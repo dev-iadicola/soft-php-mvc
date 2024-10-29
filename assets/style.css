@@ -124,6 +124,7 @@ header {
     z-index: 10;
     transform: translateX(0vw);
     transition: all .5 ease-in-out;
+    background-color: #cce4f7;
 }
 
 nav ul {
