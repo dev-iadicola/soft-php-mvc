@@ -3,65 +3,58 @@
     <h1 class="my-4">Portfolio Management</h1>
 
     <!-- Form to Add portfolio -->
-    <div class="mb-4">
-        <h3>Nuova Esperienza</h3>
+    <div class="mb-4 p-4 bg-light shadow rounded">
+        <h3 class="text-center mb-4">Nuova Esperienza</h3>
         <?php
-            $url = isset($pfolio->id) ? "/admin/portfolio-update/{$pfolio->id}" : '/admin/portfolio';
+        $url = isset($pfolio->id) ? "/admin/portfolio-update/{$pfolio->id}" : '/admin/portfolio';
         ?>
-
-        <form method="POST" action="<?= $url ?>">
-            <div class="form-group">
-                <label for="title">Title</label>
-                <input type="text" class="form-control" id="title" name="title" value="<?= isset($pfolio->title) ? $pfolio->title : '' ?>" required>
+        <form method="POST" action="<?= $url ?>" class="p-3">
+            <div class="form-group mb-3">
+                <label for="title" class="form-label">Titolo</label>
+                <input type="text" class="form-control shadow-sm" id="title" name="title" value="<?= isset($pfolio->title) ? $pfolio->title : '' ?>" required>
             </div>
-            <div class="form-group">
-                <label for="overview">Overview</label>
-                <textarea class="form-control" id="overview" name="overview" rows="3"><?= isset($pfolio->overview) ? $pfolio->overview : '' ?></textarea>
+            <div class="form-group mb-3">
+                <label for="overview" class="form-label">Descrizione</label>
+                <textarea class="form-control editor shadow-sm" id="overview" name="overview" rows="5"><?= isset($pfolio->overview) ? $pfolio->overview : '' ?></textarea>
             </div>
-            <div class="form-group">
-                <label for="link">Link</label>
-                <input type="url" class="form-control" id="link" name="link" value="<?= isset($pfolio->link) ? $pfolio->link : '' ?>">
+            <div class="form-group mb-4">
+                <label for="link" class="form-label">Link</label>
+                <input type="url" class="form-control shadow-sm" id="link" name="link" value="<?= isset($pfolio->link) ? $pfolio->link : '' ?>">
             </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="d-flex justify-content-end">
+                <button type="submit" class="btn btn-primary shadow-sm px-4">Salva</button>
+            </div>
         </form>
     </div>
 
+
     <!-- Portfolio Table -->
-    <div>
-        <h3>Existing Projects</h3>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Title</th>
-                    <th>Overview</th>
-                    <th>Link</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="projectsTableBody">
-                <?php foreach ($portfolio as $project): ?>
-                    <tr>
-                        <td><?= $project->id ?></td>
-                        <td><?= $project->title ?></td>
-                        <td><?= $project->overview ?></td>
-                        <td>
+    <div class="container mb-4">
+        <h3 class="text-center mb-4">Progetti Esistenti</h3>
+        <div class="row" id="projectsCardBody">
+            <?php foreach ($portfolio as $project): ?>
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card border-0 shadow-sm h-100">
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title text-primary font-weight-bold"><?= $project->title ?></h5>
+                            <p class="card-text text-muted"><?= $project->overview ?></p>
                             <?php if ($project->link !== ''): ?>
-                                <a href="<?= $project->link ?>" target="_blank" class="btn btn-primary">
-                                    Apri il link per <?= $project->title ?>
+                                <a href="<?= $project->link ?>" target="_blank" class="btn btn-outline-primary mt-2">
+                                    Vai al progetto
                                 </a>
                             <?php endif ?>
-                        </td>
-                        <td class="col-ms-3 p-2 gap-3">
-                            <form action="/admin/portfolio-delete/<?= $project->id ?>" method="POST">
-                                @delete
-                                <button onclick="return confirm('Are you sure you want to eliminate <?= $project->title ?>')" class="btn btn-danger">Delete</button>
-                            </form>
-                            <a href="/admin/portfolio-edit/<?= $project->id ?>" class="btn btn-warning my-3">Edit</a>
-                        </td>
-                    </tr>
-                <?php endforeach ?>
-            </tbody>
-        </table>
+                            <div class="mt-3 d-flex justify-content-between">
+                                <form action="/admin/portfolio-delete/<?= $project->id ?>" method="POST" class="d-inline">
+                                    @delete
+                                    <button onclick="return confirm('Vuoi davvero eliminare <?= $project->title ?>?')" class="btn btn-danger btn-sm">Elimina</button>
+                                </form>
+                                <a href="/admin/portfolio-edit/<?= $project->id ?>" class="btn btn-warning btn-sm">Modifica</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
     </div>
+
 </div>

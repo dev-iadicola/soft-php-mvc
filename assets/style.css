@@ -396,11 +396,7 @@ ____________________________*/
 
     /* BODY */
      /* Definizione dell'animazione del gradiente */
-     @keyframes gradientAnimation {
-        0% { background-position: 0% 0%; }
-        50% { background-position: 100% 100%; }
-        100% { background-position: 0% 0%; }
-    }
+    
     
     /* Applicazione dell'animazione al background per schermi più grandi */
     .animated-gradient {

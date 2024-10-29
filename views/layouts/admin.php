@@ -13,6 +13,8 @@
     <!-- Font Awesome Icon CDN -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="/assets/admin.css">
 </head>
@@ -55,6 +57,7 @@
             }
         });
     </script>
+
 <!-- chart js -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -63,6 +66,58 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+
+<!-- editor di test -->
+
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
+
+
+<script type="importmap">
+            {
+                "imports": {
+                    "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.js",
+                    "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.0/"
+                }
+            }
+        </script>
+        <script type="module">
+            import {
+                ClassicEditor,
+                Essentials,
+                Paragraph,
+                Bold,
+                Italic,
+                Font
+            } from 'ckeditor5';
+
+            document.querySelectorAll('.editor').forEach((element) => {
+        ClassicEditor
+            .create(element, {
+                plugins: [Essentials, Paragraph, Bold, Italic, Font],
+                toolbar: [
+                    'undo', 'redo', '|', 'bold', 'italic', '|',
+                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+                ]
+            })
+            .then(editor => {
+                // Puoi salvare ogni editor creato in un array per riferimento futuro
+                window.editors = window.editors || [];
+                window.editors.push(editor);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+        </script>
+        <!-- A friendly reminder to run on a server, remove this during the integration. -->
+        <script>
+		        window.onload = function() {
+		            if ( window.location.protocol === "file:" ) {
+		                alert( "This sample requires an HTTP server. Please serve this file with a web server." );
+		            }
+		        };
+		</script>
+
 </body>
 
 </html>

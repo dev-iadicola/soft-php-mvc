@@ -8,7 +8,7 @@
                     <h2 class="text-2xl font-medium mb-4"><?php echo $profile->tagline; ?></h2>
                     
                     <!-- Messaggio di Benvenuto -->
-                    <p class="text-lg"><?php echo $profile->welcome_message; ?></p>
+                  <?php echo $profile->welcome_message; ?>
 
                     <!-- Decorazione -->
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full"></div>
@@ -28,9 +28,9 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <?php foreach ($skills as $skill) : ?>
                 <div class="bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col items-center">
-                    <h1 class="text-2xl font-bold text-white mb-2"><?php echo $skill->title; ?></h1>
+                    <h1 class="text-2xl font-bold text-white mb-2"><?= $skill->title; ?></h1>
                     <p class="text-base text-gray-300 text-center">
-                        <?php echo $skill->description; ?>
+                        <?= $skill->description; ?>
                     </p>
                 </div>
             <?php endforeach; ?>

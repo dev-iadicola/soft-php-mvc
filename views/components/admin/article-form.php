@@ -2,10 +2,11 @@
 $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home';
 ?>
 <div class="card">
-    <div class="card-header" id="headingArticle">
+    <div class="p-0 m-0" id="headingArticle">
         <h5 class="mb-0">
-            <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapseArticle" aria-expanded="true" aria-controls="collapseArticle">
-                <h2 class="my-4">Articles Form</h2>
+            <button class="btn btn-light w-100 text-left " type="button" 
+            data-toggle="collapse" data-target="#collapseArticle" aria-expanded="true" aria-controls="collapseArticle">
+                <h2 class="">Articles Form</h2>
             </button>
         </h5>
     </div>
@@ -22,15 +23,20 @@ $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home'
                 </div>
                 <div class="form-group">
                     <label for="overview">Description</label>
-                    <textarea class="form-control" id="overview" name="overview" rows="3"><?= isset($article->overview) ? $article->overview : '' ?></textarea>
+                    <textarea class="form-control editor" id="editor" name="overview" rows="3"><?= isset($article->overview) ? $article->overview : '' ?></textarea>
                 </div>
                 <div class="form-group">
                     <label for="link">Link</label>
-                    <input type="url" class="form-control" id="link" name="link" value="<?= isset($article->link) ? $article->link : '' ?>">
+                    <input type="url" class="form-control" id="link" name="link" 
+                    value="<?= isset($article->link) ? $article->link : '' ?>">
                 </div>
-                <div class="form-group">
+                <div class="form-group mt-2">
                     <label for="img">Img</label>
-                    <input type="file" accept="image/*" name="img" class="form-control-file" id="myfile">
+                    <input 
+                    <?php if (isset($article->img)): ?>
+                        value="<?=$article->img?>"
+                    <?php endif ?>
+                     type="file" accept="image/*" name="img" class="form-control-file" id="myfile" >
                 </div>
                 <div class="mt-3 d-flex flex-row">
                     <?php if (isset($article->img)) : ?>
@@ -44,7 +50,7 @@ $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home'
                         <img src="" id="output" class="img-thumbnail" alt="Immagine selezionata">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Article</button>
+                <button type="submit" class="btn btn-primary mt-2">Submit Article</button>
             </form>
         </div>
     </div>

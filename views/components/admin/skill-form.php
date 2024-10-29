@@ -5,7 +5,7 @@ $urlSkill = isset($skill->id) ? "/admin/skill/{$skill->id}" : '/admin/skill';
     <div class="card-header" id="headingSkill">
         <h5 class="mb-0">
             <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapseSkill" aria-expanded="false" aria-controls="collapseSkill">
-                <h2 class="my-4">Skills Form</h2>
+                <h2 class="">Skills Form</h2>
             </button>
         </h5>
     </div>
@@ -18,9 +18,9 @@ $urlSkill = isset($skill->id) ? "/admin/skill/{$skill->id}" : '/admin/skill';
                 </div>
                 <div class="form-group">
                     <label for="subtitle">Description</label>
-                    <textarea class="form-control" id="subtitle" name="description" rows="3" required><?= isset($skill->description) ? $skill->description : '' ?></textarea>
+                    <textarea class="form-control editor" id="subtitle" name="description" rows="3" required><?= isset($skill->description) ? $skill->description : '' ?></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Skill</button>
+                <button type="submit" class="btn btn-primary mt-2">Submit Skill</button>
             </form>
         </div>
     </div>

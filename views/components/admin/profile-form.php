@@ -5,7 +5,7 @@ $urlProfile = isset($profile->id) ? "/admin/profile/{$profile->id}" : '/admin/pr
     <div class="card-header" id="headingSkill">
         <h5 class="mb-0">
             <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapseProfile" aria-expanded="false" aria-controls="collapseProfile">
-                <h2 class="my-4">Welcome Message - Profile Form</h2>
+                <h2 class="">Welcome Message - Profile Form</h2>
             </button>
         </h5>
     </div>
@@ -30,10 +30,13 @@ $urlProfile = isset($profile->id) ? "/admin/profile/{$profile->id}" : '/admin/pr
                 </div>
                 <div class="form-group">
                     <label for="overview">Description</label>
-                    <textarea class="form-control" id="overview" name="welcome_message" rows="3"><?= isset($profile->welcome_message) ? $profile->welcome_message : '' ?></textarea>
+                    <textarea class="form-control editor" id="editor" name="welcome_message" rows="5"><?= isset($profile->welcome_message) ? $profile->welcome_message : '' ?></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit Welcome Profile Message</button>
+                <button type="submit" class="btn btn-primary mt-3">Submit Welcome Profile Message</button>
             </form>
         </div>
     </div>
 </div>
+
+<!-- Include CKEditor -->
+

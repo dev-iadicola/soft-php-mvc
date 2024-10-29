@@ -70,3 +70,5 @@ function toggleCards(idCards, idHide) {
     $(idCards).fadeToggle('slow');
     $(idHide).fadeOut('slow');
 }
+
+

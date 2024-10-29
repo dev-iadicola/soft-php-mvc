@@ -54,14 +54,15 @@ class ProjectManagerController extends Controller
       $project = Project::find($id);
       // Validazione Dati
       if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-         $this->withError("I think you need rest, I don't know what you put in the file, but it's definitely not an image.");
-         return $this->redirectBack();
+         $this->withError("Aggiornato, eccetto l'immagine");
+         // return $this->redirectBack();
       }
       if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
 
          $this->deleteFile($project->img);
 
          $data['img'] = $this->checkImage($data);
+
       } else {
          unset($data['img']);
       }

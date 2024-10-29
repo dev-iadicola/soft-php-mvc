@@ -30,7 +30,8 @@ class HomeController extends Controller {
         $skills = Skill::orderBy('id desc')->get();
 
 
-        $this->render('home',[] ,compact('articles','certificati','projects','curriculum','profiles','skills') );
+        $this->render('home',[] ,compact('articles',
+        'certificati','projects','curriculum','profiles','skills') );
     }
 
     public function cookie(){

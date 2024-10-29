@@ -5,8 +5,6 @@ namespace App\Controllers\Admin;
 use App\Core\Mvc;
 use App\Core\Controller;
 use App\Core\Http\Request;
-use App\Core\UploadFile;
-use App\Core\Validator;
 use App\Model\Project;
 
 class ProjectManagerController extends Controller
@@ -52,19 +50,22 @@ class ProjectManagerController extends Controller
    {
       $data = $request->getPost();
       $project = Project::find($id);
+
       // Validazione Dati
+     
+    
       if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-         $this->withError("I think you need rest, I don't know what you put in the file, but it's definitely not an image.");
-         return $this->redirectBack();
-      }
-      if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
 
-         $this->deleteFile($project->img);
+         $this->withError("Aggiornamento effettuato senza immagine");
 
-         $data['img'] = $this->checkImage($data);
-      } else {
          unset($data['img']);
+
+         $project->dirtyUpdate($data);
+
+         return $this->redirectBack();
+         
       }
+     
 
       // Trova porgetto
       $project = Project::find($id);
