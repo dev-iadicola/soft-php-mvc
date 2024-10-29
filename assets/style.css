@@ -316,6 +316,7 @@ img:hover{
 p {
     color: var(--color-text)
 }
+
 article p {
     color: white;
 }

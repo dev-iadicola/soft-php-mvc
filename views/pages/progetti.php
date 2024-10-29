@@ -13,17 +13,19 @@
                             <!-- Corpo della Card -->
                             <div class="p-6 bg-black bg-opacity-50 "> <!-- Sfondo semi-trasparente per il testo -->
                                 <h5 class="text-2xl font-bold text-white mb-4"><?= $project->title ?></h5>
-                                <div class="bg-gray-100 text-white rounded-lg p-4 mb-4">
-                                   <p> <?= $project->overview ?></p>
+                                <div class="bg-gray-900 text-white rounded-lg p-4 mb-40">
+                                   <p class="carusel-p"> <?= $project->overview ?></p>
                                 </div>
                                 <a href="<?= $project->link ?>" 
-                                class="my-10 inline-flex items-center bg-gradient-to-r 
+                                class="my-20 inline-flex items-center bg-gradient-to-r 
                                 from-teal-400 to-cyan-500 text-white hover:bg-gradient-to-l 
                                 focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg 
                                 px-4 py-2 transition duration-300 " target="_blank" rel="noopener noreferrer">
                                     View Project <i class="fa fa-link ml-2 text-xl"></i>
                                 </a>
                             </div>
+
+                           
                         </div>
                     </div>
                 <?php endforeach; ?>
@@ -54,7 +56,7 @@
                     <!-- Immagine e titolo del progetto -->
                     <img src="<?= $project->img ?>" class="w-full h-48 object-cover" alt="<?= $project->title ?>">
                     <div class="p-6">
-                        <h5 class="text-2xl font-bold mb-4"><?= htmlspecialchars($project->title) ?></h5>
+                        <h5 class="text-2xl font-bold mb-4 text-black" ><?= htmlspecialchars($project->title) ?></h5>
                         <p><?= $project->overview ?></p>
 
                       
