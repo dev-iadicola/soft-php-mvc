@@ -1,0 +1,30 @@
+/* CARDS */
+.img-thumbnail {
+    height: 300px;
+    border: 1px solid #000;
+
+}
+
+.fix-object {
+    object-fit: cover;
+    height: 200px;
+    /* Altezza fissa per l'immagine */
+}
+
+.card {
+    transition: transform 0.2s ease-in-out;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    /* Leggero ingrandimento alla hover */
+}
+
+.card-img-top {
+    max-height: 200px;
+    /* Altezza massima per l'immagine */
+}
+
+.foo{
+    margin-bottom: 200px;
+}

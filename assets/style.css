@@ -1,0 +1,449 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+
+:root {
+    font-family: "Quicksand", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 700 !important;
+    font-style: normal;
+    --color-text: #474747;
+    --color-design: #272424;
+    --color-layout: #ffffff;
+    --color-text-footer: #bababa;
+}
+/* OVERRIDE bootstrap*/
+body {
+    font-family: "Quicksand", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700 !important;
+    font-style: normal;
+    color: var(--color-text);
+    background-color: var(--color-layout);
+}
+
+
+.color-red {
+    color: red;
+}
+
+.form-format {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.btn {
+    padding: 1rem 1.2rem;
+    font-size: 1rem;
+    border: solid 1px black;
+    border-radius: 5px;
+
+    transition: all 1s;
+}
+
+.btn:hover {
+    color: white;
+    cursor: pointer;
+}
+
+.btn-dblue {
+    background-color: dodgerblue;
+    color: #d3d3d3;
+
+}
+
+.form-format input, select {
+    padding: 3px;
+    margin-bottom: 3px;
+    border-radius: 2px;
+
+}
+.form-format select{
+  padding: 1rem 1rem; 
+  margin: 0.5rem 0.1rem 0.5rem; 
+}
+
+.form-format label {
+    text-align: left;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.alert {
+    border: solid 1px gray;
+    border-radius: 10px;
+    padding: 10px 15px;
+    text-align: start;
+    margin: 10px;
+
+}
+
+.bg-success {
+    background-color: rgba(51, 160, 51, 0.786);
+    color: white;
+}
+
+body {
+    color: var(--color-text);
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+
+
+
+
+/* NAVBAR */
+
+header {
+    margin-bottom: 4rem !important;
+    
+}
+
+
+
+
+#menu {
+    position: fixed;
+    z-index: 10;
+    inset: 0;
+    background-color: var(--color-design);
+    opacity: 1;
+}
+
+#menu.chiuso {
+    z-index: 99;
+    transform: translateX(100vw);
+    transition: all .5 ease-in-out;
+}
+
+#menu.aperto {
+    z-index: 10;
+    transform: translateX(0vw);
+    transition: all .5 ease-in-out;
+}
+
+nav ul {
+    margin-top: 6rem;
+    list-style: none;
+}
+
+nav ul li {
+    margin-bottom: 1.6rem;
+}
+
+nav a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 1.7rem;
+    border: 1.8px solid rgba(255 255 255 /0.5);
+    padding: 0.3rem 1.5rem;
+    border-radius: 1rem;   
+    
+}
+
+nav a:hover{
+    text-decoration: none;
+    text-decoration-line: none;
+    color: var(--color-text-footer) ;
+}
+
+nav a.active {
+    background-color: #fff;
+    color: var(--color-design);
+}
+
+
+#barra-1,
+#barra-2,
+#barra-3 {
+    background-color: var(--color-design);
+    display: block;
+    width: 2rem;
+    height: 4px;
+    margin: 0.4rem 0;
+    transition: .5s;
+    border-radius: 2px;
+}
+
+#menu-icon {
+    position: fixed;
+    right: 1.2rem;
+    top: 1rem;
+    cursor: pointer;
+    z-index: 30;
+}
+
+#menu-icon.trasforma #barra-2 {
+    opacity: 0;
+}
+
+#menu-icon.trasforma #barra-1 {
+    transform: rotate(-50deg) translate(-0.4rem, 0.4rem);
+    background-color: white;
+}
+
+#menu-icon.trasforma #barra-3 {
+    transform: rotate(50deg) translate(-0.5rem, -0.5rem);
+    background-color: white;
+}
+
+@media(min-width: 700px) {
+    #menu-icon {
+        display: none;
+    }
+
+    #menu {
+        z-index: 10;
+        position: relative;
+        height: 2.6rem;
+        background-color: var(--color-design);
+    }
+
+    #menu.chiuso {
+        transform: translateX(0);
+    }
+
+    nav ul {
+        margin-top: 0;
+        display: flex;
+        height: 2.6rem;
+    }
+
+    nav li {
+        margin-left: 1.3rem;
+        height: inherit;
+        line-height: 2.6rem;
+    }
+
+    nav li:last-of-type {
+        margin-left: auto;
+        margin-right: 1rem;
+    }
+
+    nav a {
+        font-size: 1rem;
+    }
+
+
+}
+
+.bg-design{
+    background-color: var(--color-design);
+}
+
+footer{
+    color: var(--color-text-footer);
+}
+
+
+/*___________________
+ARTICOLI 
+___________*/ 
+
+.article-img {
+    max-width: 35%;
+    height: auto;
+}
+.article-container {
+    margin-bottom: 2rem;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 1rem;
+}
+.article-title {
+    font-size: 2rem;
+    font-weight: bold;
+}
+.article-subtitle {
+    font-size: 1.5rem;
+    color: #6c757d;
+}
+.article-overview {
+    font-size: 1rem;
+}
+.article-date {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* OLD */
+.img-lenguage {
+    background: linear-gradient(to right, rgba(213, 200, 200, 0.077), rgba(174, 169, 169, 0.104));
+}
+
+h1,
+p {
+    color: white;
+}
+
+.img-lenguage img {
+    width: 200px;
+    height: 200px;
+}
+img:hover{
+    cursor: pointer;
+}
+
+.scroll-bar{
+    overflow-x: auto;
+    scrollbar-width: none;
+    
+}
+
+.scroll-bar:hover {
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #757575 #f1f1f100;
+}
+
+
+
+/*      EFFECTS - combinato con js    */
+
+.fade-in-section {
+    opacity: 0;
+    transform: translateX(-70%);
+    transition: opacity 1.5s ease-in-out, transform 1s ease-in-out;
+   
+}
+
+.fade-in-section.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+p a{
+   text-decoration: underline 3px dodgerblue;
+   font-weight: 600;
+}
+.btn-arrow {
+    opacity: 0; /* Inizialmente nascosto */
+    border: solid 2px dodgerblue;
+    padding: 15px;
+    border-radius: 100%;
+    font-size: 20px;
+    z-index: 9999;
+    position: fixed; 
+    right: 15px; 
+    bottom: 15px;
+    background-color: white; 
+    color: dodgerblue;
+    cursor: pointer; 
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; 
+
+}
+
+.btn-arrow:hover {
+    transform: scale(1.1); 
+}
+
+.btn-arrow.visible {
+    opacity: 1;
+}
+
+
+
+/*__________________________
+    SESSION FLASH MESSAGE
+____________________________*/
+
+    .alert {
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        border: 1px solid transparent;
+        border-radius: 0.375rem;
+    }
+
+    .alert-danger {
+        color: #dc3545; /* Colore del testo per alert-danger */
+        background-color: #f8d7da; /* Colore di sfondo per alert-danger */
+        border-color: #f5c6cb; /* Colore del bordo per alert-danger */
+    }
+
+    .alert-danger .alert-icon {
+        color: #dc3545;
+    }
+
+    .alert-success {
+        color: #155724; /* Colore del testo per alert-success */
+        background-color: #d4edda; /* Colore di sfondo per alert-success */
+        border-color: #c3e6cb; /* Colore del bordo per alert-success */
+    }
+
+    .alert-success .alert-icon {
+        color: #155724;
+    }
+
+    .text-center {
+        text-align: center;
+    }
+
+    .mt-5 {
+        margin-top: 3rem;
+    }
+
+    .mx-5 {
+        margin-left: 3rem;
+        margin-right: 3rem;
+    }
+
+    .fs-3 {
+        font-size: 1.75rem; /* Font-size per fs-3 (adatta a Bootstrap) */
+    }
+
+
+    /* BODY */
+     /* Definizione dell'animazione del gradiente */
+     @keyframes gradientAnimation {
+        0% { background-position: 0% 0%; }
+        50% { background-position: 100% 100%; }
+        100% { background-position: 0% 0%; }
+    }
+    
+    /* Applicazione dell'animazione al background per schermi più grandi */
+    .animated-gradient {
+        animation: gradientAnimation 10s ease infinite;
+        background: linear-gradient(45deg, #cce4f7, #003366, #4b0082, #cce4f7);
+        background-size: 400% 400%; /* Dimensione del gradiente per un effetto fluido */
+        margin: 0; /* Rimuove margini di default */
+    }
+
+    /*SMARTPHONE */
+    
+    /* Disabilita l'animazione su schermi piccoli (smartphone) */
+    @media (max-width: 768px) {
+        .animated-gradient {
+            animation: none;
+            background: linear-gradient(45deg, #cce4f7, #cce4f7); /* Solo azzurrino su schermi piccoli */
+        }
+        h1,h2,h3,h4,h5, p{
+            color: black !important; 
+        }
+
+        form{
+            background-color: rgba(0, 0, 0, 0) !important;
+            border: solid 3px black;
+            border-radius: 20px;
+          
+            
+        }
+        
+      
+        input, select, option, textarea {
+            background-color: aliceblue !important;
+        }
+
+        
+        body div{
+            background-color: #cce4f7 !important;
+        }
+
+        footer div{
+            background-color: black !important;
+        }
+        #menu a{
+            color: black;
+        }
+    }

@@ -1,0 +1,7 @@
+/vendor/
+.vscode/launch.json
+
+.env
+uploads
+error_log
+

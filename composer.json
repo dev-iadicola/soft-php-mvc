@@ -1,0 +1,20 @@
+{
+    "name": "lui12/portoflio",
+    "description": "'portfolio'",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "App\\": "App/"
+        }
+    },
+    "authors": [
+        {
+            "name": "'Luigi Iadicola'"
+        }
+    ],
+    "minimum-stability": "beta",
+    "require": {
+        "phpmailer/phpmailer": "^6.9"
+    }
+}
