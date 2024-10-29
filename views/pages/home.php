@@ -19,7 +19,8 @@
         </div>
         <hr class="border-teal-300 my-10 mx-auto ">
     </div>
-</ar>
+</article>
+@include('pages.progetti')
 
 <div class="bg-white rounded-lg shadow-lg">
     <div class="fade-in-section mt-20 py-10">
@@ -76,7 +77,6 @@
 
 </article>
 
-@include('pages.progetti')
 
 
 
