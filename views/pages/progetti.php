@@ -5,7 +5,7 @@
         <div class="overflow-hidden">
             <div class="flex transition-transform duration-500 ease-in-out" id="carousel">
                 <?php foreach ($projects as $index => $project) : ?>
-                    <article class="min-w-full">
+                    <div class="min-w-full">
                         <div class="bg-white  shadow-lg rounded-lg overflow-hidden relative" 
                         style="background-image: url('<?= $project->img ?>');
                          background-size: cover; 
@@ -25,7 +25,7 @@
                                 </a>
                             </div>
                         </div>
-                    </article>
+                    </div>
                 <?php endforeach; ?>
             </div>
         </div>
