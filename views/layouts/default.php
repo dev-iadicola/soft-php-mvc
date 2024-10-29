@@ -49,7 +49,10 @@
                 <?php
                 function isActivePage($menuItem, $currentPage)
                 {
-                    return strtolower($menuItem) === strtolower($currentPage) ? 'active' : '';
+                    
+                 
+                    return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
+                    
                 }
                 ?>
                 <nav>
@@ -58,13 +61,17 @@
                         <li><a href="/contatti" class="<?= isActivePage('contatti', $page) ?>">Contatti</a></li>
                         <li><a href="/portfolio" class="<?= isActivePage('portfolio', $page) ?>">Portfolio</a></li>
                         <li><a href="/progetti" class="<?= isActivePage('progetti', $page) ?>">Progetti</a></li>
-                        <li><a href="/certificati" class="<?= isActivePage('certificati', $page) ?>">Certificati</a></li>
-                        <li><a target="_blank" href="https://github.com/AndroLuix/" class="<?= isActivePage('github', $page) ?>">GitHub <i style="color: white;" class="fa fa-github" aria-hidden="true"></i></a> </li>
+                        <li><a href="/certificati"  class="<?= isActivePage('corsi', $page) ?>">Certificati</a></li>
+                         
+                        <li><a target="_blank" href="https://github.com/AndroLuix/" class=>GitHub <i style="color: white;" class="fa fa-github" aria-hidden="true"></i></a> </li>
                     </ul>
                 </nav>
+               
                 <!-- Altri contenuti della pagina -->
             </div>
         </header>
+
+        <!-- messages -->
         @include('session.messages')
 
 <div

@@ -115,9 +115,10 @@ class Controller {
         $uploadFile = new UploadFile($this->mvc);
         $uploadFile->storageImage($data['img']);
         return $uploadFile->getPathImg();
-
      
     }
+
+    
 
     public function checkPdf($data)
     {

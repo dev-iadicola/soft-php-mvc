@@ -1,6 +1,5 @@
 const icon = document.getElementById('menu-icon');
 const menu = document.getElementById('menu');
-console.log('javascript actived');
 
 icon.addEventListener('click', toggleMenu);
 
@@ -47,21 +46,19 @@ function downloadFunction(id) {
 
 $(function() {
     const btnArrow = $('#btn-arrow');
-    console.log(btnArrow)
    
     if (btnArrow.length) {
         $(window).scroll(function() {
             var aTop = $('#footer').height();
             if ($(this).scrollTop() >= aTop) {
                 btnArrow.addClass('visible');
-                console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
+               // console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
             } else {
                 btnArrow.removeClass('visible');
-                console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
+              //  console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
             }
         });
     } else {
-        console.log('btnArrow not found');
     }
 });
 
