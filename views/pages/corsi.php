@@ -10,18 +10,17 @@
                         <div class="absolute w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mt-1.5 -left-3.5 border-2 border-white"></div>
                         
                         <!-- Contenuto della tappa -->
-                        <div class="p-6 bg-white shadow-xl rounded-lg border-l-4 border-blue-500"> <!-- Rimosso group-hover -->
-                            <div class="flex items-center mb-3">
-                                <h5 class="text-2xl font-semibold text-gray-800"><?= $certificato->title ?></h5>
-                                <span class="ml-auto bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded"><?= htmlspecialchars($certificato->certified) ?></span>
+                        <div class="p-6 bg-white shadow-xl rounded-lg border-l-4 border-blue-500"> 
+                            <div class="flex items-center mb-3 bg-white">
+                                <h5 class="bg-white" ><?= $certificato->title ?></h5>
+                                <span class=" bg-white ml-auto bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 rounded"><?= htmlspecialchars($certificato->certified) ?></span>
                             </div>
                             <p class="text-base text-gray-700"><?= $certificato->ente ?></p>
                            
-                            <div class="bg-gray-900 m-10 p-10">
                             <p class="mt-3 text-gray-900 m-20">
                                 <?= $certificato->overview ?>
-                        </p>
-                            </div>
+                    
+                            
                             <a href="<?= $certificato->link ?>" class="text-blue-600 hover:text-blue-800 mt-4 inline-flex items-center" target="_blank">
                                 <i class="fa fa-external-link mr-2"></i>View Certificate
                             </a>
