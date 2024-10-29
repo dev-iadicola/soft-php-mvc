@@ -15,12 +15,12 @@
             <div class="flex transition-transform duration-500 ease-in-out" id="carousel">
                 <?php foreach ($projects as $index => $project) : ?>
                     <div class="min-w-full">
-                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative" 
+                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative " 
                              style="background-image: url('<?= $project->img ?>') !important; 
                                     background-size: cover; 
                                     background-position: center;">
                             <!-- Corpo della Card -->
-                            <div class="p-6 bg-black bg-opacity-50">
+                            <div class="p-6 bg-black bg-opacity-50 py-40">
                                 <h3 class="text-2xl font-bold text-white mb-4"><?= $project->title ?></h3>
                                 <div class="bg-gray-900 text-white rounded-lg p-4 mb-20">
                                    <p class="carusel-p"><?= $project->overview ?></p>
@@ -71,7 +71,7 @@
                     <!-- Immagine e titolo del progetto -->
                     <img src="<?= $project->img ?>" class="w-full h-48 object-cover" alt="<?= $project->title ?>">
                     <div class="p-6">
-                        <h5 class="text-2xl font-bold mb-4 text-black mt-40" ><?= htmlspecialchars($project->title) ?></h5>
+                        <h5 class="text-2xl font-bold mb-4 text-black" ><?= htmlspecialchars($project->title) ?></h5>
                         <p><?= $project->overview ?></p>
 
                       
