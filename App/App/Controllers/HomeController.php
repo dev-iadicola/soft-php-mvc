@@ -4,7 +4,6 @@ use App\Core\ORM;
 use \App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;
-use App\Model\Profile;
 use App\Model\Project;
 use \App\Core\Controller;
 use App\Model\Curriculum;
@@ -15,14 +14,14 @@ class HomeController extends Controller {
     public function __construct(public Mvc $mvc) {
         parent::__construct($mvc);
         
-     
     }
 
     public function index() {
         // recupero dati dal database
 
         $certificati = Certificato::orderBy('certified DESC')->get();
-        $projects = Project::orderBy(' id DESC')->get();
+        $projects = Project::where('deploy',1)->get();
+        $gits = Project::where('deploy',0)->get();
         $articles = Article::orderBy('created_at DESC')->get();
         $curriculum = Curriculum::orderBy(' id DESC')->first();
         $profiles = (new ORM($this->mvc->pdo))->query('select * FROM profile where selected is true ORDER BY id desc');
@@ -30,7 +29,7 @@ class HomeController extends Controller {
         $skills = Skill::orderBy('id desc')->get();
 
 
-        $this->render('home',[] ,compact('articles','certificati','projects','curriculum','profiles','skills') );
+        $this->render('home',[] ,compact('articles','gits','certificati','projects','curriculum','profiles','skills') );
     }
 
     public function cookie(){

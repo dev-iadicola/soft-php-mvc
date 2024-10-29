@@ -18,10 +18,10 @@ class PortfolioController extends Controller {
         $portfolioModel = Portfolio::findAll();
         $items = $portfolioModel;
         $portfolio = Portfolio::orderBy('id DESC')->get();
-        $projects = Project::orderBy('id DESC')->get();
-        $certificati = Certificato::orderBy('certified DESC')->get();
+        $projects = Project::where('deploy',1)->get();
+        $gits = Project::where('deploy',0)->get();        $certificati = Certificato::orderBy('certified DESC')->get();
         $curriculum = Curriculum::orderBy(' id DESC')->first();
-        $this->render('portfolio', [], compact('portfolio','projects','certificati', 'curriculum'));
+        $this->render('portfolio', [], compact('portfolio','gits','projects','certificati', 'curriculum'));
     }
 
 

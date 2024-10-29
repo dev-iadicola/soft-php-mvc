@@ -18,7 +18,7 @@ $urlSkill = isset($skill->id) ? "/admin/skill/{$skill->id}" : '/admin/skill';
                 </div>
                 <div class="form-group">
                     <label for="subtitle">Description</label>
-                    <textarea class="form-control editor" id="subtitle" name="description" rows="3" required><?= isset($skill->description) ? $skill->description : '' ?></textarea>
+                    <textarea class="form-control editor" id="subtitle" name="description" rows="3" ><?= isset($skill->description) ? $skill->description : '' ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary mt-2">Submit Skill</button>
             </form>

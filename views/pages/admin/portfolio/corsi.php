@@ -1,91 +1,92 @@
- <!-- Admin Panel -->
- <div class="container admin-panel">
-     <h1 class="my-4">Course Management  <?= isset($element->title)?></h1>
+<!-- Admin Panel -->
+<div class="container my-5">
+    <h1 class="mb-4 display-6 text-center">Course Management</h1>
 
-     <!-- Form to Add portfolio -->
+    <!-- Course Form -->
+    <?php $url = isset($element->id) ? "/admin/corso-update/{$element->id}" : '/admin/corsi'; ?>
+    <form method="POST" action="<?= $url ?>" class="shadow-lg p-4 bg-light rounded">
+        <h3 class="mb-3"><?= (isset($element->title)) ? $element->title : 'Add new' ?>
+        </h3>
 
-     <div class="mb-4">
-         <?php
-            $url = isset($element->id) ? "/admin/corso-update/{$element->id}" : '/admin/corsi';
+        <div class="mb-3">
+            <label for="title" class="form-label">Title</label>
+            <input type="text" class="form-control" id="title" name="title"
+                placeholder="Title of certificate" value="<?= $element->title ?? '' ?>" required>
+        </div>
 
-            ?>
+        <div class="mb-3">
+            <label for="ente" class="form-label">Institution</label>
+            <input type="text" class="form-control" id="ente" name="ente"
+                placeholder="Institution that issued the certificate" value="<?= $element->ente ?? '' ?>" required>
+        </div>
 
-         <form method="POST" /admin/portfolio-update/{id} action="<?= $url ?>">
-             <div class="form-group">
-                 <label for="title">Title</label>
-                 <input type="text" placeholder="Title of certificate" 
-                 class="form-control" name="title" value="<?= isset($element->title) ? $element->title : '' ?>" required>
-             </div>
+        <div class="mb-3">
+            <label for="overview" class="form-label">Overview</label>
+            <textarea class="form-control editor" id="overview" name="overview" rows="3" placeholder="Course overview"><?= $element->overview ?? '' ?></textarea>
+        </div>
 
-             <div class="form-group">
-                 <label for="title">Institution</label>
-                 <input type="text" placeholder="Institution that issued the certificate" 
-                  class="form-control" name="ente" value="<?= isset($element->ente) ? $element->ente : '' ?>" required>
-             </div>
+        <div class="mb-3">
+            <label for="link" class="form-label">Link</label>
+            <input type="url" class="form-control" id="link" name="link"
+                placeholder="https://example.com" value="<?= $element->link ?? '' ?>" required>
+        </div>
 
-             <div class="form-group">
-                 <label for="overview">Overview</label>
-                 <textarea class="form-control"   name="overview" rows="3"><?= isset($element->overview) ? $element->overview : '' ?></textarea>
-             </div>
-             <div class="form-group">
-                 <label for="link">Link</label>
-                 <input type="url" name="link" class="form-control" placeholder="https://example.com" id="link" 
-                     value="<?= isset($element->link) ? $element->link: '' ?>" requered>
-             </div>
+        <div class="mb-4">
+            <label for="date" class="form-label">Date Certified</label>
+            <input type="number" class="form-control" id="date" name="certified" min="1900" max="2099" step="1"
+                value="<?= $element->certified ?? date('Y') ?>" required>
+        </div>
 
-             <div class="form-group">
-                 <label for="link">Date Certified</label>
-                 <input type="number" min="1900" max="2099" step="1"  class="form-control" id="date" name="certified" requered 
-                 value="<?= isset($element->certified) ? $element->certified : date('Y') ?>">
-             </div>
-             <button type="submit" class="btn btn-primary">Submit</button>
-         </form>
+        <button type="submit" class="btn btn-success w-100">Save Course</button>
+    </form>
+<!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 
-     </div>
+<!-- Bootstrap JS (dopo jQuery se usato) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Existing Certifications -->
+    <div class="mt-5">
+        <h3 class="mb-3 text-center">Existing Certifications</h3>
+        <div class="accordion" id="certificationsAccordion">
+            <?php foreach ($corsi as $corso) : ?>
+                <div class="accordion-item mb-2">
+                    <!-- Header -->
+                    <h2 class="accordion-header" id="heading<?= $corso->id ?>">
+                        <button class="accordion-button collapsed bg-primary text-white" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse<?= $corso->id ?>"
+                            aria-expanded="false" aria-controls="collapse<?= $corso->id ?>">
+                            <?= $corso->title ?> - <?= $corso->ente?>
+                        </button>
+                    </h2>
 
-     <!-- portfolio Table -->
-     <div>
-         <h3>Certified Exists</h3>
-         <table class="table table-bordered">
-             <thead>
-                 <tr>
-                     <th>ID</th>
-                     <th>Title</th>
-                     <th>Overview</th>
-                     <th>Link</th>
-                     <th>Date</th>
-                     <th>Actions</th>
-                 </tr>
-             </thead>
-             <tbody id="projectsTableBody">
-                 <?php foreach ($corsi as $corso) : ?>
-                     <tr>
-                         <td><?= $corso->id ?></td>
+                    <!-- Body with Details -->
+                    <div id="collapse<?= $corso->id ?>" class="accordion-collapse collapse"
+                        aria-labelledby="heading<?= $corso->id ?>" data-bs-parent="#certificationsAccordion">
+                        <div class="accordion-body">
+                            <p class="text-muted">
+                                <strong>Overview:</strong> <?= $corso->overview ?>
+                            </p>
+                            <p>
+                                <strong>Certified Date:</strong> <?= $corso->certified ?>
+                            </p>
+                            <?php if ($corso->link) : ?>
+                                <a href="<?= $corso->link ?>" target="_blank" class="btn btn-outline-primary btn-sm">
+                                    Open Link
+                                </a>
+                            <?php endif; ?>
+                            <div class="d-flex justify-content-between mt-3">
+                                <form action="/admin/corso-delete/<?= $corso->id ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete <?= $corso->title ?>?')">
+                                    @delete
+                                    <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                </form>
+                                <a href="/admin/corso-edit/<?= $corso->id ?>" class="btn btn-warning btn-sm">Edit</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+    </div>
 
-                         <td><?= $corso->title ?></td>
-                         <td><?= $corso->overview ?></td>
-                         <td>
-                             <?php if ($corso->link !== '') : ?>
-                                 <a href="<?= $corso->link ?>" target="_blank" class="btn btn-primary">
-                                     Apri il link per <?= $corso->title ?>
-                                 </a>
-                             <?php endif ?>
 
-                         </td>
-                        
-                         <td>
-                            <?= $corso->certified ?>
-                         </td>
-                         <td class="col-ms-3 p-2 gap-3">
-                             <form action="/admin/corso-delete/<?= $corso->id ?>" method="POST">
-                                 @delete
-                                 <button onclick="return confirm('Are you sure you want to eliminate <?= $corso->title ?>')" class="btn btn-danger">Delete</button>
-                             </form>
-                             <a href="/admin/corso-edit/<?= $corso->id ?>" class="btn btn-warning my-3">Edit</a>
-                         </td>
-                     </tr>
-                 <?php endforeach ?>
-             </tbody>
-         </table>
-     </div>
- </div>
+</div>

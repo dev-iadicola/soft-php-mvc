@@ -14,8 +14,9 @@ class ProgettiController extends Controller {
     }
 
     public function index() {
-        $projects = Project::findAll();
-        $this->render('progetti',[], compact('projects'));
+        $projects = Project::where('deploy',1)->get();
+        $gits = Project::where('deploy',0)->get();
+        $this->render('progetti',[], compact('projects', 'gits'));
     }
 
     /**

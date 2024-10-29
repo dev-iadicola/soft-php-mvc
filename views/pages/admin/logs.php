@@ -8,36 +8,28 @@
     </style>
 </head>
 <body>
-    <div class="container align-middle">
-        <h2>Logs</h2>
-        <table class="table table-condensed mt-5">
-            <thead>
-                <tr>
-                    <th>IP</th>
-                    <th>Last Log</th>
-                    <th>Number of Access</th>
-                    <th>Device</th>
-                    <th style="width: 50%;">Location</th>
-                    <th style="width: 50%;">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php foreach($logs as $log): ?>
-                    <tr>
-                        <td><?= $log->indirizzo ?></td>
-                        <td><?= $log->last_log ?></td>
-                        <td><?= $log->login_count ?></td>
-                        <td><?= $log->device ?></td>
-                        <td class="location" data-ip="<?= $log->indirizzo ?>">
-                            Loading...
-                            
-                        </td>
-                        <td><button class="btn btn-secondary btn-sm" onclick="showMap('<?= $log->indirizzo ?>')">Show Map</button></td>
-                    </tr>
-                <?php endforeach; ?>
-            </tbody>
-        </table>
+
+
+<div class="container align-middle">
+    <h2>Logs</h2>
+    <div class="card-container mt-5">
+        <?php foreach($logs as $log): ?>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><?= $log->device ?></h5>
+                    <p class="card-text"><strong>IP:</strong> <?= $log->indirizzo ?></p>
+                    <p class="card-text"><strong>Last Log:</strong> <?= $log->last_log ?></p>
+                    <p class="card-text"><strong>Number of Access:</strong> <?= $log->login_count ?></p>
+                    <p class="card-text location" data-ip="<?= $log->indirizzo ?>">
+                        Loading...
+                    </p>
+                    <button class="btn btn-secondary btn-sm" onclick="showMap('<?= $log->indirizzo ?>')">Show Map</button>
+                </div>
+            </div>
+        <?php endforeach; ?>
     </div>
+</div>
+
     
     <!-- Includi i file JavaScript alla fine del documento -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
