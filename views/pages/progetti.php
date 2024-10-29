@@ -14,38 +14,51 @@
             <div class="flex transition-transform duration-500 ease-in-out" id="carousel">
                 <?php foreach ($projects as $index => $project) : ?>
                     <div class="min-w-full">
-                        <div class="bg-white  shadow-lg rounded-lg overflow-hidden relative" 
-                        style="background-image: url('<?= $project->img ?>');
-                         background-size: cover; 
-                         background-position: center;">
+                        <div class="bg-white shadow-lg rounded-lg overflow-hidden relative" 
+                             style="background-image: url('<?= $project->img ?>');
+                                    background-size: cover; 
+                                    background-position: center;">
                             <!-- Corpo della Card -->
-                            <div class="p-6 bg-black bg-opacity-50 "> <!-- Sfondo semi-trasparente per il testo -->
+                            <div class="p-6 bg-black bg-opacity-50">
                                 <h3 class="text-2xl font-bold text-white mb-4"><?= $project->title ?></h3>
-                                <div class="bg-gray-900 text-white rounded-lg p-4 mb-40">
-                                   <p class="carusel-p"> <?= $project->overview ?></p>
+                                <div class="bg-gray-900 text-white rounded-lg p-4 mb-20">
+                                   <p class="carusel-p"><?= $project->overview ?></p>
                                 </div>
                                 <a href="<?= $project->link ?>" 
-                                class="my-20 inline-flex items-center bg-gradient-to-r 
-                                from-teal-400 to-cyan-500 text-white hover:bg-gradient-to-l 
-                                focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg 
-                                px-4 py-2 transition duration-300 " target="_blank" rel="noopener noreferrer">
+                                   class="inline-flex items-center bg-gradient-to-r 
+                                          from-teal-400 to-cyan-500 text-white hover:bg-gradient-to-l 
+                                          focus:outline-none focus:ring-2 focus:ring-cyan-500 rounded-lg 
+                                          px-4 py-2 transition duration-300" 
+                                   target="_blank" rel="noopener noreferrer">
                                     View Project <i class="fa fa-link ml-2 text-xl"></i>
                                 </a>
                             </div>
-
-                           
                         </div>
                     </div>
                 <?php endforeach; ?>
             </div>
         </div>
 
-        
-
         <button class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2" onclick="prevSlide()">❮</button>
         <button class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2" onclick="nextSlide()">❯</button>
     </div>
 </div>
+
+<style>
+    /* Stile per garantire la responsività */
+    @media (max-width: 768px) {
+        .fade-in-section h3 {
+            font-size: 2rem; /* Ridimensiona il titolo per gli schermi più piccoli */
+        }
+        .carousel-p {
+            font-size: 0.875rem; /* Font più piccolo per il testo del progetto */
+        }
+        .bg-black {
+            padding: 1rem; /* Riduci il padding per adattarlo meglio su schermi piccoli */
+        }
+    }
+    /* Aggiungi ulteriori stili per un'esperienza migliore su smartphone */
+</style>
 
 
 
