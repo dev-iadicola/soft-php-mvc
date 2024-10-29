@@ -2,6 +2,14 @@
     <h3 class="text-4xl font-bold text-white mb-8 text-center">Cloud Projects</h3>
 
     <div class="relative my-10">
+
+        <!-- Navigazione per dot (Indicatori) -->
+        <div class="flex justify-center mt-4 space-x-2 mb-10" id="dots-container">
+            <?php foreach ($projects as $index => $project) : ?>
+                <button onclick="goToSlide(<?= $index ?>)" class="dot w-3 h-3 rounded-full bg-gray-400" aria-label="Vai al progetto <?= $index + 1 ?>"></button>
+            <?php endforeach; ?>
+        </div>
+
         <div class="overflow-hidden">
             <div class="flex transition-transform duration-500 ease-in-out" id="carousel">
                 <?php foreach ($projects as $index => $project) : ?>
@@ -12,7 +20,7 @@
                          background-position: center;">
                             <!-- Corpo della Card -->
                             <div class="p-6 bg-black bg-opacity-50 "> <!-- Sfondo semi-trasparente per il testo -->
-                                <h5 class="text-2xl font-bold text-white mb-4"><?= $project->title ?></h5>
+                                <h3 class="text-2xl font-bold text-white mb-4"><?= $project->title ?></h3>
                                 <div class="bg-gray-900 text-white rounded-lg p-4 mb-40">
                                    <p class="carusel-p"> <?= $project->overview ?></p>
                                 </div>
@@ -32,12 +40,7 @@
             </div>
         </div>
 
-        <!-- Navigazione per dot (Indicatori) -->
-        <div class="flex justify-center mt-4 space-x-2" id="dots-container">
-            <?php foreach ($projects as $index => $project) : ?>
-                <button onclick="goToSlide(<?= $index ?>)" class="dot w-3 h-3 rounded-full bg-gray-400" aria-label="Vai al progetto <?= $index + 1 ?>"></button>
-            <?php endforeach; ?>
-        </div>
+        
 
         <button class="absolute top-1/2 left-0 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2" onclick="prevSlide()">❮</button>
         <button class="absolute top-1/2 right-0 transform -translate-y-1/2 bg-gray-700 text-white rounded-full p-2" onclick="nextSlide()">❯</button>
