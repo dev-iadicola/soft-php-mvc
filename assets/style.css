@@ -25,6 +25,9 @@ body {
     color: red;
 }
 
+.hidden {
+    display: none;
+}
 .form-format {
     display: flex;
     flex-direction: column;
@@ -146,6 +149,8 @@ nav a {
     
 }
 
+
+
 nav a:hover{
     text-decoration: none;
     text-decoration-line: none;
@@ -182,6 +187,7 @@ nav a.active {
 #menu-icon.trasforma #barra-2 {
     opacity: 0;
 }
+
 
 #menu-icon.trasforma #barra-1 {
     transform: rotate(-50deg) translate(-0.4rem, 0.4rem);
@@ -457,3 +463,6 @@ ____________________________*/
             color: black;
         }
     }
+
+
+ 

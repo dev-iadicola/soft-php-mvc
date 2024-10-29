@@ -72,3 +72,17 @@ function toggleCards(idCards, idHide) {
 }
 
 
+// corsi 
+
+    function toggleOverview(id) {
+        const overview = document.getElementById(`overview-${id}`);
+        const button = document.getElementById(`leggi-cert-${id}`); 
+
+        if (overview.classList.contains('hidden')) {
+            overview.classList.remove('hidden');
+            button.textContent = 'Leggi di meno';
+        } else {
+            overview.classList.add('hidden');
+            button.textContent = 'Leggi di più';
+        }
+    }
