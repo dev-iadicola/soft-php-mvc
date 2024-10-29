@@ -16,7 +16,12 @@
                                 <span class="ml-auto bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 py-0.5 rounded"><?= htmlspecialchars($certificato->certified) ?></span>
                             </div>
                             <p class="text-base text-gray-700"><?= $certificato->ente ?></p>
-                            <p class="mt-3 text-gray-600"><?= $certificato->overview ?></p>
+                           
+                            <div class="bg-gray-900 m-10 p-10">
+                            <p class="mt-3 text-gray-900 m-20">
+                                <?= $certificato->overview ?>
+                        </p>
+                            </div>
                             <a href="<?= $certificato->link ?>" class="text-blue-600 hover:text-blue-800 mt-4 inline-flex items-center" target="_blank">
                                 <i class="fa fa-external-link mr-2"></i>View Certificate
                             </a>
