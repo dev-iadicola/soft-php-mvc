@@ -71,7 +71,7 @@
                     <!-- Immagine e titolo del progetto -->
                     <img src="<?= $project->img ?>" class="w-full h-48 object-cover" alt="<?= $project->title ?>">
                     <div class="p-6">
-                        <h5 class="text-2xl font-bold mb-4 text-black" ><?= htmlspecialchars($project->title) ?></h5>
+                        <h5 class="text-2xl font-bold mb-4 text-black mt-40" ><?= htmlspecialchars($project->title) ?></h5>
                         <p><?= $project->overview ?></p>
 
                       
