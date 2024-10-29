@@ -57,6 +57,7 @@
                 ?>
                 <nav>
                     <ul>
+                        CIAOO
                         <li><a href="/" class="<?= isActivePage('home', $page) ?>">Home</a></li>
                         <li><a href="/contatti" class="<?= isActivePage('contatti', $page) ?>">Contatti</a></li>
                         <li><a href="/portfolio" class="<?= isActivePage('portfolio', $page) ?>">Portfolio</a></li>
