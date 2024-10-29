@@ -6,7 +6,8 @@
         <!-- Navigazione per dot (Indicatori) -->
         <div class="flex justify-center mt-4 space-x-2 mb-10" id="dots-container">
             <?php foreach ($projects as $index => $project) : ?>
-                <button onclick="goToSlide(<?= $index ?>)" class="dot w-3 h-3 rounded-full bg-gray-400" aria-label="Vai al progetto <?= $index + 1 ?>"></button>
+                <button onclick="goToSlide(<?= $index ?>)" class="dot w-3 h-3 rounded-full bg-gray-400" 
+                aria-label="Vai al progetto <?= $index + 1 ?>"></button>
             <?php endforeach; ?>
         </div>
 
@@ -15,7 +16,7 @@
                 <?php foreach ($projects as $index => $project) : ?>
                     <div class="min-w-full">
                         <div class="bg-white shadow-lg rounded-lg overflow-hidden relative" 
-                             style="background-image: url('<?= $project->img ?>');
+                             style="background-image: url('<?= $project->img ?>') !important; 
                                     background-size: cover; 
                                     background-position: center;">
                             <!-- Corpo della Card -->
@@ -44,19 +45,17 @@
     </div>
 </div>
 
+
 <style>
-    /* Stile per garantire la responsività */
-    @media (max-width: 768px) {
-        .fade-in-section h3 {
-            font-size: 2rem; /* Ridimensiona il titolo per gli schermi più piccoli */
-        }
-        .carousel-p {
-            font-size: 0.875rem; /* Font più piccolo per il testo del progetto */
-        }
-        .bg-black {
-            padding: 1rem; /* Riduci il padding per adattarlo meglio su schermi piccoli */
-        }
+   
+    @media (max-width: 640px) {
+    .carousel-background {
+        background-size: contain !important; /* O `cover` a seconda delle esigenze */
+        background-repeat: no-repeat;
+        background-position: center;
     }
+}
+
     /* Aggiungi ulteriori stili per un'esperienza migliore su smartphone */
 </style>
 
