@@ -427,38 +427,7 @@ ____________________________*/
     
     /* Disabilita l'animazione su schermi piccoli (smartphone) */
     @media (max-width: 768px) {
-        .animated-gradient {
-            animation: none;
-            background: linear-gradient(45deg, #cce4f7, #cce4f7); /* Solo azzurrino su schermi piccoli */
-        }
-        h1,h2,h3,h4,h5, p{
-            color: black !important; 
-        }
-        article {
-            background: linear-gradient(45deg, #cce4f7, #cce4f7); /* Solo azzurrino su schermi piccoli */
-        }
-
-        form{
-            background-color: rgba(0, 0, 0, 0) !important;
-            border: solid 3px black;
-            border-radius: 20px;
-          
-            
-        }
-        
-      
-        input, select, option, textarea {
-            background-color: aliceblue !important;
-        }
-
-        
-        body div{
-            background-color: #cce4f7;
-        }
-
-        footer div{
-            background-color: black !important;
-        }
+       
         #menu a{
             color: black;
         }
