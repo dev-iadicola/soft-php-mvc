@@ -1,7 +1,7 @@
 /vendor/
 .vscode/launch.json
-
 .env
 
+uploads/images/
 error_log
 
