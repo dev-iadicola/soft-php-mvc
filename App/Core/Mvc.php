@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Whoops\Run;
 use App\Core\ORM;
 use \App\Core\View;
 use App\Mail\Mailer;
@@ -13,6 +14,7 @@ use \App\Core\Http\Response;
 use App\Core\Connection\SMTP;
 use \App\Core\Connection\Database;
 use App\Core\Services\SessionService;
+use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
@@ -45,8 +47,13 @@ class Mvc{
 
 
     {
+        // Inizalizzazione per la debug layout
+        $this->initializeWhoops();
+
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
+
+
 
 
         // inizializza l'oggetto Request per gestire le richieste HTTP
@@ -76,6 +83,23 @@ class Mvc{
         $this->middleware = new Middleware($this, $config['middleware']);
 
         $this->sessionService = new SessionService();
+    }
+
+    //Layout per Debug
+    private function initializeWhoops()
+    {
+    
+        if (getenv('APP_DEBUG') === 'true') {
+            $whoops = new Run;
+            $handler = new PrettyPageHandler();
+            $handler->addDataTable('Environment', [
+                'PHP Version' => phpversion(),
+                'Loaded Extensions' => implode(', ', get_loaded_extensions()),
+                'App Mode' => getenv('APP_ENV'),
+            ]);
+            $whoops->pushHandler($handler);
+            $whoops->register();
+        }
     }
 
     /**

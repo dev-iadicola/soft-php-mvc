@@ -24,7 +24,6 @@ use App\Model\Certificato;
 
     public function store(Request $request){
 
-      var_dump($request->getPost()); 
       Certificato::save($request->getPost());
 
      return  $this->redirectBack()->withSuccess('Certificato Inserito');

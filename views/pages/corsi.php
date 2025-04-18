@@ -1,47 +1,57 @@
 <?php if (isset($certificati)): ?>
-    <div class="fade-in-section mt-20">
-        <h3 class="text-4xl font-extrabold text-white mb-12 text-center">Professional Courses Timeline</h3>
+    <div class="mt-5">
+        <div class="bg-white rounded">
+            <h3 class="text-center display-4 mb-5">Professional Courses Timeline</h3>
+        </div>
 
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="relative border-l-4 border-blue-500">
-                <?php foreach ($certificati as $index => $certificato) : ?>
-                    <div class="mb-12 ml-6">
-                        <!-- Indicatore della tappa sulla linea temporale -->
-                        <div class="absolute w-6 h-6 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-full mt-1.5 -left-3.5 border-2 border-white"></div>
+        <div class="container position-relative pl-4 border-left border-primary">
+            <?php foreach ($certificati as $index => $certificato) : ?>
+                <div class="position-relative mb-5 pl-4">
 
-                        <!-- Contenuto della tappa -->
-                        <div class="p-6 bg-white shadow-xl rounded-lg border-l-4 border-blue-500">
-                            <div class="flex items-center mb-3 bg-white">
-                                <h5><?= $certificato->title ?></h5>
-                                <span class="ml-auto bg-blue-100 text-blue-800 text-sm font-medium mr-2 px-2.5 rounded"><?= htmlspecialchars($certificato->certified) ?></span>
+                   
+
+                    <!-- Content box -->
+                    <div class="card shadow border-primary">
+                        <div class="card-body">
+                            <div class="d-flex align-items-center mb-2">
+                                <h5 class="mb-0"><?= $certificato->title ?></h5>
+                                <span class="ml-auto badge badge-primary"><?= htmlspecialchars($certificato->certified) ?></span>
                             </div>
 
+                            <p class="text-muted mb-1"><?= $certificato->ente ?></p>
 
-                            <p class="text-base text-gray-700"><?= $certificato->ente ?></p>
-
-                            <!-- Pulsante per mostrare/nascondere -->
-                            <button id="leggi-cert-<?= $certificato->id ?>" onclick="toggleOverview(<?= $certificato->id ?>)"
-                                class="text-blue-500 hover:text-blue-700 text-sm mt-2">
+                            <!-- Toggle button -->
+                            <button class="btn btn-link p-0 text-primary"
+                                onclick="toggleOverview(<?= $certificato->id ?>)">
                                 Leggi di più
-                            </button> <br/>
+                            </button>
 
-                            <!-- Overview con ID specifico per il toggle -->
-                            <div class="hidden bg-white" id="overview-<?= $certificato->id ?>">
-                                <p class="overview-content text-gray-700 text-sm hidden">
-                                    <?= $certificato->overview ?>
-                                </p>
+                            <!-- Overview -->
+                            <div class="collapse mt-2" id="overview-<?= $certificato->id ?>">
+                                <p class="text-muted small"><?= $certificato->overview ?></p>
                             </div>
 
-
-
-
-                            <a href="<?= $certificato->link ?>" class="text-blue-600 hover:text-blue-800 mt-4 inline-flex items-center" target="_blank">
-                                <i class="fa fa-external-link mr-2"></i>View Certificate
+                            <a href="<?= $certificato->link ?>"
+                                class="btn btn-sm btn-outline-primary mt-3"
+                                target="_blank">
+                                <i class="fa fa-external-link mr-1"></i> View Certificate
                             </a>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
+                </div>
+            <?php endforeach; ?>
         </div>
     </div>
+
+    <!-- Toggle Script -->
+    <script>
+        function toggleOverview(id) {
+            const el = document.getElementById('overview-' + id);
+            if (el.classList.contains('show')) {
+                $(el).collapse('hide');
+            } else {
+                $(el).collapse('show');
+            }
+        }
+    </script>
 <?php endif; ?>

@@ -14,20 +14,10 @@ class ProgettiController extends Controller {
     }
 
     public function index() {
-        $projects = Project::where('deploy',1)->get();
-        $gits = Project::where('deploy',0)->get();
-        $this->render('progetti',[], compact('projects', 'gits'));
+     $projects = Project::findAll();
+        
+        $this->render('progetti',[], compact('projects' ));
     }
-
-    /**
-     * Summary of getFormComponent
-     * 
-     * Inseriamo i componenti da inserire per sostotuire i placeholder
-     */
-    
-
-   
-
 
 
 }

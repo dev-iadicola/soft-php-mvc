@@ -21,14 +21,7 @@
                     <input type="url" class="form-control" value="<?= isset($project->link) ? $project->link : '' ?>" id="link" name="link" required>
                 </div>
 
-                <div class="form-group">
-                    <label for="deploySelect">Seleziona Opzione</label>
-                    <select class="form-select" id="deploySelect" name="deploy" aria-label="Default select example">
-                        <option value="" <?= !isset($project->deploy) ? 'selected' : '' ?>>Seleziona un'opzione</option>
-                        <option value="1" <?= isset($project->deploy) && $project->deploy == 1 ? 'selected' : '' ?>>In Cloud</option>
-                        <option value="0" <?= isset($project->deploy) && $project->deploy == 0 ? 'selected' : '' ?>>Su GitHub</option>
-                    </select>
-                </div>
+               
 
 
                 <div class="form-group">

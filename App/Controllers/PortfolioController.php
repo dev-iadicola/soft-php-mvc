@@ -15,13 +15,11 @@ class PortfolioController extends Controller {
     }
 
     public function index() {
-        $portfolioModel = Portfolio::findAll();
-        $items = $portfolioModel;
-        $portfolio = Portfolio::orderBy('id DESC')->get();
+  
         $projects = Project::orderBy('id DESC')->get();
         $certificati = Certificato::orderBy('certified DESC')->get();
         $curriculum = Curriculum::orderBy(' id DESC')->first();
-        $this->render('portfolio', [], compact('portfolio','projects','certificati', 'curriculum'));
+        $this->render('portfolio', [], compact('projects','certificati', 'curriculum'));
     }
 
 

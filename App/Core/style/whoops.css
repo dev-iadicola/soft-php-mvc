@@ -1,0 +1,80 @@
+/* Definisce lo stile generale della pagina di errore */
+body {
+    background-color: #f4f6f9; /* Colore di sfondo grigio chiaro */
+    font-family: 'Arial', sans-serif; /* Font di sistema semplice */
+    color: #333; /* Colore del testo */
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Imposta la pagina per occupare tutta l'altezza */
+    overflow: hidden;
+}
+
+/* Contenitore principale dell'errore */
+.whoops-container {
+    background-color: #fff; /* Sfondo bianco per il contenitore */
+    border: 1px solid #ddd; /* Bordo grigio chiaro */
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1); /* Leggera ombra per il contenitore */
+    padding: 20px;
+    border-radius: 8px; /* Angoli arrotondati */
+    width: 80%; /* Larghezza massima del contenitore */
+    max-width: 800px;
+    text-align: center; /* Centra il contenuto */
+}
+
+/* Titolo dell'errore */
+.whoops-container h1 {
+    color: #e74c3c; /* Colore rosso per il titolo */
+    font-size: 48px; /* Grandezza del font */
+    margin-bottom: 20px; /* Distanza sotto il titolo */
+    font-weight: bold; /* Titolo in grassetto */
+}
+
+/* Messaggio descrittivo dell'errore */
+.whoops-container p {
+    color: #555; /* Colore grigio scuro per il testo */
+    font-size: 18px; /* Dimensione del testo */
+    margin-bottom: 20px;
+}
+
+/* Dettagli dell'errore (stack trace e info aggiuntive) */
+.whoops-container pre {
+    background-color: #f9f9f9; /* Colore di sfondo del blocco di codice */
+    color: #d9534f; /* Colore rosso per il testo di errore */
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px; /* Font più piccolo per il codice */
+    white-space: pre-wrap; /* Consente il ritorno a capo per evitare il layout fuori schermo */
+    word-wrap: break-word; /* Rende il testo più leggibile in caso di stringhe lunghe */
+}
+
+/* Link per il ritorno o altre azioni */
+.whoops-container a {
+    color: #3498db; /* Colore blu per i link */
+    text-decoration: none; /* Rimuove la sottolineatura */
+    font-weight: bold; /* Rende il link in grassetto */
+    display: inline-block;
+    margin-top: 20px;
+}
+
+.whoops-container a:hover {
+    color: #2980b9; /* Colore blu più scuro al passaggio del mouse */
+}
+
+/* Personalizzazione dei bottoni per eventuali azioni */
+.whoops-container button {
+    background-color: #27ae60; /* Colore verde per i bottoni */
+    color: #fff; /* Testo bianco */
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.whoops-container button:hover {
+    background-color: #2ecc71; /* Colore verde più chiaro al passaggio del mouse */
+}

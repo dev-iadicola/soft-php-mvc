@@ -21,10 +21,7 @@ class LawsMngController extends Controller{
          return $this->render('admin.laws.index',[],compact('laws'));
         }
         
-        public function store(Request $request){
-
-          //var_dump($request->getPost()); exit;
-        
+        public function store(Request $request){        
          Law::dirtySave( $request->getPost());
         
          $this->withSuccess('New Law has be created');

@@ -4,5 +4,4 @@
 <hr>
 @include('pages.corsi')
 
-@include('pages.curriculum')
 </section>

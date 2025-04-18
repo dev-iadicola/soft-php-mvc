@@ -17,7 +17,7 @@ class AuthService
             static::startUserSession(token: $token);
 
 
-            self::saveLog();
+            self::saveLog($user->id);
 
             
            
@@ -57,8 +57,8 @@ class AuthService
         $user = User::where('id', $userId)->first();
         $user->update(['token' => $token]);
     }
-    protected static function saveLog(){
-        $log = Log::ceateLog();
+    protected static function saveLog(int $userId){
+        $log = Log::ceateLog($userId);
          if(empty($log)){
             return false;
          }

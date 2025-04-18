@@ -57,7 +57,6 @@ class Controller {
 
     public function withError($message){
         SessionService::setFlashSession('error',$message);
-     //   var_dump(SessionService::get('error')); exit;
     }
 
     public function withSuccess($message){

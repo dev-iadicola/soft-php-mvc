@@ -15,7 +15,7 @@ use App\Core\ORM;
      */
      static string $table = 'projects'; 
      static array $fillable = [
-        'title','overview','link','img','deploy'
+        'title','overview','link','img','website'
      ];
     
  }

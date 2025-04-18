@@ -23,7 +23,6 @@ class LawsMngController extends Controller{
         
         public function store(Request $request){
 
-          //var_dump($request->getPost()); exit;
         
          Law::dirtySave( $request->getPost());
         

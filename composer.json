@@ -15,6 +15,7 @@
     ],
     "minimum-stability": "beta",
     "require": {
-        "phpmailer/phpmailer": "^6.9"
+        "phpmailer/phpmailer": "^6.9",
+        "filp/whoops": "^2.18"
     }
 }

@@ -17,7 +17,7 @@ body {
     font-weight: 700 !important;
     font-style: normal;
     color: var(--color-text);
-    background-color: var(--color-layout);
+    background-color: azure;
 }
 
 
@@ -417,10 +417,7 @@ ____________________________*/
     
     /* Applicazione dell'animazione al background per schermi più grandi */
     .animated-gradient {
-        animation: gradientAnimation 10s ease infinite;
-        background: linear-gradient(45deg, #cce4f7, #003366, #4b0082, #cce4f7);
-        background-size: 400% 400%; /* Dimensione del gradiente per un effetto fluido */
-        margin: 0; /* Rimuove margini di default */
+    background-color: #c3cee6;
     }
 
     /*SMARTPHONE */
