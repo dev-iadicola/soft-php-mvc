@@ -2,7 +2,7 @@
 namespace App\Controllers;
 use App\Core\Mvc;
 use App\Core\Controller;
-use App\Model\Certificato;
+use App\Model\Certificate;
 
 class CertificatiController extends Controller{
     
@@ -12,7 +12,7 @@ class CertificatiController extends Controller{
 
     public function index(){
         
-        $certificati = Certificato::findAll();
+        $certificati = (new Certificate())->findAll();
 
         return $this->render('corsi',[],compact('certificati'));
 

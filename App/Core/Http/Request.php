@@ -39,6 +39,7 @@ class Request {
         if (isset($_SERVER['HTTP_REFERER'])) {
             return strtolower($_SERVER['HTTP_REFERER']);
         }
+        
         return null;
     }
 

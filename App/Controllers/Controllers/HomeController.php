@@ -1,6 +1,6 @@
 <?php
 namespace App\Controllers;
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
 use \App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;
@@ -8,7 +8,7 @@ use App\Model\Profile;
 use App\Model\Project;
 use \App\Core\Controller;
 use App\Model\Curriculum;
-use App\Model\Certificato;
+use App\Model\Certificate;
 
 class HomeController extends Controller {
 
@@ -21,7 +21,7 @@ class HomeController extends Controller {
     public function index() {
         // recupero dati dal database
 
-        $certificati = Certificato::orderBy('certified DESC')->get();
+        $certificati = Certificate::orderBy('certified DESC')->get();
         $projects = Project::orderBy(' id DESC')->get();
         $articles = Article::orderBy('created_at DESC')->get();
         $curriculum = Curriculum::orderBy(' id DESC')->first();

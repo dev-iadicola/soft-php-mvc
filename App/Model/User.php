@@ -3,13 +3,15 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\Getter;
 
 class User extends ORM
 {
-    public static string $table = 'users';
+    use Getter;
+    public protected string $table = 'users';
 
-    static array $fillable = [
+    protected array $fillable = [
         'email', 'password','token','indirizzo', 'last_log'
     ];
 

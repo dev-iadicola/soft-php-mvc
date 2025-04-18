@@ -1,13 +1,13 @@
 <?php
 namespace App\Model;
 
+use App\Traits\Getter;
 use PDO;
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
 use DateTime;
 
  class Token extends ORM{
-
-
+   use Getter;
 
     /**
      * Summary of table
@@ -16,9 +16,9 @@ use DateTime;
      * permettendoci di rispamiare tempo
      * 
      */
-     static string $table = 'tokens'; 
+     protected string $table = 'tokens'; 
 
-     static array $fillable = [
+     protected array $fillable = [
         'email',
         'token',
         'used'

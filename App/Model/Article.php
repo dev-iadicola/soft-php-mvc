@@ -3,12 +3,24 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\BelongsTo;
+use App\Traits\Getter;
+use App\Traits\Has;
+use App\Traits\Relation;
 
 class Article extends ORM
 {
-    static string $table = 'articles';
+    use Getter; use Relation;
+    protected string $table = 'articles';
 
-    static array $fillable = ['id', 'title', 'subtitle','overview','img','link','created_at'];
-
+    protected array $fillable = [
+    'id', 
+    'title', 
+    'subtitle', 
+    'overview', 
+    'img', 
+    'link', 
+    'created_at'
+];
 }

@@ -9,18 +9,17 @@ use App\Traits\Getter;
 use App\Traits\Has;
 use App\Traits\Relation;
 
-class Profile extends ORM
+class Certificate extends ORM
 {
     use Getter; use Relation;
-    protected string $table = 'profile';
+    protected string $table = 'corsi';
 
-    protected array $fillable = [
+    protected  array $fillable = [
         'id',
-        'name',
-        'tagline',
-        'welcome_message',
-        'selected'
+        'title',
+        'overview',
+        'certified',
+        'link',
+        'ente'
     ];
-
-
 }

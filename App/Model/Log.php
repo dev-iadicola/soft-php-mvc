@@ -3,13 +3,18 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\BelongsTo;
+use App\Traits\Getter;
+use App\Traits\Has;
+use App\Traits\Relation;
 
 class Log extends ORM
 {
-    static string $table = 'logs';
+    use Getter; use Relation;
+    protected string $table = 'logs';
 
-    static array $fillable = ['user_id', 'last_log', 'indirizzo','device'];
+    protected array $fillable = ['user_id', 'last_log', 'indirizzo','device'];
 
     public static function ceateLog(int $id)
     {
@@ -20,6 +25,7 @@ class Log extends ORM
             'device' =>  $_SERVER['HTTP_USER_AGENT']
 
         ];
+
        $log = Log::save($default);
 
         return $log;

@@ -2,7 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
 use App\Model\Log;
 use App\Core\Component;
 use App\Core\Controller;

@@ -3,12 +3,14 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\Getter;
 
 class Law extends ORM
 {
-    static string $table = 'laws';
+    use Getter;
+    protected string $table = 'laws';
 
-    static array $fillable = ['id', 'title', 'testo'];
+    protected array $fillable = ['id', 'title', 'testo'];
 
 }

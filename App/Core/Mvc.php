@@ -3,7 +3,7 @@
 namespace App\Core;
 
 use Whoops\Run;
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
 use \App\Core\View;
 use App\Mail\Mailer;
 use App\Core\Middleware;
@@ -77,8 +77,6 @@ class Mvc{
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
         $this->mailer = new Mailer($this);
-
-        Orm::setPDO($this->pdo);
 
         $this->middleware = new Middleware($this, $config['middleware']);
 

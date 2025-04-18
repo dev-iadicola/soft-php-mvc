@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Core;
 
 /**
@@ -7,31 +8,33 @@ namespace App\Core;
  * Classe per la connessione al database.
  * 
  */
+
 use PDO;
 
-class Database {
+class Database
+{
 
     public PDO $pdo;
 
-    public function __construct() {
+    public function __construct()
+    {
 
         // definiamo le credenziali
-        define('HOST', getenv('DB_HOST'));
-        define('USER', getenv('DB_USER'));
-        define('PSW', getenv('DB_PSW'));
-        define('NAME', getenv('DB_NAME'));
-        define('PORT', getenv('DB_PORT') ?: 3306); // Usa la porta 3306 come predefinita se DB_PORT non è definito
+        $host = getenv('DB_HOST');
+        $user = getenv('DB_USER');
+        $psw = getenv('DB_PSW');
+        $name = getenv('DB_NAME');
+        $port = getenv('DB_PORT') ?: 3306; // Usa la porta 3306 come predefinita se DB_PORT non è definito
 
-        $_DSN =  "mysql:host=".HOST.";
-        port=".PORT.";
-        dbname=".NAME.";
+
+        $_DSN =  "mysql:host=" . $host . ";
+        port=" . $port . ";
+        dbname=" . $name . ";
         charset=utf8";
 
-        $this->pdo = new PDO($_DSN, USER, PSW, [
+        $this->pdo = new PDO($_DSN, $user, $psw, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_EMULATE_PREPARES => false // maggior sicurezza attacchi SQL injection
         ]);
-
     }
-
 }

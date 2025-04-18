@@ -3,12 +3,17 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\BelongsTo;
+use App\Traits\Getter;
+use App\Traits\Has;
+use App\Traits\Relation;
 
 class Contatti extends ORM
 {
-    static string $table = 'contatti';
-    protected static array $fillable = ['nome', 'email', 'messaggio', 'created_at','typologie'];
+    use Getter; use Relation;
+    protected string $table = 'contatti';
+    protected  array $fillable = ['nome', 'email', 'messaggio', 'created_at','typologie'];
 
 
     public function checkForm($post)

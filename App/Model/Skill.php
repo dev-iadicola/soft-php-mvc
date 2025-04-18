@@ -3,12 +3,14 @@
 namespace App\Model;
 
 
-use App\Core\ORM;
+use App\Core\Eloquent\ORM;
+use App\Traits\Getter;
 
 class Skill extends ORM
 {
-    static string $table = 'skills';
+    use Getter;
+    protected string $table = 'skills';
 
-    static array $fillable = ['id', 'title', 'description'];
+    protected array $fillable = ['id', 'title', 'description'];
 
 }

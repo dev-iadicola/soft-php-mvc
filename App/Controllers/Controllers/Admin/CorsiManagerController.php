@@ -4,7 +4,7 @@ namespace App\Controllers\Admin;
 use App\Core\Mvc;
 use App\Core\Controller;
 use App\Core\Http\Request;
-use App\Model\Certificato;
+use App\Model\Certificate;
 
  class CorsiManagerController extends Controller{
      
@@ -16,7 +16,7 @@ use App\Model\Certificato;
     }
  
     public function index(){
-        $corsi = Certificato::orderBy('id DESC')->get();
+        $corsi = Certificate::orderBy('id DESC')->get();
 
        return $this->render('/admin/portfolio/corsi',[],compact('corsi'));
 
@@ -24,17 +24,17 @@ use App\Model\Certificato;
 
     public function store(Request $request){
 
-      Certificato::save($request->getPost());
+      Certificate::save($request->getPost());
 
-     return  $this->redirectBack()->withSuccess('Certificato Inserito');
+     return  $this->redirectBack()->withSuccess('Certificate Inserito');
         
     }
 
 
     public function edit(Request $request, $id){
-      $corsi = Certificato::orderBy('id DESC')->get();
+      $corsi = Certificate::orderBy('id DESC')->get();
 
-      $element = Certificato::find($id);
+      $element = Certificate::find($id);
       
 
       if(empty($corsi) || empty($element)){
@@ -49,7 +49,7 @@ use App\Model\Certificato;
 
   public function update(Request $request, $id){
 
-   Certificato::where('id',$id)->update($request->getPost());
+   Certificate::where('id',$id)->update($request->getPost());
    $this->withSuccess('Corso Aggiornato con successo!');
    return $this->redirectBack() ;
   }
@@ -59,7 +59,7 @@ use App\Model\Certificato;
          return $this->statusCode413();
         }
         
-     $corso = Certificato::where('id',$id);
+     $corso = Certificate::where('id',$id);
      $corso->delete();
 $this->withSuccess('Corso ELIMINATO');
       return $this->redirectBack();
