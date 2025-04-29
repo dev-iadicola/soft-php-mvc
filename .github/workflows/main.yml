@@ -18,4 +18,4 @@ jobs:
           password: ${{ secrets.FTPPASSWORD }}
           protocol: ftps
           server-dir: public_html/
-          local-dir: ./
+
