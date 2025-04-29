@@ -26,7 +26,7 @@ class Database {
         $dsn = "mysql:host={$host};port={$port};dbname={$name};charset={$charset}";
 
         var_dump([
-            'DB_HOST' => $port,
+            'DB_HOST' => $host,
             'DB_USER' => $user,
             'DB_PORT' => getenv('DB_PORT'),
             'DB_PSW' => $pass,
