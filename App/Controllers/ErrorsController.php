@@ -13,7 +13,7 @@ class ErrorsController extends Controller{
     }
     
     public function repair() {
-        if(getenv('MAINTENANCE') === 'true'){
+        if(getenv('MAINTENANCE') == 'true' || getenv('CLOUD') == 'true'){
             $this->render('coming-soon',[]);
             
         }else{

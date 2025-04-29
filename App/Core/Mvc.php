@@ -111,7 +111,7 @@ class Mvc{
             $this->pdo = (new Database())->pdo;
         } catch (\PDOException $e) {
            if( getenv('CLOUD') == 'true')
-                $this->view->render('coming-soon'); 
+                $this->response->redirect('/coming-soon'); 
             else
                  echo "Errore di connessione al database: " . $e->getMessage();
             exit;
