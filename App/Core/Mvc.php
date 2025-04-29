@@ -110,8 +110,10 @@ class Mvc{
             // Crea una nuova istanza della classe Database e assegna il PDO
             $this->pdo = (new Database())->pdo;
         } catch (\PDOException $e) {
-            // Se c'è un errore di connessione, stampa il messaggio di errore e termina
-            echo "Errore di connessione al database: " . $e->getMessage();
+           if( getenv('CLOUD') == 'true')
+                $this->view->render('coming-soon'); 
+            else
+                 echo "Errore di connessione al database: " . $e->getMessage();
             exit;
         }
     }
