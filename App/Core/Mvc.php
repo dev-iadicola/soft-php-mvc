@@ -16,6 +16,8 @@ use \App\Core\Connection\Database;
 use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
+use App\Core\Helpers\Log;
+
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mvc{
@@ -49,6 +51,7 @@ class Mvc{
     {
         // Inizalizzazione per la debug layout
         $this->initializeWhoops();
+        Log::info(['array'=>'test']);
 
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
