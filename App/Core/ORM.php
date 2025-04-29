@@ -407,7 +407,7 @@ class ORM
             return $stmt->execute();
         } catch (\PDOException $e) {
             // Logga l'errore e rilancia l'eccezione
-            error_log("Error executing query: " . $e->getMessage());
+            error_log("Error executing query: " . $e->getMessage() . " at line" . $e->getLine() . ".". $e->getCode());
             throw $e;
         }
     }
