@@ -10,6 +10,8 @@ class Database {
     public PDO $pdo;
 
     public function __construct() {
+        
+          
         // Prendo le variabili d'ambiente
         $host    = getenv('DB_HOST');
         $user    = getenv('DB_USER');
@@ -18,9 +20,18 @@ class Database {
         $port    = getenv('DB_PORT') ?: 3306;
         $charset = 'utf8mb4';
 
+        
+
         // Ricompongo correttamente il DSN in un'unica stringa
         $dsn = "mysql:host={$host};port={$port};dbname={$name};charset={$charset}";
 
+        var_dump([
+            'DB_HOST' => getenv('DB_HOST'),
+            'DB_PORT' => getenv('DB_PORT'),
+            'DSN'     => $dsn
+            
+          ]);
+          exit;
         try {
             $this->pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
@@ -29,6 +40,7 @@ class Database {
         } catch (PDOException $e) {
             // Rilancio un errore più leggibile
              Log::error( ['exception' => $e]);
+            error_log($e);
             throw new \RuntimeException("Connessione al DB fallita: " . $e->getMessage() );
            
         }
