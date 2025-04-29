@@ -37,4 +37,6 @@ $config = Config::dir(__DIR__.'/config');
  * folder e route
  * invocando il metodo run
  */
-(new Mvc($config))->run();
+// (new Mvc($config))->run();
+
+echo 'ciaooo';
