@@ -25,15 +25,6 @@ class Database {
         // Ricompongo correttamente il DSN in un'unica stringa
         $dsn = "mysql:host={$host};port={$port};dbname={$name};charset={$charset}";
 
-        var_dump([
-            'DB_HOST' => $host,
-            'DB_USER' => $user,
-            'DB_PORT' => getenv('DB_PORT'),
-            'DB_PSW' => $pass,
-            'DSN'     => $dsn
-            
-          ]);
-          exit;
         try {
             $this->pdo = new PDO($dsn, $user, $pass, [
                 PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
