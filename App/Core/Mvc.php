@@ -52,9 +52,7 @@ class Mvc{
 
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
-
-
-
+        
 
         // inizializza l'oggetto Request per gestire le richieste HTTP
         $this->request = new Request();
@@ -72,7 +70,7 @@ class Mvc{
         $this->router = new Router($this);
 
        
-
+        $this->middleware = new Middleware($this, $config['middleware']);
         // Inizializza la connessione al database e imposta il PDO per l'ORM
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
@@ -80,7 +78,7 @@ class Mvc{
 
         Orm::setPDO($this->pdo);
 
-        $this->middleware = new Middleware($this, $config['middleware']);
+      
 
         $this->sessionService = new SessionService();
     }
