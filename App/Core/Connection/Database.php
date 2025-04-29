@@ -28,8 +28,9 @@ class Database {
             ]);
         } catch (PDOException $e) {
             // Rilancio un errore più leggibile
+             Log::error( ['exception' => $e]);
             throw new \RuntimeException("Connessione al DB fallita: " . $e->getMessage() );
-            Log::error($errorMessage, ['exception' => $e]);
+           
         }
     }
 

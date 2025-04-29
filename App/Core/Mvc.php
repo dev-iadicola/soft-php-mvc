@@ -107,7 +107,6 @@ class Mvc{
     private function getPdoConnection()
     {
         try {
-            // Crea una nuova istanza della classe Database e assegna il PDO
             $this->pdo = (new Database())->pdo;
         } catch (\PDOException $e) {
            if( getenv('CLOUD') == 'true')
