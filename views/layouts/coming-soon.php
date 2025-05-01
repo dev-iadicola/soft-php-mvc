@@ -10,13 +10,17 @@
 
 </head>
 <body>
-    <div class="maintenance-container">
+<div class="maintenance-container">
         <h1>Sito web in manutenzione</h1>
         <p>Stiamo lavorando per migliorare la tua esperienza. Torna presto a trovarci!</p>
         <div class="icon-container">
-            <img src="../assets/img/manutenzione.png" alt="Icona di manutenzione">
+        <dotlottie-player src="https://lottie.host/7261cb2c-cd30-4dd1-9109-b44663b5aac3/Hcw5b4kdhs.lottie" background="transparent" speed="1" 
+        style="width: 700px; height: 700px" loop autoplay></dotlottie-player>
+
         </div>
     </div>
+
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
 </body>
 </html>
 

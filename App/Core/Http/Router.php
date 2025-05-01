@@ -15,10 +15,6 @@ class Router {
         $this->request = $this->mvc->request; // Inizializza la proprietà request
     }
 
-   
-
-    
-
     public function getRoute() {
         $method = $this->mvc->request->getRequestMethod();
         $path = $this->mvc->request->getRequestPath();
@@ -75,7 +71,7 @@ class Router {
 
         
 
-        call_user_func_array([$instance, $method], array_merge([$request], $params)); // passa i parametri dinamici
+        call_user_func_array([$instance, $method], array_merge([$request], $params));
     }
 
 

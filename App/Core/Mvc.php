@@ -17,6 +17,8 @@ use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Support\Tree\TreeProject;
+use App\Core\Helpers\Log;
+
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mvc{
@@ -52,15 +54,14 @@ class Mvc{
     {
         // Inizalizzazione per la debug layout
         $this->initializeWhoops();
+        Log::info(['array'=>'test']);
 
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
         
 
         // $this->treeProject = new TreeProject();
-
-
-
+        
 
         // inizializza l'oggetto Request per gestire le richieste HTTP
         $this->request = new Request();
@@ -78,14 +79,13 @@ class Mvc{
         $this->router = new Router($this);
 
        
-
+        $this->middleware = new Middleware($this, $config['middleware']);
         // Inizializza la connessione al database e imposta il PDO per l'ORM
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
         $this->mailer = new Mailer($this);
 
-        $this->middleware = new Middleware($this, $config['middleware']);
-
+        Orm::setPDO($this->pdo);
         $this->sessionService = new SessionService();
     }
 
@@ -113,11 +113,12 @@ class Mvc{
     private function getPdoConnection()
     {
         try {
-            // Crea una nuova istanza della classe Database e assegna il PDO
             $this->pdo = (new Database())->pdo;
         } catch (\PDOException $e) {
-            // Se c'è un errore di connessione, stampa il messaggio di errore e termina
-            echo "Errore di connessione al database: " . $e->getMessage();
+           if( getenv('CLOUD') == 'true')
+                $this->response->redirect('/coming-soon'); 
+            else
+                 echo "Errore di connessione al database: " . $e->getMessage();
             exit;
         }
     }

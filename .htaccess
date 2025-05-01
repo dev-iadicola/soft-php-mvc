@@ -15,7 +15,7 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]
 
 # Protezione file di configurazione 
-RewriteRule \.(env|example|json|log|lock|sql)$ - [F]
+RewriteRule \.(env|example|json|log|lock|sql|log)$ - [F]
 
 # php -- BEGIN cPanel-generated handler, do not edit
 # This domain inherits the “PHP” package.
