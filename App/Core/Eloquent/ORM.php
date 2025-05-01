@@ -2,6 +2,7 @@
 
 namespace App\Core\Eloquent;
 
+use Exception;
 use PDO;
 use App\Core\Database;
 use App\Core\Eloquent\QueryBuilder;
@@ -20,6 +21,7 @@ class ORM extends Database
         $this->queryBuilder->setTable(table: $this->table);
         $this->queryBuilder->setFillable(fillable: $this->fillable);
     }
+ 
 
     public static function __callStatic($method, $parameters)
     {
