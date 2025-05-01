@@ -7,7 +7,7 @@ use App\Core\Eloquent\ORM;
 use \App\Core\View;
 use App\Mail\Mailer;
 use App\Core\Middleware;
-use App\Core\UploadFile;
+use App\Core\Storage;
 use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
@@ -16,6 +16,7 @@ use \App\Core\Connection\Database;
 use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
+use App\Core\Support\Tree\TreeProject;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mvc{
@@ -28,7 +29,7 @@ class Mvc{
     public Router $router; // Gestione delle rotte
     public View $view; // Gestione delle viste
 
-    public UploadFile $uploadFile;
+    public Storage $uploadFile;
     public \PDO $pdo; // Connessione PDO al database
 
     public SMTP $Smtp;
@@ -38,6 +39,8 @@ class Mvc{
 
 
     public SessionService $sessionService;
+
+    private TreeProject $treeProject; // serve per la popolazione dell'albero
     /**
      * Costruttore della classe Mvc
      *
@@ -52,6 +55,9 @@ class Mvc{
 
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
+        
+
+        // $this->treeProject = new TreeProject();
 
 
 
@@ -62,7 +68,7 @@ class Mvc{
         // Inizializza l'oggetto View per gestire le viste
         $this->view = new View($this);
 
-        $this->uploadFile = new UploadFile($this);
+        $this->uploadFile = new Storage($this);
 
 
         // inizializza l'oggetto Response per gestire la risposta HTTP

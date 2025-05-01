@@ -27,7 +27,7 @@
         </a>
       </li>
       <li class="nav-item mx-2">
-        <a href="https://github.com/AndroLuix/" target="_blank" class="nav-link d-flex align-items-center text-light border border-light rounded py-1 px-3 my-1">
+        <a href="https://github.com/dev-iadicola/" target="_blank" class="nav-link d-flex align-items-center text-light border border-light rounded py-1 px-3 my-1">
         <i class="fa fa-github me-2" aria-hidden="true"></i>
           <span class="d-none d-md-inline">GitHub</span>
         </a>

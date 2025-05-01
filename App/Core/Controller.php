@@ -2,7 +2,7 @@
 namespace App\Core;
 use \App\Core\Mvc;
 use App\Core\Validator;
-use App\Core\UploadFile;
+use App\Core\Storage;
 use App\Core\Services\SessionService;
 
 /**
@@ -68,14 +68,14 @@ class Controller {
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
             unset($data['img']);
         }elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-            (new UploadFile($this->mvc))->deleteFile($data['img']);
+            (new Storage($this->mvc))->deleteFile($data['img']);
             $data['img'] = $this->checkImage($data);
     
         }
     }
     public function deleteFile(string $img){
         if(isset($img)){
-            $isImgDelete = (new UploadFile($this->mvc))->deleteFile($img);
+            $isImgDelete = (new Storage($this->mvc))->deleteFile($img);
             if ($isImgDelete === TRUE) {
                 return true;
             } 
@@ -111,7 +111,7 @@ class Controller {
             return $this->redirectBack();
         }
 
-        $uploadFile = new UploadFile($this->mvc);
+        $uploadFile = new Storage($this->mvc);
         $uploadFile->storageImage($data['img']);
         return $uploadFile->getPathImg();
      
@@ -129,7 +129,7 @@ class Controller {
             return $this->redirectBack();
         }
 
-        $uploadFile = new UploadFile($this->mvc);
+        $uploadFile = new Storage($this->mvc);
         $uploadFile->storeFile($data['img']);
 
         return  $uploadFile->getPathImg();

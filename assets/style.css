@@ -1,18 +1,32 @@
-@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:wght@300;400;600;700&family=Fira+Sans:wght@300;400;600;700&family=Inter:wght@300;400;600;700&family=Raleway:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&family=JetBrains+Mono:wght@400;600;700&family=Manrope:wght@300;400;600;700&family=Playfair+Display:wght@400;600;700&display=swap');
 
 :root {
-    font-family: "Quicksand", sans-serif !important;
+    /* Font di default */
+    font-family: "Montserrat", sans-serif !important;
     font-optical-sizing: auto;
     font-weight: 700 !important;
     font-style: normal;
+
+    /* Palette colori */
     --color-text: #474747;
     --color-design: #272424;
     --color-layout: #ffffff;
-    --color-text-footer: #bababa;
+    --color-text-footer:white;
+
+    /* Altri font disponibili */
+    --font-poppins: "Poppins", sans-serif;
+    --font-fira: "Fira Sans", sans-serif;
+    --font-inter: "Inter", sans-serif;
+    --font-raleway: "Raleway", sans-serif;
+    --font-space-grotesk: "Space Grotesk", sans-serif;
+    --font-jetbrains: "JetBrains Mono", monospace;
+    --font-manrope: "Manrope", sans-serif;
+    --font-playfair: "Playfair Display", serif;
 }
+
 /* OVERRIDE bootstrap*/
 body {
-    font-family: "Quicksand", sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-optical-sizing: auto;
     font-weight: 700 !important;
     font-style: normal;
@@ -20,6 +34,17 @@ body {
     background-color: azure;
 }
 
+h1 {
+    font-family: var(--font-space-grotesk);
+}
+
+.code-block {
+    font-family: var(--font-jetbrains);
+}
+
+.section-title {
+    font-family: var(--font-raleway);
+}
 
 .color-red {
     color: red;
@@ -282,7 +307,7 @@ ___________*/
     background: linear-gradient(to right, rgba(213, 200, 200, 0.077), rgba(174, 169, 169, 0.104));
 }
 
-h1,
+
 
 
 .img-lenguage img {

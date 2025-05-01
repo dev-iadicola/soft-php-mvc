@@ -1,0 +1,15 @@
+.dodgerblu{
+    color: #1e90ff
+}
+
+.hover-text-white:hover {
+  color: white !important;
+  transition: color 1.2s ease;
+}
+
+.hover-text-dark:hover {
+    color: black !important;
+    transition: color 1.2s ease;
+  }
+
+

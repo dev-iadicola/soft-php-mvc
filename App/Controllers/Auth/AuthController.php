@@ -29,9 +29,7 @@ class AuthController extends Controller
     public function login()
     {
         // login post (quando inserisce le credenziali)
-
         $data = $this->post;
-
         // verifica esistenza user
         $user = User::where('email', $data['email'])->first();
 

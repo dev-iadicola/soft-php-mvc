@@ -11,16 +11,19 @@ use App\Traits\Relation;
 
 class Article extends ORM
 {
-    use Getter; use Relation;
+    use Getter;
+    use Relation;
     protected string $table = 'articles';
 
     protected array $fillable = [
-    'id', 
-    'title', 
-    'subtitle', 
-    'overview', 
-    'img', 
-    'link', 
-    'created_at'
-];
+        'id',
+        'title',
+        'subtitle',
+        'overview',
+        'img',
+        'link',
+        'created_at'
+    ];
+
+   
 }

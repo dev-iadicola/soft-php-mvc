@@ -29,7 +29,7 @@
         </a>
       </li>
       <li class="nav-item mx-2">
-        <a href="https://github.com/AndroLuix/" target="_blank" class="flex items-center text-gray-400 hover:text-white transition duration-300 border border-white rounded-full py-1 px-3 my-1">
+        <a href="https://github.com/dev-iadicoa/" target="_blank" class="flex items-center text-gray-400 hover:text-white transition duration-300 border border-white rounded-full py-1 px-3 my-1">
           <i class="fa fa-github text-xl mr-2"></i>
           <span class="hidden md:inline">GitHub</span>
         </a>

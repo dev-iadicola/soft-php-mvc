@@ -8,5 +8,5 @@ return [
     '/' => 'Home',
     '/contatti' => 'Contatti',
     '/portfolio' => 'Portfolio',
-    '/https://github.com/AndroLuix/' => 'GitHub'
+    '/https://github.com/dev-iadicola/' => 'GitHub'
 ];

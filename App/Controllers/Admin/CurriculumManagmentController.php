@@ -7,7 +7,7 @@ use App\Core\Validator;
 use App\Core\Controller;
 use App\Model\Curriculum;
 use App\Core\Http\Request;
-use App\Core\UploadFile;
+use App\Core\Storage;
 
 class CurriculumManagmentController extends Controller
 {

@@ -5,7 +5,7 @@ namespace App\Controllers\Admin;
 use App\Core\Mvc;
 use App\Core\Controller;
 use App\Core\Http\Request;
-use App\Core\UploadFile;
+use App\Core\Storage;
 use App\Core\Validator;
 use App\Model\Project;
 

@@ -4,7 +4,7 @@ namespace App\Core;
 
 use Exception;
 
-class UploadFile
+class Storage
 {
     protected string $targetDirFormImages;
     public string $targetDir;
@@ -17,8 +17,8 @@ class UploadFile
     public function __construct(public Mvc $mvc)
     {
         // Imposta il targetDirFormImages basato sulla configurazione
-        $this->targetDirFormImages = $this->mvc->config['folder']['uploads']['image'];
-        $this->targetDir = $this->mvc->config['folder']['uploads']['base'];
+        $this->targetDirFormImages = $this->mvc->config['folder']['storage']['images'];
+        $this->targetDir = $this->mvc->config['folder']['storage']['base'];
         $this->root = $this->mvc->config['folder']['root'];
 
         

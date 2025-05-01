@@ -6,7 +6,7 @@ use App\Core\Database;
 
 class QueryBuilder {
 
-    protected string $table = ''; // Nome della tabella
+    protected string $table; 
     protected array $fillable = []; // Campi riempibili
     protected string $selectValues = '*'; // Campi da selezionare
 
@@ -101,7 +101,7 @@ class QueryBuilder {
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato.");
+            throw new \Exception("Nome della tabella non impostato. __CLASS__");
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";

@@ -1,8 +1,8 @@
 /vendor/
-.vscode/launch.json
+.vscode/*
 .env
 
-uploads/images/
+storage/*
 error_log
 TASK.MD
 db/*
