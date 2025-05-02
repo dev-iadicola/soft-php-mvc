@@ -85,7 +85,6 @@ class Mvc{
         $this->getSMTPConnection();
         $this->mailer = new Mailer($this);
 
-        Orm::setPDO($this->pdo);
         $this->sessionService = new SessionService();
     }
 

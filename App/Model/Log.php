@@ -4,9 +4,7 @@ namespace App\Model;
 
 
 use App\Core\Eloquent\ORM;
-use App\Traits\BelongsTo;
 use App\Traits\Getter;
-use App\Traits\Has;
 use App\Traits\Relation;
 
 class Log extends ORM
