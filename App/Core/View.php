@@ -103,7 +103,7 @@ class View
         extract($values);
         extract($variables);
         extract(SessionService::getAll()); // per visualizzare i messaggi di errore e successo
-        $views = $this->mvc->config->folder['views'];
+        $views = $this->mvc->config->folder->views;
         ob_start();
         include "$views/$folder/$item.php";
         return ob_get_clean();
@@ -117,11 +117,6 @@ class View
         }
 
         $pattern = '/@include\(\s*\'([^\']+)\'\s*\)/';
-
-
-
-
-
 
         // Finché troviamo delle inclusioni, le processiamo
         while (preg_match_all($pattern, $content, $matches)) {

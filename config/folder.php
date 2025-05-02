@@ -1,18 +1,18 @@
-<?php 
+<?php
+
 /**
  * semplicità, migliorando il codice, senza dover scrivere molto codice
  * 
  * questo file permette di ridurre il codice per trovare le cartelle
  */
-$root = $_SERVER['DOCUMENT_ROOT'];
 
-return [
-   
-    'root' => $root,
-    'views' => $root.'/views',
-    'mails'=> $root.'/mails',
-    'storage' =>[
-        'base'=> $root.'/storage/',
-        'images' => $root.'/storage/images/',
-    ],
-];
+use App\Core\Services\FolderApp;
+
+FolderApp::set('root');
+FolderApp::set('views','views');
+FolderApp::set('mails','mails');
+FolderApp::set('storage', '/storage/');
+FolderApp::set('images', '/storage/images/');
+
+return new FolderApp();
+

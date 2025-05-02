@@ -4,7 +4,6 @@ use App\Controllers\Admin\ContattiManagerController;
 use App\Controllers\Admin\CorsiManagerController;
 use App\Controllers\Admin\CurriculumManagmentController;
 use App\Controllers\Admin\HomeManagerController;
-use App\Controllers\Admin\PortfolioManagerController;
 use App\Core\Services\Route;
 use App\Controllers\LawController;
 use App\Controllers\HomeController;

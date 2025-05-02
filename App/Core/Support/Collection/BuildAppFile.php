@@ -8,6 +8,13 @@ class BuildAppFile {
         
     }
 
+    /**
+     * Summary of __get
+     * @property string $folder
+     * @property string $menu
+     * @property string $middleware
+     * @property string $routes
+     */
     public function __get($name){
         return $this->files[$name];
     }

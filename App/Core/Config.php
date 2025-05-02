@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Exception;
 use App\Core\Support\Collection\BuildAppFile;
 
 class Config
@@ -46,7 +47,7 @@ class Config
         }
     }
 
-    public static function dir($dir)
+    public static function dir($dir): bool|BuildAppFile
     {
         if (!is_dir($dir)) {
             return false;
@@ -58,13 +59,12 @@ class Config
             $nomeFile = pathinfo($file, PATHINFO_FILENAME);
             $conf[$nomeFile] = include $dir . '/' . $file;
         }
+        if(count($conf) === 0 ){
+            return throw new Exception("No files found in directory " . $dir);
+        }
         return new BuildAppFile($conf);
     }
 
-    protected static function fromFile($files){
-        
-           
-    }
 
 
 

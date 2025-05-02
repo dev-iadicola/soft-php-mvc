@@ -2,7 +2,6 @@
 
 use App\Core\Mvc;
 use App\Core\Support\Collection\BuildAppFile;
-use App\Core\Support\Collection\Collection;
 use App\Core\Support\Debug\VarDumper;
 
 // File: src/helpers.php
@@ -75,6 +74,11 @@ if (! function_exists('dd')) {
         {
             getSource();
             VarDumper::dump($vars);
+        }
+    }
+    if(! function_exists('baseRoot')){
+        function baseRoot(): string{
+            return  $_SERVER['DOCUMENT_ROOT'].'/';
         }
     }
     

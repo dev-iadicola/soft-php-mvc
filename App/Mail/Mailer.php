@@ -62,7 +62,7 @@ class Mailer extends BaseMail implements MailBaseInterface
 
     public function setPage(string $page,  $content = []): string
     {
-        $mail = $this->mvc->config['folder']['mails'] . '/' . $page.'.php';
+        $mail = $this->mvc->config->folder['mails'] . '/' . $page.'.php';
         ob_start(); // start capturing output
 
     if (is_object($content)) {

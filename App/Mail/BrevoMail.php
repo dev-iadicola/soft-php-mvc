@@ -14,7 +14,7 @@ class BrevoMail extends BaseMail implements MailBaseInterface {
     }
 
   public function setPage(string $page, $content = []): string{
-    return mvc()->config;
+    return mvc()->config->folder->;
   }
 
   public function sendEmail(string $to, string $subject, string $body, string|null $from = NULL, string|null $fromName = NULL){
