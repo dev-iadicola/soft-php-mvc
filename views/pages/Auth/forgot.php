@@ -1,26 +1,30 @@
 <form action="/forgot" method="POST">
-   <div class="container py-5 h-screen flex justify-center items-center">
-      <div class="w-full max-w-md">
-        <div class="bg-gray-800 text-white rounded-lg shadow-lg">
-          <div class="p-6 text-center">
-            
-            <div class="mb-8">
-              <h2 class="text-2xl font-bold mb-2 uppercase">Reset Password</h2>
-              <p class="text-gray-400 mb-4">Inserisci la tua Email</p>
-              <p class="text-gray-400 mb-4">{{message}}</p>
-              
-              <div class="mb-4">
-                <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>
-                <input type="email" name="email" id="email" class="w-full px-3 py-2 border border-gray-600 rounded-lg bg-gray-900 text-white focus:outline-none focus:ring-2 focus:ring-blue-500" />
-              </div>
+  <div class="container py-5 d-flex justify-content-center align-items-center min-vh-100">
+    <div class="w-100" style="max-width: 500px;">
+      <div class="card bg-dark text-white shadow">
+        <div class="card-body text-center">
+          <h2 class="card-title text-uppercase mb-3">Reset Password</h2>
+          <p class="text-secondary mb-3">Inserisci la tua Email</p>
+          <p class="text-secondary mb-4">{{message}}</p>
 
-              <p class="text-sm mb-4"><a href="/login" class="text-gray-400 hover:text-white">Hai la password? Accedi</a></p>
-              
-              <button type="submit" class="w-full py-2 px-4 border border-transparent rounded-lg shadow-sm text-base font-medium text-gray-900 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">Reset Password</button>
-            </div>
-            
+          <div class="mb-3 text-start">
+            <label for="email" class="form-label">Email</label>
+            <input 
+              type="email" 
+              name="email" 
+              id="email" 
+              class="form-control bg-dark text-white border-secondary"
+              required
+            >
           </div>
+
+          <p class="text-sm mb-4">
+            <a href="/login" class="text-secondary text-decoration-none">Hai la password? Accedi</a>
+          </p>
+
+          <button type="submit" class="btn btn-light w-100 fw-bold">Reset Password</button>
         </div>
       </div>
     </div>
+  </div>
 </form>

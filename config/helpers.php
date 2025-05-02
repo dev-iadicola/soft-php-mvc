@@ -1,10 +1,25 @@
 <?php
 
+use App\Core\Mvc;
+use App\Core\Support\Collection\BuildAppFile;
+use App\Core\Support\Collection\Collection;
 use App\Core\Support\Debug\VarDumper;
 
 // File: src/helpers.php
 // Defines a global helper function available everywhere
+if (!function_exists('setMvc')) {
+    function setMvc(BuildAppFile $config) {
+        $mvc = new Mvc($config);
+        $GLOBALS['mvc'] = $mvc;
+        $mvc->run();
+    }
+}
 
+if (!function_exists('mvc')) {
+    function mvc() {
+        return $GLOBALS['mvc'] ?? null;
+    }
+}
 
 if (! function_exists('dd')) {
     /**

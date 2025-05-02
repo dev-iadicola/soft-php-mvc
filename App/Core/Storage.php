@@ -17,9 +17,9 @@ class Storage
     public function __construct(public Mvc $mvc)
     {
         // Imposta il targetDirFormImages basato sulla configurazione
-        $this->targetDirFormImages = $this->mvc->config['folder']['storage']['images'];
-        $this->targetDir = $this->mvc->config['folder']['storage']['base'];
-        $this->root = $this->mvc->config['folder']['root'];
+        $this->targetDirFormImages = $this->mvc->config->folder['storage']['images'];
+        $this->targetDir = $this->mvc->config->folder['storage']['base'];
+        $this->root = $this->mvc->config->folder['root'];
 
         
     }

@@ -18,7 +18,7 @@ class Router {
     public function getRoute() {
         $method = $this->mvc->request->getRequestMethod();
         $path = $this->mvc->request->getRequestPath();
-        $routes = $this->mvc->config['routes'];
+        $routes = $this->mvc->config->routes;
         
         
     

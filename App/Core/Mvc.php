@@ -18,7 +18,7 @@ use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Support\Tree\TreeProject;
 use App\Core\Helpers\Log;
-
+use App\Core\Support\Collection\BuildAppFile;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mvc{
@@ -48,13 +48,13 @@ class Mvc{
      *
      * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public array $config)
+    public function __construct(public BuildAppFile $config)
 
 
     {
         // Inizalizzazione per la debug layout
         $this->initializeWhoops();
-        Log::info(['array'=>'test']);
+       
 
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
@@ -79,7 +79,7 @@ class Mvc{
         $this->router = new Router($this);
 
        
-        $this->middleware = new Middleware($this, $config['middleware']);
+        $this->middleware = new Middleware($this, $config->middleware);
         // Inizializza la connessione al database e imposta il PDO per l'ORM
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
@@ -92,7 +92,7 @@ class Mvc{
     private function initializeWhoops()
     {
     
-        if (getenv('APP_DEBUG') === 'true') {
+        if (getenv('APP_DEBUG') == 'true') {
             $whoops = new Run;
             $handler = new PrettyPageHandler();
             $handler->addDataTable('Environment', [

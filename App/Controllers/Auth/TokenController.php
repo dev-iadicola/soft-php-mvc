@@ -54,10 +54,6 @@ class TokenController extends Controller
         // Creazione Token
 
        $tokenModel =  Token::generateToken($post['email']);
-
-      
-
-
       
         $mailer = $this->mvc->mailer;
         $mailer->setContent($tokenModel);

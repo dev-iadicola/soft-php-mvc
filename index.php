@@ -29,6 +29,7 @@ Config::env(__DIR__.'/.env'); // caricamento variabili d'ambiente del file .env
  * 
  * il terzo elemento è un array contenente il menu che ha come chiave la path e come valore il nome del link
  */
+
 $config = Config::dir(__DIR__.'/config');
 
 // istanza Mvc che è il CORE dell'architettura MVC
@@ -37,4 +38,6 @@ $config = Config::dir(__DIR__.'/config');
  * folder e route
  * invocando il metodo run
  */
-(new Mvc($config))->run();
+
+ setMvc($config);
+ 

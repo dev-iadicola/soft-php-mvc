@@ -25,7 +25,7 @@ class View
 
         $layoutValue = [
             'page' => $page,
-            'menu' => $this->mvc->config['menu'],
+            'menu' => $this->mvc->config->menu,
         ];
 
         // Ricerca layouts e page
@@ -103,7 +103,7 @@ class View
         extract($values);
         extract($variables);
         extract(SessionService::getAll()); // per visualizzare i messaggi di errore e successo
-        $views = $this->mvc->config['folder']['views'];
+        $views = $this->mvc->config->folder['views'];
         ob_start();
         include "$views/$folder/$item.php";
         return ob_get_clean();

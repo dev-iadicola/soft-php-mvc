@@ -3,10 +3,11 @@
 namespace App\Mail;
 
 use App\Core\Connection\SMTP;
+use App\Core\Contract\MailBaseInterface;
 use App\Core\Mvc;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
-class Mailer
+class Mailer extends BaseMail implements MailBaseInterface
 {
     private Mvc $mvc;
 
@@ -22,9 +23,12 @@ class Mailer
         string $to,
         string $subject,
         string $body,
-        string $from = 'luigi.iadicola30@demomailtrap.com',
-        string $fromName = 'Pesronal Portoflio - MVC'
+        string $from = NULL,
+        string $fromName = NULL,
     ) {
+
+        $from ??= getenv('APP_EMAIL');
+        $fromName ??= getenv('APP_NAME');
         $mail = $this->mvc->Smtp->getMailer();
         $content = $this->content;
 
@@ -38,7 +42,7 @@ class Mailer
             $mail->addAddress($to);
             $mail->isHTML(true);
             $mail->Subject = $subject;
-            $mail->Body = $this->getMailViews($body, $content); 
+            $mail->Body = $this->setPage($body, $content); 
 
             return $mail->send();
         } catch (ExceptionSMTP $e) {
@@ -56,7 +60,7 @@ class Mailer
         return $this->content;
     }
 
-    protected function getMailViews(string $page,  $content = []): string
+    public function setPage(string $page,  $content = []): string
     {
         $mail = $this->mvc->config['folder']['mails'] . '/' . $page.'.php';
         ob_start(); // start capturing output

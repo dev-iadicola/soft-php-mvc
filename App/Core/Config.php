@@ -2,6 +2,8 @@
 
 namespace App\Core;
 
+use App\Core\Support\Collection\BuildAppFile;
+
 class Config
 {
 
@@ -19,6 +21,8 @@ class Config
         }
         return include $file;
     }
+
+   
     /**
      * Summary of env
      * @param string $env // il fil .env
@@ -54,7 +58,12 @@ class Config
             $nomeFile = pathinfo($file, PATHINFO_FILENAME);
             $conf[$nomeFile] = include $dir . '/' . $file;
         }
-        return $conf;
+        return new BuildAppFile($conf);
+    }
+
+    protected static function fromFile($files){
+        
+           
     }
 
 
