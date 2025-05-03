@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Core\Mailer\Mailer;
 use App\Core\Mvc;
+use App\Mail\BrevoMail;
 use App\Model\User;
 use App\Core\Validator;
 use App\Core\Controller;
@@ -24,12 +25,12 @@ class TokenController extends Controller
         $this->post =  $this->mvc->request->getPost();
     }
 
-   
+
 
     public function forgotPasswordToken()
     {
         $post = $this->post;
-       
+
 
         // Validazione dei campi input 
 
@@ -50,21 +51,23 @@ class TokenController extends Controller
 
             return $this->render('Auth.forgot');
         }
-        
+
         // Creazione Token
 
-       $tokenModel =  Token::generateToken($post['email']);
-      
-        $mailer = $this->mvc->mailer;
-        $mailer->setContent($tokenModel);
+        $tokenGenerated = Token::generateToken($post['email']);
+        dd($tokenGenerated);
         $to = $post['email'];
         $subject = 'Richiesta di reset Password';
-        $body = 'token-mail' ;
-        
-       //attendere per l'algoritmo per poter prendere il file da inviare anzichè un HTML
+        $body = 'token-mail';
+
+        //attendere per l'algoritmo per poter prendere il file da inviare anzichè un HTML
 
         // Validazione Mail
 
+        $brevoMail = new BrevoMail();
+        $brevoMail->bodyHtml($body, $tokenGenerated);
+        $brevoMail->setEmail($to, $subject, $body);
+        dd($brevoMail->send());
         if (!$mailer->sendEmail($to, $subject, $body)) {
             $this->withError('Errore, la mail non è stata inviata');
             return $this->render('Auth.forgot', ['message' => 'ERRORE: La mail non è stata inviata']);
@@ -84,26 +87,27 @@ class TokenController extends Controller
      * validazione token gestione richiesta POST e reindirizzamento per modifica password
      */
 
-     public function pagePin(Request $request, $token){
+    public function pagePin(Request $request, $token)
+    {
 
         $message = '';
-        
-        if(Token::isBad($token)){
-            return $this->render('Auth.forgot',['message'=>'Non hai le credenziali per accedere']);
+
+        if (Token::isBad($token)) {
+            return $this->render('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
         }
-       
-       return $this->render('Auth.validate-token', compact('token','message'));
 
-     }
+        return $this->render('Auth.validate-token', compact('token', 'message'));
+    }
 
-     public function validatePin(Request $request){
+    public function validatePin(Request $request)
+    {
         $data = $request->getPost();
 
 
         // Validazione della password
-        $validatorPassword = Validator::confirmedPassword( $data);
+        $validatorPassword = Validator::confirmedPassword($data);
 
-        if(!$validatorPassword){
+        if (!$validatorPassword) {
             $this->withError('Le password devono corrispondere');
             $this->redirectBack();
         }
@@ -111,33 +115,29 @@ class TokenController extends Controller
 
 
         //Validazione del token
-       $token =  Token::where('token', $data['token'])->first();
+        $token =  Token::where('token', $data['token'])->first();
 
 
-       
-       if(empty($token)){
-       return  $this->render('Auth.forgot',['message'=> 'La richiesta non è stata accettata!']);
-       }
-      
 
-       $user = User::changePassword(password: $data['password'], email: $token->email);
-       if(!empty($user)){
-        $mailer = $this->mvc->mailer;
-        $mailer->setContent($user);
-        $to = $user->email;
-        $subject = 'Password Cambiata con Successo';
-        $body = 'password-changed' ;
-        
-     
+        if (empty($token)) {
+            return  $this->render('Auth.forgot', ['message' => 'La richiesta non è stata accettata!']);
+        }
 
-        $mailer->sendEmail($to, $subject, $body);
-       }
 
-       $this->withSuccess('Accedi con le nuove credenziali!');
-       return $this->render('Auth.login',['message'=>'Accedi con le nuove credenziali']);
-       
-      
-        
-     }
- 
+        $user = User::changePassword(password: $data['password'], email: $token->email);
+        if (!empty($user)) {
+            $mailer = $this->mvc->mailer;
+            $mailer->setContent($user);
+            $to = $user->email;
+            $subject = 'Password Cambiata con Successo';
+            $body = 'password-changed';
+
+
+
+            $mailer->sendEmail($to, $subject, $body);
+        }
+
+        $this->withSuccess('Accedi con le nuove credenziali!');
+        return $this->render('Auth.login', ['message' => 'Accedi con le nuove credenziali']);
+    }
 }

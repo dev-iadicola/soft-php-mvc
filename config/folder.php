@@ -11,8 +11,8 @@ use App\Core\Services\FolderApp;
 FolderApp::set('root');
 FolderApp::set('views','views');
 FolderApp::set('mails','mails');
-FolderApp::set('storage', '/storage/');
-FolderApp::set('images', '/storage/images/');
+FolderApp::set('storage', 'storage');
+FolderApp::set('images', 'storage.images');
 
 return new FolderApp();
 

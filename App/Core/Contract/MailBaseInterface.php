@@ -12,5 +12,6 @@ interface MailBaseInterface {
         string $fromName = NULL,
     );
 
-    public function setPage(string $page,  $content = []): string;
+    public function mailPage(string $page): void;
+
 }

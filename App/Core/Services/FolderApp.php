@@ -11,12 +11,10 @@ class FolderApp
     {
         return self::$folders[$name];
     }
-    public static function set(string $key, string|array $root = '')
+    public static function set(string $key, string $root = '')
     {
-        if (is_array($root))
-            foreach ($root as $key => $subrot) {
-                self::$folders[$key] = baseRoot() . $subrot;
-            }
+        if (str_contains($root,'.'))
+            self::$folders[$key] = convertDotToSlash($root);
         else
             self::$folders[$key] = baseRoot() . $root;
     }

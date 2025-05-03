@@ -14,7 +14,8 @@ class VarDumper {
         border-left: 5px solid #50fa7b;
         border-radius: 8px;
         box-shadow: 0 0 10px rgba(80, 250, 123, 0.3);
-        white-space: pre-wrap;
+        white-space:1rem;
+
     ">';
     }
     public static function dd($vars) {
@@ -33,36 +34,10 @@ class VarDumper {
         if(!is_array($vars) && !is_object($vars)){
             var_dump($vars);
         }else{
-            foreach ($vars as $var) {
-                ob_start();
-                var_dump($var);
-                $dump = ob_get_clean();
-        
-                // Escapa HTML PRIMA delle regex
-                $dump = htmlspecialchars($dump, ENT_QUOTES, 'UTF-8');
-        
-                // Colora object(ClassName)
-                $dump = preg_replace_callback(
-                    '/object\(&quot;?([^)&]+)&quot;?\)/',
-                    function ($matches) {
-                        return '<span style="color: #ff5555;">object(' . $matches[1] . ')</span>';
-                    },
-                    $dump
-                );
-        
-                // Colora array(n)
-                $dump = preg_replace_callback(
-                    '/array\((\d+)\)/',
-                    function ($matches) {
-                        return '<span style="color: #f1fa8c;">array(' . $matches[1] . ')</span>';
-                    },
-                    $dump
-                );
-        
-                // Mostra con stili
+            foreach ($vars as $key => $var) {
+    
                 echo '<div style="margin-bottom: 15px;">
-                    <code>' . nl2br($dump) . '</code>
-                </div>';
+                    <code> <span style="color:dodgerblue" > ' .$key . '</span> => ' . $var . '</code> <br>';
         }
        
         }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Core\Connection\SMTP;
 use App\Core\Mvc;
 use App\Core\Support\Collection\BuildAppFile;
 use App\Core\Support\Debug\VarDumper;
@@ -7,7 +8,8 @@ use App\Core\Support\Debug\VarDumper;
 // File: src/helpers.php
 // Defines a global helper function available everywhere
 if (!function_exists('setMvc')) {
-    function setMvc(BuildAppFile $config) {
+    function setMvc(BuildAppFile $config)
+    {
         $mvc = new Mvc($config);
         $GLOBALS['mvc'] = $mvc;
         $mvc->run();
@@ -15,7 +17,8 @@ if (!function_exists('setMvc')) {
 }
 
 if (!function_exists('mvc')) {
-    function mvc() {
+    function mvc()
+    {
         return $GLOBALS['mvc'] ?? null;
     }
 }
@@ -69,17 +72,32 @@ if (! function_exists('dd')) {
             echo '</div>';
         }
     }
-    if(! function_exists('dump')){
+    if (! function_exists('dump')) {
         function dump($vars)
         {
             getSource();
             VarDumper::dump($vars);
         }
     }
-    if(! function_exists('baseRoot')){
-        function baseRoot(): string{
-            return  $_SERVER['DOCUMENT_ROOT'].'/';
+    if (! function_exists('baseRoot')) {
+        function baseRoot(): string
+        {
+            return  $_SERVER['DOCUMENT_ROOT'] . '/';
         }
     }
+    if (! function_exists('convertDotToSlash')) {
+        function convertDotToSlash(string $dir)
+        {
+            return str_replace('.', '/', $dir);
+        }
+    }
+
+    if (! function_exists(function: 'smtp')) {
+        function smtp(): SMTP
+        {
+            return new SMTP();
+        }
+    }
+    
     
 }

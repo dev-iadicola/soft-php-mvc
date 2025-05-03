@@ -83,7 +83,6 @@ class Mvc{
         // Inizializza la connessione al database e imposta il PDO per l'ORM
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
-        $this->mailer = new Mailer($this);
 
         $this->sessionService = new SessionService();
     }
