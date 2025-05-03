@@ -9,14 +9,13 @@ class BaseMail
 
     public ?string $from;
 
-    public ?string $formName;
-
+    public ?string $fromName;
+    public string $bodyHtml;
     private ?string $page;
-
     public function __construct()
     {
         $this->from = getenv('APP_EMAIL') ?? null;
-        $this->formName = getenv('APP_NAME') ?? null;
+        $this->fromName = getenv('APP_NAME') ?? null;
     }
 
     public function mailPage($dir): void
@@ -31,23 +30,23 @@ class BaseMail
     }
 
 
-    public function getContent( $content = '')
+    public function getContent($content = '')
     {
-        ob_start(); // start capturing output
+        ob_start();
+    
         if (is_object($content)) {
             $content = get_object_vars($content);
         }
-
+    
         if (!is_array($content)) {
             throw new \InvalidArgumentException('Content must be an array or an object');
         }
-
-        extract($content); // extract variables from content array
-
-        include($this->page); // execute the file
-        $output = ob_get_contents(); // get the contents from the buffer
-        ob_end_clean(); // stop buffering and discard contents
-
-        return $output; // return the captured content
+    
+        extract($content, EXTR_SKIP); // evita di sovrascrivere variabili esistenti
+    
+        include($this->page);
+    
+        return $this->bodyHtml = ob_get_clean();
     }
+    
 }

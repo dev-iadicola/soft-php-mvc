@@ -26,8 +26,8 @@ class ORM extends Database
             $calledClass = get_class($this); // Ottieni il nome completo del Model
             throw new Exception("La proprietà 'table' non è definita nel model: {$calledClass}");
         }
-    
         $this->queryBuilder = new QueryBuilder(pdo: $this->pdo);
+        $this->queryBuilder->setClassModel(get_called_class());
         $this->queryBuilder->setTable(table: $this->table);
         $this->queryBuilder->setFillable(fillable: $this->fillable);
     }

@@ -5,42 +5,45 @@ namespace App\Mail;
 use GuzzleHttp\Client;
 use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Model\SendSmtpEmail;
+use SendinBlue\Client\Model\CreateEmailCampaign;
 use SendinBlue\Client\Api\EmailCampaignsApi;
 use SendinBlue\Client\Api\TransactionalEmailsApi;
 
 class BrevoMail extends BaseMail
 {
-  private Configuration $config;
-
-  private SendSmtpEmail $email;
-
-  private transactionalEmailsApi $transactionalEmailsApi;
-  private EmailCampaignsApi $apiIstance;
-
-  public function __construct()
-  {
-    parent::__construct();
-    $this->config =  Configuration::getDefaultConfiguration()->setApiKey('api-key', getenv('REVO_API_KEY'));
-    $this->transactionalEmailsApi = new TransactionalEmailsApi(new Client(), $this->config);
-    $this->apiIstance = new EmailCampaignsApi();
-
-  }
+    private Configuration $config;
+    private Client $httpClient;
+    private TransactionalEmailsApi $transactionalEmailsApi;
+    private SendSmtpEmail $mail;
 
 
+    public function __construct()
+    {
+        parent::__construct();
+        $this->config = Configuration::getDefaultConfiguration()
+            ->setApiKey('api-key', getenv('BREVO_API_KEY'));
+        $this->httpClient = new Client();
+        $this->transactionalEmailsApi = new TransactionalEmailsApi($this->httpClient, $this->config);
+    }
 
-
-  public function setEmail(string $to, string $subject, string|null $page = null, array $content = [], string|null $from = NULL, string|null $fromName = NULL)
-  {
-    return new SendSmtpEmail([
-      'subject' => $subject,
-      'sender' => ['name' => $from ?? $this->formName, 'email' => $fromName ?? $this->from],
-      'to' => [['email' => $to]],
-      'htmlContent' => $body ?? $this->bodyHtml($page, $content),
+    public function setEmail(string $to, string $subject, array $content = [], string|null $from = null, string|null $fromName = null)
+    {
+      
+        $this->mail = new SendSmtpEmail([
+        'to' => [['email' => $to]],
+        'subject' => $subject,
+        'sender' => [
+            'name' => $fromName ?? $this->fromName,
+            'email' => $from ?? $this->from,
+        ],
+        'htmlContent' => $this->bodyHtml,
     ]);
-  }
+        // dd($this->mail);
 
-  public function send()
-  {
-   return  $this->apiIstance->createEmailCampaign($this->email);
-  }
+    }
+
+    public function send()
+    {
+        return $this->transactionalEmailsApi->sendTransacEmail($this->mail);
+    }
 }

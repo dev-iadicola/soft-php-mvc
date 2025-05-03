@@ -1,12 +1,15 @@
-<?php 
+<?php
+
 namespace App\Core\Eloquent;
 
 use PDO;
 use App\Core\Database;
 
-class QueryBuilder {
+class QueryBuilder
+{
 
-    protected string $table; 
+    protected string $nameModel;
+    protected string $table;
     protected array $fillable = []; // Campi riempibili
     protected string $selectValues = '*'; // Campi da selezionare
 
@@ -19,20 +22,24 @@ class QueryBuilder {
 
     public $id = ''; // ID dell'istanza
 
-    public function __construct(PDO $pdo) {
-       $this->setPDO($pdo);
+    public function __construct(PDO $pdo)
+    {
+        $this->setPDO($pdo);
     }
 
     public function setPDO(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
+    public function setClassModel(string $model){
+        $this->nameModel = $model;
+    }
 
     public function setFillable(array $fillable): void
     {
         $this->fillable = $fillable;
     }
-    
+
     public function setTable(string $table)
     {
         $this->table = $table;
@@ -140,6 +147,10 @@ class QueryBuilder {
     {
         if ($data) {
             $instance = new static($this->pdo);
+            $instance->setFillable($this->fillable);
+            $instance->setTable($this->table);
+            $instance->setClassModel($this->nameModel);
+
             foreach ($data as $key => $value) {
                 $instance->$key = $value;
             }
@@ -154,6 +165,9 @@ class QueryBuilder {
         $results = [];
         foreach ($data as $row) {
             $instance = new static($this->pdo);
+            $instance->setFillable($this->fillable);
+            $instance->setTable($this->table);
+            $instance->setClassModel($this->nameModel);
             foreach ($row as $key => $value) {
                 $instance->$key = $value;
             }

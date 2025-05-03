@@ -17,13 +17,8 @@ class DashBoardController extends Controller{
     }
 
     public function index(){
-
-        $curricula = Curriculum::findAll();
         $message = Contatti::orderBy('id desc')->get();
-        $cvdownload = (new ORM($this->mvc->pdo))->query('SELECT sum(download) as downloads from curriculum limit 1');
-       
-
-        $this->render('admin.dashboard',[],compact('curricula','message','cvdownload'));
+        $this->render('admin.dashboard',[],compact('message'));
     }
 
     public function logout(){

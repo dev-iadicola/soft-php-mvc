@@ -11,7 +11,6 @@ use App\Traits\Relation;
 class User extends ORM
 {
     use Getter; use Relation;
-
     protected string $table = 'users';
     protected array $fillable = [
         'email',
@@ -24,15 +23,13 @@ class User extends ORM
 
     public static function changePassword(string $password, string $email)
     {
-        $user =  User::where('email', $email)->first();
+        $user = User::where('email', $email)->first();
+       
         if (empty($user)) {
             return false;
         }
         $password = password_hash($password, PASSWORD_BCRYPT);
-
         $user->update(['password' => $password]);
-
-
         return $user;
     }
     public function log(){

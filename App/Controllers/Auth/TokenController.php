@@ -55,20 +55,19 @@ class TokenController extends Controller
         // Creazione Token
 
         $tokenGenerated = Token::generateToken($post['email']);
-        dd($tokenGenerated);
         $to = $post['email'];
         $subject = 'Richiesta di reset Password';
-        $body = 'token-mail';
+        $page = 'token-mail';
 
         //attendere per l'algoritmo per poter prendere il file da inviare anzichè un HTML
 
         // Validazione Mail
 
         $brevoMail = new BrevoMail();
-        $brevoMail->bodyHtml($body, $tokenGenerated);
-        $brevoMail->setEmail($to, $subject, $body);
-        dd($brevoMail->send());
-        if (!$mailer->sendEmail($to, $subject, $body)) {
+        $brevoMail->bodyHtml($page, $tokenGenerated);
+        $brevoMail->setEmail($to, $subject);
+        $sended = $brevoMail->send();
+        if (! $sended) {
             $this->withError('Errore, la mail non è stata inviata');
             return $this->render('Auth.forgot', ['message' => 'ERRORE: La mail non è stata inviata']);
         }
@@ -126,15 +125,14 @@ class TokenController extends Controller
 
         $user = User::changePassword(password: $data['password'], email: $token->email);
         if (!empty($user)) {
-            $mailer = $this->mvc->mailer;
-            $mailer->setContent($user);
+            $brevoMail = new BrevoMail();
+            $body = 'password-changed';
+            $brevoMail->bodyHtml($body,$user);
             $to = $user->email;
             $subject = 'Password Cambiata con Successo';
-            $body = 'password-changed';
+            $brevoMail->setEmail($to, $subject);
+            $brevoMail->send();
 
-
-
-            $mailer->sendEmail($to, $subject, $body);
         }
 
         $this->withSuccess('Accedi con le nuove credenziali!');

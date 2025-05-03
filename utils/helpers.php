@@ -30,7 +30,7 @@ if (! function_exists('dd')) {
      * @param  mixed  ...$vars
      * @return void
      */
-    function dd($vars): void
+    function dd(...$vars): void
     {
         getSource();
         VarDumper::dd($vars);

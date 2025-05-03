@@ -35,10 +35,23 @@ class VarDumper {
             var_dump($vars);
         }else{
             foreach ($vars as $key => $var) {
-    
-                echo '<div style="margin-bottom: 15px;">
-                    <code> <span style="color:dodgerblue" > ' .$key . '</span> => ' . $var . '</code> <br>';
-        }
+                echo '<div style="margin-bottom: 15px;">';
+                echo '<code><span style="color:dodgerblue">' . htmlspecialchars((string)$key) . '</span> => ';
+            
+                if (is_scalar($var)) {
+                    // Se è un tipo semplice (stringa, int, bool, float)
+                    echo htmlspecialchars((string)$var);
+                } elseif (is_array($var)) {
+                    echo '<pre>' . htmlspecialchars(print_r($var, true)) . '</pre>';
+                } elseif (is_object($var)) {
+                    echo '<pre>' . htmlspecialchars(print_r($var, true)) . '</pre>';
+                } else {
+                    echo '<em>Tipo non gestito</em>';
+                }
+            
+                echo '</code><br></div>';
+            }
+            
        
         }
     

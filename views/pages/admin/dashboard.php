@@ -15,17 +15,7 @@
   </div>
 
   <div class="row">
-    <div class="col-lg-3 col-md-3 col-sm-12 pr-0 mb-3">
-      <div class="card  ">
-        <div class="card-header"><i class="fa fa-shopping-bag"></i> CV Downloaded</div>
-        <div class="m-auto p-auto py-5 fs-1">
-          <?= $cvdownload[0]->downloads ?> <i class="fa fa-download ms-2" aria-hidden="true"></i>
-
-        </div>
-
-
-      </div>
-    </div>
+    
     <div class="col-lg-3 col-md-3 col-sm-12 pr-0 mb-3">
       <div class="card  ">
         <div class="card-header"><i class="fa fa-bar-chart"></i> Visite</div>
