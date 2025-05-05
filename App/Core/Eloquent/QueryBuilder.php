@@ -310,8 +310,10 @@ class QueryBuilder
         return $stmt->execute();
     }
 
-    private static function removeSpecialChars(string $value): string
+    public static function removeSpecialChars(string $value): string
     {
         return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
     }
+
+
 }

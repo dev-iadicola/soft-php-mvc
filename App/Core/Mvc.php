@@ -31,7 +31,7 @@ class Mvc{
     public Router $router; // Gestione delle rotte
     public View $view; // Gestione delle viste
 
-    public Storage $uploadFile;
+    public Storage $storage;
     public \PDO $pdo; // Connessione PDO al database
 
     public SMTP $Smtp;
@@ -69,7 +69,7 @@ class Mvc{
         // Inizializza l'oggetto View per gestire le viste
         $this->view = new View($this);
 
-        $this->uploadFile = new Storage($this);
+        $this->storage = new Storage();
 
 
         // inizializza l'oggetto Response per gestire la risposta HTTP

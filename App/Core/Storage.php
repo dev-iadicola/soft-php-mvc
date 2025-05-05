@@ -14,19 +14,19 @@ class Storage
     protected string $root = '';
 
     // Usa la configurazione passata tramite il costruttore
-    public function __construct(public Mvc $mvc)
+    public function __construct()
     {
-       
         // Imposta il targetDirFormImages basato sulla configurazione
-        $this->targetDirFormImages = $this->mvc->config->folder->images;
-        $this->targetDir = $this->mvc->config->folder->storage;
-        $this->root = $this->mvc->config->folder->root;
+        $this->targetDirFormImages = mvc()->config->folder->images;
+        $this->targetDir = mvc()->config->folder->storage;
+        $this->root = mvc()->config->folder->root;
 
         
     }
 
     public function setTargetDir($var)
     {
+        $var = convertDotToSlash($var);
         $this->targetDir = $var;
     }
 
