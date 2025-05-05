@@ -7,10 +7,9 @@ use App\Core\Database;
 
 class QueryBuilder
 {
+    protected array $attribute = [];
+    protected ?string $table = null;
 
-    protected string $nameModel;
-    protected string $table;
-    protected array $fillable = []; // Campi riempibili
     protected string $selectValues = '*'; // Campi da selezionare
 
     protected string $whereClause = ''; // Clausola WHERE
@@ -27,12 +26,21 @@ class QueryBuilder
         $this->setPDO($pdo);
     }
 
+    public function __get($name){
+        return $this->attribute[$name];
+    }
+
+    public function __set($name, $value){
+        $this->attribute[$name] = $value;
+    }
+
+
     public function setPDO(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
-    public function setClassModel(string $model){
-        $this->nameModel = $model;
+    public function setClassModel(string $name){
+        $this->nameModel = $name;
     }
 
     public function setFillable(array $fillable): void
@@ -108,7 +116,7 @@ class QueryBuilder
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato. __CLASS__");
+            throw new \Exception("Nome della tabella non impostato. Model: " .$this->nameModel);
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
