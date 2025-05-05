@@ -11,7 +11,7 @@ class FolderApp
     {
         return self::$folders[$name];
     }
-    public static function set(string $key, string $root = '')
+    public static function set(string $key, string $root = '/')
     {
         if (str_contains($root,'.'))
             self::$folders[$key] = convertDotToSlash($root);
