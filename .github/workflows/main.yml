@@ -5,7 +5,7 @@ jobs:
     name: 🎉 Deploy
     runs-on: ubuntu-latest
     steps:
-    
+
     - name: 🚚 Get latest code
       uses: actions/checkout@v4
     
@@ -20,3 +20,6 @@ jobs:
         password: ${{ secrets.FTPPASSWORD }}
         protocol: ftps
         server-dir: public_html/
+        exclude: |
+        vendor/sendinblue/api-v3-sdk/docs/**
+
