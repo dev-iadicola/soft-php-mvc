@@ -1,41 +1,41 @@
-<footer class="bg-gray-900 text-gray-400 py-4">
-  <div class="container mx-auto px-4">
+<footer class="bg-dark text-light py-1 mt-5">
+  <div class="container mt-4">
     <!-- Navbar -->
-    <ul class="flex flex-wrap justify-center  pb-4 mb-4">
-      <li class="nav-item mx-2">
-        <a href="/" class="text-gray-400 hover:text-white transition duration-300">Home</a>
+    <ul class="nav justify-content-center mb-2 gap-3">
+      <li class="nav-item">
+        <a href="/" class="nav-link text-white lead">Home</a>
       </li>
-      <li class="nav-item mx-2">
-        <a href="/contatti" class="text-gray-400 hover:text-white transition duration-300">Contact</a>
+      <li class="nav-item">
+        <a href="/contatti" class="nav-link  text-white lead  ">Contact</a>
       </li>
-      <li class="nav-item mx-2">
-        <a href="/certificati" class="text-gray-400 hover:text-white transition duration-300">Professional Courses</a>
+      <li class="nav-item">
+        <a href="/certificati" class="nav-link  text-white lead">Professional Courses</a>
       </li>
-      <li class="nav-item mx-2">
-        <a href="/laws" class="text-gray-400 hover:text-white transition duration-300">Cookie Policy & Terms</a>
+      <li class="nav-item">
+        <a href="/laws" class="nav-link  text-white lead">Cookie Policy & Terms</a>
       </li>
-      <li class="nav-item mx-2">
-        <a href="/portfolio" class="text-gray-400 hover:text-white transition duration-300">About</a>
+      <li class="nav text-white">
+        <a href="/portfolio" class="nav-link  text-white lead">About</a>
       </li>
-    
     </ul>
 
-    <ul class="flex flex-wrap justify-center  pb-4 mb-4">
-
-    <li class="nav-item mx-2">
-        <a href="https://www.linkedin.com/in/luigi-iadicola/" target="_blank" class="flex items-center text-gray-400 hover:text-white transition duration-300 border border-white rounded-full py-1 px-3 my-1">
-          <i class="fa fa-linkedin text-xl mr-2"></i>
-          <span class="hidden md:inline">LinkedIn</span>
+    <!-- Social -->
+    <ul class="nav justify-content-center mb-4">
+      <li class="nav-item mx-2">
+        <a href="https://www.linkedin.com/in/luigi-iadicola/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
+          <i class="fa fa-linkedin me-2"></i>
+          <span class="d-none d-md-inline">LinkedIn</span>
         </a>
       </li>
       <li class="nav-item mx-2">
-        <a href="https://github.com/dev-iadicoa/" target="_blank" class="flex items-center text-gray-400 hover:text-white transition duration-300 border border-white rounded-full py-1 px-3 my-1">
-          <i class="fa fa-github text-xl mr-2"></i>
-          <span class="hidden md:inline">GitHub</span>
+        <a href="https://github.com/dev-iadicoa/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
+          <i class="fa fa-github me-2"></i>
+          <span class="d-none d-md-inline">GitHub</span>
         </a>
       </li>
-</ul>
+    </ul>
+
     <!-- Copyright -->
-    <p class="text-center text-gray-500">© <?= date('Y') ?> Luigi Iadicola, Web Developer</p>
+    <p class="text-center text-secondary mb-0">© <?= date('Y') ?> Luigi Iadicola, Web Developer</p>
   </div>
 </footer>

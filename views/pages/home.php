@@ -124,33 +124,6 @@
     </div>
 </div>
 
-<article class="fade-in-section mt-5 py-5">
-    <div class="container py-5">
-        <?php foreach ($articles as $article) : ?>
-            <article class="row mb-5">
-                <!-- Immagine dell'articolo -->
-                <?php if (!empty($article->img)) : ?>
-                    <div class="col-md-4 mb-4 mb-md-0">
-                        <img src="<?php echo $article->img; ?>" class="img-fluid rounded-lg shadow-md" alt="Immagine dell'articolo">
-                    </div>
-                <?php endif; ?>
-                <!-- Contenuto testuale -->
-                <div class="col-md-8">
-                    <h1 class="h3 font-weight-bold text-dark mb-2"><?= $article->title; ?></h1>
-                    <?php if (!empty($article->subtitle)) : ?>
-                        <h2 class="h5 text-muted mb-3"><?= $article->subtitle; ?></h2>
-                    <?php endif; ?>
-                    <p class="text-muted mb-4"><?= $article->overview; ?></p>
-                    <?php if (!empty($article->link)) : ?>
-                        <a href="<?= $article->link; ?>" class="text-primary font-weight-bold">
-                            Leggi di più
-                        </a>
-                    <?php endif; ?>
-                </div>
-            </article>
-        <?php endforeach; ?>
-    </div>
-</article>
 
 <!-- Scroll to top button -->
 <a class="fa fa-arrow-up btn-arrow" id="btn-arrow" href="#top" aria-hidden="true"></a>
