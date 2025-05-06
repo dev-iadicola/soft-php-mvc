@@ -36,8 +36,7 @@ $config = Config::dir(__DIR__.'/config');
 /**
  * Passiamo l'array con i due valori:
  * folder e route
- * invocando il metodo run
+ * utilizzando la funzione setMvc
  */
-
  setMvc($config);
  

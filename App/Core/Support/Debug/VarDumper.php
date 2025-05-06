@@ -46,7 +46,7 @@ class VarDumper {
                 } elseif (is_object($var)) {
                     echo '<pre>' . htmlspecialchars(print_r($var, true)) . '</pre>';
                 } else {
-                    echo '<em>Tipo non gestito</em>';
+                    echo '<pre>' . htmlspecialchars(print_r($var, true)) . '</pre>';
                 }
             
                 echo '</code><br></div>';

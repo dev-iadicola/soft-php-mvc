@@ -17,7 +17,6 @@ use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Support\Tree\TreeProject;
-use App\Core\Helpers\Log;
 use App\Core\Support\Collection\BuildAppFile;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
@@ -48,12 +47,12 @@ class Mvc{
      *
      * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public BuildAppFile $config)
-
-
-    {
+    public function __construct(public BuildAppFile $config){
+        
         // Inizalizzazione per la debug layout
         $this->initializeWhoops();
+
+        $this->config = $config; 
        
 
         // Imposta l'istanza statica dell'oggetto Mvc
@@ -69,7 +68,7 @@ class Mvc{
         // Inizializza l'oggetto View per gestire le viste
         $this->view = new View($this);
 
-        $this->storage = new Storage();
+
 
 
         // inizializza l'oggetto Response per gestire la risposta HTTP

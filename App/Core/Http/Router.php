@@ -39,7 +39,6 @@ class Router {
         return false;
     }
     
-
     public function resolve() {
         $route = $this->getRoute();
         if (!$route) throw new NotFoundException();

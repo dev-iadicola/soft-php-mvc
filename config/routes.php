@@ -100,13 +100,11 @@ Route::get('/admin/home/{id}',HomeManagerController::class, 'edit');
 Route::post('/admin/home/{id}',HomeManagerController::class, 'update');
 Route::post('/admin/home-delete/{id}',HomeManagerController::class,'destroy');
 
-
 // Administration Profile
 Route::post('/admin/profile',ProfileMngController::class, 'store');
 Route::get('/admin/profile/{id}',ProfileMngController::class, 'edit');
 Route::post('/admin/profile/{id}',ProfileMngController::class, 'update');
 Route::post('/admin/profile-delete/{id}',ProfileMngController::class,'destroy');
-
 
 // Administration Skills
 Route::post('/admin/skill',SkillMngController::class, 'store');
@@ -114,18 +112,9 @@ Route::get('/admin/skill/{id}',SkillMngController::class, 'edit');
 Route::post('/admin/skill/{id}',SkillMngController::class, 'update');
 Route::post('/admin/skill-delete/{id}',SkillMngController::class,'destroy');
 
-
 // Administration maintenance
 Route::get('/admin/settings',MaintenanceController::class,'index');
 Route::post('/admin/settings',MaintenanceController::class,'submit');
-
-
-
-
-
-
-
-
 
 // Restituisce l'array delle rotte
 return Route::all();
