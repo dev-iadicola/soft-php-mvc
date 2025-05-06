@@ -103,7 +103,6 @@ class TokenController extends Controller
      public function validatePin(Request $request){
         $data = $request->getPost();
 
-        // var_dump($data); exit;
 
         // Validazione della password
         $validatorPassword = Validator::confirmedPassword( $data);

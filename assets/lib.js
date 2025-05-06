@@ -18,7 +18,6 @@ function downloadFunction(id) {
     });
 }
 
-
 // OLD
  // fade in e fade out per effetto visivo
  $(document).ready(function () {

@@ -23,7 +23,7 @@ if (!function_exists('mvc')) {
     }
 }
 
-if (! function_exists('dd')) {
+if (!function_exists('dd')) {
     /**
      * Dump and Die: stampa variabili e termina l'esecuzione
      *
@@ -36,7 +36,14 @@ if (! function_exists('dd')) {
         VarDumper::dd($vars);
     }
 
-    if (! function_exists('getSource')) {
+    if (!function_exists('css')) {
+        function css(){
+           return mvc()->config->folder->css;
+        }
+    }
+
+
+    if (!function_exists('getSource')) {
         function getSource()
         {
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -56,48 +63,52 @@ if (! function_exists('dd')) {
             echo '<div style="margin-bottom: 10px; font-weight: bold; color: #ff79c6;">Call Stack (debug_backtrace):</div>';
 
             foreach ($trace as $i => $step) {
+
                 $file = $step['file'] ?? '[internal]';
                 $line = $step['line'] ?? 'n/a';
                 $function = $step['function'] ?? 'unknown';
+                if ($i == 2) {
 
-                echo '<div style="margin-bottom: 6px;">';
-                echo "<span style='color: #8be9fd;'>#{$i}</span> ";
-                echo "<span style='color: #50fa7b;'>{$function}()</span> ";
-                echo "<span style='color: #f1fa8c;'>in</span> ";
-                echo "<span style='color: #bd93f9;'>{$file}</span>:";
-                echo "<span style='color: #f1fa8c;'>{$line}</span>";
-                echo '</div>';
+                    echo '<div style="margin-bottom: 6px;">';
+                    echo "<span style='color: #8be9fd;'>#{$i}</span> ";
+                    echo "<span style='color: #50fa7b;'>{$function}()</span> ";
+                    echo "<span style='color: #f1fa8c;'>in</span> ";
+                    echo "<span style='color: #bd93f9;'>{$file}</span>:";
+                    echo "<span style='color: #f1fa8c;'>{$line}</span>";
+                    echo '</div>';
+                    echo '</div>';
+                }
+
+               
             }
-
-            echo '</div>';
         }
     }
-    if (! function_exists('dump')) {
+    if (!function_exists('dump')) {
         function dump($vars)
         {
             getSource();
             VarDumper::dump($vars);
         }
     }
-    if (! function_exists('baseRoot')) {
+    if (!function_exists('baseRoot')) {
         function baseRoot(): string
         {
-            return  $_SERVER['DOCUMENT_ROOT'] . '/';
+            return $_SERVER['DOCUMENT_ROOT'];
         }
     }
-    if (! function_exists('convertDotToSlash')) {
+    if (!function_exists('convertDotToSlash')) {
         function convertDotToSlash(string $dir)
         {
             return str_replace('.', '/', $dir);
         }
     }
 
-    if (! function_exists(function: 'smtp')) {
+    if (!function_exists(function: 'smtp')) {
         function smtp(): SMTP
         {
             return new SMTP();
         }
     }
-    
-    
+
+
 }

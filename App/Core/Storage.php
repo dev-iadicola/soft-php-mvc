@@ -25,6 +25,10 @@ class Storage
         
     }
 
+    public function make(string $filePath, string $fileName, string $fileContent){
+       $targetDir = $this->targetDir .'/'. convertDotToSlash($filePath);
+        
+    }   
 
 
     public function setTargetDir($var)
@@ -36,7 +40,6 @@ class Storage
     public function storeFile($file)
     {
         $this->file = $file;
-        //var_dump($file); 
         $targetPath = $this->targetDirFormImages . basename($file["name"]);
 
         $isStore = move_uploaded_file($file['tmp_name'], $this->targetDirFormImages . basename($file["name"]));
@@ -77,7 +80,6 @@ class Storage
 
     public function getPathImg()
     {
-        //var_dump($this->targetFile); exit;
         return str_replace( $this->root, '', $this->targetFile);
     }
 

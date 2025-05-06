@@ -8,11 +8,13 @@
 
 use App\Core\Services\FolderApp;
 
-FolderApp::set('root');
-FolderApp::set('views','views');
-FolderApp::set('mails','mails');
-FolderApp::set('storage', 'storage');
-FolderApp::set('images', 'storage.images');
+$folders = new FolderApp();
+$folders::set('root');
+$folders::set('views','views');
+$folders::set('mails','mails');
+$folders::set('storage', 'storage');
+$folders::set('images', 'storage.images');
+$folders::set('css','assets.css');
 
-return new FolderApp();
+return $folders;
 

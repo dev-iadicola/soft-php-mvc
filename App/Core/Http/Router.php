@@ -12,7 +12,7 @@ class Router {
 
    
     public function __construct(public Mvc $mvc) {
-        $this->request = $this->mvc->request; // Inizializza la proprietà request
+        $this->request = $this->mvc->request; 
     }
 
     public function getRoute() {
@@ -56,9 +56,6 @@ class Router {
         }
 
         $request = $this->request;
-
-
-        // var_dump(['controller' => $controller], ['method' => $method], ['req' =>$request],['param' =>  $params] );
 
         $instance = new $controller($this->mvc);
 

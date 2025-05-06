@@ -84,6 +84,7 @@ class Mvc{
         $this->getSMTPConnection();
 
         $this->sessionService = new SessionService();
+
     }
 
     //Layout per Debug
@@ -134,6 +135,7 @@ class Mvc{
      */
     public function run()
     {
+        $this->treeProject = new TreeProject($this);
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             $this->router->resolve();

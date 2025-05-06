@@ -3,33 +3,47 @@ namespace App\Core\Support\Tree;
 
 use App\Core\Mvc;
 
-class TreeProject {
-    public function __construct(public Mvc $mvc) {
-        $this->generateTree();
+class TreeProject
+{
+    private $arrayResult = [];
+    public function __construct(public Mvc $mvc)
+    {
+        $baseroot = $this->mvc->config->folder->root;
+        $this->generateTree($baseroot);
     }
 
 
-    private function generateTree(string $direcotry = realpath('/'), string $prefix = ""): string{
-        $items = scandir($direcotry);
-        $items = array_diff($items,['.', '..', 'vendor', 'node_modules', '.git']);
+    public function generateTree(?string $directory, string $prefix = ""): void
+    {
+        if (is_null($directory) || empty($directory)) {
+            $directory = baseRoot();
+        }
+  
+        $items = scandir($directory);
 
-        $result = '';
+        $items = array_diff($items, ['.', '..', 'vendor', 'node_modules', '.git']);
+        dd($items);
 
         foreach ($items as $item) {
-            $path = "$direcotry/$item";
+            $path = "$directory". DIRECTORY_SEPARATOR."$item";
 
-            $result .= $prefix.'|-- '.$item . "\n";
+            dump($path);
 
-            if(is_dir($path)){
-                $result .= $this->generateTree($path, $prefix . '|   ');
+            if (is_dir($path)) {
+                $this->arrayResult[$item] = $path ;
+                $this->generateTree($path, $prefix . '|   ');
+                dump($this->arrayResult);
             }
         }
-        return $result;
+        dd($this->arrayResult);
     }
 
-    private function putIntoFile(){
 
-        
+
+    private function putIntoFile()
+    {
+        Storage::make($this->generateTree());
+
     }
 
 

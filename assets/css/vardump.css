@@ -1,0 +1,38 @@
+.vardump-container {
+    background: #1e1e1e;
+    color: #f8f8f2;
+    padding: 20px;
+    margin: 20px;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 14px;
+    border-left: 5px solid #50fa7b;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(80, 250, 123, 0.3);
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.big-font {
+    font-size: 22px;
+}
+
+.vardump-key {
+    color: #8be9fd;
+}
+
+.vardump-type {
+    color: #bd93f9;
+}
+
+.vardump-string {
+    color: #f1fa8c;
+}
+
+.vardump-number {
+    color: #ff79c6;
+}
+
+.vardump-parents {
+    color: rgb(255, 115, 0);
+    font-size: 13px;
+}
