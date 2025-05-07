@@ -35,10 +35,10 @@
         <p>Grazie per aver effettuato la richiesta. Per completare il processo, per favore utilizza il seguente link:</p>
 
         <p>
-        <a href="<?php echo 'http://' . $_SERVER['SERVER_NAME'] . '/validate-pin/' . $token; ?>">Apri il link per Inserire una nuova password</a>
+        <a href="<?php echo 'http://' . $_SERVER['SERVER_NAME'] . '/validate-pin/' . $token->token; ?>">Apri il link per Inserire una nuova password</a>
 
         </p>
-        <p>Questo token scade il <?php echo htmlspecialchars($expiry_date); ?>.</p>
+        <p>Questo token scade il <?php echo htmlspecialchars($token->expiry_date); ?>.</p>
         <p>Se non hai richiesto questa operazione, ignora questa email.</p>
         <p>Saluti,</p>
         <p>Il team di supporto</p>

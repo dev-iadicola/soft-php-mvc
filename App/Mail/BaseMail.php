@@ -10,7 +10,7 @@ class BaseMail
     public ?string $from;
 
     public ?string $fromName;
-    public string $bodyHtml;
+    public  $bodyHtml;
     private ?string $page;
     public function __construct()
     {
@@ -24,29 +24,26 @@ class BaseMail
         $this->page = mvc()->config->folder->mails . '/' . $page . '.php';
     }
 
-    public function bodyHtml(string $page, $content = ''): bool|string{
+    public function bodyHtml(string $page, $content = ''){
         $this->mailPage($page);
-        return $this->getContent($content);
+        $this->getContent($content);
+        
     }
 
 
-    public function getContent($content = '')
+    public function getContent($data = []): void
     {
         ob_start();
     
-        if (is_object($content)) {
-            $content = get_object_vars($content);
-        }
-    
-        if (!is_array($content)) {
-            throw new \InvalidArgumentException('Content must be an array or an object');
-        }
-    
-        extract($content, EXTR_SKIP); // evita di sovrascrivere variabili esistenti
-    
+        // dump($content);
+    // Rende ogni chiave di $data disponibile come variabile isolata nella view
+    foreach ($data as $key => $value) {
+        $$key = $value; // crea variabile dinamica (es. $token = ...)
+    }
+        //  dd($data);
         include($this->page);
     
-        return $this->bodyHtml = ob_get_clean();
+        $this->bodyHtml = ob_get_clean();
     }
     
 }

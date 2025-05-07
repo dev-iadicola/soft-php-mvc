@@ -12,6 +12,8 @@ use SendinBlue\Client\Api\TransactionalEmailsApi;
 class BrevoMail extends BaseMail
 {
     private Configuration $config;
+
+    public $bodyHtml;
     private Client $httpClient;
     private TransactionalEmailsApi $transactionalEmailsApi;
     private SendSmtpEmail $mail;
@@ -28,7 +30,6 @@ class BrevoMail extends BaseMail
 
     public function setEmail(string $to, string $subject, array $content = [], string|null $from = null, string|null $fromName = null)
     {
-      
         $this->mail = new SendSmtpEmail([
         'to' => [['email' => $to]],
         'subject' => $subject,
@@ -38,7 +39,7 @@ class BrevoMail extends BaseMail
         ],
         'htmlContent' => $this->bodyHtml,
     ]);
-        // dd($this->mail);
+    
 
     }
 

@@ -54,17 +54,13 @@ class TokenController extends Controller
 
         // Creazione Token
 
-        $tokenGenerated = Token::generateToken($post['email']);
+        $token = Token::generateToken($post['email']);
         $to = $post['email'];
         $subject = 'Richiesta di reset Password';
         $page = 'token-mail';
 
-        //attendere per l'algoritmo per poter prendere il file da inviare anzichè un HTML
-
-        // Validazione Mail
-
         $brevoMail = new BrevoMail();
-        $brevoMail->bodyHtml($page, $tokenGenerated);
+        $brevoMail->bodyHtml($page, ['token'=>$token]);
         $brevoMail->setEmail($to, $subject);
         $sended = $brevoMail->send();
         if (! $sended) {
@@ -111,11 +107,10 @@ class TokenController extends Controller
             $this->redirectBack();
         }
 
-
-
         //Validazione del token
         $token =  Token::where('token', $data['token'])->first();
 
+       
 
 
         if (empty($token)) {

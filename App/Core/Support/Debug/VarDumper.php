@@ -42,7 +42,7 @@ class VarDumper
         if (is_array($var)) {
             echo "{$pad}<span class='vardump-type'>array</span> (" . count($var) . ") [\n";
             foreach ($var as $key => $value) {
-                if ($countLoop >= 3) {
+                if ($countLoop >= 10) {
                     $this->exitInfiniteLoop();
                 } else {
                    
@@ -57,7 +57,7 @@ class VarDumper
             $class = get_class($var);
             echo "{$pad}<span class='vardump-type'>object</span>({$class}) {\n";
             foreach ((array) $var as $key => $value) {
-                if ($countLoop <= 3) {
+                if ($countLoop <= 10) {
                     $prop = str_replace("\0", '', $key);
                     echo $pad . "    <span class='vardump-key'>{$prop}</span> => ";
                     $this->renderVar($value, $indent + 1, $countLoop +1);
