@@ -1,9 +1,9 @@
 <?php 
 namespace App\Model;
 
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 
-class Technology extends ORM{
+class Technology extends Model{
     protected string $table = 'technologies';
 
     protected array $fillable = [

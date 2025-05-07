@@ -2,7 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use App\Model\Log;
 use App\Core\Component;
 use App\Core\Controller;
@@ -19,7 +19,7 @@ class LogsController extends Controller{
     }
 
     public function index() {
-        $orm = new ORM($this->mvc->pdo); 
+        $orm = new Model($this->mvc->pdo); 
 
         $query ="SELECT indirizzo, COUNT(*) AS login_count, MAX(last_log) AS last_log
         FROM logs

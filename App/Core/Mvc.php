@@ -3,7 +3,7 @@
 namespace App\Core;
 
 use Whoops\Run;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use \App\Core\View;
 use App\Mail\Mailer;
 use App\Core\Middleware;
@@ -12,7 +12,7 @@ use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
 use App\Core\Connection\SMTP;
-use \App\Core\Connection\Database;
+use \App\Core\Database;
 use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use \App\Core\Exception\NotFoundException;
@@ -79,7 +79,7 @@ class Mvc{
 
        
         $this->middleware = new Middleware($this, $config->middleware);
-        // Inizializza la connessione al database e imposta il PDO per l'ORM
+        // Inizializza la connessione al database e imposta il PDO per l'Model
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
 

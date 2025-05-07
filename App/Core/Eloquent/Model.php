@@ -2,12 +2,14 @@
 
 namespace App\Core\Eloquent;
 
+use App\Core\Contract\ModelSchemaInterface;
 use Exception;
+use JsonSerializable;
 use PDO;
 use App\Core\Database;
 use App\Core\Eloquent\QueryBuilder;
 
-class ORM extends Database
+class Model extends Database implements JsonSerializable
 {
     protected string $table; // Nome della tabella
     protected array $fillable; // Campi riempibili
@@ -35,11 +37,15 @@ class ORM extends Database
     public static function __callStatic($method, $parameters)
     {
 
-        // Per ogni chiamata statica, creiamo un'istanza dell'ORM
+        // Per ogni chiamata statica, creiamo un'istanza dell'Model
         $instance = new static();
         $instance->boot();
         $queryBuilder = $instance->queryBuilder;  // Prendi l'istanza di QueryBuilder
         return call_user_func_array([$queryBuilder, $method], $parameters);  // Esegui il metodo su QueryBuilder
 
+    }
+
+    public function jsonSerialize(): mixed{
+        return $this->toArray(); // da implementare
     }
 }

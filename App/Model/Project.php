@@ -2,12 +2,12 @@
 
 namespace App\Model;
 
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use App\Model\Partner;
 use App\Traits\Getter;
 use App\Traits\Relation;
 
-class Project extends ORM
+class Project extends Model
 {
    use Getter; use Relation;
 

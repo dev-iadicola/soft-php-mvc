@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers\Admin;
 use App\Core\Mvc;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use App\Model\Contatti;
 use App\Core\Controller;
 use App\Model\Curriculum;

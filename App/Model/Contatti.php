@@ -3,13 +3,13 @@
 namespace App\Model;
 
 
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use App\Traits\BelongsTo;
 use App\Traits\Getter;
 use App\Traits\Has;
 use App\Traits\Relation;
 
-class Contatti extends ORM
+class Contatti extends Model
 {
     use Getter; use Relation;
     protected string $table = 'contatti';

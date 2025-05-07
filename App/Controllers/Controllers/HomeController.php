@@ -1,6 +1,6 @@
 <?php
 namespace App\Controllers;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use \App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;
@@ -25,7 +25,7 @@ class HomeController extends Controller {
         $projects = Project::orderBy(' id DESC')->get();
         $articles = Article::orderBy('created_at DESC')->get();
         $curriculum = Curriculum::orderBy(' id DESC')->first();
-        $profiles = (new ORM($this->mvc->pdo))->query('select * FROM profile where selected is true ORDER BY id desc');
+        $profiles = (new Model($this->mvc->pdo))->query('select * FROM profile where selected is true ORDER BY id desc');
        // $profiles = Profile::orderBy('id desc')->where('selected', true)->get();
         $skills = Skill::orderBy('id desc')->get();
 

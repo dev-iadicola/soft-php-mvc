@@ -5,7 +5,7 @@ use App\Core\Contract\CommandInterface;
 
 class MakeControllerCommand implements CommandInterface {
   
-    public function exe(array $params = []) {
+    public function exe(array $params) {
         
     }
 }

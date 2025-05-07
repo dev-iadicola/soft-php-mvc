@@ -3,10 +3,10 @@
 namespace App\Model;
 
 
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use App\Traits\Getter;
 
-class Law extends ORM
+class Law extends Model
 {
     use Getter;
     protected string $table = 'laws';

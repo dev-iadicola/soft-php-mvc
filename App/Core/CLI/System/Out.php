@@ -12,7 +12,9 @@ class Out {
             'warn' => 'printWarn',
             'warning' => 'printWarn',
             'ok' => 'printOK',
+            'success' => 'printOK',
             'ln' => 'printLn',
+            'info' => 'printLn',
             'p' => 'print',
         ];
     
@@ -28,16 +30,35 @@ class Out {
 
     private function printLn($str) {
         $this->log($str);
-        
+     
     }
-    private function print(string $str) {
-        $this->log($str,'',false);
+
+ 
+    private function print(string $str, $type = 'i') {
+        $this->log($str,$type,false);
     }
 
 
      private function printError($str) {
 
-        $this->log("Error:" . $str, 'e');
+        $this->log("Error:" . $str, 'e',true);
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+
+        foreach($trace as $i => $step){
+            $file = $step['file'] ?? '[internal]';
+            $line = $step['line'] ?? 'n/a';
+            $function = $step['function'] ?? 'unknown';
+            if($i >= 1){
+                $this->print("#{$i} ",'e');             
+                $this->print("{$function}() ",'e');             
+                $this->print("{$file} ",'e');             
+                $this->log("{$line} ",'e');  
+            }
+                     
+
+            
+        }
+       
         exit(1);
     }
 
@@ -53,10 +74,10 @@ class Out {
 
     private function log(string $str, string $type = 'i', bool $toBakc = true) {
         $colors = [
-            'e' => 31, //error
-            's' => 32, //success
-            'w' => 33, //warning
-            'i' => 36  //info
+            'e' => 31, //error - red
+            's' => 36, //success - blue
+            'w' => 33, //warning - yellow
+            'i' => 32,  //info - green
         ];
         $color = $colors[$type] ?? 0;
         

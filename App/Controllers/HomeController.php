@@ -1,6 +1,6 @@
 <?php
 namespace App\Controllers;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
 use \App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;

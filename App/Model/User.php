@@ -2,13 +2,14 @@
 
 namespace App\Model;
 
-
+use App\Core\Contract\ModelSchemaInterface;
 use App\Model\Log;
 use App\Traits\Getter;
-use App\Core\Eloquent\ORM;
+use App\Core\Eloquent\Model;
+use App\Core\Eloquent\Schema\SchemaBuilder;
 use App\Traits\Relation;
 
-class User extends ORM
+class User extends Model implements ModelSchemaInterface  
 {
     use Getter; use Relation;
     protected string $table = 'users';
@@ -20,6 +21,21 @@ class User extends ORM
         'indirizzo',
         'last_log'
     ];
+
+    public static function schema(SchemaBuilder $schema): void{
+        $schema->table(self::$table)
+            ->id()
+            ->string('email')
+            ->integer('log_id')
+            ->string('password')
+            ->string('token')
+            ->string('indirizzo')
+            ->string('last_log')
+            ->timestamps()
+            ->foreignKey('log_id', 'log_id', 'logs')
+            ->unique('email')
+            ->create();
+    }
 
     public static function changePassword(string $password, string $email)
     {
@@ -35,4 +51,6 @@ class User extends ORM
     public function log(){
         return $this->hasMany(Log::class, 'log_id');
     }
+
+
 }
