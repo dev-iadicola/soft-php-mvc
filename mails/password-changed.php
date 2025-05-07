@@ -31,7 +31,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Ciao <?= $email?>, dal tuo Personale MVC,</h1>
+        <h1>Ciao <?= $user->email?>, dal tuo Personale MVC,</h1>
         <p>è stata fatta una richiesta per cambiare password </p>
 
         <p>

@@ -5,10 +5,8 @@ class SessionService {
     public static function startSession() {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
-            error_log("Sessione avviata.");
             return true;
         }
-        error_log("Sessione già avviata.");
         return false;
     }
     
@@ -54,8 +52,7 @@ class SessionService {
         self::startSession();
         $_SESSION['FLASH'][$key] = $value;
         $_SESSION['TIME'] = time(); // Imposta il tempo corrente
-        error_log("FLASH sessione impostata: " . print_r($_SESSION['FLASH'], true));
-        error_log("Tempo TIME impostato: " . $_SESSION['TIME']);
+      
     }
 
     public static function getFlashSession($key) {

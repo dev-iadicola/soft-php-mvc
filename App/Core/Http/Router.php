@@ -23,7 +23,6 @@ class Router {
         
     
         if (isset($routes[$method][$path])) {
-            error_log("Matched static route: $path");
             return [$routes[$method][$path], []];
         }
     
@@ -31,7 +30,6 @@ class Router {
             $routeRegex = preg_replace('/\{[^\}]+\}/', '([^/]+)', $route);
             if (preg_match('#^' . $routeRegex . '$#', $path, $matches)) {
                 array_shift($matches);
-                error_log("Matched dynamic route: $route");
                 return [$response, $matches];
             }
         }

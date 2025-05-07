@@ -9,6 +9,7 @@ use App\Core\Validator;
 use App\Core\Controller;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
+use App\Mail\BrevoMail;
 use App\Model\Token;
 
 class TokenController extends Controller
@@ -126,16 +127,19 @@ class TokenController extends Controller
 
        $user = User::changePassword(password: $data['password'], email: $token->email);
        if(!empty($user)){
-        $mailer = $this->mvc->mailer;
-        $mailer->setContent($user);
+
+        $brevoMail = new BrevoMail();
+        $body = 'password-changed' ;
+        $brevoMail->bodyHtml($body,['user' =>$user]);
         $to = $user->email;
         $subject = 'Password Cambiata con Successo';
-        $body = 'password-changed' ;
+        
         
      
 
-        $mailer->sendEmail($to, $subject, $body);
+        $brevoMail->send($to, $subject, $body);
        }
+
 
        $this->withSuccess('Accedi con le nuove credenziali!');
        return $this->render('Auth.login',['message'=>'Accedi con le nuove credenziali']);

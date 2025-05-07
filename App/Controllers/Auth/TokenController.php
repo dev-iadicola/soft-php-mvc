@@ -122,7 +122,7 @@ class TokenController extends Controller
         if (!empty($user)) {
             $brevoMail = new BrevoMail();
             $body = 'password-changed';
-            $brevoMail->bodyHtml($body,$user);
+            $brevoMail->bodyHtml($body,['user'=>$user]);
             $to = $user->email;
             $subject = 'Password Cambiata con Successo';
             $brevoMail->setEmail($to, $subject);
