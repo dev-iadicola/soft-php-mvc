@@ -42,10 +42,7 @@ class Kernel
 
     private function validateCommand($argv)
     {
-        Out::info($argv[0]);
-        
-
-        $command = $argv[1];
+        $command = $argv[1] ?? null;
         if (!$command) {
             Out::info("Welcome to SoftCLI v1.0\nA lightweight PHP CLI tool for your project (in development).\n");
             Out::ln("Future available commands:");
