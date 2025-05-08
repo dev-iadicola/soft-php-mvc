@@ -84,6 +84,7 @@ class Mvc{
         $this->getSMTPConnection();
 
         $this->sessionService = new SessionService();
+       
 
     }
 
@@ -135,6 +136,7 @@ class Mvc{
      */
     public function run()
     {
+        dd($this);
         $this->treeProject = new TreeProject($this);
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta

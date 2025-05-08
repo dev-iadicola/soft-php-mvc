@@ -1,0 +1,33 @@
+.debug-trace {
+    background: #2d2d2d;
+    color: #f8f8f2;
+    font-family: Consolas, Monaco, monospace;
+    font-size: 13px;
+    margin: 2px;
+    padding: 15px;
+    border-left: 4px solid #ff79c6;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 121, 198, 0.3);
+    margin-top: 6px;
+}
+
+.backtrace {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #ff79c6;
+}
+
+    /* Colors */
+
+.azure {
+    color: #8be9fd;
+}
+.green{
+    color: #50fa7b;
+}
+.yellow{
+    color: #f1fa8c;
+}
+.indaco {
+    color: #bd93f9;
+}
