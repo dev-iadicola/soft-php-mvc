@@ -158,7 +158,6 @@ class Controller
             $layout = str_replace('.php', '', $layout);
         }
 
-
         $this->mvc->view->layout = $layout;
     }
 

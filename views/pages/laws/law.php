@@ -44,7 +44,7 @@
     <div class="container">
         <div class="d-flex justify-content-start gap-5 flex-row flex-wrap mb-4">
             <?php foreach ($laws as $law) : ?>
-                <a href="#<?= $law->id ?>" class="stretched-link mr-5"><?= htmlspecialchars($law->title, ENT_QUOTES, 'UTF-8') ?></a>
+                <a href="#<?= $law->id ?>" class="stretched-link mr-5"><?= $law->title?></a>
             <?php endforeach ?>
         </div>
 
@@ -54,7 +54,7 @@
                     <div class="shadow-xl rounded bg-white" style="min-height: 900px; width: 100%; max-width: 1000px;">
                         <!-- Card Body -->
                         <div class="card-body">
-                            <h2 class=""><?= htmlspecialchars($law->title, ENT_QUOTES, 'UTF-8') ?></h2>
+                            <h2 class=""><?= $law->title ?></h2>
                             <div>
                                 <?= $law->testo ?>
                             </div>
