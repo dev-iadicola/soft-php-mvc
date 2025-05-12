@@ -17,7 +17,7 @@ class ErrorsController extends Controller{
             $this->render('coming-soon',[]);
             
         }else{
-            $this->mvc->response->redirect('/');
+            redirect('/');
         }
         
     }

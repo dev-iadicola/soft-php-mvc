@@ -19,7 +19,7 @@ class ContattiController extends Controller
     public function index()
     {
 
-        $this->render('contatti');
+        return view('contatti');
     }
 
 
@@ -42,7 +42,7 @@ class ContattiController extends Controller
         }
 
 
-        return $this->render('contatti');
+        return view('contatti');
     }
 
     public function checkThsiForm()

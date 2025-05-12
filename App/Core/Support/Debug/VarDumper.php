@@ -2,6 +2,7 @@
 namespace App\Core\Support\Debug;
 
 use App\Core\Design\Stilize;
+use ReflectionClass;
 
 class VarDumper
 {
@@ -53,8 +54,8 @@ class VarDumper
      */
     private function renderVar($var, $indent = 0, $countLoop = 0)
     {
-        $maxDepth = 10;
-        $pad = str_repeat(' ', $indent); // HTML-friendly indent
+        $maxDepth = 13;
+        $pad = str_repeat('&nbsp;', $indent); // HTML-friendly indent
         if ($countLoop > $maxDepth) {
             echo "<span class='vardump-limit'>[...]</span><br>";
             return;
@@ -69,8 +70,10 @@ class VarDumper
             echo "{$pad}]<br>";
         } elseif (is_object($var)) {
             $class = get_class($var);
-            echo "<span class='vardump-type'>object</span>({$class}) {<br>";
+            echo "<span class='vardump-type'>object</span>({$class}){ {$this->getFileName($var)} <br>";
+            
             foreach ((array) $var as $key => $value) {
+                
                 $prop = preg_replace('/^\0.+\0/', '', $key);
                 echo "{$pad}<span class='vardump-key'>{$prop}</span> => ";
                 $this->renderVar($value, $indent + 1, $countLoop + 1);
@@ -87,5 +90,14 @@ class VarDumper
         } else {
             echo "<span class='vardump-type'>unknown type</span><br>";
         }
+    }
+
+    private function getFileName($var){
+        $reflector = new ReflectionClass(get_class($var));
+        $fullPath = $reflector->getFileName();
+        $baseroot= baseRoot();
+        $fileName = str_replace( $baseroot,"", $fullPath);
+        echo "<span class='vardump-file'>defined in ".$fileName."</span> <br>";
+
     }
 }

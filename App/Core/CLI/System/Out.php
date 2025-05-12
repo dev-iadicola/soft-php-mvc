@@ -30,7 +30,6 @@ class Out {
 
     private function printLn($str) {
         $this->log($str);
-     
     }
 
  
@@ -84,5 +83,17 @@ class Out {
         $string = $toBakc ? "\033[".$color."m".$str."\033[0m\n" :"\033[".$color."m".$str."\033[0m";
         echo $string;
     
+    }
+
+    public function exe(array $command){
+
+        $string = "";
+        foreach($command as $key => $value) {
+            if($key >= 2){
+                $string.= $value.' ';
+            }
+        }
+
+        $this->printLn($string);
     }
 }

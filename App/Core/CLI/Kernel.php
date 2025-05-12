@@ -26,7 +26,8 @@ class Kernel
             'make:controller' => MakeControllerCommand::class,
             'make:table' => MakeTableCommand::class,
             'migrate' => MakeMigrationCommand::class,
-            'serve' => ServeCommand::class
+            'serve' => ServeCommand::class,
+            'print' => Out::class
         ];
     }
 
@@ -60,6 +61,7 @@ class Kernel
         if (!isset($this->commands[$command])) {
             Out::error(" the command '$command' not exist.");
         }
+
 
         $commandClass = $this->commands[$command];
 

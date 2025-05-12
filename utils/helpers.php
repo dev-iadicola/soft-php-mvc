@@ -1,10 +1,13 @@
 <?php
 
 use App\Core\Connection\SMTP;
+use App\Core\Controller;
 use App\Core\Design\Stilize;
+use App\Core\Http\Router;
 use App\Core\Mvc;
 use App\Core\Support\Collection\BuildAppFile;
 use App\Core\Support\Debug\VarDumper;
+use App\Core\CLI\System\Out;
 
 // File: src/helpers.php
 // Defines a global helper function available everywhere
@@ -25,6 +28,24 @@ if (!function_exists('setMvc')) {
     }
 }
 
+if (!function_exists(function: 'redirect')) {
+    function redirect($var){
+        mvc()->response->redirect($var);
+    }
+}
+if (!function_exists(function: 'printLn')) {
+    function printLn(string $var){
+        passthru("php soft print $var");
+    }
+}
+if (!function_exists(function: 'view')) {
+    function view(string $page, array $variables = [], array|null $message = null){
+      return mvc()->controller->render($page, $variables, $message);
+     }
+}
+
+
+ 
 if (!function_exists('mvc')) {
     /**
      * Summary of mvc
@@ -33,7 +54,7 @@ if (!function_exists('mvc')) {
      */
     function mvc()
     {
-        return $GLOBALS['mvc'];
+        return $GLOBALS['mvc'] ?? null;
     }
 }
 
@@ -49,11 +70,24 @@ if (!function_exists('dd')) {
         VarDumper::dd($vars);
     }
 
-    if (!function_exists('css')) {
+    if (!function_exists(function: 'css')) {
+        /**
+         * Summary of css
+         * return the css path
+         */
         function css(){
            return mvc()->config->folder->css;
         }
     }
+
+    if (!function_exists(function: 'router')) {
+        function router(){
+            return new Router();
+        }
+    }
+
+
+
 
 
     if (!function_exists('getSource')) {

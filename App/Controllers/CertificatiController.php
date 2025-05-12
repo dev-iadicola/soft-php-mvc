@@ -14,7 +14,7 @@ class CertificatiController extends Controller{
         
         $certificati = Certificate::findAll();
 
-        return $this->render('corsi',[],compact('certificati'));
+        return view(page: 'corsi',variables: compact('certificati'));
 
     }
 }
