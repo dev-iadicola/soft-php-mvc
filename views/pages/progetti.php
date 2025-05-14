@@ -1,5 +1,5 @@
 <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
-    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark">Cloud Projects</h3>
+    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Projects</h3>
 
     <div class="container bg-white my-5">
         <div class="row">
