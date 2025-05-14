@@ -28,7 +28,7 @@
         </a>
       </li>
       <li class="nav-item mx-2">
-        <a href="https://github.com/dev-iadicoa/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
+        <a href="https://github.com/dev-iadicola/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
           <i class="fa fa-github me-2"></i>
           <span class="d-none d-md-inline">GitHub</span>
         </a>
