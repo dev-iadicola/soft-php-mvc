@@ -24,7 +24,7 @@ class MaintenanceController extends Controller{
         $post = $request->getPost();
 
 
-        $root = $this->mvc->config['folder']['root'].'\.env';
+        $root = $this->mvc->config->folder->root.'\.env';
         if(isset($post['check'])){
 
             $valueForEnv = 'true';

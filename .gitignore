@@ -1,6 +1,7 @@
 /vendor/
 .vscode/*
 .env
+settings.json
 
 storage/*
 error_log

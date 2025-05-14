@@ -22,8 +22,8 @@ class User extends Model implements ModelSchemaInterface
         'last_log'
     ];
 
-    public static function schema(SchemaBuilder $schema): void{
-        $schema->table(self::$table)
+    public static function schema(SchemaBuilder $schema){
+        return $schema->propriety(new self())
             ->id()
             ->string('email')
             ->integer('log_id')

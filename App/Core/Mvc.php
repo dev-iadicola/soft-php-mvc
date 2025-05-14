@@ -62,9 +62,6 @@ class Mvc{
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
 
-
-
-       
         $this->middleware = new Middleware($this, $config->middleware);
         // Inizializza la connessione al database e imposta il PDO per l'Model
         $this->getPdoConnection(); // Invochiamo la connessione
@@ -72,7 +69,6 @@ class Mvc{
 
         $this->sessionService = new SessionService();
         $this->controller = New Controller(mvc: $this);
-
 
     }
 

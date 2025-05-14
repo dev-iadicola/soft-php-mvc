@@ -2,8 +2,12 @@
 
 namespace App\Core\Eloquent;
 
+use App\Core\Eloquent\Schema\Validation\CheckSchema;
 use PDO;
 use App\Core\Database;
+use App\Core\CLI\System\Out;
+use App\Core\Exception\ModelNotFoundException;
+use App\Core\Exception\ModelStructureException;
 
 class QueryBuilder
 {
@@ -26,6 +30,7 @@ class QueryBuilder
         $this->setPDO($pdo);
     }
 
+    
     public function __get($name){
         return $this->attribute[$name];
     }
@@ -40,7 +45,7 @@ class QueryBuilder
         $this->pdo = $pdo;
     }
     public function setClassModel(string $name){
-        $this->nameModel = $name;
+        $this->modelName = $name;
     }
 
     public function setFillable(array $fillable): void
@@ -116,7 +121,7 @@ class QueryBuilder
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato. Model: " .$this->nameModel);
+            throw new \Exception("Nome della tabella non impostato. Model: " .$this->modelName);
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
@@ -157,7 +162,7 @@ class QueryBuilder
             $instance = new static($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
-            $instance->setClassModel($this->nameModel);
+            $instance->setClassModel($this->modelName);
 
             foreach ($data as $key => $value) {
                 $instance->$key = $value;
@@ -175,7 +180,7 @@ class QueryBuilder
             $instance = new static($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
-            $instance->setClassModel($this->nameModel);
+            $instance->setClassModel($this->modelName);
             foreach ($row as $key => $value) {
                 $instance->$key = $value;
             }
@@ -230,6 +235,27 @@ class QueryBuilder
 
         return $this->getOneInstance($data);
     }
+    
+    public function findOrFail($id, int $fetchType = PDO::FETCH_ASSOC)
+    {
+        if (empty($this->table)) {
+            throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelName);
+        }
+        if(CheckSchema::tableExist($this->table)) {
+            throw new ModelNotFoundException("Table" . $this->table . " don't exist in database, correct your Model class ". $this->modelName ."");
+        }
+
+        $this->setKeyId($id);
+        $id = self::removeSpecialChars($id);
+
+        $query = "SELECT * FROM $this->table WHERE id = :id";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetch($fetchType);
+
+        return $this->getOneInstance($data) ?? throw new ModelNotFoundException( $id . " Not Found in Model " . $this->modelName  );
+    }
 
     public function delete(): bool
     {
@@ -256,7 +282,7 @@ class QueryBuilder
     public function update(array $values): bool
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato.");
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
 
         $fillable = $this->fillable;
@@ -284,10 +310,20 @@ class QueryBuilder
         return $stmt->execute();
     }
 
+    public function create(array $values){
+        if (empty($this->table)) {
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
+        }
+    
+        $fillable = $this->fillable;
+        
+        Out::foreach($fillable);
+
+    }
     public function save(array $values): bool
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato.");
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
 
         $fillable = $this->fillable;

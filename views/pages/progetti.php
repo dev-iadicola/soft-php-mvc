@@ -6,8 +6,11 @@
             <?php foreach ($projects as $project) : ?>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm border-light rounded-lg">
+
                         <a href="<?php isset($project->website) ? $project->website : $project->link ?>">
-                            <img class="card-img-top rounded-t-lg" src="<?= $project->img ?>" alt="<?= $project->title ?>" />
+                            <img class="card-img-top rounded-t-lg" 
+                            
+                            src="<?=validateImagePath($project->img, assets('img/no-img.svg'))?>" alt="<?= $project->title ?>" />
                         </a>
                         <div class="">
 

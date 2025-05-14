@@ -3,10 +3,8 @@
 namespace App\Core\CLI;
 
 use App\Core\CLI\Commands\MakeControllerCommand;
-use App\Core\CLI\Commands\MakeMigration;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeModelCommand;
-use App\Core\CLI\Commands\MakeTableCommand;
 use App\Core\CLI\Commands\ServeCommand;
 use App\Core\CLI\System\Out;
 
@@ -24,7 +22,6 @@ class Kernel
         $this->commands = [
             'make:model' => MakeModelCommand::class,
             'make:controller' => MakeControllerCommand::class,
-            'make:table' => MakeTableCommand::class,
             'migrate' => MakeMigrationCommand::class,
             'serve' => ServeCommand::class,
             'print' => Out::class
@@ -41,6 +38,7 @@ class Kernel
         $istance->exe($argv);
     }
 
+   
     private function validateCommand($argv)
     {
         $command = $argv[1] ?? null;

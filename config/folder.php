@@ -14,6 +14,7 @@ $folders::set('views','views');
 $folders::set('mails','mails');
 $folders::set('storage', 'storage');
 $folders::set('images', 'storage.images');
+$folders::set('migration','database.migration');
 $folders::set('css','assets.css');
 
 return $folders;

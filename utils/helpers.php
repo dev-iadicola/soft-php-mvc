@@ -2,6 +2,7 @@
 
 use App\Core\Connection\SMTP;
 use App\Core\Controller;
+use App\Core\Database;
 use App\Core\Design\Stilize;
 use App\Core\Http\Router;
 use App\Core\Mvc;
@@ -29,23 +30,26 @@ if (!function_exists('setMvc')) {
 }
 
 if (!function_exists(function: 'redirect')) {
-    function redirect($var){
+    function redirect($var)
+    {
         mvc()->response->redirect($var);
     }
 }
 if (!function_exists(function: 'printLn')) {
-    function printLn(string $var){
+    function printLn(string $var)
+    {
         passthru("php soft print $var");
     }
 }
 if (!function_exists(function: 'view')) {
-    function view(string $page, array $variables = [], array|null $message = null){
-      return mvc()->controller->render($page, $variables, $message);
-     }
+    function view(string $page, array $variables = [], array|null $message = null)
+    {
+        return mvc()->controller->render($page, $variables, $message);
+    }
 }
 
 
- 
+
 if (!function_exists('mvc')) {
     /**
      * Summary of mvc
@@ -70,18 +74,41 @@ if (!function_exists('dd')) {
         VarDumper::dd($vars);
     }
 
-    if (!function_exists(function: 'css')) {
+    if (!function_exists(function: 'assets')) {
+        function assets(string $file)
+        {
+            return 'assets/' . $file;
+        }
+    }
+
+    if (!function_exists('validateImagePath')) {
+        function validateImagePath(string $path, string $fallback)
+        {
+            if(file_exists(mvc()->config->folder->root.$path)) 
+                return $path;
+            else 
+                return $fallback;
+            
+        }
+    }
+
+
+
+
+    if (!function_exists(function: 'css')) { //get css folder in assets folder
         /**
          * Summary of css
          * return the css path
          */
-        function css(){
-           return mvc()->config->folder->css;
+        function css()
+        {
+            return mvc()->config->folder->css;
         }
     }
 
     if (!function_exists(function: 'router')) {
-        function router(){
+        function router()
+        {
             return new Router();
         }
     }
@@ -101,24 +128,24 @@ if (!function_exists('dd')) {
 
             Stilize::get('debugbacktrace.css');
             echo '<div class="debug-trace">';
-  
+
 
             $trace = array_reverse($trace);
             foreach ($trace as $i => $step) {
                 $file = $step['file'] ?? '[internal]';
                 $line = $step['line'] ?? 'n/a';
                 $function = $step['function'] ?? 'unknown';
-                
-                    echo "<span class='green'>{$function}()</span> ";
-                    echo "<span class='yellow'>in</span> ";
-                    echo "<span class='indaco'>{$file}</span>:";
-                    echo "<span class='yellow'>{$line}</span> <br><br>";
-                  
-                    
+
+                echo "<span class='green'>{$function}()</span> ";
+                echo "<span class='yellow'>in</span> ";
+                echo "<span class='indaco'>{$file}</span>:";
+                echo "<span class='yellow'>{$line}</span> <br><br>";
+
+
             }
-           
+
         }
-       
+
     }
     if (!function_exists('dump')) {
         function dump($vars)
@@ -144,6 +171,13 @@ if (!function_exists('dd')) {
         function smtp(): SMTP
         {
             return new SMTP();
+        }
+    }
+
+    if (!function_exists(function: 'database')) {
+        function database()
+        {
+            return new Database();
         }
     }
 
