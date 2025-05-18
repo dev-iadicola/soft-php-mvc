@@ -16,7 +16,7 @@ class LawController extends Controller {
     }
     public function home(){
         $laws = Law::findAll();
-        return $this->render('laws.law',[],compact('laws'));
+        return view('laws.law',compact('laws'));
     }
 
 }

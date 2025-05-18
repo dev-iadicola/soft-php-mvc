@@ -16,7 +16,7 @@ class ProgettiController extends Controller {
     public function index() {
      $projects = Project::findAll();
         
-        $this->render('progetti',[], compact('projects' ));
+        $this->render(view: 'progetti',  variables: compact('projects' ));
     }
 
 

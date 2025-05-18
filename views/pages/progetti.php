@@ -1,13 +1,16 @@
 <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
-    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark">Cloud Projects</h3>
+    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Projects</h3>
 
-    <div class="container bg-white m-5">
+    <div class="container bg-white my-5">
         <div class="row">
             <?php foreach ($projects as $project) : ?>
                 <div class="col-md-6 mb-4">
                     <div class="card shadow-sm border-light rounded-lg">
+
                         <a href="<?php isset($project->website) ? $project->website : $project->link ?>">
-                            <img class="card-img-top rounded-t-lg" src="<?= $project->img ?>" alt="<?= $project->title ?>" />
+                            <img class="card-img-top rounded-t-lg" 
+                            
+                            src="<?=validateImagePath($project->img, assets('img/no-img.svg'))?>" alt="<?= $project->title ?>" />
                         </a>
                         <div class="">
 

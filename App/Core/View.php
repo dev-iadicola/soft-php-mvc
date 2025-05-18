@@ -19,8 +19,12 @@ class View
     }
 
     // Rimpiazziamo i placeholder nelle pagine php
-    public function render(string $page, array $values = ['message' => ''], array $variables = []): string
+    public function render(string $page,array $variables = [], array|null $message = ['message' => '']) : string
     {
+        if($message === null){
+            $message = ['message'=>''];
+        }
+
         $page = str_replace('.', '/', $page);
 
         $layoutValue = [
@@ -28,20 +32,20 @@ class View
             'menu' => $this->mvc->config->menu,
         ];
 
+
         // Ricerca layouts e page
         $layoutContent = $this->getViewContent("layouts", $this->layout, $layoutValue);
         $pageContent = $this->getViewContent("pages", $page, $layoutValue, $variables);
-
         // Ricambia Includes 
         $pageContent = $this->processIncludes($pageContent, variables: $variables);
         $layoutContent = $this->processIncludes($layoutContent, $variables);
         // eseguito due volte nel caso si trattasse di un placeholder include con all'interno unaltro placeholder include
         $pageContent =  $this->processIncludes($pageContent, variables: $variables);
-
-
+        ini_set('display_errors', 1);
+        error_reporting(E_ALL);
 
         // Sostituzione dei placeholder {{page}} con un file.php
-        $pageContent = $this->renderContent($pageContent, $values);
+        $pageContent = $this->renderContent($pageContent, $message);
         return $this->renderContent($layoutContent, [
             'page' => $pageContent,
             'footer' => "Applicazione web MVC con PHP"
@@ -57,10 +61,6 @@ class View
         return ob_get_clean();
     }
 
-
-    // Nuova funzione per passare direttamente le variabili alla vista
-
-
     /**
      * Renderizza una vista.
      *
@@ -68,18 +68,16 @@ class View
      * @param array $variables Variabili da passare alla vista
      * @return string Contenuto della vista
      */
-
-
-    private function renderContent(string $content, array $values): string
+    private function renderContent(string $content, array|null $message): string
     {
-        $chiavi = array_keys($values);
+        $chiavi = array_keys($message);
         $chiavi = array_map(fn($chiave) => "{{" . $chiave . "}}", $chiavi);
-        foreach ($values as $key => $value) {
+        foreach ($message as $key => $value) {
             if ($value instanceof Component) {
-                $values[$key] = $this->renderComponent($value);
+                $message[$key] = $this->renderComponent($value);
             }
         }
-        $valori = array_values($values);
+        $valori = array_values($message);
         return str_replace($chiavi, $valori, $content);
     }
 

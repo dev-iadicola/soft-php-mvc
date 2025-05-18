@@ -24,14 +24,12 @@ class HomeController extends Controller {
         $certificati = Certificate::orderBy('certified DESC')->get();
         $projects = Project::orderBy(' id DESC')->get();
         $articles = Article::orderBy('created_at DESC')->get();
-        $curriculum = Curriculum::orderBy(' id DESC')->first();
         $profiles = Profile::where('selected',TRUE)->orderBy('id desc')->get();
-       // $profiles = Profile::orderBy('id desc')->where('selected', true)->get();
         $skills = Skill::orderBy('id desc')->get();
 
 
-        $this->render('home',[] ,compact('articles',
-        'certificati','projects','curriculum','profiles','skills') );
+        view('home',compact('articles',
+        'certificati','projects','profiles','skills') );
     }
 
     public function cookie(){

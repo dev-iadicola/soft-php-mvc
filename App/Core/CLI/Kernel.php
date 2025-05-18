@@ -3,10 +3,8 @@
 namespace App\Core\CLI;
 
 use App\Core\CLI\Commands\MakeControllerCommand;
-use App\Core\CLI\Commands\MakeMigration;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeModelCommand;
-use App\Core\CLI\Commands\MakeTableCommand;
 use App\Core\CLI\Commands\ServeCommand;
 use App\Core\CLI\System\Out;
 
@@ -24,9 +22,9 @@ class Kernel
         $this->commands = [
             'make:model' => MakeModelCommand::class,
             'make:controller' => MakeControllerCommand::class,
-            'make:table' => MakeTableCommand::class,
             'migrate' => MakeMigrationCommand::class,
-            'serve' => ServeCommand::class
+            'serve' => ServeCommand::class,
+            'print' => Out::class
         ];
     }
 
@@ -40,12 +38,10 @@ class Kernel
         $istance->exe($argv);
     }
 
+   
     private function validateCommand($argv)
     {
-        Out::info($argv[0]);
-        
-
-        $command = $argv[1];
+        $command = $argv[1] ?? null;
         if (!$command) {
             Out::info("Welcome to SoftCLI v1.0\nA lightweight PHP CLI tool for your project (in development).\n");
             Out::ln("Future available commands:");
@@ -63,6 +59,7 @@ class Kernel
         if (!isset($this->commands[$command])) {
             Out::error(" the command '$command' not exist.");
         }
+
 
         $commandClass = $this->commands[$command];
 

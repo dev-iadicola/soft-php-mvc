@@ -14,95 +14,106 @@ use App\Core\Services\SessionService;
  * 
  */
 
-class Controller {
+class Controller
+{
 
-    public function __construct(public Mvc $mvc) {
+    public function __construct(public Mvc $mvc)
+    {
         $mvc->sessionService->verifyTimeFlashSession();
     }
 
-        /**
+    /**
      * reindirizzamento alla cartella
      * @var $view inserire il file con estensione php per
      * visualizzare la pagina
-     * @var array $values  
+     * @var array $message  
      * All'interno di questo array insieramo  tutti i valori che sostituiranno 
      * i placceholders. esempio {{page}} verrà sostituiro da una variabile con indice page presente in un array
      *  
      * per maggiori particolari,andare nel file View presente su /App/Core/View
      */
-    public function render($view, $values = ['message' => ''], $variables = []) {
-        
-        $content = $this->mvc->view->render($view, $values, $variables);
+    public function render(string $view, array $variables = [], array|null $message = ['message' => ''])
+    {
+
+        $content = $this->mvc->view->render(page: $view, variables: $variables, message: $message);
         $this->mvc->response->setContent($content);
     }
 
-    public function redirect($var){
+    public function redirect($var)
+    {
         $this->mvc->response->redirect($var);
     }
 
-    public function statusCode413(){
+    public function statusCode413()
+    {
         $this->mvc->response->set413();
     }
 
-    public function redirectBack(){
+    public function redirectBack()
+    {
         $back = $this->mvc->request->redirectBack();
         $this->mvc->response->redirect($back);
     }
 
-    public function view($view, $variables){
+    public function view($view, $variables)
+    {
 
-      return   $this->mvc->view->view($view, $variables);
+        return $this->mvc->view->view($view, $variables);
 
     }
 
-    public function withError($message){
-        SessionService::setFlashSession('error',$message);
+    public function withError($message)
+    {
+        SessionService::setFlashSession('error', $message);
     }
 
-    public function withSuccess($message){
+    public function withSuccess($message)
+    {
         SessionService::setFlashSession('success', $message);
     }
 
-    public function resetImg(array $data){
+    public function resetImg(array $data)
+    {
 
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
             unset($data['img']);
-        }elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
+        } elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
             (new Storage($this->mvc))->deleteFile($data['img']);
             $data['img'] = $this->checkImage($data);
-    
+
         }
     }
-    public function deleteFile(string $img){
-        if(isset($img)){
+    public function deleteFile(string $img)
+    {
+        if (isset($img)) {
             $isImgDelete = (new Storage($this->mvc))->deleteFile($img);
             if ($isImgDelete === TRUE) {
                 return true;
-            } 
+            }
             return false;
         }
         return null;
     }
 
     public static function validateImage($file)
-{
-    // Controlla se il file è stato caricato senza errori
-    if (isset($file['tmp_name']) && is_uploaded_file($file['tmp_name'])) {
-        // Verifica se il file è un'immagine
-        $imageSize = @getimagesize($file['tmp_name']);
-        return is_array($imageSize);
+    {
+        // Controlla se il file è stato caricato senza errori
+        if (isset($file['tmp_name']) && is_uploaded_file($file['tmp_name'])) {
+            // Verifica se il file è un'immagine
+            $imageSize = @getimagesize($file['tmp_name']);
+            return is_array($imageSize);
+        }
+        return false;
     }
-    return false;
-}
 
     public function checkImage($data)
     {
-        $originalNameFile =  $data['img']['name'];
+        $originalNameFile = $data['img']['name'];
 
-         $newName = str_replace(' ', '',date('Y-m-d-H-i-s-').$data['img']['name']);
+        $newName = str_replace(' ', '', date('Y-m-d-H-i-s-') . $data['img']['name']);
 
-         $data['img']['name'] =  $newName;
-       
+        $data['img']['name'] = $newName;
+
         $validImage = Validator::validateImage(
             $data['img']
         );
@@ -114,10 +125,10 @@ class Controller {
         $uploadFile = new Storage($this->mvc);
         $uploadFile->storageImage($data['img']);
         return $uploadFile->getPathImg();
-     
+
     }
 
-    
+
 
     public function checkPdf($data)
     {
@@ -132,23 +143,23 @@ class Controller {
         $uploadFile = new Storage($this->mvc);
         $uploadFile->storeFile($data['img']);
 
-        return  $uploadFile->getPathImg();
+        return $uploadFile->getPathImg();
     }
 
 
-   
+
     /**
      * Modifica il Layout della pagina
      */
 
-     protected function setLayout(string $layout){
-        if(str_contains($layout, '.php')){
-            $layout =  str_replace('.php','',$layout);
+    protected function setLayout(string $layout)
+    {
+        if (str_contains($layout, '.php')) {
+            $layout = str_replace('.php', '', $layout);
         }
-      
 
         $this->mvc->view->layout = $layout;
-     }
+    }
 
-     
+
 }

@@ -11,13 +11,20 @@ class Response {
         public View $view 
     ) {}
 
+   
+
+    public function getContent(){
+        return $this->content;
+    }
+
     public function send(): void {
         http_response_code($this->statusCode);
         echo $this->content;
     }
 
-    public function redirect(string $toUrl): never {
+    public function redirect(string $toUrl, $status = 200): never {
         header("location: $toUrl");
+        $this->setCode($status);
         exit;
     }
 

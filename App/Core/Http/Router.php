@@ -4,21 +4,24 @@ use App\Controllers\Admin\DashBoardController;
 use \App\Core\Http\Request;
 use \App\Core\Mvc;
 use \App\Core\Exception\NotFoundException;
+use App\Core\Support\Collection\BuildAppFile;
 
 
 class Router {
 
     public Request $request;
-
-   
-    public function __construct(public Mvc $mvc) {
-        $this->request = $this->mvc->request; 
+public Mvc $mvc;
+    public BuildAppFile $config;
+    public function __construct(?Mvc $mvc =null) {
+        $this->mvc = $mvc ?? mvc();
+        $this->request =  $mvc->request ?? mvc()->request; 
+        $this->config = $mvc->config ?? mvc()->config;
     }
 
-    public function getRoute(): array|bool {
-        $method = $this->mvc->request->getRequestMethod();
-        $path = $this->mvc->request->getRequestPath();
-        $routes = $this->mvc->config->routes;
+    public function getRoute() {
+        $method = $this->request->getRequestMethod();
+        $path = $this->request->getRequestPath();
+        $routes = $this->config->routes;
         
         
     
@@ -49,6 +52,7 @@ class Router {
         list($response, $params) = $route;
         $controller = $response[0];
         $method = $response[1];
+
 
         if (!class_exists($controller)) {
             throw new \Exception("Controller class $controller not found");

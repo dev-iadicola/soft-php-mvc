@@ -28,6 +28,7 @@ class Mvc{
     public Request $request;
     public Response $response; // Gestione della risposta al client
     public Router $router; // Gestione delle rotte
+    public Controller $controller;
     public View $view; // Gestione delle viste
 
     public Storage $storage;
@@ -37,10 +38,7 @@ class Mvc{
     public Mailer $mailer;
 
     public Middleware  $middleware; //Gestione di Autenticazione utente
-
-
     public SessionService $sessionService;
-
     private TreeProject $treeProject; // serve per la popolazione dell'albero
     /**
      * Costruttore della classe Mvc
@@ -53,37 +51,24 @@ class Mvc{
         $this->initializeWhoops();
 
         $this->config = $config; 
-       
-
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
-        
-
-        // $this->treeProject = new TreeProject();
-        
-
         // inizializza l'oggetto Request per gestire le richieste HTTP
         $this->request = new Request();
-
         // Inizializza l'oggetto View per gestire le viste
         $this->view = new View($this);
-
-
-
-
         // inizializza l'oggetto Response per gestire la risposta HTTP
         $this->response = new Response($this->view);
-
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
 
-       
         $this->middleware = new Middleware($this, $config->middleware);
         // Inizializza la connessione al database e imposta il PDO per l'Model
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
 
         $this->sessionService = new SessionService();
+        $this->controller = New Controller(mvc: $this);
 
     }
 
@@ -135,10 +120,11 @@ class Mvc{
      */
     public function run()
     {
+  
         $this->treeProject = new TreeProject($this);
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
-            $this->router->resolve();
+            router()->resolve();
         } catch (NotFoundException $e) {
             // Se la rotta non viene trovata, imposta una risposta 404
             $this->response->set404($e);

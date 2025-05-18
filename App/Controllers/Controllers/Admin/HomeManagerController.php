@@ -30,7 +30,7 @@ class HomeManagerController extends Controller
 
 
 
-        return $this->render('admin.portfolio.home', [], compact('articles','skills','profiles'));
+        return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
 
@@ -63,7 +63,7 @@ class HomeManagerController extends Controller
         $profiles = Profile::orderBy('id DESC')->get();
 
 
-        return $this->render('admin.portfolio.home', [], compact('articles', 'article', 'skills','profiles'));
+        return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
     }
     public function update(Request $request, $id)
     {

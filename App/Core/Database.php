@@ -27,10 +27,8 @@ class Database
         $port = getenv('DB_PORT') ?: 3306; // Usa la porta 3306 come predefinita se DB_PORT non è definito
 
 
-        $_DSN =  "mysql:host=" . $host . ";
-        port=" . $port . ";
-        dbname=" . $name . ";
-        charset=utf8";
+        $_DSN = "mysql:host={$host};port={$port};dbname={$name};charset=utf8";
+
 
         $this->pdo = new PDO($_DSN, $user, $psw, [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
