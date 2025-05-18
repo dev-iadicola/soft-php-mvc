@@ -15,7 +15,7 @@ class Router {
         $this->request = $this->mvc->request; 
     }
 
-    public function getRoute() {
+    public function getRoute(): array|bool {
         $method = $this->mvc->request->getRequestMethod();
         $path = $this->mvc->request->getRequestPath();
         $routes = $this->mvc->config->routes;
@@ -43,8 +43,9 @@ class Router {
         $this->dispatch($route);
     }
 
-    public function dispatch($route) {
+    public function dispatch(array $route) {
 
+        
         list($response, $params) = $route;
         $controller = $response[0];
         $method = $response[1];
@@ -54,16 +55,15 @@ class Router {
         }
 
         $request = $this->request;
+ 
+
 
         $instance = new $controller($this->mvc);
 
         if (!method_exists($instance, $method)) {
             throw new \Exception("Method $method not found in controller $controller");
         }
-
         $this->mvc->middleware->execute(); // controllo middleware
-
-        
 
         call_user_func_array([$instance, $method], array_merge([$request], $params));
     }

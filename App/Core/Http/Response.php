@@ -11,25 +11,25 @@ class Response {
         public View $view 
     ) {}
 
-    public function send() {
+    public function send(): void {
         http_response_code($this->statusCode);
         echo $this->content;
     }
 
-    public function redirect($toUrl) {
+    public function redirect(string $toUrl): never {
         header("location: $toUrl");
         exit;
     }
 
-    public function setContent($content) {
+    public function setContent(string $content): void {
         $this->content = $content;
     }
 
-    public function setCode($code) {
+    public function setCode(int $code): void {
         $this->statusCode = $code;
     }
 
-    public function set404($e) {
+    public function set404($e): void {
         $this->setCode($e->getCode());
         $this->setContent(
             $this->view->render('error', [
@@ -39,7 +39,7 @@ class Response {
         );
     }
 
-    public function set413() {
+    public function set413(): void {
         // Imposta il layout desiderato
         $this->view->setLayout('default');
     

@@ -14,26 +14,24 @@ class Request {
     }
 
     // Cattura richiesta post
-    public function getPost() {
+    public function getPost(): array {
     $postData = $_POST ?? [];
     $fileData = $_FILES ?? [];
-
     $combinedData = array_merge($postData, $fileData);
-
     return $combinedData;
     }
-
+    
     // Preleva la request URI
-    public function getRequestPath() {
+    public function getRequestPath(): string {
         return $_SERVER['REQUEST_URI'];
     }
 
     // Cattura il metodo della richiesta
-    public function getRequestMethod() {
+    public function getRequestMethod(): string {
         return strtolower($_SERVER['REQUEST_METHOD']);
     }
 
-    public function getBack()
+    public function getBack(): string|null
     {
         // Assicurati che HTTP_REFERER sia impostato
         if (isset($_SERVER['HTTP_REFERER'])) {
@@ -43,7 +41,7 @@ class Request {
         return null;
     }
 
-    public function redirectBack()
+    public function redirectBack(): never
     {
         $backUrl = $this->getBack();
         if (!empty($backUrl)) {
