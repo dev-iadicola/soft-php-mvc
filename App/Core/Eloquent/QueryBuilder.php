@@ -317,8 +317,7 @@ class QueryBuilder
     
         $fillable = $this->fillable;
         
-        Out::foreach($fillable);
-
+       
     }
     public function save(array $values): bool
     {

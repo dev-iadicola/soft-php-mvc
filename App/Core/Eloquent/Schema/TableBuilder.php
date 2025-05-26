@@ -8,17 +8,24 @@ use PDOException;
 use App\Core\Helpers\Log;
 use App\Core\CLI\System\Out;
 use App\Core\Eloquent\Schema\Column;
+use ReturnTypeWillChange;
 
-class TableBuilder 
+class TableBuilder
 {
+    /**
+     * Questa classe è ancora in fase di sviluppo e testing
+     * 
+     */
     public string $id;
     protected Column $column;
-    public function __construct(protected PDO $pdo, protected string $table, protected array $columns = [], protected bool $tableExist = false)
+    public function __construct(protected PDO $pdo, public string $table, protected array $columns = [], protected bool $tableExist = false)
     {
-
+        $this->tableExist = CheckSchema::tableExist($this->table);
+        Out::warning($this->tableExist ? "table $this->table exist:true" : "table $this->table exist:false");
     }
     public function setCreate(): self
     {
+
         $this->tableExist = CheckSchema::tableExist($this->table);
         return $this;
     }
@@ -37,10 +44,10 @@ class TableBuilder
         return $this;
     }
 
-    public function stringId(string $name): self
+    public function stringId(string $name, int $length = 255): self
     {
         $this->id = $name;
-        $this->columns[$name] = "`$name` STRING PRIMARY KEY";
+        $this->columns[$name] = "`$name` VARCHAR($length) PRIMARY KEY";
         return $this;
     }
     public function string(string $name, int $length = 255): self
@@ -57,152 +64,163 @@ class TableBuilder
     public function timestamps(): self
     {
         $this->columns['created_at'] = "`created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP";
-        $this->columns['updated_at'] = "`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
+        $this->columns['updated_at'] = "`updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ";
         return $this;
     }
 
-    public function json(string $name){
-        $this->columns[$name] = "`$name` JSON";
-    }
-
-    public function unique(string|array $name): self
+    public function json(string $name): self
     {
-        $this->columns[] = "UNIQUE (`...$name`)";
+        $this->columns[$name] = "`$name` JSON";
         return $this;
     }
+
+    public function unique(string|array $name = ''): self
+    {
+        if ($name === '') {
+            $this->last('UNIQUE');
+        }else{
+            $columns = is_array($name) ? implode('`,`', $name) : $name;
+            $this->columns[] = "UNIQUE (`$columns`)";
+        }
+        return $this;
+    }
+
     public function text($name)
     {
         $this->columns[$name] = "`$name` TEXT";
     }
 
+    private function last(string $string): void
+    {
+        $last = array_key_last($this->columns);
+        if ($last !== null) {
+            $this->columns[$last] = $this->columns[$last] . ' ' . $string;
+        }
+    }
+
     public function nullable(): self
     {
-        $last = array_key_last($this->columns);
-        if ($last !== null) {
-            $this->columns[$last]['nullable'] = true;
-        }
+        $this->last('NULL');
+        return $this;
+    }
+    public function notNull(): self
+    {
+        $this->last('NOT NULL');
+        return $this;
+    }
+    public function unsigned(): self
+    {
+        $this->last('UNSIGNED');
         return $this;
     }
 
-    public function default(string|int|null $value): self
+    public function default(string|int|float|null $value): self
     {
-        $last = array_key_last($this->columns);
-        if ($last !== null) {
-            $this->columns[$last]['default'] = $value;
-        }
+        $val = is_string($value) ? "'$value'" : $value;
+        $this->last("DEFAULT $val");
         return $this;
     }
 
 
-    public function foreignKey(string $foreignKey, string $columnReference, string $tableReference): self
+
+    // Foreign Key
+    public function foreignKey(string $foreignKey, string $tableReference, string $columnReference = 'id'): self
     {
-        $this->columns[] = "CONSTRAINT `FK_{$foreignKey}_{$columnReference}` FOREIGN KEY (`{$columnReference}`) REFERENCES `{$tableReference}`(`{$columnReference}`)";
+        $this->columns[] = "FOREIGN KEY (`{$foreignKey}`) REFERENCES `{$tableReference}`(`{$columnReference}`)";
         return $this;
     }
 
-    protected function buildColumn(array $column): string
+    public function bool(string $name): self
     {
-        $sql = "`{$column['name']}` {$column['type']}";
-
-        if ($column['nullable']) {
-            $sql .= " NULL";
-        } else {
-            $sql .= " NOT NULL";
-        }
-
-        if (!is_null($column['default'])) {
-            $default = is_string($column['default']) ? "'{$column['default']}'" : $column['default'];
-            $sql .= " DEFAULT {$default}";
-        }
-
-        if (!empty($column['extra'])) {
-            $sql .= " {$column['extra']}";
-        }
-
-        return $sql;
+        $this->columns[$name] = "`$name` TINYINT";
+        return $this;
     }
-
-
 
     private function createTable()
     {
         Migration::setMigration($this->table, $this->columns);
-        $table = $this->table; 
-        $sqlParts = [];
 
-
-        foreach ($this->columns as $column) {
-            if (is_array($column)) {
-                $sqlParts[] = $this->buildColumn($column);
-            } else {
-                $sqlParts[] = $column; // per FOREIGN KEY, UNIQUE ecc.
-            }
-        }
-
-        $sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (\n" . implode(",\n", $sqlParts) . "\n)";
+        $sql = "CREATE TABLE IF NOT EXISTS `{$this->table}` (\n" . implode(",\n", array: $this->columns) . "\n) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;";
         Out::info($sql);
+        // put the data in migration
         $this->pdo->exec($sql);
     }
 
     private function updateTable()
     {
-        $sqlParts = [];
+        // $sqlParts = [];
 
-        $existing = CheckSchema::getExistColumns($this->table);
-        Log::info($existing);
-        exit();
 
-        foreach ($this->columns as $column) {
-            if (is_array($column)) {
-                $action = $column['action'] ?? 'add';
-                $columnDef = $this->buildColumn($column);
 
-                switch (strtolower($action)) {
-                    case 'add':
-                        $sqlParts[] = "ADD COLUMN {$columnDef}";
-                        break;
-                    case 'modify':
-                        $sqlParts[] = "MODIFY COLUMN {$columnDef}";
-                        break;
-                    case 'drop':
-                        $sqlParts[] = "DROP COLUMN `{$column['name']}`";
-                        break;
-                    // puoi aggiungere altri casi
-                }
-            } else {
-                $sqlParts[] = $column; // per ALTER generici
-            }
-        }
+        // foreach ($this->columns as $column) {
+        //     if (is_array($column)) {
+        //         $action = $column['action'] ?? 'add';
+        //         $columnDef = $column;
 
-        if (!empty($sqlParts)) {
-            $sql = "ALTER TABLE `{$this->table}`\n" . implode(",\n", $sqlParts);
-            //Out::info($sql);
-            $this->pdo->exec($sql);
-        }
+        //         switch (strtolower($action)) {
+        //             case 'add':
+        //                 $sqlParts[] = "ADD COLUMN {$columnDef}";
+        //                 break;
+        //             case 'modify':
+        //                 $sqlParts[] = "MODIFY COLUMN {$columnDef}";
+        //                 break;
+        //             case 'drop':
+        //                 $sqlParts[] = "DROP COLUMN `{$column['name']}`";
+        //                 break;
+        //             // puoi aggiungere altri casi
+        //         }
+        //     } else {
+        //         $sqlParts[] = $column; // per ALTER generici
+        //     }
+        // }
+
+        // if (!empty($sqlParts)) {
+        //     $sql = "ALTER TABLE `{$this->table}`\n" . implode(",\n", $sqlParts);
+        //     Out::warning($sql);
+        //     $this->pdo->exec($sql);
+        // }
     }
-    public function build(): void
+
+
+
+    // Date
+    public function datetime(string $name): self
+    {
+        $this->columns[$name] = "`$name` DATETIME ";
+        return $this;
+    }
+
+    public function date(string $name): self
+    {
+        $this->columns[$name] = "`$name` DATE";
+        return $this;
+    }
+
+
+    // esecuzione scrittura della tabella
+    private function exec(): void
     {
         try {
             if ($this->tableExist) {
                 $this->updateTable();
+                Out::success("Table is create {$this->table}");
             } else {
                 $this->createTable();
+                Out::success("Table is update {$this->table}");
             }
         } catch (PDOException $e) {
-            Out::info($e->getMessage(). " at line " . $e->getLine() . " at file " . $e->getFile());
-            Out::error("Query fallita:\n" . ($sql ?? 'Query non disponibile.'));
-
+            Out::warning($e->getMessage() . " at line " . $e->getLine() . " at file " . $e->getFile());
         }
 
     }
 
-
-
-    public function create(): void
+    // comando pubblico per la creazione della tabella
+    public function build(): void
     {
-        $this->setCreate()->build();
+        $this->exec();
     }
 
+    // comando pubblico per l'eliminazione della tab 
     public function delete()
     {
         $sql = "DROP TABLE IF EXISTS `{$this->table}`";
