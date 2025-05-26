@@ -21,10 +21,11 @@ class MakeModelCommand implements CommandInterface
         // $template = "<?php\n\nnamespace App\Models;\n\nclass $modelName\n{\n    // Model $modelName\n}\n";
         // file_put_contents($path, $template);
 
-        Out::success("✅ Modello" . $modelName . " creato con successo in App/Models/$modelName.php\n");
+        Out::success("Modello " . $modelName . " creato con successo in App/Models/$modelName.php\n");
 
     }
 
+    
     private function mvc(): Mvc
     {
         echo getcwd() . '/.env';
