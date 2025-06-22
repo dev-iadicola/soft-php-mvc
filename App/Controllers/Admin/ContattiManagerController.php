@@ -15,13 +15,13 @@ class ContattiManagerController extends Controller{
 
     public function index(){
        $contatti = Contatti::orderBy('created_at DESC')->get();
-       return $this->render('admin.portfolio.messaggi',[],compact('contatti'));
+       return view('admin.portfolio.messaggi', compact('contatti'));
     }
 
     public function get(Request $request, $id){
       $contatti = Contatti::orderBy('created_at DESC')->get();
       $contatto = Contatti::find($id);
-      return $this->render('admin.portfolio.messaggi',[],compact('contatti','contatto'));
+      return view('admin.portfolio.messaggi',compact('contatti','contatto'));
 
     }
 

@@ -30,7 +30,7 @@ class HomeManagerController extends Controller
 
 
 
-        return $this->render('admin.portfolio.home', [], compact('articles','skills','profiles'));
+        return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
 
@@ -46,7 +46,7 @@ class HomeManagerController extends Controller
             $data['img'] = $this->checkImage($data);
         }
 
-        Article::dirtySave($data);
+        Article::store($data);
 
         return $this->redirectBack()->withSuccess('Articolo Inserito con successo nella Home Page!');
 
@@ -63,7 +63,7 @@ class HomeManagerController extends Controller
         $profiles = Profile::orderBy('id DESC')->get();
 
 
-        return $this->render('admin.portfolio.home', [], compact('articles', 'article', 'skills','profiles'));
+        return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
     }
     public function update(Request $request, $id)
     {
@@ -86,7 +86,7 @@ class HomeManagerController extends Controller
 
         // Trova porgetto
         $project = Article::find($id);
-        $project->dirtyUpdate($data);
+        $project->update($data);
 
 
         // feedback server

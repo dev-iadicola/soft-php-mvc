@@ -21,7 +21,7 @@ class ProjectManagerController extends Controller
    public function index()
    {
       $projects = Project::orderBy('id DESC')->get();
-      $this->render('admin.portfolio.project', [], compact('projects'));
+      return view('admin.portfolio.project',  compact('projects'));
    }
 
    public function store(Request $request)
@@ -34,7 +34,7 @@ class ProjectManagerController extends Controller
       }
 
 
-      Project::dirtySave($data);
+      Project::update($data);
 
       $this->withSuccess('Progetto salvato con Successo!');
       return $this->redirectBack();
@@ -45,7 +45,7 @@ class ProjectManagerController extends Controller
 
       $project = Project::find($id);
       $projects = Project::orderBy('id DESC')->get();
-      $this->render('admin.portfolio.project', [], compact('project', 'projects'));
+      return view('admin.portfolio.project', compact('project', 'projects'));
    }
 
    public function update(Request $request, $id)
@@ -69,7 +69,7 @@ class ProjectManagerController extends Controller
 
       // Trova porgetto
       $project = Project::find($id);
-      $project->dirtyUpdate($data);
+      $project->update($data);
 
 
       // feedback server
@@ -99,14 +99,8 @@ class ProjectManagerController extends Controller
       }
 
       $this->withError('Progetto non eliminato correttamente');
-
-      // Feedback Serve
       return $this->redirect('/admin/progetti');
    }
-
-
-
-   // Metodo validazione Immagine
 
 
 }

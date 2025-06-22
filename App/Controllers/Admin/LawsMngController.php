@@ -18,11 +18,11 @@ class LawsMngController extends Controller{
     public function index(){
 
         $laws=  Law::orderBy('id desc')->get();
-         return $this->render('admin.laws.index',[],compact('laws'));
+         return view('admin.laws.index',compact('laws'));
         }
         
         public function store(Request $request){        
-         Law::dirtySave( $request->getPost());
+         Law::create( $request->getPost());
         
          $this->withSuccess('New Law has be created');
          return $this->redirectBack();
@@ -33,14 +33,14 @@ class LawsMngController extends Controller{
         
          $laws = Law::findAll();
         
-         return $this->render( 'admin.laws.index' , [], compact('laws','law')  );
+         return view( 'admin.laws.index' , compact('laws','law')  );
         
         }
 
         public function update(Request $request, $id){
           $law = Law::find($id);
 
-          $law->dirtyUpdate($request->getPost());
+          $law->update($request->getPost());
           
           $this->withSuccess('Law is Updated');
           return $this->redirectBack();
@@ -63,8 +63,6 @@ class LawsMngController extends Controller{
          
             $this->withError('LAW NOT WAS DELETED!');
             return $this->redirectBack();
-          
-
         }
         
 }

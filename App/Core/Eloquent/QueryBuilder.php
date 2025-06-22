@@ -8,6 +8,7 @@ use App\Core\Database;
 use App\Core\CLI\System\Out;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
+use App\Core\Exception\QueryBuilderException;
 
 class QueryBuilder
 {
@@ -60,8 +61,7 @@ class QueryBuilder
 
     public function where(string $columnName, $parameter): self
     {
-        $columnName = self::removeSpecialChars($columnName);
-        $parameter = self::removeSpecialChars($parameter);
+      
 
         $this->whereClause = "WHERE $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
@@ -71,8 +71,7 @@ class QueryBuilder
 
     public function whereNot(string $columnName, $parameter): self
     {
-        $columnName = self::removeSpecialChars($columnName);
-        $parameter = self::removeSpecialChars($parameter);
+        
 
         $this->whereClause = "WHERE NOT $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
@@ -80,26 +79,26 @@ class QueryBuilder
         return $this;
     }
 
-    public function select($value): self
+    public function select(array|string $value): self
     {
-        $sanitizedValue = self::removeSpecialChars($value);
-        $this->selectValues = $sanitizedValue;
-
+        if (is_array($value)) {
+            $this->selectValues = implode(', ', $value);
+        } else {
+            $this->selectValues = $value;
+        }
         return $this;
     }
 
     public function orderBy(string $value): self
     {
-        $sanitizedValue = self::removeSpecialChars($value);
-        $this->orderByClause = "ORDER BY $sanitizedValue";
+        $this->orderByClause = "ORDER BY $value";
 
         return $this;
     }
 
     public function groupBy(string $param): self
     {
-        $sanitizeVal = self::removeSpecialChars($param);
-        $this->groupByClause = "GROUP BY $sanitizeVal";
+        $this->groupByClause = "GROUP BY $param";
 
         return $this;
     }
@@ -263,17 +262,25 @@ class QueryBuilder
             throw new \Exception("Nome della tabella non impostato.");
         }
 
-        $findRecord = $this->whereClause ?: "WHERE id = :id";
-        $query = "DELETE FROM $this->table $findRecord";
+        // condizioni
+        $where = $this->whereClause ?? '';
+        $bindigns = $this->bindings == [];
+
+        if(empty($where)){
+            if(isset($this->id)){
+                $where = "WHERE id = :id";
+                $bindigns = [':id' => $this->id];
+            }else{
+                throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
+            }
+        }
+
+        $query = "DELETE FROM {$this->table} $where";
 
         $stmt = $this->pdo->prepare($query);
 
-        foreach ($this->bindings as $param => $value) {
+        foreach ($bindigns as $param => $value) {
             $stmt->bindValue($param, $value);
-        }
-
-        if (!isset($this->bindings[':id']) && !$this->whereClause) {
-            $stmt->bindValue(':id', $this->id, PDO::PARAM_INT);
         }
 
         return $stmt->execute();
@@ -284,42 +291,78 @@ class QueryBuilder
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
-
+    
         $fillable = $this->fillable;
         if (!empty($fillable)) {
             $values = array_filter($values, fn($key) => in_array($key, $fillable), ARRAY_FILTER_USE_KEY);
         }
-
+    
         $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($values)));
-        $findRecord = $this->whereClause ?: "WHERE id = :id";
+    
+        $whereClause = $this->whereClause ?: "WHERE id = :id";
         if (!isset($this->bindings[':id']) && !$this->whereClause) {
             $this->bindings[':id'] = $this->id;
         }
-
-        $query = "UPDATE $this->table SET $setClause $findRecord";
+    
+        $query = "UPDATE {$this->table} SET {$setClause} {$whereClause}";
         $stmt = $this->pdo->prepare($query);
-
-        foreach ($values as $field => $value) {
-            $stmt->bindValue(":$field", self::removeSpecialChars($value));
+    
+        // Bind dei valori da aggiornare
+        foreach ($values as $key => $val) {
+            if(trim($val) === ''){
+                $val = NULL;
+            }
+         
+            $stmt->bindValue(":$key", $val);
         }
-
+    
+        // Bind dei valori nella WHERE
         foreach ($this->bindings as $param => $value) {
-            $stmt->bindValue($param, $value);
+            if (!isset($values[ltrim($param, ':')])) {
+                $stmt->bindValue($param, $value);
+            }
         }
-
+      
         return $stmt->execute();
     }
+    
 
-    public function create(array $values){
+    public function create(array $values)
+    {
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
     
         $fillable = $this->fillable;
-        
-        Out::foreach($fillable);
+    
+        // Filtra i valori per tenere solo quelli presenti in $fillable
+        $filteredValues = array_filter(
+            $values,
+            fn($key) => in_array($key, $fillable),
+            ARRAY_FILTER_USE_KEY
+        );
+    
+        if (empty($filteredValues)) {
+            throw new \InvalidArgumentException("Nessun valore valido da inserire.");
+        }
+    
+        // Prepara colonne e placeholder per PDO
+        $columns = implode(", ", array_keys($filteredValues));
+        $placeholders = implode(", ", array_map(fn($key) => ":$key", array_keys($filteredValues)));
+    
+        $query = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
+    
+        $stmt = $this->pdo->prepare($query);
+    
+        // Bind dei valori
+        foreach ($filteredValues as $key => $val) {
+            $stmt->bindValue(":$key", $val);
+        }
 
+        $stmt->execute();
+        return $this;
     }
+    
     public function save(array $values): bool
     {
         if (empty($this->table)) {

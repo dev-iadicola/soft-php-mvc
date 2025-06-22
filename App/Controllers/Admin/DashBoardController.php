@@ -4,7 +4,6 @@ use App\Core\Mvc;
 use App\Core\Eloquent\Model;
 use App\Model\Contatti;
 use App\Core\Controller;
-use App\Model\Curriculum;
 use App\Core\Services\AuthService;
 
 class DashBoardController extends Controller{
@@ -18,7 +17,7 @@ class DashBoardController extends Controller{
 
     public function index(){
         $message = Contatti::orderBy('id desc')->get();
-        $this->render('admin.dashboard',[],compact('message'));
+       return view('admin.dashboard', compact('message'));
     }
 
     public function logout(){

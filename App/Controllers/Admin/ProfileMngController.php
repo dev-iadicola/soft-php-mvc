@@ -25,7 +25,7 @@ class ProfileMngController extends Controller
 
   public function store(Request $request)
   {   
-    Profile::dirtySave($request->getPost());
+    Profile::create($request->getPost());
 
     $this->redirectBack()->withSuccess('Skills Aggiornate conn Successo!');
   }
@@ -36,7 +36,7 @@ class ProfileMngController extends Controller
     $skills = Skill::orderBy('id DESC')->get();
     $articles = Article::orderBy('created_at DESC')->get();
     $profiles = Profile::orderBy('id desc')->get();
-    $this->render('admin.portfolio.home', [], compact('profile','skills','articles','profiles'));
+    return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
   }
 
   public function update(Request $request, $id)
@@ -47,7 +47,7 @@ class ProfileMngController extends Controller
 
 
     $project = Profile::find($id);
-    $project->dirtyUpdate($data);
+    $project->update($data);
 
     $this->withSuccess('Aggiornamento Eseguito');
     $this->redirectBack();

@@ -21,13 +21,13 @@ class CorsiManagerController extends Controller
    {
       $corsi = Certificate::orderBy('certified DESC')->get();
 
-      return $this->render('/admin/portfolio/corsi', [], compact('corsi'));
+      return view('/admin/portfolio/corsi',  compact('corsi'));
    }
 
    public function store(Request $request)
    {
 
-      Certificate::dirtySave($request->getPost());
+      Certificate::store($request->getPost());
 
       return  $this->redirectBack()->withSuccess('Certificate Inserito');
    }
@@ -45,13 +45,13 @@ class CorsiManagerController extends Controller
          return $this->redirectBack();
       }
 
-      return $this->render('/admin/portfolio/corsi', [], compact('corsi', 'element'));
+      return view('/admin/portfolio/corsi', compact('corsi', 'element'));
    }
 
    public function update(Request $request, $id)
    {
 
-      Certificate::where('id', $id)->dirtyUpdate($request->getPost());
+      Certificate::where('id', $id)->update($request->getPost());
       $this->withSuccess('Corso Aggiornato con successo!');
       return $this->redirectBack();
    }

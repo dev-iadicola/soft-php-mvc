@@ -21,7 +21,7 @@ class CurriculumManagmentController extends Controller
    public function index()
    {
       $curricula = Curriculum::findAll();
-      $this->render('admin.cv', [], compact('curricula'));
+      return view('admin.cv', compact('curricula'));
    }
    public function store(Request $request)
    {
@@ -43,7 +43,7 @@ class CurriculumManagmentController extends Controller
    {
       $curriculum = Curriculum::find($id);
       $curricula = Curriculum::orderBy('id DESC')->get();
-      $this->render('admin.cv', [], compact('curriculum', 'curricula'));
+      return view('admin.cv',  compact('curriculum', 'curricula'));
    }
 
    public function update(Request $request, $id)

@@ -25,19 +25,18 @@ class SkillMngController extends Controller
 
   public function store(Request $request)
   {   
-    Skill::dirtySave($request->getPost());
+    Skill::create($request->getPost());
 
     $this->redirectBack()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   public function edit(Request $request, $id)
   {
-  
     $skill = Skill::find($id);
     $skills = Skill::orderBy('id DESC')->get();
     $articles = Article::orderBy('created_at DESC')->get();
     $profiles = Profile::orderBy('id desc')->get();
-    $this->render('admin.portfolio.home', [], compact('skill','skills','articles','profiles'));
+    return view('admin.portfolio.home', compact('skill','skills','articles','profiles'));
   }
 
   public function update(Request $request, $id)
@@ -45,7 +44,7 @@ class SkillMngController extends Controller
     $data = $request->getPost();
 
     $project = Skill::find($id);
-    $project->dirtyUpdate($data);
+    $project->update($data);
 
     $this->withSuccess('Aggiornamento Eseguito');
     $this->redirectBack();
