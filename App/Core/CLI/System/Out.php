@@ -74,10 +74,9 @@ class Out
 
     }
 
-    private function printWarn(string $message, ?int $code = 110)
+    private function printWarn(string $message )
     {
-        $this->log('Warning: ' . $message, 'w');
-        $this->log('code : ' . $code, 'w');
+        $this->log("Warning: " . $message, 'w');
 
     }
     private function foreach(array|object $vars){

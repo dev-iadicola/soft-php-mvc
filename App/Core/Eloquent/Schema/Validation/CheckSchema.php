@@ -21,26 +21,11 @@ use App\Core\CLI\System\Out;
     
         $smtp = database()->pdo->prepare($sql);
         $smtp->execute(['table' => $table]);
-        //Out::debug('Tabella -> '.$table).
-         Out::debug("FETCHCOLUM = ".$smtp->fetchColumn(). "  TAB " .$table);
+
 
         return $smtp->fetchColumn() > 0;
     
     }
 
-     public static function getExistColumns($table): array{
-        return Migration::findOrFail($table)->json_sql;
-        // $smts = self::$pdo->query("DESCRIBE `{$table}`");
-        // $columns = [];
-      
-        // while($row = $smts->fetch(PDO::FETCH_ASSOC)){
-        //     foreach($row as $key => $value){
-        //         Out::info("". $key ." => ". $value);
-        //     }
-        //     //$columns[$row["field"]] = $row ;
-        // }
-        // print_r($columns);
-
-        // return $columns;
-    }
+     
  }

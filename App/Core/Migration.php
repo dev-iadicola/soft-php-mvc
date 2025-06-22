@@ -7,9 +7,10 @@ use App\Core\Eloquent\Model;
 use App\Core\Eloquent\Schema\SchemaBuilder;
 use App\Traits\Relation;
 
-class Migration extends Model implements ModelSchemaInterface  
+class Migration extends Model implements ModelSchemaInterface
 {
-    use Getter; use Relation;
+    use Getter;
+    use Relation;
     protected string $table = 'migrations';
     protected array $fillable = [
         'table',
@@ -18,21 +19,25 @@ class Migration extends Model implements ModelSchemaInterface
         'updated',
     ];
 
-    public static function schema(SchemaBuilder $schema){
-       return $schema->propriety(new self())
+    public static function schema(SchemaBuilder $schema)
+    {
+        return $schema->table('migrations')
             ->stringId('table')
             ->json('json_sql')
             ->timestamps()
-            ->create();
+            ->build();
     }
 
-    public static function setMigration(string $table, array $columns){
+    public static function setMigration(string $table, array $columns)
+    {  if(! $table == 'table' ){
         $jsonColumns = json_encode($columns, JSON_UNESCAPED_UNICODE);
-        return self::create(['table'=> $table,'json_sql'=> $jsonColumns]);
-
+        return self::save(['table' => $table, 'json_sql' => $jsonColumns]);
+    }
+        
     }
 
-    public static function getMigration(string $table, array $columns){
+    public static function getMigration(string $table, array $columns)
+    {
         return json_decode(self::find($table)->json_sql);
     }
 

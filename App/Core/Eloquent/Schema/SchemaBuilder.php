@@ -15,9 +15,9 @@ class SchemaBuilder extends Database {
         
     }
 
-    public function propriety(Model $model)
+    public function table(string $table)
     {
-       return new TableBuilder($this->pdo, $model->getTable());
+       return new TableBuilder($this->pdo, $table);
     }
 
     // public function build(string $name): TableBuilder{

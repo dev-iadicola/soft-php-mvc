@@ -33,7 +33,7 @@ class MakeMigrationCommand implements CommandInterface
             }
         }
 
-        print_r($schema);
+       
 
 
 

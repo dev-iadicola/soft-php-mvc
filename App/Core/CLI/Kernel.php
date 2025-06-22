@@ -2,11 +2,12 @@
 
 namespace App\Core\CLI;
 
-use App\Core\CLI\Commands\MakeControllerCommand;
-use App\Core\CLI\Commands\MakeMigrationCommand;
-use App\Core\CLI\Commands\MakeModelCommand;
-use App\Core\CLI\Commands\ServeCommand;
 use App\Core\CLI\System\Out;
+use App\Core\CLI\Commands\ServeCommand;
+use App\Core\CLI\Commands\MakeModelCommand;
+use App\Core\CLI\Commands\MakeMigrationCommand;
+use App\Core\CLI\Commands\MakeControllerCommand;
+use App\Core\CLI\Commands\Clear\ClearCacheCommand;
 
 class Kernel
 {
@@ -24,7 +25,11 @@ class Kernel
             'make:controller' => MakeControllerCommand::class,
             'migrate' => MakeMigrationCommand::class,
             'serve' => ServeCommand::class,
-            'print' => Out::class
+            'print' => Out::class,
+
+            // Clear commands 
+            'clear:cache' => ClearCacheCommand::class,
+
         ];
     }
 
@@ -38,7 +43,7 @@ class Kernel
         $istance->exe($argv);
     }
 
-   
+
     private function validateCommand($argv)
     {
         $command = $argv[1] ?? null;
