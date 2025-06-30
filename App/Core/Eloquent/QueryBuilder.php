@@ -15,6 +15,9 @@ class QueryBuilder
     protected array $attribute = [];
     protected ?string $table = null;
 
+    private string $modelName = ''; // Nome del modello, utile per il debug e la gestione degli errori
+    private array $fillable = []; // Attributi che possono essere assegnati in massa
+
     protected string $selectValues = '*'; // Campi da selezionare
 
     protected string $whereClause = ''; // Clausola WHERE
@@ -31,12 +34,32 @@ class QueryBuilder
         $this->setPDO($pdo);
     }
 
-    
+    /**
+     * Summary of attributeExist
+     * @param string $name
+     * @return bool
+     * Permette di verificare se un attributo esiste nell'array $attribute, molto utile per evitare errori 
+     * quando si accede a proprietà dinamiche.
+     * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi 
+     * o modificarli.
+     */
+    private function attributeExist(string $name): bool
+    {
+        return array_key_exists($name, $this->attribute);
+    }
     public function __get($name){
+        // Verifica se l'attributo esiste nel Model prima di accedervi
+        if (!$this->attributeExist($name)) {
+            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
+        }
         return $this->attribute[$name];
     }
 
     public function __set($name, $value){
+        // Verifica se l'attributo esiste nel Model prima di aFccedervi
+        if (!$this->attributeExist($name)) {
+            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
+        }
         $this->attribute[$name] = $value;
     }
 
@@ -264,7 +287,7 @@ class QueryBuilder
 
         // condizioni
         $where = $this->whereClause ?? '';
-        $bindigns = $this->bindings == [];
+        $bindigns = $this->bindings = [];
 
         if(empty($where)){
             if(isset($this->id)){
