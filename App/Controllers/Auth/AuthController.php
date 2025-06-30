@@ -34,14 +34,14 @@ class AuthController extends Controller
         $user = User::where('email', $data['email'])->first();
 
         if(empty($user)){
-            return $this->render('Auth.login', ['message' => 'Credenziali non valide!']);
+            return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
         // conferma
         $confirmPassword = password_verify($data['password'], $user->password);
 
         if ($confirmPassword === false) {
-            return $this->render('Auth.login', ['message' => 'Credenziali non valide!']);
+            return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
         AuthService::login($user->email);
@@ -50,14 +50,14 @@ class AuthController extends Controller
 
     public function forgotPassword()
     {
-        $this->render('Auth.forgot');
+        return view('Auth.forgot');
     }
 
     public function signUp()
     {
         $user = User::findAll();
         if (count($user) == 0) {
-            $this->render('Auth.sign-up', ['message' => '']); // fa caldo
+            return view('Auth.sign-up');
         } else {
             // se esiste un utente, ritorna alla pagina di login
             $this->mvc->response->redirect('/login');
@@ -71,12 +71,12 @@ class AuthController extends Controller
 
         $confirmed =  Validator::confirmedPassword($data);
         if ($confirmed === false) {
-            return $this->render('Auth.sign-up', ['message' => 'Le password non corrispondono']);
+            return view('Auth.sign-up', ['message' => 'Le password non corrispondono']);
         }
 
         $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
 
-        User::save($data);
+        User::upload($data);
 
         $this->render('Auth.login', ['message' => 'Registrazione Effettuata, Ora Iscriviti!']);
     }

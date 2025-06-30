@@ -15,7 +15,7 @@
                 <input type="password" name="confirmed" minlength="8" class="form-control bg-dark text-white border-secondary" id="confirmed" placeholder="Ripeti Password *" required>
             </div>
 
-            <input type="hidden" name="token" value="{{token}}" readonly>
+            <input type="hidden" name="token" value="<?= $token ?>" readonly>
 
             <button type="submit" class="btn btn-primary w-100">Invia</button>
         </div>

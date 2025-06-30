@@ -82,21 +82,19 @@ class TokenController extends Controller
      * validazione token gestione richiesta POST e reindirizzamento per modifica password
      */
 
+     // Richiesta validaizone pin per poi cambiare credenziali
     public function pagePin(Request $request, $token)
     {
-
-        $message = '';
-
         if (Token::isBad($token)) {
             return $this->render('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
         }
-
-        return $this->render('Auth.validate-token', compact('token', 'message'));
+        return $this->render('Auth.validate-token', compact('token'));
     }
 
     public function validatePin(Request $request)
     {
         $data = $request->getPost();
+       
 
 
         // Validazione della password
@@ -110,14 +108,9 @@ class TokenController extends Controller
         //Validazione del token
         $token =  Token::where('token', $data['token'])->first();
 
-       
-
-
         if (empty($token)) {
-            return  $this->render('Auth.forgot', ['message' => 'La richiesta non è stata accettata!']);
+            return  view('Auth.forgot', ['message' => 'La richiesta non è stata accettata!']);
         }
-
-
         $user = User::changePassword(password: $data['password'], email: $token->email);
         if (!empty($user)) {
             $brevoMail = new BrevoMail();
@@ -131,6 +124,6 @@ class TokenController extends Controller
         }
 
         $this->withSuccess('Accedi con le nuove credenziali!');
-        return $this->render('Auth.login', ['message' => 'Accedi con le nuove credenziali']);
+        return view('Auth.login', ['message' => 'Accedi con le nuove credenziali']);
     }
 }
