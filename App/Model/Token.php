@@ -21,7 +21,9 @@ use DateTime;
      protected array $fillable = [
         'email',
         'token',
-        'used'
+        'used',
+        'created_at',
+        'expiry_date',
      ];
 
      public static function generateToken(string $email){
