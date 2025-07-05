@@ -31,8 +31,8 @@ class Storage
         if (!isset($this->diskPath)) {
             throw new StorageException("Disk '{$diskName}' not configured.");
         }
-        dd(is_dir($this->diskPath));
-        if ( !is_dir($this->diskPath)) {
+        dd(is_dir($this->diskPath), $this->diskPath);
+        if ( is_dir($this->diskPath) === false) {
             throw new StorageException("path disk of '{$diskName}' not exist: {$this->diskPath}");
         }
 
