@@ -38,6 +38,19 @@ class Validator
         }
     }
 
+    public static function  verifyImage(?array $file = null): bool
+    {
+        if(!$file || is_null($file)) {
+           return false;
+        }
+      
+        if (empty($file['tmp_name'])) {
+            return false;
+        }
+
+        return getimagesize($file['tmp_name']) !== false;
+    }
+
     public static function validatePDF(array $input){
         $format = array('.pdf');
         foreach ($format  as $item){

@@ -2,11 +2,9 @@
 
 namespace App\Model;
 
-use App\Core\Contract\ModelSchemaInterface;
 use App\Model\Log;
 use App\Traits\Getter;
 use App\Core\Eloquent\Model;
-use App\Core\Eloquent\Schema\SchemaBuilder;
 use App\Traits\Relation;
 
 class User extends Model   
@@ -18,7 +16,9 @@ class User extends Model
         'password',
         'token',
         'indirizzo',
-        'last_log'
+        'last_log',
+        'log_id',
+        'created_at',
     ];
 
   

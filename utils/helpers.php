@@ -75,9 +75,9 @@ if (!function_exists('dd')) {
     }
 
     if (!function_exists(function: 'assets')) {
-        function assets(string $file)
+        function assets(string $file): string
         {
-            return 'assets/' . $file;
+            return '/assets/' . $file;
         }
     }
 

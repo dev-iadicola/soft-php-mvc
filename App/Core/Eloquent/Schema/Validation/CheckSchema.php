@@ -4,7 +4,6 @@ namespace App\Core\Eloquent\Schema\Validation;
 use App\Core\Migration;
 use PDO;
 use App\Core\Database;
-use App\Core\CLI\System\Out;
 
  class CheckSchema extends Database {
 

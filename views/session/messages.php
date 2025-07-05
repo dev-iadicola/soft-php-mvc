@@ -11,3 +11,10 @@ if (isset($FLASH['success']) && !empty($FLASH['success'])): ?>
         <?= htmlspecialchars($FLASH['success']) ?>
     </div>
 <?php endif; ?>
+
+<?php
+if (isset($FLASH['warning']) && !empty($FLASH['warning'])): ?>
+    <div class="alert alert-warning text-center mt-5 mx-5 fs-3">
+        <?= htmlspecialchars($FLASH['warning']) ?>
+    </div>
+<?php endif; ?>

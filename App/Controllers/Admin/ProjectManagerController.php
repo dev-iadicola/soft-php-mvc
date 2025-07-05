@@ -26,18 +26,32 @@ class ProjectManagerController extends Controller
 
    public function store(Request $request)
    {
-      $projects = Project::orderBy('id DESC')->get();
+      $projects = Project::orderBy('id', 'DESC')->get();
       $data = $request->getPost();
 
-      if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-         $data['img'] = $this->checkImage($data);
+      // Controlla se è stato caricato un file immagine
+      if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
+
+         $file = $data['img'];
+
+         // Verifica che sia un'immagine valida
+         if (!Validator::verifyImage($file)) {
+            // Gestisci errore (es. ritorna con errore, throw, ecc)
+            return $this->redirectBack()->withErrors('Il file caricato non è un\'immagine valida.');
+         }
+         // Salva il file e ottieni il path relativo
+         $storage = new Storage();
+         $storage->disk('images')->put($file);
+
+         // Sovrascrivi $data['img'] con il path relativo (da salvare nel DB)
+         $data['img'] = $storage->getRelativePath();
       }
 
-
-      Project::update($data);
+      // Crea il progetto
+      Project::create($data);
 
       $this->withSuccess('Progetto salvato con Successo!');
-      return $this->redirectBack();
+      return view('admin.portfolio.project', compact('projects'));
    }
 
    public function edit(Request $request, $id)
@@ -55,26 +69,22 @@ class ProjectManagerController extends Controller
       // Validazione Dati
       if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
          $this->withError("Aggiornato, eccetto l'immagine");
-         // return $this->redirectBack();
       }
       if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-
-         $this->deleteFile($project->img);
-
-         $data['img'] = $this->checkImage($data);
-
+         $stg = new Storage();
+         $stg->deleteIfFileExist($project->img);
+         $stg->disk('images')->put($data['img']);
+         $data['img'] = $stg->getRelativePath() ;
+         
       } else {
          unset($data['img']);
       }
-
       // Trova porgetto
       $project = Project::find($id);
       $project->update($data);
-
-
       // feedback server
       $this->withSuccess('Aggiornamento Eseguito');
-      $this->redirectBack();
+      return $this->redirectBack();
    }
 
    public function destroy(Request $reqq, $id)
@@ -86,21 +96,23 @@ class ProjectManagerController extends Controller
       }
 
       $project  = Project::find($id);
-      if (!isset($project->img)) {
+      if (!$project) {
+         $this->withError('Progetto non trovato');
+         return $this->redirectBack();
+      }
+      if (!isset($project->img) && !is_null($project->img)) {
+         $stg = new Storage();
+         if ($stg->deleteIfFileExist($project->img)) {
+            $this->withSuccess('Progetto Elimianto');
+         } else {
+            $this->withWarning('Progetto ELIMINATO, non è stata trovata alcuna immagine');
+         }
          $project->delete();
-         $this->withSuccess('Progetto ELIMINATO, non è stata trovata alcuna immagine');
-         return $this->redirect('/admin/progetti');
+         return $this->redirectBack();
       }
 
-      if ($this->deleteFile($project->img) === TRUE) {
-         $this->withSuccess('Progetto ELIMINATO');
-         $project->delete();
-         return $this->redirect('/admin/progetti');
-      }
 
       $this->withError('Progetto non eliminato correttamente');
-      return $this->redirect('/admin/progetti');
+      return $this->redirectBack();
    }
-
-
 }

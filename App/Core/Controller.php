@@ -72,6 +72,11 @@ class Controller
         SessionService::setFlashSession('success', $message);
     }
 
+    public function withWarning($message)
+    {
+        SessionService::setFlashSession('warning', $message);
+    }
+
     public function resetImg(array $data)
     {
 
@@ -83,17 +88,7 @@ class Controller
 
         }
     }
-    public function deleteFile(string $img)
-    {
-        if (isset($img)) {
-            $isImgDelete = (new Storage($this->mvc))->deleteFile($img);
-            if ($isImgDelete === TRUE) {
-                return true;
-            }
-            return false;
-        }
-        return null;
-    }
+    
 
     public static function validateImage($file)
     {
@@ -106,27 +101,7 @@ class Controller
         return false;
     }
 
-    public function checkImage($data)
-    {
-        $originalNameFile = $data['img']['name'];
-
-        $newName = str_replace(' ', '', date('Y-m-d-H-i-s-') . $data['img']['name']);
-
-        $data['img']['name'] = $newName;
-
-        $validImage = Validator::validateImage(
-            $data['img']
-        );
-        if ($validImage === FALSE) {
-            $this->withError('Non sono accettati formati che non sono immagini');
-            return $this->redirectBack();
-        }
-
-        $uploadFile = new Storage($this->mvc);
-        $uploadFile->storageImage($data['img']);
-        return $uploadFile->getPathImg();
-
-    }
+   
 
 
 

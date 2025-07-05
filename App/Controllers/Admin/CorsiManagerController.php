@@ -27,7 +27,7 @@ class CorsiManagerController extends Controller
    public function store(Request $request)
    {
 
-      Certificate::store($request->getPost());
+      Certificate::create($request->getPost());
 
       return  $this->redirectBack()->withSuccess('Certificate Inserito');
    }

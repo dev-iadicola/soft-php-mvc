@@ -6,17 +6,17 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>Persona MVC - Admin</title>
-    <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png">
+    <link rel="icon" type="image/x-icon" href="<?= assets('/img/favicon.png') ?>">
 
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link href="<?= assets("/vendor/bootstrap/css/bootstrap.min.css") ?>" rel="stylesheet">
     <!-- Font Awesome Icon CDN -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="<?= assets('/vendor/fontawesome/css/font-awesome.min.css') ?>">
 
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
+    <link rel="stylesheet" href="<?= assets('/vendor/ckeditor/css/ckeditor.css') ?>">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="/assets/admin.css">
+    <link rel="stylesheet" href="<?= assets('/admin.css') ?>">
 </head>
 
 
@@ -58,8 +58,8 @@
         });
     </script>
 
-<!-- chart js -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
@@ -67,56 +67,57 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
-<!-- editor di test -->
+    <!-- editor di test -->
 
-<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
 
 
-<script type="importmap">
-            {
-                "imports": {
-                    "ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.js",
-                    "ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.3.0/"
-                }
-            }
-        </script>
-        <script type="module">
-            import {
-                ClassicEditor,
-                Essentials,
-                Paragraph,
-                Bold,
-                Italic,
-                Font
-            } from 'ckeditor5';
+    <!-- Carica CKEditor Classic dalla CDN -->
+    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.0/classic/ckeditor.js"></script>
 
-            document.querySelectorAll('.editor').forEach((element) => {
-        ClassicEditor
-            .create(element, {
-                plugins: [Essentials, Paragraph, Bold, Italic, Font],
-                toolbar: [
-                    'undo', 'redo', '|', 'bold', 'italic', '|',
-                    'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
-                ]
-            })
-            .then(editor => {
-                // Puoi salvare ogni editor creato in un array per riferimento futuro
-                window.editors = window.editors || [];
-                window.editors.push(editor);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+  // Gestisco evento apertura collapse
+  $('#collapseSkill').on('shown.bs.collapse', function () {
+    document.querySelectorAll('.editor').forEach(el => {
+      if (!el.classList.contains('ck-editor__editable')) { 
+        // Evita di reinizializzare se già inizializzato
+        ClassicEditor.create(el, {
+          toolbar: [
+            'undo', 'redo', '|', 'bold', 'italic', '|',
+            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+          ]
+        }).catch(console.error);
+      }
     });
-        </script>
-        <!-- A friendly reminder to run on a server, remove this during the integration. -->
-        <script>
-		        window.onload = function() {
-		            if ( window.location.protocol === "file:" ) {
-		                alert( "This sample requires an HTTP server. Please serve this file with a web server." );
-		            }
-		        };
-		</script>
+  });
+
+  // Se il collapse è già aperto al caricamento, inizializzo subito
+  if ($('#collapseSkill').hasClass('show')) {
+    document.querySelectorAll('.editor').forEach(el => {
+      ClassicEditor.create(el, {
+        toolbar: [
+          'undo', 'redo', '|', 'bold', 'italic', '|',
+          'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
+        ]
+      }).catch(console.error);
+    });
+  }
+});
+
+    </script>
+
+    <!-- A friendly reminder to run on a server, remove this during the integration. -->
+    <script>
+        window.onload = function() {
+            if (window.location.protocol === "file:") {
+                alert("This sample requires an HTTP server. Please serve this file with a web server.");
+            }
+        };
+    </script>
+
+
+
 
 </body>
 

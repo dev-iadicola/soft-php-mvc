@@ -43,10 +43,11 @@ class QueryBuilder
      * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi 
      * o modificarli.
      */
-    private function attributeExist(string $name): bool
-    {
-        return array_key_exists($name, $this->attribute);
-    }
+   private function attributeExist(string $name): bool
+{
+    return in_array($name, $this->fillable);
+}
+
     public function __get($name){
         // Verifica se l'attributo esiste nel Model prima di accedervi
         if (!$this->attributeExist($name)) {
@@ -56,7 +57,7 @@ class QueryBuilder
     }
 
     public function __set($name, $value){
-        // Verifica se l'attributo esiste nel Model prima di aFccedervi
+        // Verifica se l'attributo esiste nel Model prima di accedervi
         if (!$this->attributeExist($name)) {
             throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
         }
@@ -84,11 +85,8 @@ class QueryBuilder
 
     public function where(string $columnName, $parameter): self
     {
-      
-
         $this->whereClause = "WHERE $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
-
         return $this;
     }
 
@@ -143,7 +141,7 @@ class QueryBuilder
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato. Model: " .$this->modelName);
+            throw new ModelNotFoundException("Nome della tabella non impostato. Model: " .$this->modelName);
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";

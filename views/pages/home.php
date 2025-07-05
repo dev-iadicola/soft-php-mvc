@@ -5,9 +5,6 @@
                 <div class=" p-5 shadow-lg mb-4 bg-dark rounded">
                     <!-- Intestazione -->
                     <div class="d-flex flex-row justify-content-center mb-5">
-
-
-
                         <h1 class="display-4 mb-2 fw-bold text-center dodgerblu w-100" id="name">
                             <i class="fa fa-code text-white" style="font-size:3rem" aria-hidden="true"></i>
                             <?php echo $profile->name; ?>
@@ -38,8 +35,8 @@
 @include('pages.progetti')
 
 <div class="bg-white rounded-lg shadow-lg">
-    <div class="fade-in-section mt-5 py-5">
-        <h1 class="text-dark text-4xl font-weight-bold mb-5 text-center">Scopri le mie Skills</h1>
+<div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
+    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Projects</h3>
         <p class="text-center text-lg text-muted mb-4">
             Sono appassionato di tecnologia e sempre aggiornato sulle ultime tendenze. Ecco le competenze che posso
             mettere al servizio del tuo progetto!

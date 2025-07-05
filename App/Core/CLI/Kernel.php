@@ -8,6 +8,7 @@ use App\Core\CLI\Commands\MakeModelCommand;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeControllerCommand;
 use App\Core\CLI\Commands\Clear\ClearCacheCommand;
+use App\Core\CLI\Commands\StorageCommand;
 
 class Kernel
 {
@@ -18,6 +19,12 @@ class Kernel
         $this->registerCommands();
     }
 
+    /**
+     * Summary of registerCommands
+     * @return void
+     * Qui registri i comandi disponibili per il CLI.
+     * Ogni comando è associato a una classe che implementa l'interfaccia CommandInterface.
+     */
     protected function registerCommands()
     {
         $this->commands = [
@@ -26,6 +33,7 @@ class Kernel
             'migrate' => MakeMigrationCommand::class,
             'serve' => ServeCommand::class,
             'print' => Out::class,
+            'storage' => StorageCommand::class,
 
             // Clear commands 
             'clear:cache' => ClearCacheCommand::class,
@@ -58,14 +66,12 @@ class Kernel
             Out::ln("\nUsage: php soft <command> [options]");
             Out::ln("Example: php soft make:controller UserController");
             exit();
-        }
-
-
+        }        
+       
+        // NOTE: qui avviene la verifica se il comando esiste nella lista dei comandi registrati
         if (!isset($this->commands[$command])) {
             Out::error(" the command '$command' not exist.");
         }
-
-
         $commandClass = $this->commands[$command];
 
         if (!class_exists($commandClass)) {

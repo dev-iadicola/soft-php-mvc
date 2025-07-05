@@ -2,98 +2,122 @@
 
 namespace App\Core;
 
+use App\Core\Exception\StorageException;
 use Exception;
 
 class Storage
 {
-    protected string $targetDirFormImages;
-    public string $targetDir;
+    protected string $root;
+    protected array $storagePaths = [];
+    protected string $diskPath = '';
+    protected string $diskName = '';
+    protected array $file = [];
     protected string $targetFile = '';
-    private array $file = [];
 
-    protected string $root = '';
-
-    // Usa la configurazione passata tramite il costruttore
-    public function __construct(public ?Mvc $mvc = null)
+    protected string $filename='';
+    
+    public function __construct()
     {
-        // Imposta il targetDirFormImages basato sulla configurazione
-       
-        $this->targetDirFormImages =  mvc()->config->folder->images;
-        $this->targetDir = mvc()->config->folder->storage;
-        $this->root = mvc()->config->folder->root;
-
+    }
+  
+    /**
+     * Seleziona un "disk" (path) dal config
+     */
+    public function disk(string $diskName): self
+    {
+     
+        $this->diskPath =mvc()->config->storage[$diskName];
         
+        if (!isset($this->diskPath)) {
+            throw new StorageException("Disk '{$diskName}' not configured.");
+        }
+        if ( !is_dir($this->diskPath)) {
+            throw new StorageException("path disk of '{$diskName}' not exist: {$this->diskPath}");
+        }
+
+        return $this;
     }
 
-    public function make(string $filePath, string $fileName, string $fileContent){
-       $targetDir = $this->targetDir .'/'. convertDotToSlash($filePath);
-        
-    }   
-
-
-    public function setTargetDir($var)
+    /**
+     * Salva un file caricato (array $_FILES) nel disk selezionato
+     */
+    public function put(array $file): bool
     {
-        $var = convertDotToSlash($var);
-        $this->targetDir = $var;
-    }
+        if (empty($this->diskPath)) {
+            throw new StorageException("Disk non selezionato.");
+        }
 
-    public function storeFile($file)
-    {
+        if (empty($file['tmp_name']) || empty($file['name'])) {
+            throw new StorageException("File non valido.");
+        }
+
         $this->file = $file;
-        $targetPath = $this->targetDirFormImages . basename($file["name"]);
+        $this->filename = $file['name'];
+        $this->targetFile = $this->diskPath . $this->filename;
 
-        $isStore = move_uploaded_file($file['tmp_name'], $this->targetDirFormImages . basename($file["name"]));
-        if ($isStore) {
-            $this->targetFile = $targetPath;
-        } else {
-            $this->targetFile = '';
-        }
-      
-        return $isStore;
-    }
-
-    public function storageImage( array $file)
-    {
-        $this->file = $file;
-        $this->targetFile = $this->targetDirFormImages . basename($file["name"]);
-        $imageFileType = strtolower(pathinfo($this->targetFile, PATHINFO_EXTENSION));
-
-        if (!$this->verifyImage()) {
-            throw new Exception("The file is not an image");
+        if (!move_uploaded_file($file['tmp_name'], $this->targetFile)) {
+            throw new StorageException("Errore nel salvataggio del file.");
         }
 
-        return $this->storageImageInUploadFolder();
+        return true;
     }
 
-    public function verifyImage()
+    /**
+     * Elimina un file dato il path relativo al root
+     */
+    public function delete($absolutePath): bool
     {
-        return getimagesize($this->file["tmp_name"]);
-    }
+        $filePath = baseRoot(). $this->diskPath. $absolutePath; 
 
-    private function storageImageInUploadFolder()
-    {
-        if (!move_uploaded_file($this->file["tmp_name"], $this->targetFile)) {
-        
-            throw new Exception("Failed to upload file.");
+
+        if (!file_exists($filePath)){
+           throw new StorageException("File '{$filePath}' non trovato");
         }
+
+        return unlink($filePath);
     }
 
-    public function getPathImg()
-    {
-        return str_replace( $this->root, '', $this->targetFile);
-    }
-
-    public function deleteFile($naemFile)
-    {
+    public function deleteIfFileExist($absolutePaht):bool{
        
-        $filePath = $this->root. $naemFile;
-   
-        if (file_exists($filePath)) {
-            unlink($filePath);
-            return true;
-        } else {
-            echo "File does not exist: " . $filePath;
+        if($this->fileExists($absolutePaht)){
+            $filePath = baseRoot(). $this->diskPath. $absolutePaht; 
+            return unlink($filePath);
         }
         return false;
     }
+
+    public function fileExists(?string $nameFile = null): bool
+    {
+        if (is_null($nameFile) || empty($nameFile)) {
+           return is_file($this->diskPath. $this->diskName);
+        }
+        $filePath = $this->diskPath . $nameFile;
+
+        return is_file($filePath);
+    }
+
+   
+
+    public function getAbsolutePath(): string
+    {
+     if (empty($this->targetFile)) {
+            throw new StorageException("File not found.");
+        }
+        return $this->targetFile;
+    }
+
+    /**
+     * Restituisce il path relativo del file salvato rispetto al root
+     */
+    public function getRelativePath(): string
+    {
+        $relativePath = str_replace(baseRoot(), '', $this->targetFile);
+       return $relativePath;
+    }
+
+    /**
+     * Verifica che il file caricato sia un'immagine
+     */
+    
+    
 }

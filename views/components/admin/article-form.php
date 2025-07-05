@@ -15,31 +15,31 @@ $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home'
             <form method="POST" action="<?= $urlArticle ?>" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="title" value="<?= isset($article->title) ? $article->title : '' ?>" required>
+                    <input type="text" class="form-control" id="title" name="title" value="<?= $article->title ?? '' ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="subtitle">Subtitle</label>
-                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="<?= isset($article->subtitle) ? $article->subtitle : '' ?>" required>
+                    <input type="text" class="form-control" id="subtitle" name="subtitle" value="<?= $article->subtitle ?? '' ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="overview">Description</label>
-                    <textarea class="form-control editor" id="editor" name="overview" rows="3"><?= isset($article->overview) ? $article->overview : '' ?></textarea>
+                    <textarea class="form-control editor" id="editor" name="overview" rows="3"><?=  $article->overview ?? '' ?></textarea>
                 </div>
                 <div class="form-group">
                     <label for="link">Link</label>
                     <input type="url" class="form-control" id="link" name="link" 
-                    value="<?= isset($article->link) ? $article->link : '' ?>">
+                    value="<?= $article->link ?? '' ?>">
                 </div>
                 <div class="form-group mt-2">
                     <label for="img">Img</label>
                     <input 
-                    <?php if (isset($article->img)): ?>
+                    <?php if (isset($article) && empty($article->img)): ?>
                         value="<?=$article->img?>"
                     <?php endif ?>
                      type="file" accept="image/*" name="img" class="form-control-file" id="myfile" >
                 </div>
                 <div class="mt-3 d-flex flex-row">
-                    <?php if (isset($article->img)) : ?>
+                    <?php if (isset($article) && empty($article->img)) : ?>
                         <div class="text-center">
                             <label>Immagine Originale</label><br><br>
                             <img src="<?= $article->img ?>" id="original" class="img-thumbnail" alt="Immagine Originale">

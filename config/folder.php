@@ -1,9 +1,7 @@
 <?php
 
 /**
- * semplicità, migliorando il codice, senza dover scrivere molto codice
- * 
- * questo file permette di ridurre il codice per trovare le cartelle
+    * Configuration file for folder paths
  */
 
 use App\Core\Services\FolderApp;

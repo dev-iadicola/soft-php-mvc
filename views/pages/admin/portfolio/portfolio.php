@@ -11,15 +11,15 @@
         <form method="POST" action="<?= $url ?>" class="p-3">
             <div class="form-group mb-3">
                 <label for="title" class="form-label">Titolo</label>
-                <input type="text" class="form-control shadow-sm" id="title" name="title" value="<?= isset($pfolio->title) ? $pfolio->title : '' ?>" required>
+                <input type="text" class="form-control shadow-sm" id="title" name="title" value="<?= $pfolio->title ?? '' ?>" required>
             </div>
             <div class="form-group mb-3">
                 <label for="overview" class="form-label">Descrizione</label>
-                <textarea class="form-control editor shadow-sm" id="overview" name="overview" rows="5"><?= isset($pfolio->overview) ? $pfolio->overview : '' ?></textarea>
+                <textarea class="form-control editor shadow-sm" id="overview" name="overview" rows="5"><?=  $pfolio->overview ?? '' ?></textarea>
             </div>
             <div class="form-group mb-4">
                 <label for="link" class="form-label">Link</label>
-                <input type="url" class="form-control shadow-sm" id="link" name="link" value="<?= isset($pfolio->link) ? $pfolio->link : '' ?>">
+                <input type="url" class="form-control shadow-sm" id="link" name="link" value="<?= $pfolio->link ?? '' ?>">
             </div>
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-primary shadow-sm px-4">Salva</button>

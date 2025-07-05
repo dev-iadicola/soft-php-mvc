@@ -62,6 +62,8 @@ class Config
         if(count($conf) === 0 ){
             return throw new Exception("No files found in directory " . $dir);
         }
+
+        // ritorna un oggetto BuildAppFile con i file caricati
         return new BuildAppFile($conf);
     }
 

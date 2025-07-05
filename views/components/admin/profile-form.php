@@ -14,11 +14,11 @@ $urlProfile = isset($profile->id) ? "/admin/profile/{$profile->id}" : '/admin/pr
             <form method="POST" action="<?= $urlProfile ?>" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">Title</label>
-                    <input type="text" class="form-control" id="title" name="name" value="<?= isset($profile->name) ? $profile->name : '' ?>" required>
+                    <input type="text" class="form-control" id="title" name="name" value="<?= $profile->name ?? '' ?>" required>
                 </div>
                 <?php if (isset($profile->id)) : ?>
                     <div class="form-group form-check text-center">
-                        <input type="checkbox" name="selected" <?= ($profile->selected == 1) ? 'checked' : '' ?> class="form-check-input" id="exampleCheck1">
+                        <input type="checkbox" name="selected" <?=php ($profile->selected == 1) ? 'checked' : '' ?> class="form-check-input" id="exampleCheck1">
                         <label class="form-check-label" for="exampleCheck1">
                             <?= ($profile->selected == 1) ? 'Deselziona Per togliere dalla' : 'Seleziona per Aggiungere nella' ?> home page
                         </label>
@@ -26,11 +26,11 @@ $urlProfile = isset($profile->id) ? "/admin/profile/{$profile->id}" : '/admin/pr
                 <?php endif ?>
                 <div class="form-group">
                     <label for="subtitle">Subtitle</label>
-                    <input type="text" class="form-control" id="subtitle" name="tagline" value="<?= isset($profile->tagline) ? $profile->tagline : '' ?>" required>
+                    <input type="text" class="form-control" id="subtitle" name="tagline" value="<?=  $profile->tagline ?? '' ?>" required>
                 </div>
                 <div class="form-group">
                     <label for="overview">Description</label>
-                    <textarea class="form-control editor" id="editor" name="welcome_message" rows="5"><?= isset($profile->welcome_message) ? $profile->welcome_message : '' ?></textarea>
+                    <textarea class="form-control editor" id="editor" name="welcome_message" rows="5"><?= $profile->welcome_message ?? '' ?></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary mt-3">Submit Welcome Profile Message</button>
             </form>

@@ -38,8 +38,8 @@
                     <?php foreach ($articles as $article) : ?>
                         <div class="col-md-6 col-lg-4 mb-3">
                             <div class="p-3 border border-light bg-light rounded">
-                                <?php if (!empty($article->img)) : ?>
-                                    <img src="<?= $article->img ?>" class="img-fluid mb-2" alt="Image for <?= $article->title ?>" style="height: 100px; object-fit: cover;">
+                                <?php if (empty($article->img)) : ?>
+                                    <img src="<?= $article->img ?>" class="img-fluid object-fit-contain border rounded w-100 h-100" alt="Image for <?= $article->title ?>" style="height: 100px; object-fit: cover;">
                                 <?php endif ?>
                                 <h5><?= $article->title ?></h5>
                                 <p class="text-muted"><?= $article->subtitle ?></p>

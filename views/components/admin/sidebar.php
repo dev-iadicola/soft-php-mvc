@@ -34,12 +34,11 @@
 
                 <div class="collapse" id="collapsePortfolio">
                     <div class="card card-body mt-2">
-                        <a class="dropdown-item <?php echo isActive('/admin/home', $page) ?>" href="/admin/home">Gestione Home Page</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/contatti', $page) ?>" href="/admin/contatti">Messaggi</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/portfolio', $page) ?>" href="/admin/portfolio">Portfolio</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/progetti', $page) ?>" href="/admin/progetti">Progetti</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/corsi', $page) ?>" href="/admin/corsi">Corsi Professionali</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/cv', $page) ?>" href="/admin/cv">Curriculum</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/home', $page) ?>" href="/admin/home">Gestione Home Page</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/contatti', $page) ?>" href="/admin/contatti">Messaggi</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/progetti', $page) ?>" href="/admin/progetti">Progetti</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/corsi', $page) ?>" href="/admin/corsi">Corsi Professionali</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/cv', $page) ?>" href="/admin/cv">Curriculum</a>
                     </div>
                 </div>
             </div>
@@ -52,7 +51,7 @@
 
                 <div class="collapse" id="collapseLaws">
                     <div class="card card-body mt-2">
-                        <a class="dropdown-item <?php echo isActive('/admin/laws', $page) ?>" href="/admin/laws">Policy and Laws</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/laws', $page) ?>" href="/admin/laws">Policy and Laws</a>
                     </div>
                 </div>
             </div>
@@ -65,10 +64,10 @@
 
                 <div class="collapse" id="collapseUser">
                     <div class="card card-body mt-2">
-                        <a class="dropdown-item <?php echo isActive('/admin/settings', $page) ?>" href="/admin/settings">Impostazioni</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/password', $page) ?>" href="/admin/password">Cambia Password</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/edit', $page) ?>" href="/admin/edit">Edit Profile</a>
-                        <a class="dropdown-item <?php echo isActive('/admin/logs', $page) ?>" href="/admin/logs">Logs</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/settings', $page) ?>" href="/admin/settings">Impostazioni</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/password', $page) ?>" href="/admin/password">Cambia Password</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/edit', $page) ?>" href="/admin/edit">Edit Profile</a>
+                        <a class="dropdown-item  text-dark<?php echo isActive('/admin/logs', $page) ?>" href="/admin/logs">Logs</a>
                     </div>
                 </div>
             </div>

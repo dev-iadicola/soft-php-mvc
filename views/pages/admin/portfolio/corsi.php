@@ -5,7 +5,7 @@
     <!-- Course Form -->
     <?php $url = isset($element->id) ? "/admin/corso-update/{$element->id}" : '/admin/corsi'; ?>
     <form method="POST" action="<?= $url ?>" class="shadow-lg p-4 bg-light rounded">
-        <h3 class="mb-3"><?= (isset($element->title)) ? $element->title : 'Add new' ?>
+        <h3 class="mb-3"><?php (isset($element->title)) ? "Modifica ". $element->title : 'Add new' ?>
         </h3>
 
         <div class="mb-3">
