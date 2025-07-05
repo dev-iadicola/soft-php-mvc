@@ -25,11 +25,7 @@ $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home'
                     <label for="overview">Description</label>
                     <textarea class="form-control editor" id="editor" name="overview" rows="3"><?=  $article->overview ?? '' ?></textarea>
                 </div>
-                <div class="form-group">
-                    <label for="link">Link</label>
-                    <input type="url" class="form-control" id="link" name="link" 
-                    value="<?= $article->link ?? '' ?>">
-                </div>
+              
                 <div class="form-group mt-2">
                     <label for="img">Img</label>
                     <input 

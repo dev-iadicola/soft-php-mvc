@@ -44,9 +44,7 @@
                                 <h5><?= $article->title ?></h5>
                                 <p class="text-muted"><?= $article->subtitle ?></p>
                                 <p><small><strong>Date:</strong> <?= $article->created_at ?></small></p>
-                                <?php if (!empty($article->link)) : ?>
-                                    <a href="<?= $article->link ?>" target="_blank" class="text-primary">Open Link</a>
-                                <?php endif ?>
+                               
                                 <div class="mt-2">
                                     <a href="/admin/home/<?= $article->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="/admin/home-delete/<?= $article->id ?>" method="POST" style="display: inline;">

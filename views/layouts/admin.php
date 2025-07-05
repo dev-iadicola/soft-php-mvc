@@ -9,14 +9,18 @@
     <link rel="icon" type="image/x-icon" href="<?= assets('/img/favicon.png') ?>">
 
     <!-- Bootstrap CSS -->
-    <link href="<?= assets("/vendor/bootstrap/css/bootstrap.min.css") ?>" rel="stylesheet">
+    <link href="<?= assets("vendor/bootstrap/css/bootstrap.min.css") ?>" rel="stylesheet">
     <!-- Font Awesome Icon CDN -->
-    <link rel="stylesheet" href="<?= assets('/vendor/fontawesome/css/font-awesome.min.css') ?>">
+    <link rel="stylesheet" href="<?= assets('vendor/fontawesome/css/font-awesome.min.css') ?>">
 
-    <link rel="stylesheet" href="<?= assets('/vendor/ckeditor/css/ckeditor.css') ?>">
+    <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css') ?>">
 
     <!-- Custom CSS -->
-    <link rel="stylesheet" href="<?= assets('/admin.css') ?>">
+    <link rel="stylesheet" href="<?= assets('admin.css') ?>">
+
+    <!-- Editor di test -->
+        <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css')?>">
+
 </head>
 
 
@@ -69,11 +73,11 @@
 
     <!-- editor di test -->
 
-    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.3.0/ckeditor5.css">
 
 
-    <!-- Carica CKEditor Classic dalla CDN -->
-    <script src="https://cdn.ckeditor.com/ckeditor5/43.3.0/classic/ckeditor.js"></script>
+<?= assets('vendor/ckeditor/js/cdn.js')?>
+    <script src="<?= assets('vendor/ckeditor/js/cdn.js')?>"></script>
+    <script src="<?= assets('vendor/ckeditor/js/execute.js')?>"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -105,6 +109,7 @@
   }
 });
 
+   
     </script>
 
     <!-- A friendly reminder to run on a server, remove this during the integration. -->
