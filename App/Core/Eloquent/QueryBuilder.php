@@ -389,7 +389,6 @@ class QueryBuilder
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
-
         $fillable = $this->fillable;
         if (!empty($fillable)) {
             $values = array_filter($values, fn($key) => in_array($key, $fillable), ARRAY_FILTER_USE_KEY);

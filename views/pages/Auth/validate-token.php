@@ -14,6 +14,7 @@
                 <label for="confirmed" class="form-label">Ripeti Password *</label>
                 <input type="password" name="confirmed" minlength="8" class="form-control bg-dark text-white border-secondary" id="confirmed" placeholder="Ripeti Password *" required>
             </div>
+            <button type="button" onclick="seePassword()" class="btn btn-link text-white p-0">Mostra password</button>
 
             <input type="hidden" name="token" value="<?= $token ?>" readonly>
 
@@ -21,3 +22,22 @@
         </div>
     </form>
 </section>
+<script>
+    const seePassword = () => {
+        const passwordFields = document.querySelectorAll('input[type="password"], input[data-toggled="true"]');
+
+        passwordFields.forEach(field => {
+            if (field.type === 'password') {
+                // Salva name originale se non presente
+                if (!field.name) {
+                    field.name = 'password';
+                }
+                field.setAttribute('data-toggled', 'true');
+                field.type = 'text';
+            } else if (field.dataset.toggled === 'true') {
+                field.type = 'password';
+                field.removeAttribute('data-toggled');
+            }
+        });
+    };
+</script>
