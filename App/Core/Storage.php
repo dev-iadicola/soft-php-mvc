@@ -26,12 +26,15 @@ class Storage
     public function disk(string $diskName): self
     {
      
-        $this->diskPath =mvc()->config->storage[$diskName];
+        $this->diskPath = mvc()->config->storage[$diskName];
         
         if (!isset($this->diskPath)) {
             throw new StorageException("Disk '{$diskName}' not configured.");
         }
-        dd(is_dir($this->diskPath), $this->diskPath);
+       if(is_dir($this->diskPath) === false){
+           mkdir($this->diskPath, 0755, true);
+           
+        }
         if ( is_dir($this->diskPath) === false) {
             throw new StorageException("path disk of '{$diskName}' not exist: {$this->diskPath}");
         }
