@@ -28,7 +28,8 @@
           name="password"
           placeholder="Enter your password"
           required
-        >
+        > 
+       <p onclick="seePassword()">See</p>
       </div>
 
       <div class="d-flex flex-column text-center mb-4">
@@ -42,3 +43,22 @@
     </div>
   </div>
 </form>
+<script>
+const seePassword = () => {
+  const passwordFields = document.querySelectorAll('input[type="password"], input[data-toggled="true"]');
+
+  passwordFields.forEach(field => {
+    if (field.type === 'password') {
+      // Salva name originale se non presente
+      if (!field.name) {
+        field.name = 'password';
+      }
+      field.setAttribute('data-toggled', 'true');
+      field.type = 'text';
+    } else if (field.dataset.toggled === 'true') {
+      field.type = 'password';
+      field.removeAttribute('data-toggled');
+    }
+  });
+}
+</script>
