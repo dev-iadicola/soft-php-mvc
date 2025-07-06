@@ -61,7 +61,30 @@ if (!function_exists('mvc')) {
         return $GLOBALS['mvc'] ?? null;
     }
 }
+if (!function_exists('urlExist')) {
+    /**
+     * Check if a URL exists by fetching its headers
+     * @param string $url
+     * @return bool
+     */
+   function urlExist($url)
+{
+    if (empty($url)) return false;
 
+    $ch = curl_init($url);
+    curl_setopt($ch, CURLOPT_NOBODY, true); // non scaricare il corpo
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_TIMEOUT, 2); // timeout breve (2 secondi)
+    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // segue redirect
+    curl_exec($ch);
+
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+
+    return $httpCode >= 200 && $httpCode < 400;
+}
+
+}
 if (!function_exists('dd')) {
     /**
      * Dump and Die: Print variables and end execution
@@ -84,11 +107,10 @@ if (!function_exists('dd')) {
     if (!function_exists('validateImagePath')) {
         function validateImagePath(string $path, string $fallback)
         {
-            if(file_exists(mvc()->config->folder->root.$path)) 
+            if (file_exists(mvc()->config->folder->root . $path))
                 return $path;
-            else 
+            else
                 return $fallback;
-            
         }
     }
 
@@ -140,12 +162,8 @@ if (!function_exists('dd')) {
                 echo "<span class='yellow'>in</span> ";
                 echo "<span class='indaco'>{$file}</span>:";
                 echo "<span class='yellow'>{$line}</span> <br><br>";
-
-
             }
-
         }
-
     }
     if (!function_exists('dump')) {
         function dump($vars)
@@ -180,6 +198,4 @@ if (!function_exists('dd')) {
             return new Database();
         }
     }
-
-
 }

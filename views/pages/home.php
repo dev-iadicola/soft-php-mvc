@@ -36,7 +36,7 @@
 
 <div class="bg-white rounded-lg shadow-lg">
 <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
-    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Projects</h3>
+    <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Skills</h3>
         <p class="text-center text-lg text-muted mb-4">
             Sono appassionato di tecnologia e sempre aggiornato sulle ultime tendenze. Ecco le competenze che posso
             mettere al servizio del tuo progetto!

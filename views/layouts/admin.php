@@ -75,9 +75,9 @@
 
 
 
-<?= assets('vendor/ckeditor/js/cdn.js')?>
-    <script src="<?= assets('vendor/ckeditor/js/cdn.js')?>"></script>
-    <script src="<?= assets('vendor/ckeditor/js/execute.js')?>"></script>
+
+    <script src="<?= assets('vendor/ckeditor/js/cdn.js')?>" defer></script>
+    <script src="<?= assets('vendor/ckeditor/js/execute.js')?>" defer></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {

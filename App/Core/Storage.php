@@ -33,7 +33,6 @@ class Storage
         }
        if(is_dir($this->diskPath) === false){
            mkdir($this->diskPath, 0755, true);
-           
         }
         if ( is_dir($this->diskPath) === false) {
             throw new StorageException("path disk of '{$diskName}' not exist: {$this->diskPath}");

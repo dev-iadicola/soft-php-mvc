@@ -15,11 +15,16 @@
                 </div>
                 <div class="form-group">
                     <label for="overview">Descrizione</label>
-                    <textarea class="form-control editor" id="overview" name="overview" rows="3"><?= $project->overview ?? '' ?></textarea>
+                    <textarea class="form-control editor" id="editor" name="overview" rows="3"><?= $project->overview ?? '' ?></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="link">Link</label>
+                    <label for="link">GitHub Repo</label>
                     <input type="url" class="form-control" value="<?= $project->link ?? '' ?>" id="link" name="link" required>
+                </div>
+
+                 <div class="form-group">
+                    <label for="link">Website</label>
+                    <input type="url" class="form-control" value="<?= $project->website ?? '' ?>" id="website" name="website" >
                 </div>
 
 
@@ -28,7 +33,7 @@
                 <div class="form-group">
                     <label for="img">Inserisci Nuova Immagine</label>
                     <input
-                        <?= isset($project?->img) ? '' : 'required' ?>
+                        <?= isset($project?->img) ? 'required' : '' ?>
                         type="file" accept="image/*" name="img" class="form-control" id="myfile">
                     <div class="row mt-3">
                         <?php if ( isset($project) && !is_null($project?->img) && is_string($project->img) ) : ?>
@@ -102,7 +107,6 @@
         }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-        document.getElementById('myfile').addEventListener('change', anteprimaFile, false);
-    });
+ 
+
 </script>

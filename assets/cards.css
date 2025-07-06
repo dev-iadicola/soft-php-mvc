@@ -11,14 +11,6 @@
     /* Altezza fissa per l'immagine */
 }
 
-.card {
-    transition: transform 0.2s ease-in-out;
-}
-
-.card:hover {
-    transform: scale(1.03);
-    /* Leggero ingrandimento alla hover */
-}
 
 .card-img-top {
     max-height: 200px;

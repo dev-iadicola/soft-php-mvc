@@ -51,10 +51,8 @@ $(function() {
             var aTop = $('#footer').height();
             if ($(this).scrollTop() >= aTop) {
                 btnArrow.addClass('visible');
-               // console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
             } else {
                 btnArrow.removeClass('visible');
-              //  console.log(btnArrow.attr('class')); // Mostra le classi dell'elemento btnArrow nella console
             }
         });
     } else {

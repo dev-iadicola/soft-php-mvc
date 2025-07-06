@@ -27,7 +27,7 @@ $urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home'
                 </div>
               
                 <div class="form-group mt-2">
-                    <label for="img">Img</label>
+                    <label for="img">Immagine</label>
                     <input 
                     <?php if (isset($article) && empty($article->img)): ?>
                         value="<?=$article->img?>"
