@@ -68,14 +68,14 @@ class ProjectManagerController extends Controller
       $project = Project::find($id);
       // Validazione Dati
       if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-         $this->withError("Aggiornato, eccetto l'immagine");
+         $this->withWarning("Aggiornato, eccetto l'immagine");
       }
       if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
          $stg = new Storage();
          $stg->deleteIfFileExist($project->img);
          $stg->disk('images')->put($data['img']);
          $data['img'] = $stg->getRelativePath() ;
-         
+         $this->withSuccess('Aggiornamento Eseguito');
       } else {
          unset($data['img']);
       }
@@ -83,7 +83,7 @@ class ProjectManagerController extends Controller
       $project = Project::find($id);
       $project->update($data);
       // feedback server
-      $this->withSuccess('Aggiornamento Eseguito');
+      
       return $this->redirectBack();
    }
 
