@@ -8,7 +8,7 @@
             <h3 class="card-title mb-0"><?= $title ?></h3>
         </div>
         <div class="card-body">
-            <form method="POST" action="<?= isset($project->id) ? "/admin/progetti-edit/{$project->id}" : "/admin/progetti" ?>" enctype="multipart/form-data">
+            <form method="POST" onsubmit="verification(event)" action="<?= isset($project->id) ? "/admin/progetti-edit/{$project->id}" : "/admin/progetti" ?>" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="title">Titolo</label>
                     <input type="text" class="form-control" value="<?= $project->title ?? '' ?>" id="title" name="title" required>
@@ -19,7 +19,7 @@
                 </div>
                 <div class="form-group">
                     <label for="link">GitHub Repo</label>
-                    <input type="url" class="form-control" value="<?= $project->link ?? '' ?>" id="link" name="link" required>
+                    <input type="url" class="form-control" value="<?= $project->link ?? '' ?>" id="link" name="link" >
                 </div>
 
                  <div class="form-group">
@@ -107,6 +107,20 @@
         }
     }
 
- 
+
+    const verification = (event) => {
+        event.preventDefault();
+        form = event.target;
+        const link = form.querySelector('#link').value.trim();
+        const website = form.querySelector('#website').value.trim();
+        console.log(link, website);
+        if ( link === website) {
+            alert('I link devono esser diversi tra loro.'); 
+            return false;
+        }else{
+            form.submit();
+            return true;
+        }
+    };
 
 </script>
