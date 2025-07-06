@@ -48,7 +48,7 @@
 
 
                                 <div class="cad-body shadow d-flex flex-wrap justify-content-around gap-3 py-2 ">
-                                    <?php if (!isset($project->link)): ?>
+                                    <?php if (urlExist($project->link)): ?>
                                         <a onmouseover="showArrow('<?= $project->link ?>')" onmouseleave="hideArrow('<?= $project->link ?>')" href="<?= $project->link ?>"
                                             class="btn bg-dark btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-dark hover-text-white ">
