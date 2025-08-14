@@ -7,6 +7,7 @@ use App\Model\User;
 use App\Model\Contatti;
 use \App\Core\Controller;
 use App\Core\Http\Request;
+use App\Mail\BrevoMail;
 
 class ContattiController extends Controller
 {
@@ -30,12 +31,21 @@ class ContattiController extends Controller
             $this->withSuccess('Messaggio inviato con successo!');
             // Notifica per via mail
             $user = User::orderBy('id desc')->first();
-            $mailer = $this->mvc->mailer;
+            $brevoMail = new BrevoMail();
+            $page = 'notifica';
+           
+        $brevoMail->bodyHtml($page, [
+            'nome' => $this->mvc->request->getPost('nome'),
+            'email' => $this->mvc->request->getPost('email'),
+            'messaggio' => $this->mvc->request->getPost('messaggio'),
+            'typologie' => $this->mvc->request->getPost('typologie')
+        ]);
+        $brevoMail->setEmail($user->email, 'Messaggio dal tuo portfolio');
+        $sended = $brevoMail->send();
             $to = $user->email;
-            $subject = 'Hanno inviato un nuovo messaggio per il tuo portfolio!';
+            
             $body = 'notifica';
-            $mailer->setContent($request->getPost());
-            $mailer->sendEmail($to, $subject, $body);
+            
 
         } else {
             $this->withError('Controlla i campi inseriti');
@@ -47,10 +57,10 @@ class ContattiController extends Controller
 
     public function checkThsiForm()
     {
-        $model = new Contatti($this->mvc->pdo);
+        $contatti = new Contatti();
         $post = $this->mvc->request->getPost();
-        if ($model->checkForm($post)) {
-            $model->save($post);
+        if ($contatti->checkForm($post)) {
+            Contatti::create($post);
             return true;
         }
         return false;

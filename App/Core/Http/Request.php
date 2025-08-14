@@ -17,11 +17,16 @@ class Request
     }
 
     // Cattura richiesta post
-    public function getPost(): array
+    public function getPost($index = null): array|string|int|float
     {
         $postData = $_POST ?? [];
         $fileData = $_FILES ?? [];
+      
         $combinedData = array_merge($postData, $fileData);
+        if( !is_null($index) && !empty($combinedData[$index])){
+            return $combinedData[$index];
+        }
+
         return $combinedData;
     }
 
