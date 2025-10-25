@@ -16,6 +16,6 @@ jobs:
         username: ${{ secrets.FTPUSERNAME }}
         password: ${{ secrets.FTPPASSWORD }}
         protocol: ftps
-        server-dir: public_html/
+        server-dir: /public_html/
         exclude: |
           vendor/sendinblue/api-v3-sdk/docs/**
