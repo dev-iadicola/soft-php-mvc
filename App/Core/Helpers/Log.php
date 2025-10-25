@@ -1,38 +1,41 @@
 <?php
+
 namespace App\Core\Helpers;
 
 class Log
 {
     protected static string $logFile = __DIR__ . '/../../../storage/logs/info.log';
 
-    public static function info( $message): void
+    public static function info($message): void
     {
-        self::writeLog('INFO', $message);
+        self::writeLog('INFO:', $message);
     }
 
-    public static function error( $message): void
+    public static function error($message): void
     {
-        self::writeLog('ERROR', $message);
+        self::writeLog('ERROR:', $message);
     }
 
     public static function debug(string $message): void
     {
-        self::writeLog('DEBUG', $message);
+        self::writeLog('DEBUG:', $message);
     }
 
-   
+
     protected static function writeLog(string $level,  $message = 'NA'): void
     {
         // Se è array o object, serializzo in JSON
         if (is_array($message) || is_object($message)) {
             $message = json_encode(
-                $message, 
+                $message,
                 JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
             );
         }
 
+        date_default_timezone_set('Europe/Rome');
         $date = date('Y-m-d H:i:s');
-        $formattedMessage = "[{$date}] {$level}: {$message}\n";
+
+        $formattedMessage = "[{$level}]: {$date} | {$message}\n";
 
         file_put_contents(self::$logFile, $formattedMessage, FILE_APPEND);
     }

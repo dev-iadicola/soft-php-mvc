@@ -192,10 +192,5 @@ if (!function_exists('dd')) {
         }
     }
 
-    if (!function_exists(function: 'database')) {
-        function database()
-        {
-            return new Database();
-        }
-    }
+    
 }

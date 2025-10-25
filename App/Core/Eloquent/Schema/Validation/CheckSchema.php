@@ -5,12 +5,13 @@ use App\Core\Migration;
 use PDO;
 use App\Core\Database;
 
- class CheckSchema extends Database {
+ class CheckSchema  {
 
-    
-    public function __construct(){
-        parent::__construct();
+    private ?Database $_database = null;
+   
 
+    private function database():Database{
+        return Database::getInstance();
     }
     public static function tableExist($table): bool{
         $sql = "SELECT COUNT(*) 
@@ -18,7 +19,7 @@ use App\Core\Database;
             WHERE table_schema = DATABASE() 
             AND table_name = :table";
     
-        $smtp = database()->pdo->prepare($sql);
+        $smtp =  Database::getInstance()->getConnection()->prepare($sql); //->pdo->prepare($sql);
         $smtp->execute(['table' => $table]);
 
 
@@ -27,4 +28,4 @@ use App\Core\Database;
     }
 
      
- }
+ } 

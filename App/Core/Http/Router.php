@@ -50,24 +50,22 @@ public Mvc $mvc;
 
         
         list($response, $params) = $route;
-        $controller = $response[0];
-        $method = $response[1];
-
+        $controller = $response[0]; // result: App\Controller\HomeController
+        $method = $response[1]; // string to page view
 
         if (!class_exists($controller)) {
             throw new \Exception("Controller class $controller not found");
         }
-
-        $request = $this->request;
- 
-
-
+        // return: array of path, method and body of request if is post
+        $request = $this->request; 
+        
         $instance = new $controller($this->mvc);
 
         if (!method_exists($instance, $method)) {
             throw new \Exception("Method $method not found in controller $controller");
         }
         $this->mvc->middleware->execute(); // controllo middleware
+        
 
         call_user_func_array([$instance, $method], array_merge([$request], $params));
     }

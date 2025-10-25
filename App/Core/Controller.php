@@ -39,7 +39,7 @@ class Controller
         $this->mvc->response->setContent($content);
     }
 
-    public function redirect($var)
+    public function redirect(string $var)
     {
         $this->mvc->response->redirect($var);
     }

@@ -96,7 +96,7 @@ class Mvc{
     private function getPdoConnection()
     {
         try {
-            $this->pdo = (new Database())->pdo;
+            $this->pdo = Database::getInstance()->getConnection();
         } catch (\PDOException $e) {
            if( getenv('CLOUD') == 'true')
                 $this->response->redirect('/coming-soon'); 

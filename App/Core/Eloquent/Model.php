@@ -8,18 +8,11 @@ use JsonSerializable;
 use App\Core\Database;
 use App\Core\Eloquent\QueryBuilder;
 
-class Model extends Database implements JsonSerializable
+class Model implements JsonSerializable
 {
     protected string $table; // Nome della tabella
     protected array $fillable; // Campi riempibili
-    public QueryBuilder $queryBuilder; // Query in costruzione
-
-    public function __construct()
-    {
-        parent::__construct(); // Chiama il costruttore della classe padre per inizializzare la connessione al database
-        
-    }
- 
+    private QueryBuilder $queryBuilder; // Permettendo di ereditare i suoi metodi, costruisce la query
 
     protected function boot(){
 
@@ -27,11 +20,15 @@ class Model extends Database implements JsonSerializable
             $calledClass = get_class($this); // Ottieni il nome completo del Model
             throw new ModelStructureException("La proprietà 'table' non è definita nel model: {$calledClass}");
         }
-        $this->queryBuilder = new QueryBuilder(pdo: $this->pdo);
+
+        $this->queryBuilder = new QueryBuilder();
+        $this->queryBuilder->setPDO(Database::getInstance()->getConnection());
         $this->queryBuilder->setClassModel(get_called_class());
         $this->queryBuilder->setTable(table: $this->table);
         $this->queryBuilder->setFillable(fillable: $this->fillable);
     }
+
+  
 
     public static function __callStatic($method, $parameters)
     {
@@ -44,7 +41,7 @@ class Model extends Database implements JsonSerializable
     }
 
     public function jsonSerialize(): mixed{
-        return $this->toArray(); // da implementare
+        return $this->toArray(); //TODO da implementare
     }
 
     public function getTable(){

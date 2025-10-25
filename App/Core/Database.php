@@ -14,9 +14,10 @@ use PDO;
 class Database
 {
 
-    public PDO $pdo;
+    private PDO $pdo;
+    private static ?Database $instance = null;
 
-    public function __construct()
+    private function __construct()
     {
 
         // definiamo le credenziali
@@ -35,4 +36,29 @@ class Database
             PDO::ATTR_EMULATE_PREPARES => false // maggior sicurezza attacchi SQL injection
         ]);
     }
+
+    public static function getInstance(): Database
+    {
+        // Lazy initialization (istanza creata solo la prima volta)
+        if (self::$instance === null) {
+            self::$instance = new Database();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Restituisce l’oggetto PDO per eseguire query
+     */
+    public function getConnection(): PDO
+    {
+        return $this->pdo;
+    }
+
+      // Impedisce la clonazione o unserializzazione
+      private function __clone() {}
+      public function __wakeup()
+      {
+          throw new \Exception("invalid argument");
+      }
 }

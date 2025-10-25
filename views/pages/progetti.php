@@ -1,28 +1,25 @@
 <style>
+    .arrow-icon {
+        display: inline-block;
+        opacity: 1;
+        transform: translateX(0);
+        transition:
+            opacity 0.3s ease,
+            transform 0.3s ease,
+            width 0.3s ease,
+            margin 0.3s ease;
+        width: auto;
+        margin-right: 8px;
+        /* o quello che preferisci */
+    }
 
-.arrow-icon {
-    display: inline-block;
-    opacity: 1;
-    transform: translateX(0);
-    transition: 
-        opacity 0.3s ease,
-        transform 0.3s ease,
-        width 0.3s ease,
-        margin 0.3s ease;
-    width: auto;
-    margin-right: 8px; /* o quello che preferisci */
-}
-
-.arrow-icon.hidden-arrow {
-    opacity: 0;
-    transform: translateX(-10px);
-    width: 0;
-    margin-right: 0;
-    overflow: hidden;
-}
-
-
-
+    .arrow-icon.hidden-arrow {
+        opacity: 0;
+        transform: translateX(-10px);
+        width: 0;
+        margin-right: 0;
+        overflow: hidden;
+    }
 </style>
 <div class="bg-white rounded-lg shadow-lg">
 
@@ -33,23 +30,31 @@
             <div class="row">
                 <?php foreach ($projects as $project) : ?>
 
-                    <div class="col-md-6 mb-4">
+                    <div class="col-md-6 mb-4 on-hover">
                         <div class=" shadow-sm border-light rounded-lg">
 
-                            <a href="<?= $project->website ?? $project->link ?>" rel="noreferrer" target="_blank">
+                            <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
                                 <img class="card-img-top rounded-t-lg object-fit-contain border rounded"
 
                                     src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
                                     alt="<?= $project->title ?>" />
+
+                                    <!-- EFFETTO VISUALIZZA PROGETTO -->
+                                    <div class="overlay-text">Apri</div>
+
                             </a>
+
 
                             <div class="">
                                 <h5 class="card-title text-2xl font-weight-bold text-dark"><?= $project->title ?></h5>
 
 
                                 <div class="cad-body shadow d-flex flex-wrap justify-content-around gap-3 py-2 ">
-                                    <?php if (urlExist($project->link)): ?>
-                                        <a onmouseover="showArrow('<?= $project->link ?>')" onmouseleave="hideArrow('<?= $project->link ?>')" href="<?= $project->link ?>"
+                                    <?php if (!isset($project->link)): ?>
+                                        <a onmouseover="showArrow('<?= $project->link ?>')"
+                                            onmouseleave="hideArrow('<?= $project->link ?>')"
+                                            href="<?= $project->link ?>"
+                                            target="_blank" rel="noopener noreferrer"
                                             class="btn bg-dark btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-dark hover-text-white ">
 
@@ -64,11 +69,14 @@
                                         </a>
                                     <?php endif ?>
                                     <?php if (urlExist($project->website)): ?>
-                                        <a onmouseover="showArrow('<?= $project->website ?>')" onmouseleave="hideArrow('<?= $project->website ?>')" href="<?= $project->website ?>"
+                                        <a onmouseover="showArrow('<?= $project->website ?>')"
+                                            onmouseleave="hideArrow('<?= $project->website ?>')"
+                                            href="<?= $project->website ?>"
+                                            target="_blank" rel="noopener noreferrer"
                                             class="btn btn-primary  btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-primary hover-text-white">
-                                            <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website?>" aria-hidden="true"></i>
-                                            
+                                            <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website ?>" aria-hidden="true"></i>
+
 
                                             <p class="border rounded px-2 text-white mt-3">
                                                 <i class="fa fa-eye" id="$project->website" aria-hidden="true"> </i>
@@ -87,18 +95,17 @@
 </div>
 
 <script>
- function showArrow(id) {
-    const arrow = document.getElementById(id);
-    if (arrow) {
-        arrow.classList.remove('hidden-arrow');
+    function showArrow(id) {
+        const arrow = document.getElementById(id);
+        if (arrow) {
+            arrow.classList.remove('hidden-arrow');
+        }
     }
-}
 
-function hideArrow(id) {
-    const arrow = document.getElementById(id);
-    if (arrow) {
-        arrow.classList.add('hidden-arrow');
+    function hideArrow(id) {
+        const arrow = document.getElementById(id);
+        if (arrow) {
+            arrow.classList.add('hidden-arrow');
+        }
     }
-}
-
 </script>

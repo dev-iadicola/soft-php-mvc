@@ -12,6 +12,7 @@ use App\Core\Exception\QueryBuilderException;
 
 class QueryBuilder
 {
+    private static ?QueryBuilder $_instance = null;
     protected array $attribute = [];
     protected ?string $table = null;
 
@@ -25,14 +26,13 @@ class QueryBuilder
     protected string $orderByClause = ''; // Clausola ORDER BY
     protected string $groupByClause = ''; // Clausola GROUP BY
 
-    protected PDO $pdo; // Oggetto PDO per la connessione al database
+    private PDO $pdo; // Oggetto PDO per la connessione al database
 
     public $id = ''; // ID dell'istanza
 
-    public function __construct(PDO $pdo)
-    {
-        $this->setPDO($pdo);
-    }
+  
+
+  
 
     /**
      * Summary of attributeExist
@@ -64,6 +64,9 @@ class QueryBuilder
         $this->attribute[$name] = $value;
     }
 
+    public function __construct(){
+        
+    }
 
     public function setPDO(PDO $pdo)
     {
@@ -72,16 +75,20 @@ class QueryBuilder
     public function setClassModel(string $name){
         $this->modelName = $name;
     }
-
+    public function setTable(string $table)
+    {
+        if(CheckSchema::tableExist($table))   
+            $this->table = $table;
+        else{
+            throw new ModelNotFoundException("Table " + $table +" Not Exist in Schema. Correct yout Model: " + $this->modelName);
+        }
+    }
     public function setFillable(array $fillable): void
     {
         $this->fillable = $fillable;
     }
 
-    public function setTable(string $table)
-    {
-        $this->table = $table;
-    }
+  
 
     public function where(string $columnName, $parameter): self
     {
@@ -141,7 +148,7 @@ class QueryBuilder
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new ModelNotFoundException("Nome della tabella non impostato. Model: " .$this->modelName);
+            throw new ModelNotFoundException("Name of table not set. Model: " .$this->modelName);
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
@@ -197,7 +204,8 @@ class QueryBuilder
     {
         $results = [];
         foreach ($data as $row) {
-            $instance = new static($this->pdo);
+            $instance = new static();
+            $instance->setPDO($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
             $instance->setClassModel($this->modelName);
@@ -261,9 +269,7 @@ class QueryBuilder
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelName);
         }
-        if(CheckSchema::tableExist($this->table)) {
-            throw new ModelNotFoundException("Table" . $this->table . " don't exist in database, correct your Model class ". $this->modelName ."");
-        }
+      
 
         $this->setKeyId($id);
         $id = self::removeSpecialChars($id);

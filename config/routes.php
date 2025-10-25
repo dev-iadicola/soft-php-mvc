@@ -28,6 +28,7 @@ Route::get('/', HomeController::class, 'index');
 Route::get('/cookie', LawController::class, 'cookie');
 Route::get('/laws', LawController::class, 'home');
 Route::get('/portfolio', PortfolioController::class, 'index');
+Route::get('/progetti/{id}', ProgettiController::class, 'show');
 Route::get('/progetti', ProgettiController::class, 'index');
 Route::get('/coming-soon', ErrorsController::class, 'repair');
 Route::get('/contatti', ContattiController::class, 'index');
@@ -49,12 +50,12 @@ Route::post('/token/change-password', TokenController::class, 'validatePin');
 Route::get('/admin/dashboard', DashBoardController::class, 'index');
 Route::get('/admin/logout', DashBoardController::class, 'logout');
 
-// Administration Portfolio
-Route::get('/admin/portfolio', AdminPortfolio::class, 'index');
-Route::post('/admin/portfolio', AdminPortfolio::class, 'store');
-Route::get('/admin/portfolio-edit/{id}',AdminPortfolio::class,'edit');
-Route::post('/admin/portfolio-update/{id}',AdminPortfolio::class,'update');
-Route::post('/admin/portfolio-delete/{id}',AdminPortfolio::class,'destroy');
+// // Administration Portfolio
+// Route::get('/admin/portfolio', AdminPortfolio::class, 'index');
+// Route::post('/admin/portfolio', AdminPortfolio::class, 'store');
+// Route::get('/admin/portfolio-edit/{id}',AdminPortfolio::class,'edit');
+// Route::post('/admin/portfolio-update/{id}',AdminPortfolio::class,'update');
+// Route::post('/admin/portfolio-delete/{id}',AdminPortfolio::class,'destroy');
 
 
 

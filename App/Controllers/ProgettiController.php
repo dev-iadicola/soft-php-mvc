@@ -1,11 +1,13 @@
 <?php
 namespace App\Controllers;
-use \App\Core\Controller;
-use \App\Core\Component;
 use \App\Core\Mvc;
-
-use App\Model\Contatti;
 use App\Model\Project;
+use App\Model\Contatti;
+use \App\Core\Component;
+
+use \App\Core\Controller;
+use App\Core\Helpers\Log;
+use App\Core\Http\Request;
 
 class ProgettiController extends Controller {
 
@@ -17,6 +19,12 @@ class ProgettiController extends Controller {
      $projects = Project::findAll();
         
         $this->render(view: 'progetti',  variables: compact('projects' ));
+    }
+
+    public function show(Request $request, int $id){
+         $project = Project::findOrFail($id);   
+         $projects = Project::findAll();
+         view('progetto', compact('project', "projects"));
     }
 
 
