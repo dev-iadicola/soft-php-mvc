@@ -20,7 +20,8 @@ use App\Core\Support\Tree\TreeProject;
 use App\Core\Support\Collection\BuildAppFile;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
-class Mvc{
+class Mvc
+{
     public static Mvc $mvc;
 
 
@@ -45,12 +46,13 @@ class Mvc{
      *
      * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public BuildAppFile $config){
-        
+    public function __construct(public BuildAppFile $config)
+    {
+
         // Inizalizzazione per la debug layout
         $this->initializeWhoops();
 
-        $this->config = $config; 
+        $this->config = $config;
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
         // inizializza l'oggetto Request per gestire le richieste HTTP
@@ -68,16 +70,15 @@ class Mvc{
         $this->getSMTPConnection();
 
         $this->sessionService = new SessionService();
-        $this->controller = New Controller(mvc: $this);
-
+        $this->controller = new Controller(mvc: $this);
     }
 
     //Layout per Debug
     private function initializeWhoops()
     {
-    
-        if (getenv('APP_DEBUG') == 'true') {
-            $whoops = new Run;
+        $whoops = new Run;
+        if (strtolower(getenv('APP_DEBUG')) == 'true') {
+
             $handler = new PrettyPageHandler();
             $handler->addDataTable('Environment', [
                 'PHP Version' => phpversion(),
@@ -85,8 +86,15 @@ class Mvc{
                 'App Mode' => getenv('APP_ENV'),
             ]);
             $whoops->pushHandler($handler);
-            $whoops->register();
+        } else {
+            $whoops->pushHandler(function ($exception, $inspector, $run) {
+                http_response_code(500);
+                
+                include  __DIR__."/../../views/pages/errors/ops.php";
+            return \Whoops\Handler\Handler::QUIT; // Ferma l’esecuzione di Whoops
+            });
         }
+        $whoops->register();
     }
 
     /**
@@ -98,19 +106,20 @@ class Mvc{
         try {
             $this->pdo = Database::getInstance()->getConnection();
         } catch (\PDOException $e) {
-           if( getenv('CLOUD') == 'true')
-                $this->response->redirect('/coming-soon'); 
+            if (getenv('CLOUD') == 'true')
+                $this->response->redirect('/coming-soon');
             else
-                 echo "Errore di connessione al database: " . $e->getMessage();
+                echo "Errore di connessione al database: " . $e->getMessage();
             exit;
         }
     }
 
-    private function getSMTPConnection(){
-        try{
+    private function getSMTPConnection()
+    {
+        try {
             $this->Smtp = new SMTP();
-        }catch(ExceptionSMTP $e){
-            echo "Errore di connessione al servizio di posta elettronica ". $e->getMessage();
+        } catch (ExceptionSMTP $e) {
+            echo "Errore di connessione al servizio di posta elettronica " . $e->getMessage();
             exit;
         }
     }
@@ -120,7 +129,7 @@ class Mvc{
      */
     public function run()
     {
-  
+
         $this->treeProject = new TreeProject($this);
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta

@@ -22,7 +22,7 @@ class ProgettiController extends Controller {
     }
 
     public function show(Request $request, int $id){
-         $project = Project::findOrFail($id);   
+         $project = Project::find($id);  // anziché usare findOrFail utilizzo l'eccezione all'interno della pagina pages.progetto 
          $projects = Project::findAll();
          view('progetto', compact('project', "projects"));
     }

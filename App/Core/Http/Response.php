@@ -1,6 +1,7 @@
 <?php
 namespace App\Core\Http;
 use \App\Core\View;
+use Exception;
 
 class Response {
 
@@ -10,8 +11,6 @@ class Response {
     public function __construct(
         public View $view 
     ) {}
-
-   
 
     public function getContent(){
         return $this->content;

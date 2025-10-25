@@ -23,6 +23,7 @@
         overflow: hidden;
     }
 </style>
+<?php if($project): ?>
 <div class="card shadow-sm border-light rounded-lg bg-white overflow-hidden mb-4">
   <div class="row g-0 align-items-center">
     
@@ -68,6 +69,8 @@
     </div>
   </div>
 </div>
+<?php endif; ?>
+
 
 
 @include('pages.progetti')
