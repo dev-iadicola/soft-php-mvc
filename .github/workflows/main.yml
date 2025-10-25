@@ -19,3 +19,13 @@ jobs:
         server-dir: /public_html/
         exclude: |
           vendor/sendinblue/api-v3-sdk/docs/**
+          exclude: |
+          **/.git*
+          **/.github*
+          **/node_modules/**
+          **/vendor/**
+          **/Storage/logs/**
+          **/tests/**
+          README.md
+          .env
+
