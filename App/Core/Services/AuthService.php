@@ -15,12 +15,8 @@ class AuthService
             $token = static::generateToken();
             static::saveTokenToDatabase($user->id, $token);
             static::startUserSession(token: $token);
-
-
-            self::saveLog($user->id);
-
             
-           
+            self::saveLog($user->id);           
         }
         return false;
     }

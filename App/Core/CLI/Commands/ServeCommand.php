@@ -10,7 +10,7 @@ class ServeCommand implements CommandInterface {
     private string $port; 
     public function exe(array $command): void
     {
-        $this->host = $command[2] ?? '127.0.0.2';
+        $this->host = $command[2] ?? '127.0.0.1';
         $this->port = $command[3] ?? '8000';
         $dir = getcwd();
     Out::info($dir);

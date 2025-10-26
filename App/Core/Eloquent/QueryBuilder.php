@@ -186,7 +186,8 @@ class QueryBuilder
     private function getOneInstance($data)
     {
         if ($data) {
-            $instance = new static($this->pdo);
+            $instance = new static();
+            $instance->setPDO($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
             $instance->setClassModel($this->modelName);
