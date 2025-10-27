@@ -50,7 +50,6 @@ class CorsiManagerController extends Controller
 
    public function update(Request $request, $id)
    {
-
       Certificate::where('id', $id)->update($request->getPost());
       $this->withSuccess('Corso Aggiornato con successo!');
       return $this->redirectBack();

@@ -3,6 +3,7 @@
 namespace App\Core\Eloquent;
 
 use App\Core\Eloquent\Schema\Validation\CheckSchema;
+use ErrorException;
 use PDO;
 use App\Core\Database;
 use App\Core\CLI\System\Out;
@@ -91,22 +92,101 @@ class QueryBuilder
         $this->fillable = $fillable;
     }
 
-
-
-    public function where(string $columnName, $parameter): self
+    /**
+     * Summary of where
+     * 
+     * Aggiunge una clausola Where alla query
+     * 
+     *  Semplice confronto di uguaglianza:
+     *    ```php
+     *    $query->where('id', 5);
+     *     genera: WHERE id = :param
+     *    ```
+     * 
+     *  Con operatore personalizzato:
+     *    ```php
+     *    $query->where('prezzo', '>', 100);
+     *     genera: WHERE prezzo > :param
+     *    ```
+     * @param string $columnName Nome della colonna su cui applicare la condizione
+     * @param string|int|float|bool|null $conditionOrValue Operatore di contonto SQL oppure valore se non è specificato l'operatore
+     * @param  string|int|float|bool|null $value Valore del parametro, opzionale se il secondo parametro non è inserito.
+     * @return QueryBuilder 
+     */
+    public function where(string $columnName, string|int|float|bool|null $conditionOrValue, string|int|float|bool|null $value = null): self
     {
-        $this->whereClause .= "WHERE $columnName = :parameter";
-        $this->bindings[':parameter'] = $parameter;
+        if ($value === null) {
+            $this->whereClause .= "{$this->getPrefix()} $columnName = :param ";
+            $this->bindings[':param'] = $conditionOrValue;
+        } else {
+            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue :param ";
+            $this->bindings[':param'] = $value;
+        }
+
         return $this;
     }
 
-    public function whereNot(string $columnName, $parameter): self
+    /**
+     * Summary of whereNot
+     * 
+     * Aggiunge una clausola Where NOT alla query
+     * 
+     *  Semplice confronto di uguaglianza:
+     *    ```php
+     *    $query->where('id', 5);
+     *     genera: WHERE id = :param
+     *    ```
+     * 
+     *  Con operatore personalizzato:
+     *    ```php
+     *    $query->where('prezzo', '>', 100);
+     *     genera: WHERE prezzo > :param
+     *    ```
+     * @param string $columnName Nome della colonna su cui applicare la condizione
+     * @param string|int|float|bool|null $value  Valore del parametro
+     * @param  string|int|float|bool|null $value Valore del parametro, opzionale se il secondo parametro non è inserito.
+     * @return QueryBuilder 
+     */
+    public function whereNot(string $columnName, string $value, $parameter = null): self
     {
-        $this->whereClause .= "WHERE NOT $columnName = :parameter";
-        $this->bindings[':parameter'] = $parameter;
+        if ($parameter === null) {
+            $this->whereClause .= "{$this->getPrefix()} $columnName <> :param ";
+            $this->bindings[':param'] = $value;
+        }
         return $this;
     }
+    /**
+     * Summary of getPrefix
+     * @return string Se la clausola where è vuota, ritorna WHERE altrimenti concatena le altre condizioni con AND
+     */
+    private function getPrefix(): string
+    {
+        return empty($this->whereClause) ? "WHERE" : "AND";
+    }
 
+    /**
+     * Imposta i campi da selezionare nella query SQL.
+     * 
+     * Può ricevere una stringa singola o un array di colonne:
+     * 
+     *  Stringa singola:
+     *    ```php
+     *    $query->select('id, nome, email');
+     *      genera: SELECT id, nome, email
+     *    ```
+     * 
+     * Array di colonne:
+     *    ```php
+     *    $query->select(['id', 'nome', 'email']);
+     *     genera: SELECT id, nome, email
+     *    ```
+     * 
+     * Se non viene specificato alcun campo, la query di default selezionerà `*`.
+     * 
+     * @param array<string>|string $value Elenco dei campi da selezionare.
+     * 
+     * @return self Ritorna l’istanza corrente per permettere chiamate fluide.
+     */
     public function select(array|string $value): self
     {
         if (is_array($value)) {
@@ -117,17 +197,26 @@ class QueryBuilder
         return $this;
     }
 
+    /**
+     * Summary of orderBy
+     * @param array<string>|string $columns
+     * @param string $direction
+     * @throws \App\Core\Exception\QueryBuilderException
+     * @return QueryBuilder
+     */
     public function orderBy(array|string $columns, string $direction = 'ASC'): self
     {
+        if(!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelName} ");
+        // validazione delle colonne
         $validated = $this->validateColumns($columns, true);
 
         $allowedDirections = ['ASC', 'DESC'];
         $direction = strtoupper(trim($direction));
-
+        // è possibile solo che ci sia ASC o DESC e nient'altro
         if (!in_array($direction, $allowedDirections, true)) {
             throw new QueryBuilderException("Invalid direction '$direction' in orderBy()");
         }
-
+        // costruzione della clausola orderBy.
         $this->orderByClause = 'ORDER BY ' . implode(', ', array_map(fn($col) => "$col $direction", $validated));
         return $this;
     }
@@ -142,7 +231,7 @@ class QueryBuilder
      * Se groupBy() viene richiamato più di una volta nella stessa query,
      * viene lanciata un'eccezione per evitare ambiguità.
      *
-     * @param string|array $columns  Una o più colonne per la clausola GROUP BY
+     * @param string|array<string> $columns  Una o più colonne per la clausola GROUP BY
      * @return self
      *
      * @throws QueryBuilderException Se le colonne non sono valide o se il metodo viene richiamato più volte
@@ -166,6 +255,16 @@ class QueryBuilder
     }
 
 
+    /**
+     * Summary of query 
+     * 
+     * Prepara la tua query. Questo metodo è molto utile se si tratta di una query complessa. 
+     * 
+     * @param string $query 
+     * @param array<string> $params parametri da serire per il bindValue
+     * @param int $fetchType
+     * @return QueryBuilder[]
+     */
     public function query(string $query, array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
     {
         $stmt = $this->pdo->prepare($query);
@@ -180,13 +279,23 @@ class QueryBuilder
         return $this->getInstances($data);
     }
 
+    /**
+     * Summary of toSql
+     * 
+     * Ritorna la query in stringa
+     * @return string
+     */
+    public function toSql(): string
+    {
+        return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
+    }
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
             throw new ModelNotFoundException("Name of table not set. Model: " . $this->modelName);
         }
 
-        $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
+        $query = $this->toSql();
         $stmt = $this->pdo->prepare($query);
 
         foreach ($this->bindings as $param => $value) {
