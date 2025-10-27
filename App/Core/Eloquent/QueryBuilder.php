@@ -19,6 +19,8 @@ class QueryBuilder
     private string $modelName = ''; // Nome del modello, utile per il debug e la gestione degli errori
     private array $fillable = []; // Attributi che possono essere assegnati in massa
 
+    private array $systemColumns = ['id', 'created_at','updated_at'];
+
     protected string $selectValues = '*'; // Campi da selezionare
 
     protected string $whereClause = ''; // Clausola WHERE
@@ -30,9 +32,9 @@ class QueryBuilder
 
     public $id = ''; // ID dell'istanza
 
-  
 
-  
+
+
 
     /**
      * Summary of attributeExist
@@ -43,12 +45,13 @@ class QueryBuilder
      * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi 
      * o modificarli.
      */
-   private function attributeExist(string $name): bool
-{
-    return in_array($name, $this->fillable);
-}
+    private function attributeExist(string $name): bool
+    {
+        return in_array($name, $this->fillable);
+    }
 
-    public function __get($name){
+    public function __get($name)
+    {
         // Verifica se l'attributo esiste nel Model prima di accedervi
         if (!$this->attributeExist($name)) {
             throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
@@ -56,7 +59,8 @@ class QueryBuilder
         return $this->attribute[$name];
     }
 
-    public function __set($name, $value){
+    public function __set($name, $value)
+    {
         // Verifica se l'attributo esiste nel Model prima di accedervi
         if (!$this->attributeExist($name)) {
             throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
@@ -64,23 +68,22 @@ class QueryBuilder
         $this->attribute[$name] = $value;
     }
 
-    public function __construct(){
-        
-    }
+    public function __construct() {}
 
     public function setPDO(PDO $pdo)
     {
         $this->pdo = $pdo;
     }
-    public function setClassModel(string $name){
+    public function setClassModel(string $name)
+    {
         $this->modelName = $name;
     }
     public function setTable(string $table)
     {
-        if(CheckSchema::tableExist($table))   
+        if (CheckSchema::tableExist($table))
             $this->table = $table;
-        else{
-            throw new ModelNotFoundException("Table " + $table +" Not Exist in Schema. Correct yout Model: " + $this->modelName);
+        else {
+            throw new ModelNotFoundException("Table " + $table + " Not Exist in Schema. Correct yout Model: " + $this->modelName);
         }
     }
     public function setFillable(array $fillable): void
@@ -88,7 +91,7 @@ class QueryBuilder
         $this->fillable = $fillable;
     }
 
-  
+
 
     public function where(string $columnName, $parameter): self
     {
@@ -99,7 +102,7 @@ class QueryBuilder
 
     public function whereNot(string $columnName, $parameter): self
     {
-        
+
 
         $this->whereClause = "WHERE NOT $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
@@ -148,7 +151,7 @@ class QueryBuilder
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new ModelNotFoundException("Name of table not set. Model: " .$this->modelName);
+            throw new ModelNotFoundException("Name of table not set. Model: " . $this->modelName);
         }
 
         $query = "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
@@ -264,13 +267,13 @@ class QueryBuilder
 
         return $this->getOneInstance($data);
     }
-    
+
     public function findOrFail($id, int $fetchType = PDO::FETCH_ASSOC)
     {
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelName);
         }
-      
+
 
         $this->setKeyId($id);
         $id = self::removeSpecialChars($id);
@@ -281,7 +284,7 @@ class QueryBuilder
         $stmt->execute();
         $data = $stmt->fetch($fetchType);
 
-        return $this->getOneInstance($data) ?? throw new ModelNotFoundException( $id . " Not Found in Model " . $this->modelName  );
+        return $this->getOneInstance($data) ?? throw new ModelNotFoundException($id . " Not Found in Model " . $this->modelName);
     }
 
     public function delete(): bool
@@ -294,11 +297,11 @@ class QueryBuilder
         $where = $this->whereClause ?? '';
         $bindigns = $this->bindings = [];
 
-        if(empty($where)){
-            if(isset($this->id)){
+        if (empty($where)) {
+            if (isset($this->id)) {
                 $where = "WHERE id = :id";
                 $bindigns = [':id' => $this->id];
-            }else{
+            } else {
                 throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
             }
         }
@@ -319,69 +322,69 @@ class QueryBuilder
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
-    
+
         $fillable = $this->fillable;
         if (!empty($fillable)) {
             $values = array_filter($values, fn($key) => in_array($key, $fillable), ARRAY_FILTER_USE_KEY);
         }
-    
+
         $setClause = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($values)));
-    
+
         $whereClause = $this->whereClause ?: "WHERE id = :id";
         if (!isset($this->bindings[':id']) && !$this->whereClause) {
             $this->bindings[':id'] = $this->id;
         }
-    
+
         $query = "UPDATE {$this->table} SET {$setClause} {$whereClause}";
         $stmt = $this->pdo->prepare($query);
-    
+
         // Bind dei valori da aggiornare
         foreach ($values as $key => $val) {
-            if(trim($val) === ''){
+            if (trim($val) === '') {
                 $val = NULL;
             }
-         
+
             $stmt->bindValue(":$key", $val);
         }
-    
+
         // Bind dei valori nella WHERE
         foreach ($this->bindings as $param => $value) {
             if (!isset($values[ltrim($param, ':')])) {
                 $stmt->bindValue($param, $value);
             }
         }
-      
+
         return $stmt->execute();
     }
-    
+
 
     public function create(array $values)
     {
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
         }
-    
+
         $fillable = $this->fillable;
-    
+
         // Filtra i valori per tenere solo quelli presenti in $fillable
         $filteredValues = array_filter(
             $values,
             fn($key) => in_array($key, $fillable),
             ARRAY_FILTER_USE_KEY
         );
-    
+
         if (empty($filteredValues)) {
             throw new \InvalidArgumentException("Nessun valore valido da inserire.");
         }
-    
+
         // Prepara colonne e placeholder per PDO
         $columns = implode(", ", array_keys($filteredValues));
         $placeholders = implode(", ", array_map(fn($key) => ":$key", array_keys($filteredValues)));
-    
+
         $query = "INSERT INTO {$this->table} ($columns) VALUES ($placeholders)";
-    
+
         $stmt = $this->pdo->prepare($query);
-    
+
         // Bind dei valori
         foreach ($filteredValues as $key => $val) {
             $stmt->bindValue(":$key", $val);
@@ -390,7 +393,7 @@ class QueryBuilder
         $stmt->execute();
         return $this;
     }
-    
+
     public function save(array $values): bool
     {
         if (empty($this->table)) {
@@ -422,4 +425,79 @@ class QueryBuilder
     }
 
 
+    /**
+     * ✅ Valida che le colonne passate a metodi come orderBy() o groupBy() siano sicure.
+     * 
+     * Determina automaticamente il nome del metodo chiamante tramite debug_backtrace()
+     * per restituire messaggi d’errore più precisi.
+     *
+     * @param array|string $columns  Colonne da validare
+     * @param bool $allowMultiple    Permette più colonne (true per groupBy)
+     * @return array                 Array di colonne validate
+     * @throws QueryBuilderException Se una colonna non è ammessa
+     */
+    protected function validateColumns(array|string $columns, bool $allowMultiple = false): array
+    {
+        // Determina automaticamente il contesto (chi ha chiamato questo metodo)
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = $trace[1]['function'] ?? 'unknown';
+
+        $allowed = array_merge($this->fillable, $this->systemColumns);
+        $validated = [];
+
+        // Normalizza: accetta string o array
+        if (is_string($columns)) {
+            $columns = [$columns];
+        }
+
+        foreach ($columns as $col) {
+            $col = trim($col);
+
+            // Blocca SQL injection tramite colonne arbitrarie
+            if (!in_array($col, $allowed, true)) {
+                throw new QueryBuilderException(
+                    "Invalid column '{$col}' passed to {$caller}() in model {$this->modelName}"
+                );
+            }
+
+            $validated[] = $col;
+        }
+
+        // Evita che vengano passate più colonne se non consentito
+        if (!$allowMultiple && count($validated) > 1) {
+            throw new QueryBuilderException(
+                "Multiple columns are not allowed in {$caller}()"
+            );
+        }
+
+        return $validated;
+    }
+
+    //───────────────────────────────────────────────────────────────
+    // TRANSAZIONI
+    //───────────────────────────────────────────────────────────────
+
+    public function beginTransaction(): void
+    {
+        if ($this->transactionLevel === 0) {
+            $this->pdo->beginTransaction();
+        }
+        $this->transactionLevel++;
+    }
+
+    public function commit(): void
+    {
+        if ($this->transactionLevel > 0) {
+            $this->pdo->commit();
+            $this->transactionLevel = 0;
+        }
+    }
+
+    public function rollBack(): void
+    {
+        if ($this->transactionLevel > 0) {
+            $this->pdo->rollBack();
+            $this->transactionLevel = 0;
+        }
+    }
 }
