@@ -14,12 +14,12 @@ class ContattiManagerController extends Controller{
     }
 
     public function index(){
-       $contatti = Contatti::orderBy('created_at DESC')->get();
+       $contatti = Contatti::orderBy('created_at', 'DESC')->get();
        return view('admin.portfolio.messaggi', compact('contatti'));
     }
 
     public function get(Request $request, $id){
-      $contatti = Contatti::orderBy('created_at DESC')->get();
+      $contatti = Contatti::orderBy('created_at', 'DESC')->get();
       $contatto = Contatti::find($id);
       return view('admin.portfolio.messaggi',compact('contatti','contatto'));
 

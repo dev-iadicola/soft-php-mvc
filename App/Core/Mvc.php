@@ -2,21 +2,23 @@
 
 namespace App\Core;
 
+use Throwable;
 use Whoops\Run;
-use App\Core\Eloquent\Model;
 use \App\Core\View;
 use App\Mail\Mailer;
-use App\Core\Middleware;
 use App\Core\Storage;
+use \App\Core\Database;
+use App\Core\Middleware;
+use App\Core\Helpers\Log;
 use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
+use App\Core\Eloquent\Model;
 use App\Core\Connection\SMTP;
-use \App\Core\Database;
 use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
-use \App\Core\Exception\NotFoundException;
 use App\Core\Support\Tree\TreeProject;
+use \App\Core\Exception\NotFoundException;
 use App\Core\Support\Collection\BuildAppFile;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
@@ -50,6 +52,7 @@ class Mvc
     {
 
         // Inizalizzazione per la debug layout
+        $this->getNativeErrorInLog();
         $this->initializeWhoops();
 
         $this->config = $config;
@@ -73,6 +76,33 @@ class Mvc
         $this->controller = new Controller(mvc: $this);
     }
 
+    private function getNativeErrorInLog(): void{
+        //  Intercetta anche errori PHP (warning, notice, deprecated, ecc.)
+    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+        // Crea un oggetto ErrorException per uniformità con Log::exception
+        $exception = new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+        \App\Core\Helpers\Log::exception($exception);
+
+        // Restituisce false per lasciare proseguire i normali handler PHP/Whoops
+        return false;
+    });
+
+    // Intercetta fatal error, parse error, ecc.
+    register_shutdown_function(function () {
+        $error = error_get_last();
+        if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
+            $exception = new \ErrorException(
+                $error['message'],
+                0,
+                $error['type'],
+                $error['file'],
+                $error['line']
+            );
+            \App\Core\Helpers\Log::exception($exception);
+        }
+    });
+    }
+
     //Layout per Debug
     private function initializeWhoops()
     {
@@ -86,14 +116,22 @@ class Mvc
                 'App Mode' => getenv('APP_ENV'),
             ]);
             $whoops->pushHandler($handler);
-        } else {
+
+            // Logga l'eccezione anche in debug
             $whoops->pushHandler(function ($exception, $inspector, $run) {
+                \App\Core\Helpers\Log::exception($exception);
+                return \Whoops\Handler\Handler::DONE; // Continua con gli altri handler
+            });
+        } else {
+            $whoops->pushHandler(function (Throwable $exception, $inspector, $run) {
+                \App\Core\Helpers\Log::exception($exception); /// logga l'eccezione in produzione
                 http_response_code(500);
-                
-                include  __DIR__."/../../views/pages/errors/ops.php";
-            return \Whoops\Handler\Handler::QUIT; // Ferma l’esecuzione di Whoops
+                include  __DIR__ . "/../../views/pages/errors/ops.php";
+                return \Whoops\Handler\Handler::QUIT; // Ferma l’esecuzione di Whoops
             });
         }
+        
+
         $whoops->register();
     }
 

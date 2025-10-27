@@ -16,7 +16,7 @@ class DashBoardController extends Controller{
     }
 
     public function index(){
-        $message = Contatti::orderBy('id desc')->get();
+        $message = Contatti::orderBy('id', 'DESC')->get();
        return view('admin.dashboard', compact('message'));
     }
 

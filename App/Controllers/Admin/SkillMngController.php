@@ -33,9 +33,9 @@ class SkillMngController extends Controller
   public function edit(Request $request, $id)
   {
     $skill = Skill::find($id);
-    $skills = Skill::orderBy('id DESC')->get();
-    $articles = Article::orderBy('created_at DESC')->get();
-    $profiles = Profile::orderBy('id desc')->get();
+    $skills = Skill::orderBy('id', 'DESC')->get();
+    $articles = Article::orderBy('created_at', 'DESC')->get();
+    $profiles = Profile::orderBy('id', 'DESC')->get();
     return view('admin.portfolio.home', compact('skill','skills','articles','profiles'));
   }
 

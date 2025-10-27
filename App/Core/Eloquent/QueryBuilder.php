@@ -19,7 +19,7 @@ class QueryBuilder
     private string $modelName = ''; // Nome del modello, utile per il debug e la gestione degli errori
     private array $fillable = []; // Attributi che possono essere assegnati in massa
 
-    private array $systemColumns = ['id', 'created_at','updated_at'];
+    private array $systemColumns = ['id', 'created_at', 'updated_at'];
 
     protected string $selectValues = '*'; // Campi da selezionare
 
@@ -95,18 +95,15 @@ class QueryBuilder
 
     public function where(string $columnName, $parameter): self
     {
-        $this->whereClause = "WHERE $columnName = :parameter";
+        $this->whereClause .= "WHERE $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
         return $this;
     }
 
     public function whereNot(string $columnName, $parameter): self
     {
-
-
-        $this->whereClause = "WHERE NOT $columnName = :parameter";
+        $this->whereClause .= "WHERE NOT $columnName = :parameter";
         $this->bindings[':parameter'] = $parameter;
-
         return $this;
     }
 
@@ -120,19 +117,54 @@ class QueryBuilder
         return $this;
     }
 
-    public function orderBy(string $value): self
+    public function orderBy(array|string $columns, string $direction = 'ASC'): self
     {
-        $this->orderByClause = "ORDER BY $value";
+        $validated = $this->validateColumns($columns, true);
+
+        $allowedDirections = ['ASC', 'DESC'];
+        $direction = strtoupper(trim($direction));
+
+        if (!in_array($direction, $allowedDirections, true)) {
+            throw new QueryBuilderException("Invalid direction '$direction' in orderBy()");
+        }
+
+        $this->orderByClause = 'ORDER BY ' . implode(', ', array_map(fn($col) => "$col $direction", $validated));
+        return $this;
+    }
+
+
+    /**
+     * Raggruppa i risultati per una o più colonne.
+     *
+     * Utilizza validateColumns() per garantire che le colonne siano ammesse
+     * (presenti in $fillable o $systemColumns).
+     * 
+     * Se groupBy() viene richiamato più di una volta nella stessa query,
+     * viene lanciata un'eccezione per evitare ambiguità.
+     *
+     * @param string|array $columns  Una o più colonne per la clausola GROUP BY
+     * @return self
+     *
+     * @throws QueryBuilderException Se le colonne non sono valide o se il metodo viene richiamato più volte
+     */
+    public function groupBy(string|array $columns): self
+    {
+        // Evita l’uso multiplo
+        if (!empty($this->groupByClause)) {
+            throw new QueryBuilderException(
+                "You can't use groupBy() more than once in the same query for model {$this->modelName}"
+            );
+        }
+
+        // Validazione colonne con context automatico
+        $validated = $this->validateColumns($columns, true);
+
+        // Costruisce la clausola SQL
+        $this->groupByClause = 'GROUP BY ' . implode(', ', $validated);
 
         return $this;
     }
 
-    public function groupBy(string $param): self
-    {
-        $this->groupByClause = "GROUP BY $param";
-
-        return $this;
-    }
 
     public function query(string $query, array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
     {
@@ -438,14 +470,29 @@ class QueryBuilder
      */
     protected function validateColumns(array|string $columns, bool $allowMultiple = false): array
     {
-        // Determina automaticamente il contesto (chi ha chiamato questo metodo)
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        $caller = $trace[1]['function'] ?? 'unknown';
+        // Ottieni il backtrace completo per risalire al chiamante reale
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
+        $caller = null;
 
+        // Trova il primo frame che non appartiene al core del framework
+        foreach ($trace as $frame) {
+            if (isset($frame['file']) && !str_contains($frame['file'], 'App/Core/Eloquent')) {
+                $caller = $frame;
+                break;
+            }
+        }
+
+        // Determina il nome della funzione chiamante e l’origine del file
+        $callerName = $trace[1]['function'] ?? 'unknown';
+        $originInfo = $caller
+            ? " (called from {$caller['file']} on line {$caller['line']})"
+            : '';
+
+        // Colonne consentite (fillable + systemColumns)
         $allowed = array_merge($this->fillable, $this->systemColumns);
         $validated = [];
 
-        // Normalizza: accetta string o array
+        // Normalizza: accetta stringa singola o array
         if (is_string($columns)) {
             $columns = [$columns];
         }
@@ -456,7 +503,7 @@ class QueryBuilder
             // Blocca SQL injection tramite colonne arbitrarie
             if (!in_array($col, $allowed, true)) {
                 throw new QueryBuilderException(
-                    "Invalid column '{$col}' passed to {$caller}() in model {$this->modelName}"
+                    "Invalid column '{$col}' passed to {$callerName}() in model {$this->modelName}{$originInfo}"
                 );
             }
 
@@ -466,38 +513,93 @@ class QueryBuilder
         // Evita che vengano passate più colonne se non consentito
         if (!$allowMultiple && count($validated) > 1) {
             throw new QueryBuilderException(
-                "Multiple columns are not allowed in {$caller}()"
+                "Multiple columns are not allowed in {$callerName}() in model {$this->modelName}{$originInfo}"
             );
         }
 
         return $validated;
     }
 
+
+
     //───────────────────────────────────────────────────────────────
     // TRANSAZIONI
     //───────────────────────────────────────────────────────────────
+    private int $transactionLevel = 0;
 
+    /**
+     * Avvia una transazione, gestendo livelli annidati.
+     */
     public function beginTransaction(): void
     {
-        if ($this->transactionLevel === 0) {
-            $this->pdo->beginTransaction();
+        try {
+            if ($this->transactionLevel === 0) {
+                $this->pdo->beginTransaction();
+            } else {
+                // Usa SAVEPOINT per le transazioni annidate (se supportate)
+                $this->pdo->exec("SAVEPOINT LEVEL{$this->transactionLevel}");
+            }
+
+            $this->transactionLevel++;
+        } catch (\PDOException $e) {
+            \App\Core\Helpers\Log::exception($e);
+            throw $e;
         }
-        $this->transactionLevel++;
     }
 
+    /**
+     * Conferma la transazione o rilascia un savepoint.
+     */
     public function commit(): void
     {
-        if ($this->transactionLevel > 0) {
-            $this->pdo->commit();
-            $this->transactionLevel = 0;
+        if ($this->transactionLevel === 0) {
+            return; // nessuna transazione attiva
+        }
+
+        $this->transactionLevel--;
+
+        try {
+            if ($this->transactionLevel === 0) {
+                $this->pdo->commit();
+            } else {
+                // Rilascia il savepoint invece di committare tutto
+                $this->pdo->exec("RELEASE SAVEPOINT LEVEL{$this->transactionLevel}");
+            }
+        } catch (\PDOException $e) {
+            \App\Core\Helpers\Log::exception($e);
+            throw $e;
         }
     }
 
+    /**
+     * Annulla la transazione o ripristina un savepoint.
+     */
     public function rollBack(): void
     {
-        if ($this->transactionLevel > 0) {
-            $this->pdo->rollBack();
-            $this->transactionLevel = 0;
+        if ($this->transactionLevel === 0) {
+            return;
         }
+
+        $this->transactionLevel--;
+
+        try {
+            if ($this->transactionLevel === 0) {
+                $this->pdo->rollBack();
+            } else {
+                // Ripristina lo stato al savepoint precedente
+                $this->pdo->exec("ROLLBACK TO SAVEPOINT LEVEL{$this->transactionLevel}");
+            }
+        } catch (\PDOException $e) {
+            \App\Core\Helpers\Log::exception($e);
+            throw $e;
+        }
+    }
+
+    /**
+     * Restituisce true se c'è una transazione attiva.
+     */
+    public function inTransaction(): bool
+    {
+        return $this->transactionLevel > 0 && $this->pdo->inTransaction();
     }
 }

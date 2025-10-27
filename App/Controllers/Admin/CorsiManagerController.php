@@ -19,7 +19,7 @@ class CorsiManagerController extends Controller
 
    public function index()
    {
-      $corsi = Certificate::orderBy('certified DESC')->get();
+      $corsi = Certificate::orderBy('certified', 'DESC')->get();
 
       return view('/admin/portfolio/corsi',  compact('corsi'));
    }
@@ -35,7 +35,7 @@ class CorsiManagerController extends Controller
 
    public function edit(Request $request, $id)
    {
-      $corsi = Certificate::orderBy('id DESC')->get();
+      $corsi = Certificate::orderBy('id', 'DESC')->get();
 
       $element = Certificate::find($id);
 

@@ -20,7 +20,7 @@ class ProjectManagerController extends Controller
 
    public function index()
    {
-      $projects = Project::orderBy('id DESC')->get();
+      $projects = Project::orderBy('id', 'DESC')->get();
       return view('admin.portfolio.project',  compact('projects'));
    }
 
@@ -58,7 +58,7 @@ class ProjectManagerController extends Controller
    {
 
       $project = Project::find($id);
-      $projects = Project::orderBy('id DESC')->get();
+      $projects = Project::orderBy('id', 'DESC')->get();
       return view('admin.portfolio.project', compact('project', 'projects'));
    }
 

@@ -24,9 +24,9 @@ class HomeManagerController extends Controller
     public function index()
     {
         // visualizza per la gestione della home
-        $articles = Article::orderBy('created_at DESC')->get();
-        $skills = Skill::orderBy(' id DESC')->get();
-        $profiles = Profile::orderBy('id DESC')->get();
+        $articles = Article::orderBy('created_at', 'DESC')->get();
+        $skills = Skill::orderBy(' id', 'DESC')->get();
+        $profiles = Profile::orderBy('id', 'DESC')->get();
 
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
@@ -59,9 +59,9 @@ class HomeManagerController extends Controller
     {
        
         $article = Article::find($id);
-        $articles = Article::orderBy('created_at DESC')->get();
-        $skills = Skill::orderBy('id DESC')->get();
-        $profiles = Profile::orderBy('id DESC')->get();
+        $articles = Article::orderBy('created_at', 'DESC')->get();
+        $skills = Skill::orderBy('id', 'DESC')->get();
+        $profiles = Profile::orderBy('id', 'DESC')->get();
 
 
         return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));

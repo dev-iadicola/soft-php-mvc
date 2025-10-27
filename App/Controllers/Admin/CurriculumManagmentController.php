@@ -42,7 +42,7 @@ class CurriculumManagmentController extends Controller
    public function edit(Request $request, $id)
    {
       $curriculum = Curriculum::find($id);
-      $curricula = Curriculum::orderBy('id DESC')->get();
+      $curricula = Curriculum::orderBy('id', 'DESC')->get();
       return view('admin.cv',  compact('curriculum', 'curricula'));
    }
 

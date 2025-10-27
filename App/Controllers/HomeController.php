@@ -20,12 +20,13 @@ class HomeController extends Controller {
 
     public function index() {
         // recupero dati dal database
+// TODO: PROVALO PER TESTARE IL LOGGER 'app.log' file_get_contents(filename: 'file_che_non_esiste.txt');
 
-        $certificati = Certificate::orderBy('certified DESC')->get();
-        $projects = Project::orderBy(' id DESC')->get();
-        $articles = Article::orderBy('created_at DESC')->get();
-        $profiles = Profile::where('selected',TRUE)->orderBy('id desc')->get();
-        $skills = Skill::orderBy('id desc')->get();
+        $certificati = Certificate::orderBy('certified', 'DESC')->get();
+        $projects = Project::orderBy(' id', 'DESC')->get();
+        $articles = Article::orderBy('created_at', 'DESC')->get();
+        $profiles = Profile::where('selected',TRUE)->orderBy('id', 'DESC')->get();
+        $skills = Skill::orderBy('id', 'DESC')->get();
 
 
         view('home',compact('articles',

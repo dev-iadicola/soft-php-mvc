@@ -17,7 +17,7 @@ class LawsMngController extends Controller{
   
     public function index(){
 
-        $laws=  Law::orderBy('id desc')->get();
+        $laws=  Law::orderBy('id', 'DESC')->get();
          return view('admin.laws.index',compact('laws'));
         }
         

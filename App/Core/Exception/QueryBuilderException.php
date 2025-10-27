@@ -1,15 +1,24 @@
 <?php
 namespace App\Core\Exception;
 
-use App\Core\CLI\System\Out;
-
-class QueryBuilderException extends \Exception {
-
+use Exception;
+class QueryBuilderException extends Exception
+{
     public function __construct(
-        public string $message = 'Exception in Query!',
-        public int $code = 404
+        string $message = 'Exception in Query!',
+        int $code = 404
     ) {
+        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        $caller = $trace[1] ?? null;
+
+        if ($caller && isset($caller['file'], $caller['line'])) {
+            // Cambia il file e la linea dell’eccezione
+            $this->file = $caller['file'];
+            $this->line = $caller['line'];
+
+            $message .= " (originated in {$caller['file']} on line {$caller['line']})";
+        }
+
         parent::__construct($message, $code);
     }
-
 }

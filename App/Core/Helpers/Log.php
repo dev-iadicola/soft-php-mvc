@@ -2,23 +2,45 @@
 
 namespace App\Core\Helpers;
 
+use Throwable;
+
 class Log
 {
-    protected static string $logFile = __DIR__ . '/../../../storage/logs/info.log';
+    protected static string $logFile = __DIR__ . '/../../../storage/logs/app.log';
 
     public static function info($message): void
     {
-        self::writeLog('INFO:', $message);
+        self::writeLog('INFO', $message);
     }
+
+    public static function exception(Throwable $exception): void
+{
+    $arrExc = [
+        'Message'   => $exception->getMessage(),
+        'File'      => $exception->getFile(),
+        'Line'      => $exception->getLine(),
+        'Code'      => $exception->getCode(),
+        'Trace'     => $exception->getTraceAsString(),
+    ];
+
+    $strExc ="";
+    foreach ($arrExc as $key => $value) {
+        $strExc .= "{$key}: {$value}";
+    }
+    $strExc .=".";
+
+    // Scrittura nel log (ipotizzando che writeLog accetti messaggio e testo)
+    self::writeLog('Exception', $strExc);
+}
 
     public static function error($message): void
     {
-        self::writeLog('ERROR:', $message);
+        self::writeLog('ERROR', $message);
     }
 
     public static function debug(string $message): void
     {
-        self::writeLog('DEBUG:', $message);
+        self::writeLog('DEBUG', $message);
     }
 
 
