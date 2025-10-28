@@ -106,9 +106,9 @@ abstract class AbstractBuilder
         return $this->table;
     }
 
-    protected function addValueAndBinding(string $val):mixed{
+    protected function AddBind(string $val):mixed{
         $key = ":p_". ++$this->paramCounter;
-        $this->bindings[":p_". ++$this->paramCounter ] = $val;
+        $this->bindings[":p_". $this->paramCounter ] = $val;
         return $key;
     }
 

@@ -2,14 +2,15 @@
 
 namespace App\Core\Eloquent;
 
-use App\Core\Eloquent\Schema\Validation\CheckSchema;
-use ErrorException;
 use PDO;
+use ErrorException;
 use App\Core\Database;
+use App\Core\Helpers\Log;
 use App\Core\CLI\System\Out;
+use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
-use App\Core\Exception\QueryBuilderException;
+use App\Core\Eloquent\Schema\Validation\CheckSchema;
 
 /**
  * Classe QueryBuilder
@@ -24,7 +25,7 @@ use App\Core\Exception\QueryBuilderException;
  * È progettata per essere utilizzata internamente dai Model, ma può
  * essere usata anche in modo diretto per query personalizzate.
  *
- * ⚠️ Nota:
+ * Nota:
  * In una versione iniziale era previsto l'utilizzo del pattern Singleton,
  * ma è stato rimosso per evitare problemi di stato condiviso tra query diverse.
  *
@@ -59,9 +60,9 @@ class QueryBuilder extends AbstractBuilder
     public function where(string $columnName, string|int|float|bool|null $conditionOrValue, string|int|float|bool|null $value = null): self
     {
         if ($value === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->addValueAndBinding($conditionOrValue)} ";
+            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->AddBind($conditionOrValue)} ";
         } else {
-            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->addValueAndBinding($value)} ";
+            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->AddBind($value)} ";
         }
         return $this;
     }
@@ -90,7 +91,7 @@ class QueryBuilder extends AbstractBuilder
     public function whereNot(string $columnName, string $value, $parameter = null): self
     {
         if ($parameter === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName <> {$this->addValueAndBinding($value)} ";
+            $this->whereClause .= "{$this->getPrefix()} $columnName <> {$this->AddBind($value)} ";
         }
         return $this;
     }
@@ -234,6 +235,7 @@ class QueryBuilder extends AbstractBuilder
         $stmt = $this->pdo->prepare($query);
 
         foreach ($this->bindings as $param => $value) {
+           Log::debug("key $param => value $value");
             $stmt->bindValue($param, $value);
         }
 
