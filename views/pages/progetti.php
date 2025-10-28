@@ -30,64 +30,63 @@
             <div class="row">
                 <?php foreach ($projects as $project) : ?>
 
-                    <div class="col-md-6 mb-4 on-hover">
-                        <div class=" shadow-sm border-light rounded-lg">
 
-                            <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
-                                <img class="card-img-top rounded-t-lg object-fit-contain border rounded"
+                    <div class=" col-md-4 my-2 on-hover shadow-sm border-light rounded-lg px-2">
 
-                                    src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-                                    alt="<?= $project->title ?>" />
+                        <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
+                            <img class="card-img-top rounded-t-lg object-fit-contain border rounded"
 
-                                    <!-- EFFETTO VISUALIZZA PROGETTO -->
-                                    <div class="overlay-text">Apri</div>
+                                src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+                                alt="<?= $project->title ?>" />
 
-                            </a>
+                            <!-- EFFETTO VISUALIZZA PROGETTO -->
+                            <div class="overlay-text">Apri</div>
 
-
-                            <div class="">
-                                <h5 class="card-title text-2xl font-weight-bold text-dark"><?= $project->title ?></h5>
+                        </a>
 
 
-                                <div class="cad-body shadow d-flex flex-wrap justify-content-around gap-3 py-2 ">
-                                    <?php if (!isset($project->link)): ?>
-                                        <a onmouseover="showArrow('<?= $project->link ?>')"
-                                            onmouseleave="hideArrow('<?= $project->link ?>')"
-                                            href="<?= $project->link ?>"
-                                            target="_blank" rel="noopener noreferrer"
-                                            class="btn bg-dark btn-sm d-flex align-items-center  
+                        <h5 class="card-title text-2xl font-weight-bold text-dark"><?= $project->title ?></h5>
+
+
+                        <div class="cad-body d-flex flex-wrap justify-content-around gap-3 py-2 ">
+                            <?php if (!isset($project->link)): ?>
+                                <a onmouseover="showArrow('<?= $project->link ?>')"
+                                    onmouseleave="hideArrow('<?= $project->link ?>')"
+                                    href="<?= $project->link ?>"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="btn bg-dark btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-dark hover-text-white ">
 
-                                            <i class="fa fa-arrow-right  arrow-icon" id="<?= $project->link ?>" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-right  arrow-icon" id="<?= $project->link ?>" aria-hidden="true"></i>
 
 
-                                            <p class="border rounded  px-2 text-white mt-3">
-                                                <i class="fa fa-github fa-x2" aria-hidden="true"></i>
-                                                Code
-                                            </p>
+                                    <p class="border rounded  px-2 text-white mt-3">
+                                        <i class="fa fa-github fa-x2" aria-hidden="true"></i>
+                                        Code
+                                    </p>
 
-                                        </a>
-                                    <?php endif ?>
-                                    <?php if (urlExist($project->website)): ?>
-                                        <a onmouseover="showArrow('<?= $project->website ?>')"
-                                            onmouseleave="hideArrow('<?= $project->website ?>')"
-                                            href="<?= $project->website ?>"
-                                            target="_blank" rel="noopener noreferrer"
-                                            class="btn btn-primary  btn-sm d-flex align-items-center  
+                                </a>
+                            <?php endif ?>
+                            <?php if (urlExist($project->website)): ?>
+                                <a onmouseover="showArrow('<?= $project->website ?>')"
+                                    onmouseleave="hideArrow('<?= $project->website ?>')"
+                                    href="<?= $project->website ?>"
+                                    target="_blank" rel="noopener noreferrer"
+                                    class="btn btn-primary  btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-primary hover-text-white">
-                                            <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website ?>" aria-hidden="true"></i>
+                                    <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website ?>" aria-hidden="true"></i>
 
 
-                                            <p class="border rounded px-2 text-white mt-3">
-                                                <i class="fa fa-eye" id="$project->website" aria-hidden="true"> </i>
-                                                WebSite
-                                            </p>
-                                        </a>
-                                    <?php endif ?>
-                                </div>
-                            </div>
+                                    <p class="border rounded px-2 text-white mt-3">
+                                        <i class="fa fa-eye" id="$project->website" aria-hidden="true"> </i>
+                                        WebSite
+                                    </p>
+                                </a>
+                            <?php endif ?>
                         </div>
+
                     </div>
+
                 <?php endforeach; ?>
             </div>
         </div>

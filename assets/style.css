@@ -462,13 +462,13 @@ ____________________________*/
     **    EFFETTI 
  **---------------**/
 .on-hover {
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    transition: transform 0.5s ease, box-shadow 0.5s ease;
     cursor: pointer;
   }
   
   .on-hover:hover {
     transform: scale(1.05); /* ingrandisce del 5% */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* effetto ombra opzionale */
+    
   }
 
   /** EFFETTI SU PAGINA PROGETTO **/ 

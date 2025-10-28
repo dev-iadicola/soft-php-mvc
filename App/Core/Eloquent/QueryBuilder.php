@@ -308,7 +308,6 @@ class QueryBuilder extends AbstractBuilder
             Log::debug($row);
             foreach ($row as $key => $value) {
                 $instance->$key = $value;
-                //Log::debug($instance->key);
             }
             $results[] = $instance;
         }
@@ -321,12 +320,12 @@ class QueryBuilder extends AbstractBuilder
             throw new \Exception("Nome della tabella non impostato.");
         }
 
-        $query = "SELECT * FROM $this->table";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->execute();
-        $rows = $stmt->fetchAll($fetchType);
-        // $rows = $this->fetchAll($fetchType);
-        // dd($rows);
+        // $query = "SELECT * FROM $this->table";
+        // $stmt = $this->pdo->prepare($query);
+        // $stmt->execute();
+        // $rows = $stmt->fetchAll($fetchType);
+        $rows = $this->fetchAll($fetchType);
+       
 
         return $this->getInstances($rows);
     }
