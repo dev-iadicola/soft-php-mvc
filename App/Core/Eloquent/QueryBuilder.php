@@ -11,86 +11,29 @@ use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
 use App\Core\Exception\QueryBuilderException;
 
-class QueryBuilder
-{
-    private static ?QueryBuilder $_instance = null;
-    protected array $attribute = [];
-    protected ?string $table = null;
-
-    private string $modelName = ''; // Nome del modello, utile per il debug e la gestione degli errori
-    private array $fillable = []; // Attributi che possono essere assegnati in massa
-
-    private array $systemColumns = ['id', 'created_at', 'updated_at'];
-
-    protected string $selectValues = '*'; // Campi da selezionare
-
-    protected string $whereClause = ''; // Clausola WHERE
-    protected array $bindings = []; // Parametri di binding
-    protected string $orderByClause = ''; // Clausola ORDER BY
-    protected string $groupByClause = ''; // Clausola GROUP BY
-
-    private PDO $pdo; // Oggetto PDO per la connessione al database
-
-    public $id = ''; // ID dell'istanza
-
-
-
-
-
-    /**
-     * Summary of attributeExist
-     * @param string $name
-     * @return bool
-     * Permette di verificare se un attributo esiste nell'array $attribute, molto utile per evitare errori 
-     * quando si accede a proprietà dinamiche.
-     * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi 
-     * o modificarli.
-     */
-    private function attributeExist(string $name): bool
-    {
-        return in_array($name, $this->fillable);
-    }
-
-    public function __get($name)
-    {
-        // Verifica se l'attributo esiste nel Model prima di accedervi
-        if (!$this->attributeExist($name)) {
-            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
-        }
-        return $this->attribute[$name];
-    }
-
-    public function __set($name, $value)
-    {
-        // Verifica se l'attributo esiste nel Model prima di accedervi
-        if (!$this->attributeExist($name)) {
-            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelName);
-        }
-        $this->attribute[$name] = $value;
-    }
-
-    public function __construct() {}
-
-    public function setPDO(PDO $pdo)
-    {
-        $this->pdo = $pdo;
-    }
-    public function setClassModel(string $name)
-    {
-        $this->modelName = $name;
-    }
-    public function setTable(string $table)
-    {
-        if (CheckSchema::tableExist($table))
-            $this->table = $table;
-        else {
-            throw new ModelNotFoundException("Table " + $table + " Not Exist in Schema. Correct yout Model: " + $this->modelName);
-        }
-    }
-    public function setFillable(array $fillable): void
-    {
-        $this->fillable = $fillable;
-    }
+/**
+ * Classe QueryBuilder
+ *
+ * Responsabile della costruzione ed esecuzione dinamica delle query SQL
+ * utilizzando un approccio fluente e sicuro tramite parametri bindati.
+ *
+ * Questa classe estende {@see AbstractBuilder} e fornisce metodi
+ * di alto livello per la definizione di clausole come:
+ * - SELECT, WHERE, GROUP BY, ORDER BY, LIMIT, ecc.
+ *
+ * È progettata per essere utilizzata internamente dai Model, ma può
+ * essere usata anche in modo diretto per query personalizzate.
+ *
+ * ⚠️ Nota:
+ * In una versione iniziale era previsto l'utilizzo del pattern Singleton,
+ * ma è stato rimosso per evitare problemi di stato condiviso tra query diverse.
+ *
+ * @package App\Core\Eloquent
+ */
+class QueryBuilder extends AbstractBuilder
+{  
+   
+    #region COSTRUZIONE QUERY
 
     /**
      * Summary of where
@@ -116,13 +59,10 @@ class QueryBuilder
     public function where(string $columnName, string|int|float|bool|null $conditionOrValue, string|int|float|bool|null $value = null): self
     {
         if ($value === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName = :param ";
-            $this->bindings[':param'] = $conditionOrValue;
+            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->addValueAndBinding($conditionOrValue)} ";
         } else {
-            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue :param ";
-            $this->bindings[':param'] = $value;
+            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->addValueAndBinding($value)} ";
         }
-
         return $this;
     }
 
@@ -150,8 +90,7 @@ class QueryBuilder
     public function whereNot(string $columnName, string $value, $parameter = null): self
     {
         if ($parameter === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName <> :param ";
-            $this->bindings[':param'] = $value;
+            $this->whereClause .= "{$this->getPrefix()} $columnName <> {$this->addValueAndBinding($value)} ";
         }
         return $this;
     }
@@ -159,11 +98,7 @@ class QueryBuilder
      * Summary of getPrefix
      * @return string Se la clausola where è vuota, ritorna WHERE altrimenti concatena le altre condizioni con AND
      */
-    private function getPrefix(): string
-    {
-        return empty($this->whereClause) ? "WHERE" : "AND";
-    }
-
+   
     /**
      * Imposta i campi da selezionare nella query SQL.
      * 
@@ -206,7 +141,7 @@ class QueryBuilder
      */
     public function orderBy(array|string $columns, string $direction = 'ASC'): self
     {
-        if(!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelName} ");
+        if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelName} ");
         // validazione delle colonne
         $validated = $this->validateColumns($columns, true);
 
@@ -327,6 +262,27 @@ class QueryBuilder
         return $this->getOneInstance($data);
     }
 
+    public function find(int|float|string $id, int $fetchType = PDO::FETCH_ASSOC)
+    {
+        if (empty($this->table)) {
+            throw new ModelStructureException("Nome della tabella non impostato.");
+        }
+
+        $this->setKeyId($id);
+        $id = self::removeSpecialChars($id);
+        $this->where('id', $id);
+
+        $query = $this->toSql();
+        $stmt = $this->pdo->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetch($fetchType);
+
+        return $this->getOneInstance($data);
+    }
+
+    private function prepare() {}
+
     private function getOneInstance($data)
     {
         if ($data) {
@@ -376,38 +332,6 @@ class QueryBuilder
         return $this->getInstances($data);
     }
 
-    public function getKeyId()
-    {
-        return $this->id ?: 'id'; // Restituisce il nome della chiave primaria
-    }
-
-    public function setKeyId($id)
-    {
-        $this->id = $id;
-    }
-
-    public function getNameTable()
-    {
-        return $this->table;
-    }
-
-    public function find($id, int $fetchType = PDO::FETCH_ASSOC)
-    {
-        if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato.");
-        }
-
-        $this->setKeyId($id);
-        $id = self::removeSpecialChars($id);
-
-        $query = "SELECT * FROM $this->table WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $data = $stmt->fetch($fetchType);
-
-        return $this->getOneInstance($data);
-    }
 
     public function findOrFail($id, int $fetchType = PDO::FETCH_ASSOC)
     {
@@ -567,7 +491,7 @@ class QueryBuilder
 
 
     /**
-     * ✅ Valida che le colonne passate a metodi come orderBy() o groupBy() siano sicure.
+     * Valida che le colonne passate a metodi come orderBy() o groupBy() siano sicure.
      * 
      * Determina automaticamente il nome del metodo chiamante tramite debug_backtrace()
      * per restituire messaggi d’errore più precisi.

@@ -1,6 +1,6 @@
 {
     "name": "lui12/portoflio",
-    "description": "'portfolio'",
+    "description": "'MVC'",
     "type": "project",
     "license": "MIT",
     "autoload": {
@@ -24,7 +24,7 @@
     },
     "scripts": {
         "mvc": [
-            "php App/Core/CLI/mvc.php"
+            "php App/Core/CLI/Kernel.php"
         ]
     }
 }
