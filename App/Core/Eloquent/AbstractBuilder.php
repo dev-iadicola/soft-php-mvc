@@ -6,6 +6,7 @@ use PDO;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
 use App\Core\Eloquent\Schema\Validation\CheckSchema;
+use PDOStatement;
 
 abstract class AbstractBuilder
 {
@@ -23,12 +24,11 @@ abstract class AbstractBuilder
     protected string $groupByClause = ''; // Clausola GROUP BY
     protected PDO $pdo; // Oggetto PDO per la connessione al database
     public int|float|string|null $id = null; // ID dell'istanza
-    private int $fetchTyep = PDO::FETCH_ASSOC;
 
     private int $paramCounter = 0;
 
     //───────────────────────────────────────────────────────────────
-    // SETTAGGIO DI BASE 
+    //* SETTAGGIO DI BASE 
     //───────────────────────────────────────────────────────────────
     #region SETTERS AND GETTERS
     /**
@@ -98,7 +98,7 @@ abstract class AbstractBuilder
      * Ogni volta che la 
      */
 
-  
+
     // * Get e Setter di Id
     public function getKeyId()
     {
@@ -115,16 +115,26 @@ abstract class AbstractBuilder
         return $this->table;
     }
 
-    public function setFetchType(int $type =  PDO::FETCH_ASSOC){
-        $this->fetchTyep = $type;
-    }
+
     #ENDREGION
+    
+    //───────────────────────────────────────────────────────────────
+    //* METODI SMART PER POPOLAZIONE STATEMENT SQL 
+    //───────────────────────────────────────────────────────────────
     #region SQL OPERAZIONI
     protected function AddBind(string $val): mixed
     {
         $key = ":p_" . ++$this->paramCounter;
         $this->bindings[":p_" . $this->paramCounter] = $val;
         return $key;
+    }
+    /**
+     * Summary of getPrefix
+     * @return string
+     */
+    protected function getPrefix(): string
+    {
+        return empty($this->whereClause) ? "WHERE" : "AND";
     }
 
     /**
@@ -137,20 +147,56 @@ abstract class AbstractBuilder
         return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
     }
 
-    protected function executeQuery(): array|object|false{
+    /**
+     * Summary of executeQuery
+     * 
+     * prendo la query con i paramentri da sostituire.
+     * 
+     * Preparo lo statement della stringa con i parametri.
+     *
+     * ciclo l'array @property array<string,string> $this->bindings 
+     * per allegare i parametri ai bindings
+     *  
+     * 
+     * 
+     * @return bool
+     * */
+
+    //───────────────────────────────────────────────────────────────
+    //* ESECUZIONE QUERY E FETCH/FETCHALL 
+    //───────────────────────────────────────────────────────────────
+    #region STATMENT - EXECUTION - FETCH
+    private function prepareAndExecute(): PDOStatement
+    {
         // ritorno la generazione della stringa query con i parametri da bindare
         $query = $this->toSql();
 
         $stmt = $this->pdo->prepare($query);
-        foreach($this->bindings as $bind => $value){
+        foreach ($this->bindings as $bind => $value) {
             $stmt->bindParam($bind, $value);
         }
         $stmt->execute();
-        return $stmt->fetch($this->fetchTyep);
+        return  $stmt;
+        // return $stmt->fetch($fetchTyep);
     }
 
-    protected function getPrefix(): string
+    protected function fetch(int $fetchTyep = PDO::FETCH_ASSOC): array|object|bool
     {
-        return empty($this->whereClause) ? "WHERE" : "AND";
+        $stmt = $this->prepareAndExecute();
+        if (!$stmt instanceof PDOStatement) {
+            return false; // errore o query non eseguita
+        }
+        return $stmt->fetch($fetchTyep);
     }
+
+    protected function fetchAll(int $fetchType = PDO::FETCH_ASSOC):array|object|bool{
+        $stmt = $this->prepareAndExecute();
+         if (!$stmt instanceof PDOStatement) {
+            return false; // errore o query non eseguita
+        }
+        return $stmt->fetchAll($fetchType);
+    }
+
+
+
 }

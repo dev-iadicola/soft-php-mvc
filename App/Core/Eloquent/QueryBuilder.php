@@ -32,8 +32,8 @@ use App\Core\Eloquent\Schema\Validation\CheckSchema;
  * @package App\Core\Eloquent
  */
 class QueryBuilder extends AbstractBuilder
-{  
-   
+{
+
     #region COSTRUZIONE QUERY
 
     /**
@@ -99,7 +99,7 @@ class QueryBuilder extends AbstractBuilder
      * Summary of getPrefix
      * @return string Se la clausola where è vuota, ritorna WHERE altrimenti concatena le altre condizioni con AND
      */
-   
+
     /**
      * Imposta i campi da selezionare nella query SQL.
      * 
@@ -221,7 +221,7 @@ class QueryBuilder extends AbstractBuilder
      * Ritorna la query in stringa
      * @return string
      */
-    
+
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
@@ -232,7 +232,6 @@ class QueryBuilder extends AbstractBuilder
         $stmt = $this->pdo->prepare($query);
 
         foreach ($this->bindings as $param => $value) {
-           Log::debug("key $param => value $value");
             $stmt->bindValue($param, $value);
         }
 
@@ -261,8 +260,8 @@ class QueryBuilder extends AbstractBuilder
         return $this->getOneInstance($data);
     }
 
-    public function find(int|float|string $id)
-    {   
+    public function find(int|float|string $id, int $fetchType = PDO::FETCH_ASSOC)
+    {
         // Verifica che nel Model il nome della tabella sia settato
         $this->assertTableIsSet();
 
@@ -272,11 +271,12 @@ class QueryBuilder extends AbstractBuilder
         // Richiamo il metodo where. Che popola a sua volta bindings
         $this->where('id', $id);
 
-        
-        return $this->getOneInstance($this->executeQuery());
+        // eseguo le operazioni prepare, binding, execute della query e il fetch ritorna di base un array con risultato della query    
+        $rows = $this->fetch($fetchType);
+        return $this->getOneInstance($rows);
     }
 
-    private function prepare() {}
+
 
     private function getOneInstance($data): QueryBuilder|null
     {
@@ -305,8 +305,10 @@ class QueryBuilder extends AbstractBuilder
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
             $instance->setClassModel($this->modelClass);
+            Log::debug($row);
             foreach ($row as $key => $value) {
                 $instance->$key = $value;
+                //Log::debug($instance->key);
             }
             $results[] = $instance;
         }
@@ -322,9 +324,11 @@ class QueryBuilder extends AbstractBuilder
         $query = "SELECT * FROM $this->table";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
-        $data = $stmt->fetchAll($fetchType);
+        $rows = $stmt->fetchAll($fetchType);
+        // $rows = $this->fetchAll($fetchType);
+        // dd($rows);
 
-        return $this->getInstances($data);
+        return $this->getInstances($rows);
     }
 
 

@@ -30,7 +30,7 @@ class ContattiController extends Controller
         if ($this->checkThsiForm()) {
             $this->withSuccess('Messaggio inviato con successo!');
             // Notifica per via mail
-            $user = User::orderBy('id desc')->first();
+            $user = User::orderBy('id','desc')->first();
             $brevoMail = new BrevoMail();
             $page = 'notifica';
            

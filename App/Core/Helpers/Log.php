@@ -25,7 +25,7 @@ class Log
 
     $strExc ="";
     foreach ($arrExc as $key => $value) {
-        $strExc .= "{$key}: {$value}";
+        $strExc .= " {$key}: {$value} ";
     }
     $strExc .=".";
 
@@ -38,7 +38,7 @@ class Log
         self::writeLog('ERROR', $message);
     }
 
-    public static function debug(string $message): void
+    public static function debug( $message): void
     {
         self::writeLog('DEBUG', $message);
     }
