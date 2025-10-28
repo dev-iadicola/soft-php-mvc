@@ -21,77 +21,78 @@
         overflow: hidden;
     }
 </style>
-<div class="bg-white rounded-lg shadow-lg">
 
-    <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
-        <h3 class="text-4xl font-weight-bold mb-4 text-center text-dark py-3 shadow w-50 rounded">Projects</h3>
-
-        <div class="container bg-white my-5">
+    <div class="fade-in-section mt-5">
+        <div class="bg-white rounded">
+            <h3 class="text-center py-4 mb-5">PROJECTS</h3>
+        </div>
+        <div class="container  my-5">
             <div class="row">
                 <?php foreach ($projects as $project) : ?>
 
+                    <div class="py-2 pl-4 col-4">
+                        <div class="card shadow border-primary">
 
-                    <div class=" col-md-4 my-2 on-hover shadow-sm border-light rounded-lg px-2">
+                            <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
+                                <img class="card-img-top rounded-t-lg object-fit-contain border rounded"
 
-                        <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
-                            <img class="card-img-top rounded-t-lg object-fit-contain border rounded"
+                                    src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+                                    alt="<?= strtoupper($project->title) ?>" />
 
-                                src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-                                alt="<?= $project->title ?>" />
+                                <!-- EFFETTO VISUALIZZA PROGETTO -->
+                                <div class="overlay-text">Apri</div>
 
-                            <!-- EFFETTO VISUALIZZA PROGETTO -->
-                            <div class="overlay-text">Apri</div>
-
-                        </a>
-
-
-                        <h5 class="card-title text-2xl font-weight-bold text-dark"><?= $project->title ?></h5>
+                            </a>
 
 
-                        <div class="cad-body d-flex flex-wrap justify-content-around gap-3 py-2 ">
-                            <?php if (!isset($project->link)): ?>
-                                <a onmouseover="showArrow('<?= $project->link ?>')"
-                                    onmouseleave="hideArrow('<?= $project->link ?>')"
-                                    href="<?= $project->link ?>"
-                                    target="_blank" rel="noopener noreferrer"
-                                    class="btn bg-dark btn-sm d-flex align-items-center  
+                            <h5 class="card-title text-2xl font-weight-bold text-dark"><?= strtoupper($project->title) ?></h5>
+
+
+                            <div class="cad-body d-flex flex-wrap justify-content-around gap-3 py-2 ">
+                                <?php if (!isset($project->link)): ?>
+                                    <a onmouseover="showArrow('<?= $project->link ?>')"
+                                        onmouseleave="hideArrow('<?= $project->link ?>')"
+                                        href="<?= $project->link ?>"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="btn bg-dark btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-dark hover-text-white ">
 
-                                    <i class="fa fa-arrow-right  arrow-icon" id="<?= $project->link ?>" aria-hidden="true"></i>
+                                        <i class="fa fa-arrow-right  arrow-icon" id="<?= $project->link ?>" aria-hidden="true"></i>
 
 
-                                    <p class="border rounded  px-2 text-white mt-3">
-                                        <i class="fa fa-github fa-x2" aria-hidden="true"></i>
-                                        Code
-                                    </p>
+                                        <p class="border rounded  px-2 text-white mt-3">
+                                            <i class="fa fa-github fa-x2" aria-hidden="true"></i>
+                                            Code
+                                        </p>
 
-                                </a>
-                            <?php endif ?>
-                            <?php if (urlExist($project->website)): ?>
-                                <a onmouseover="showArrow('<?= $project->website ?>')"
-                                    onmouseleave="hideArrow('<?= $project->website ?>')"
-                                    href="<?= $project->website ?>"
-                                    target="_blank" rel="noopener noreferrer"
-                                    class="btn btn-primary  btn-sm d-flex align-items-center  
+                                    </a>
+                                <?php endif ?>
+                                <?php if (urlExist($project->website)): ?>
+                                    <a onmouseover="showArrow('<?= $project->website ?>')"
+                                        onmouseleave="hideArrow('<?= $project->website ?>')"
+                                        href="<?= $project->website ?>"
+                                        target="_blank" rel="noopener noreferrer"
+                                        class="btn btn-primary  btn-sm d-flex align-items-center  
                                             d-flex flex-row gap-3 p-0 px-3  text-primary hover-text-white">
-                                    <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website ?>" aria-hidden="true"></i>
+                                        <i class="fa fa-arrow-right arrow-icon " id="<?= $project->website ?>" aria-hidden="true"></i>
 
 
-                                    <p class="border rounded px-2 text-white mt-3">
-                                        <i class="fa fa-eye" id="$project->website" aria-hidden="true"> </i>
-                                        WebSite
-                                    </p>
-                                </a>
-                            <?php endif ?>
+                                        <p class="border rounded px-2 text-white mt-3">
+                                            <i class="fa fa-eye" id="$project->website" aria-hidden="true"> </i>
+                                            WebSite
+                                        </p>
+                                    </a>
+                                <?php endif ?>
+                            </div>
+
                         </div>
-
                     </div>
 
                 <?php endforeach; ?>
             </div>
         </div>
     </div>
-</div>
+
 
 <script>
     function showArrow(id) {
