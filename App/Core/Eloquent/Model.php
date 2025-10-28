@@ -41,7 +41,7 @@ class Model implements JsonSerializable
     protected array $fillable; // Campi riempibili
     private QueryBuilder $queryBuilder; // Permettendo di ereditare i suoi metodi, costruisce la query
 
-    protected function boot()
+    protected function boot(): void
     {
 
         if (!$this->table) {
@@ -54,6 +54,7 @@ class Model implements JsonSerializable
         $this->queryBuilder->setClassModel(get_called_class());
         $this->queryBuilder->setTable(table: $this->table);
         $this->queryBuilder->setFillable(fillable: $this->fillable);
+        Instance::context(builder: $this->queryBuilder);
     }
 
 

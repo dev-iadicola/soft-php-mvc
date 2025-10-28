@@ -142,7 +142,7 @@ class QueryBuilder extends AbstractBuilder
      */
     public function orderBy(array|string $columns, string $direction = 'ASC'): self
     {
-        if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelName} ");
+        if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelClass} ");
         // validazione delle colonne
         $validated = $this->validateColumns($columns, true);
 
@@ -177,7 +177,7 @@ class QueryBuilder extends AbstractBuilder
         // Evita l’uso multiplo
         if (!empty($this->groupByClause)) {
             throw new QueryBuilderException(
-                "You can't use groupBy() more than once in the same query for model {$this->modelName}"
+                "You can't use groupBy() more than once in the same query for model {$this->modelClass}"
             );
         }
 
@@ -221,14 +221,11 @@ class QueryBuilder extends AbstractBuilder
      * Ritorna la query in stringa
      * @return string
      */
-    public function toSql(): string
-    {
-        return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
-    }
+    
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
-            throw new ModelNotFoundException("Name of table not set. Model: " . $this->modelName);
+            throw new ModelNotFoundException("Name of table not set. Model: " . $this->modelClass);
         }
 
         $query = $this->toSql();
@@ -264,35 +261,31 @@ class QueryBuilder extends AbstractBuilder
         return $this->getOneInstance($data);
     }
 
-    public function find(int|float|string $id, int $fetchType = PDO::FETCH_ASSOC)
-    {
-        if (empty($this->table)) {
-            throw new ModelStructureException("Nome della tabella non impostato.");
-        }
+    public function find(int|float|string $id)
+    {   
+        // Verifica che nel Model il nome della tabella sia settato
+        $this->assertTableIsSet();
 
         $this->setKeyId($id);
         $id = self::removeSpecialChars($id);
+
+        // Richiamo il metodo where. Che popola a sua volta bindings
         $this->where('id', $id);
 
-        $query = $this->toSql();
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $data = $stmt->fetch($fetchType);
-
-        return $this->getOneInstance($data);
+        
+        return $this->getOneInstance($this->executeQuery());
     }
 
     private function prepare() {}
 
-    private function getOneInstance($data)
+    private function getOneInstance($data): QueryBuilder|null
     {
         if ($data) {
             $instance = new static();
             $instance->setPDO($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
-            $instance->setClassModel($this->modelName);
+            $instance->setClassModel($this->modelClass);
 
             foreach ($data as $key => $value) {
                 $instance->$key = $value;
@@ -303,7 +296,7 @@ class QueryBuilder extends AbstractBuilder
         return null;
     }
 
-    private function getInstances($data)
+    private function getInstances($data): array
     {
         $results = [];
         foreach ($data as $row) {
@@ -311,7 +304,7 @@ class QueryBuilder extends AbstractBuilder
             $instance->setPDO($this->pdo);
             $instance->setFillable($this->fillable);
             $instance->setTable($this->table);
-            $instance->setClassModel($this->modelName);
+            $instance->setClassModel($this->modelClass);
             foreach ($row as $key => $value) {
                 $instance->$key = $value;
             }
@@ -338,7 +331,7 @@ class QueryBuilder extends AbstractBuilder
     public function findOrFail($id, int $fetchType = PDO::FETCH_ASSOC)
     {
         if (empty($this->table)) {
-            throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelName);
+            throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelClass);
         }
 
 
@@ -351,7 +344,7 @@ class QueryBuilder extends AbstractBuilder
         $stmt->execute();
         $data = $stmt->fetch($fetchType);
 
-        return $this->getOneInstance($data) ?? throw new ModelNotFoundException($id . " Not Found in Model " . $this->modelName);
+        return $this->getOneInstance($data) ?? throw new ModelNotFoundException($id . " Not Found in Model " . $this->modelClass);
     }
 
     public function delete(): bool
@@ -387,7 +380,7 @@ class QueryBuilder extends AbstractBuilder
     public function update(array $values): bool
     {
         if (empty($this->table)) {
-            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
         }
 
         $fillable = $this->fillable;
@@ -428,7 +421,7 @@ class QueryBuilder extends AbstractBuilder
     public function create(array $values)
     {
         if (empty($this->table)) {
-            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
         }
 
         $fillable = $this->fillable;
@@ -464,7 +457,7 @@ class QueryBuilder extends AbstractBuilder
     public function save(array $values): bool
     {
         if (empty($this->table)) {
-            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelName);
+            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
         }
         $fillable = $this->fillable;
         if (!empty($fillable)) {
@@ -538,7 +531,7 @@ class QueryBuilder extends AbstractBuilder
             // Blocca SQL injection tramite colonne arbitrarie
             if (!in_array($col, $allowed, true)) {
                 throw new QueryBuilderException(
-                    "Invalid column '{$col}' passed to {$callerName}() in model {$this->modelName}{$originInfo}"
+                    "Invalid column '{$col}' passed to {$callerName}() in model {$this->modelClass}{$originInfo}"
                 );
             }
 
@@ -548,7 +541,7 @@ class QueryBuilder extends AbstractBuilder
         // Evita che vengano passate più colonne se non consentito
         if (!$allowMultiple && count($validated) > 1) {
             throw new QueryBuilderException(
-                "Multiple columns are not allowed in {$callerName}() in model {$this->modelName}{$originInfo}"
+                "Multiple columns are not allowed in {$callerName}() in model {$this->modelClass}{$originInfo}"
             );
         }
 
