@@ -87,7 +87,7 @@ class SessionStorage {
         $_SESSION['LAST_ACTIVITY'] = time(); // aggiorna il timestamp
     }
 
-    public function setOrCreate(int|string $key, int|float|string|array|bool|null $value): array {
+    public function setOrCreate(int|string $key, int|float|string|array|bool|null $value): mixed {
       return  $_SESSION[$key] = $value;
     }
 
