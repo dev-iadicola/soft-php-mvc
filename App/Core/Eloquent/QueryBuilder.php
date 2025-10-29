@@ -278,7 +278,7 @@ class QueryBuilder extends AbstractBuilder
 
 
 
-    private function getOneInstance(array $rows): Model|null
+    private function getOneInstance(array|bool|null $rows): Model|null
     {
         // se la query non ritorna la riga di risultato tramite query, ritorna null
         if (!$rows) {
