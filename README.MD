@@ -36,12 +36,13 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 
 ---
 
-# ⚙️ Requisiti
+# Requisiti
 
-- **PHP** ≥ 8.1  
+- **PHP** ≥ 8.1-8.4  
 - **PDO** abilitato  
-- **Composer** per autoloading  
-- Server locale (Laragon, XAMPP, o PHP built-in server)
+- **Composer** per autoloading e sistemi smtp, API BREVO 
+- **Database MySQL** al momento il querybuilder supporta solo MYSQL e MariaDB
+- Server locale (Docker, Laragon, XAMPP, o PHP built-in server)
 ##  Installazione
 
 ### Clona il progetto
