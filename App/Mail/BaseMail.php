@@ -34,13 +34,11 @@ class BaseMail
     public function getContent($data = []): void
     {
         ob_start();
-    
-        // dump($content);
-    // Rende ogni chiave di $data disponibile come variabile isolata nella view
+        // Rende ogni chiave di $data disponibile come variabile isolata nella view
     foreach ($data as $key => $value) {
         $$key = $value; // crea variabile dinamica (es. $token = ...)
     }
-        //  dd($data);
+        
         include($this->page);
     
         $this->bodyHtml = ob_get_clean();

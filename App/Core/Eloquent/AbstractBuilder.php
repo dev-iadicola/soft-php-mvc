@@ -12,7 +12,6 @@ abstract class AbstractBuilder
 {
 
     protected static ?QueryBuilder $_instance = null;
-    protected array $attribute = [];
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
     protected array $fillable = []; // Attributi che possono essere assegnati in massa
@@ -48,28 +47,11 @@ abstract class AbstractBuilder
     protected function assertTableIsSet(): void
     {
         if (empty($this->table)) {
-            throw new ModelStructureException("Name table not set in model $this->classModel");
+            throw new ModelStructureException("Name table not set in model $this->modelClass");
         }
     }
 
 
-    public function __get($name)
-    {
-        // Verifica se l'attributo esiste nel Model prima di accedervi
-        if (!$this->attributeExist($name)) {
-            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelClass);
-        }
-        return $this->attribute[$name];
-    }
-
-    public function __set($name, $value)
-    {
-        // Verifica se l'attributo esiste nel Model prima di accedervi
-        if (!$this->attributeExist($name)) {
-            throw new ModelStructureException("Attribute '$name' does not exist in " . $this->modelClass);
-        }
-        $this->attribute[$name] = $value;
-    }
     public function setPDO(PDO $pdo)
     {
         $this->pdo = $pdo;
@@ -90,6 +72,11 @@ abstract class AbstractBuilder
     {
         $this->fillable = $fillable;
     }
+    public function getFillable(): array
+    {
+        return $this->fillable;
+    }
+
 
     /**
      * Summary of addBinding
@@ -100,7 +87,7 @@ abstract class AbstractBuilder
 
 
     // * Get e Setter di Id
-    public function getKeyId()
+    public function getKeyId(): float|int|string|null
     {
         return $this->id ?: 'id'; // Restituisce il nome della chiave primaria
     }
@@ -117,7 +104,7 @@ abstract class AbstractBuilder
 
 
     #ENDREGION
-    
+
     //───────────────────────────────────────────────────────────────
     //* METODI SMART PER POPOLAZIONE STATEMENT SQL 
     //───────────────────────────────────────────────────────────────
@@ -189,14 +176,12 @@ abstract class AbstractBuilder
         return $stmt->fetch($fetchTyep);
     }
 
-    protected function fetchAll(int $fetchType = PDO::FETCH_ASSOC):array|object|bool{
+    protected function fetchAll(int $fetchType = PDO::FETCH_ASSOC): array|object|bool
+    {
         $stmt = $this->prepareAndExecute();
-         if (!$stmt instanceof PDOStatement) {
+        if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita
         }
         return $stmt->fetchAll($fetchType);
     }
-
-
-
 }

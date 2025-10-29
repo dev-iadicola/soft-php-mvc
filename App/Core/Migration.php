@@ -2,15 +2,12 @@
 
 namespace App\Core;
 use App\Core\Contract\ModelSchemaInterface;
-use App\Traits\Getter;
 use App\Core\Eloquent\Model;
 use App\Core\Eloquent\Schema\SchemaBuilder;
-use App\Traits\Relation;
 
 class Migration extends Model implements ModelSchemaInterface
 {
-    use Getter;
-    use Relation;
+  
     protected string $table = 'migrations';
     protected array $fillable = [
         'table',

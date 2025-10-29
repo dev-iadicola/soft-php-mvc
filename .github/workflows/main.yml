@@ -1,5 +1,11 @@
-on: push
+
 name: 🚀 Deploy website on push
+
+on: 
+  push: 
+    branches:
+      - main # deploy solo quando il push avviene su main
+
 jobs:
   web-deploy:
     name: 🎉 Deploy
@@ -19,11 +25,9 @@ jobs:
         server-dir: /public_html/
         exclude: |
           vendor/sendinblue/api-v3-sdk/docs/**
-          exclude: |
           **/.git*
           **/.github*
           **/node_modules/**
-        
           **/Storage/logs/**
           **/tests/**
           README.md

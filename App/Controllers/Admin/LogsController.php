@@ -3,7 +3,7 @@ namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
 use App\Core\Eloquent\Model;
-use App\Model\Log;
+use App\Model\LogTrace;
 use App\Core\Component;
 use App\Core\Controller;
 use App\Core\Http\Request;

@@ -3,11 +3,16 @@
 namespace App\Core\Eloquent;
 
 
+use App\Traits\Getter;
+use App\Traits\Setter;
 use JsonSerializable;
 use App\Core\Database;
 use App\Core\Eloquent\QueryBuilder;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelStructureException;
+use Override;
+use RuntimeException;
+
 /**
  * Classe base per tutti i Model del framework.
  *
@@ -37,9 +42,13 @@ use App\Core\Exception\ModelStructureException;
  */
 class Model implements JsonSerializable
 {
+    use Getter; use Setter;
     protected string $table; // Nome della tabella
     protected array $fillable; // Campi riempibili
-    private QueryBuilder $queryBuilder; // Permettendo di ereditare i suoi metodi, costruisce la query
+    private ?QueryBuilder $queryBuilder = null; // Permettendo di ereditare i suoi metodi, costruisce la query
+
+    protected array $attributes = [];
+
 
     protected function boot(): void
     {
@@ -54,7 +63,35 @@ class Model implements JsonSerializable
         $this->queryBuilder->setClassModel(get_called_class());
         $this->queryBuilder->setTable(table: $this->table);
         $this->queryBuilder->setFillable(fillable: $this->fillable);
-        Instance::context(builder: $this->queryBuilder);
+        // TODO: vedere se implementare oppure no Instance::context
+        //Instance::context(builder: $this->queryBuilder); 
+    }
+
+    public function setQueryBuilder(QueryBuilder $queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    public function save(): bool|QueryBuilder
+    {
+        if (!$this->queryBuilder) {
+            throw new RuntimeException("Querybuilder not connected to Model");
+        }
+
+        $data = $this->attributes;
+
+        $this->fillable = $this->queryBuilder->getFillable();
+        $data = array_filter(
+            $data,
+            fn($key) => in_array($key, $this->fillable),
+            ARRAY_FILTER_USE_KEY
+        );
+        // se l'attributo id esiste , aggiorna
+        if (isset($this->attributes['id'])) {
+            return $this->queryBuilder->where('id', $this->attributes['id'])->update($data);
+        }
+        // senno crea un nuovo record
+        return $this->queryBuilder->create($data);
     }
 
 
@@ -112,9 +149,12 @@ class Model implements JsonSerializable
         }
     }
 
+   
+
+
     public function jsonSerialize(): mixed
     {
-        return $this->toArray(); //TODO da implementare
+        return $this->attributes; //TODO da implementare
     }
 
     public function getTable()

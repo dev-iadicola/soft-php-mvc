@@ -278,40 +278,64 @@ class QueryBuilder extends AbstractBuilder
 
 
 
-    private function getOneInstance($data): QueryBuilder|null
+    private function getOneInstance(array $rows): Model|null
     {
-        if ($data) {
-            $instance = new static();
-            $instance->setPDO($this->pdo);
-            $instance->setFillable($this->fillable);
-            $instance->setTable($this->table);
-            $instance->setClassModel($this->modelClass);
-
-            foreach ($data as $key => $value) {
-                $instance->$key = $value;
-            }
-            return $instance;
+        // se la query non ritorna la riga di risultato tramite query, ritorna null
+        if (!$rows) {
+            return null;
         }
+        // instanzio il model al quale viene effettuato il querybuilder
+        $model = new $this->modelClass;
+        $model->setQueryBuilder($this);
+        foreach ($rows as $key => $value) {
+            $model->__set($key, $value);
+        }
+        return $model;
+        // if ($data) {
+        //     $instance = new static();
+        //     $instance->setPDO($this->pdo);
+        //     $instance->setFillable($this->fillable);
+        //     $instance->setTable($this->table);
+        //     $instance->setClassModel($this->modelClass);
 
-        return null;
+        //     foreach ($data as $key => $value) {
+        //         $instance->$key = $value;
+        //     }
+        //     return $instance;
+        // }
+
+
     }
 
-    private function getInstances($data): array
+    private function getInstances($rows): array
     {
-        $results = [];
-        foreach ($data as $row) {
-            $instance = new static();
-            $instance->setPDO($this->pdo);
-            $instance->setFillable($this->fillable);
-            $instance->setTable($this->table);
-            $instance->setClassModel($this->modelClass);
-            Log::debug($row);
+        $arrayModels = [];
+        foreach ($rows as $row) {
+            // instanzio classe model 
+            $model = new $this->modelClass;
+            //popolo secondo i nuovi dati rows l'array attrebutes ma utilizzo i setter magici per farlo
             foreach ($row as $key => $value) {
-                $instance->$key = $value;
+                // andiamo sul sicuro utilizzando __set anziché direttamente la chiave in modo da non chiamare prorpeità del model, popolando bene l'array attributes
+                $model->__set($key, $value);
             }
-            $results[] = $instance;
+
+            $arrayModels[] = $model;
+            //aggiunfo il model su result
         }
-        return $results;
+        return $arrayModels;
+        // $results = [];
+        // foreach ($data as $row) {
+        //     $instance = new static();
+        //     $instance->setPDO($this->pdo);
+        //     $instance->setFillable($this->fillable);
+        //     $instance->setTable($this->table);
+        //     $instance->setClassModel($this->modelClass);
+        //     foreach ($row as $key => $value) {
+        //         $instance->$key = $value;
+        //     }
+        //     $results[] = $instance;
+        // }
+
     }
 
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
@@ -325,7 +349,7 @@ class QueryBuilder extends AbstractBuilder
         // $stmt->execute();
         // $rows = $stmt->fetchAll($fetchType);
         $rows = $this->fetchAll($fetchType);
-       
+
 
         return $this->getInstances($rows);
     }
@@ -380,7 +404,7 @@ class QueryBuilder extends AbstractBuilder
         return $stmt->execute();
     }
 
-    public function update(array $values): bool
+    public function update(array $values): self
     {
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
@@ -401,12 +425,13 @@ class QueryBuilder extends AbstractBuilder
         $query = "UPDATE {$this->table} SET {$setClause} {$whereClause}";
         $stmt = $this->pdo->prepare($query);
 
+
         // Bind dei valori da aggiornare
         foreach ($values as $key => $val) {
-            if (trim($val) === '') {
+            // Fixed for php 8.4. (verifica che sia una stringa prima di fare null)
+            if (is_string($val) && trim($val) === '') {
                 $val = NULL;
             }
-
             $stmt->bindValue(":$key", $val);
         }
 
@@ -417,7 +442,8 @@ class QueryBuilder extends AbstractBuilder
             }
         }
 
-        return $stmt->execute();
+        $stmt->execute();
+        return $this;
     }
 
 

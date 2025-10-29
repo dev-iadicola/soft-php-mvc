@@ -1,13 +1,12 @@
 <?php
 namespace App\Model;
 
-use App\Traits\Getter;
 use PDO;
 use App\Core\Eloquent\Model;
 use DateTime;
 
  class Token extends Model{
-   use Getter;
+
 
     /**
      * Summary of table

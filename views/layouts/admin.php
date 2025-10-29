@@ -20,6 +20,8 @@
 
     <!-- Editor di test -->
         <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css')?>">
+    <!-- CDN favicon bootstrap --> 
+        <link rel="stylesheet" href="<?= assets('/vendor/cdn/favicon.min.css')?>">
 
 </head>
 

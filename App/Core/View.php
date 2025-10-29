@@ -4,6 +4,7 @@ namespace App\Core;
 
 use \App\Core\Mvc;
 use App\Core\Services\SessionService;
+use App\Core\Services\SessionStorage;
 
 class View
 {
@@ -94,13 +95,11 @@ class View
         return $content;
     }
 
-
-
     private function getViewContent(string $folder, string $item, array $values = [], array $variables = []): string
     {
         extract($values);
         extract($variables);
-        extract(SessionService::getAll()); // per visualizzare i messaggi di errore e successo
+        extract(SessionStorage::getInstance()->getAll()); // per visualizzare i messaggi di errore e successo
         $views = $this->mvc->config->folder->views;
         ob_start();
         include "$views/$folder/$item.php";

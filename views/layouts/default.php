@@ -21,6 +21,7 @@
     <link rel="stylesheet" href="/assets/cards.css" />
     <link rel="stylesheet" href="/assets/effect.css" />
     <link rel="stylesheet" href="/assets/colors.css" />
+        <!-- CDN favicon --> 
 
     <script src="/assets/lib.js" defer></script>
 </head>

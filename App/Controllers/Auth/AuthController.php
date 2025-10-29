@@ -3,16 +3,21 @@
 namespace App\Controllers\Auth;
 
 use App\Core\Mvc;
-use App\Core\Validator;
 use App\Model\User;
+use App\Core\Validator;
+use App\Model\LogTrace;
 use App\Core\Controller;
+use App\Core\Facade\Auth;
 use App\Core\Http\Response;
+use App\Model\LogTraceTrace;
 use App\Core\Services\AuthService;
 
 class AuthController extends Controller
 {
 
-    protected $post;
+    protected array|string|int|float $post;
+
+    private AuthService $_authService;
 
     public function __construct(public Mvc $mvc)
     {
@@ -37,14 +42,15 @@ class AuthController extends Controller
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
-        // conferma
+        // conferma password
         $confirmPassword = password_verify($data['password'], $user->password);
 
         if ($confirmPassword === false) {
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
-
-        AuthService::login($user->email);
+    
+        Auth::login($user);
+        LogTrace::ceateLog($user->id);
         return $this->mvc->response->redirect('admin/dashboard');
     }
 

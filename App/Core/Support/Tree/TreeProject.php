@@ -22,20 +22,17 @@ class TreeProject
         $items = scandir($directory);
 
         $items = array_diff($items, ['.', '..', 'vendor', 'node_modules', '.git']);
-      //  dd($items);
 
         foreach ($items as $item) {
             $path = "$directory". DIRECTORY_SEPARATOR."$item";
 
-           // dump($path);
-
             if (is_dir($path)) {
                 $this->arrayResult[$item] = $path ;
                 $this->generateTree($path, $prefix . '|   ');
-             //   dump($this->arrayResult);
+            
             }
         }
-      //  dd($this->arrayResult);
+      
     }
 
 

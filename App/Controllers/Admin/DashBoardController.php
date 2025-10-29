@@ -4,6 +4,7 @@ use App\Core\Mvc;
 use App\Core\Eloquent\Model;
 use App\Model\Contatti;
 use App\Core\Controller;
+use App\Core\Facade\Auth;
 use App\Core\Services\AuthService;
 
 class DashBoardController extends Controller{
@@ -22,7 +23,7 @@ class DashBoardController extends Controller{
 
     public function logout(){
         $this->setLayout('default');
-        AuthService::logout();
+        Auth::logout();
         return $this->mvc->response->redirect('/login');
     }
 

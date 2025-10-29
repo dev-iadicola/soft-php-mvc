@@ -15,8 +15,13 @@ RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.php [L]
 
 # Protezione file di configurazione 
-RewriteRule \.(env|example|json|log|lock|sql|log)$ - [F]
+RewriteRule \.(env|example|json|log|lock|sql|log)$ - [R=404,L]
 
 # php -- BEGIN cPanel-generated handler, do not edit
 # This domain inherits the “PHP” package.
 # php -- END cPanel-generated handler, do not edit
+<FilesMatch "\.(css|js|jpg|png|svg)$">
+    Require all granted
+    Header set X-Content-Type-Options "nosniff"
+    Header always set Content-Security-Policy "default-src 'self'"
+</FilesMatch>

@@ -19,6 +19,7 @@ use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
 use App\Core\Support\Tree\TreeProject;
 use \App\Core\Exception\NotFoundException;
+use App\Core\Services\SessionStorage;
 use App\Core\Support\Collection\BuildAppFile;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
@@ -41,8 +42,7 @@ class Mvc
     public Mailer $mailer;
 
     public Middleware  $middleware; //Gestione di Autenticazione utente
-    public SessionService $sessionService;
-    private TreeProject $treeProject; // serve per la popolazione dell'albero
+    public SessionStorage $sessionService;
     /**
      * Costruttore della classe Mvc
      *
@@ -72,7 +72,7 @@ class Mvc
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
 
-        $this->sessionService = new SessionService();
+       
         $this->controller = new Controller(mvc: $this);
     }
 
@@ -168,7 +168,7 @@ class Mvc
     public function run()
     {
 
-        $this->treeProject = new TreeProject($this);
+        
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             router()->resolve();

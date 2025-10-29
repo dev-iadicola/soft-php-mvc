@@ -19,7 +19,7 @@ class Controller
 
     public function __construct(public Mvc $mvc)
     {
-        $mvc->sessionService->verifyTimeFlashSession();
+       
     }
 
  

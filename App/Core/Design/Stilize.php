@@ -3,7 +3,12 @@ namespace App\Core\Design;
 
 class Stilize
 {
-
+    /**
+     * 
+     * //@deprecated non servirà più in futuro siccome il debug sarà un rendering di un reale file.
+     * @param string $path
+     * @return void
+     */
     public static function get(string $path)
     {
         $realCssPath = css();

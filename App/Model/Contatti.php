@@ -4,14 +4,11 @@ namespace App\Model;
 
 
 use App\Core\Eloquent\Model;
-use App\Traits\BelongsTo;
-use App\Traits\Getter;
-use App\Traits\Has;
-use App\Traits\Relation;
+
 
 class Contatti extends Model
 {
-    use Getter; use Relation;
+
     protected string $table = 'contatti';
     protected  array $fillable = ['nome', 'email', 'messaggio', 'created_at','typologie'];
 
