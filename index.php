@@ -5,6 +5,7 @@
 
 require_once __DIR__.'/vendor/autoload.php';
 
+use App\Core\Mvc;
 use App\Core\Config;
 
 /**
@@ -26,8 +27,12 @@ $config = Config::dir(__DIR__.'/config'); //ritorna BuildAppFile
 // istanza Mvc che è il CORE dell'architettura MVC
 /**
  * Passiamo l'ogggetto con i valori delle cartelle
- * la funzione globale setMvc() inizializza l'architettura MVC
- * questa inizalizzazione ci permette di accedere alle proprietà della classe MVC con il metodo mvc();
+ * la funzione globale setMvc() permette di recuperare i dati principali del software dandoci molta flessibilità per prendere una variabile MVC.
+ * Questo settaggio ci permette di accedere alle proprietà della classe MVC con il metodo mvc();
  */
- setMvc($config);
+$mvc = new Mvc($config);
+setMvc($mvc);
+$mvc->run();
+// (new Mvc($config))->run();
+//  inizializeMvc($config);
  

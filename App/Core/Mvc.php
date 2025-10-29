@@ -166,12 +166,10 @@ class Mvc
      * Avvia l'applicazione, risolvendo la richiesta e inviando la risposta
      */
     public function run()
-    {
-
-        
+    {        
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
-            router()->resolve();
+            $this->router->resolve();
         } catch (NotFoundException $e) {
             // Se la rotta non viene trovata, imposta una risposta 404
             $this->response->set404($e);

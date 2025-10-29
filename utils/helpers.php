@@ -14,20 +14,29 @@ use App\Core\CLI\System\Out;
 // Defines a global helper function available everywhere
 
 
-if (!function_exists('setMvc')) {
+if (!function_exists('inizializeMvc')) {
     /**
      * Summary of setMvc:
      * It allows you to initialize the MVC Pattern as well as make access to the instance globally.
+     * @deprecated non verrà più utilizzato, si inizializza in modo OOP non con metodi globali.
      * @param App\Core\Support\Collection\BuildAppFile $config
      * @return void
      */
-    function setMvc(BuildAppFile $config)
+    function inizializeMvc(BuildAppFile $config)
     {
         $mvc = new Mvc($config);
         $GLOBALS['mvc'] = $mvc;
         $mvc->run();
     }
 }
+
+if (!function_exists('setMvc')) {
+    function setMvc(Mvc $mvc){
+        $GLOBALS['mvc'] = $mvc;
+    }
+}
+
+
 
 if (!function_exists(function: 'redirect')) {
     function redirect($var)
@@ -128,12 +137,6 @@ if (!function_exists('dd')) {
         }
     }
 
-    if (!function_exists(function: 'router')) {
-        function router()
-        {
-            return new Router();
-        }
-    }
 
 
 
