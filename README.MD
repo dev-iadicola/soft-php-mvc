@@ -1,6 +1,6 @@
 # Portfolio PHP MVC
 
-> Framework MVC artigianale sviluppato da **Luigi Iadicola**, ispirato a Laravel, con un ORM proprietario, un motore di template interno e un router personalizzato.  
+> Framework MVC artigianale sviluppato da **Luigi Iadicola**, con un ORM proprietario, un motore di template interno e un router personalizzato.  
 > Scritto interamente in PHP per fini didattici e dimostrativi, con un'architettura estendibile, sicura e conforme ai principi SOLID.
 
 ---
@@ -14,6 +14,8 @@
 - un sistema di routing flessibile e modulare;  
 - una gestione delle eccezioni estensibile tramite classi dedicate;  
 - un’architettura chiara in stile **MVC** (Model-View-Controller).
+- Facade per semplificare le operazioni 
+
 
 Il framework è stato costruito da zero per comprendere in modo pratico il funzionamento interno dei grandi framework come Laravel o Symfony.
 
@@ -29,7 +31,8 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 | **Template Method** | `AbstractBuilder` definisce la struttura comune dei Builder. |
 | **Proxy / Delegation** | Il `Model` inoltra i metodi statici al `QueryBuilder`. |
 | **Singleton (PDO)** | La classe `Database` gestisce una sola connessione attiva. |
-| **Strategy (in prospettiva)** | Possibile estensione futura per supportare dialetti SQL diversi. |
+| **Strategy ** | e in prospessitva: Possibile estensione futura per supportare dialetti SQL diversi. |
+| **Facade**    | Possibilità di eseguire con il Facade Auth i servizi come AuthService e SessionStorage |
 
 ---
 

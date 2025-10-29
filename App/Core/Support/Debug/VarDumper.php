@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Core\Support\Debug;
 
 use App\Core\Design\Stilize;
@@ -24,8 +25,11 @@ class VarDumper
      * @param mixed $var
      * @return never
      */
-    private function dd($var)
+    private function dd($var): void
     {
+        if (strtolower(getenv('APP_DEBUG')) !== 'true') {
+            return;
+        }
         self::dump($var);
         exit(0);
     }
@@ -36,8 +40,11 @@ class VarDumper
      * @param mixed $var
      * @return void
      */
-    private function dump($var)
+    private function dump($var): void
     {
+        if (strtolower(getenv('APP_DEBUG')) !== 'true') {
+            return;
+        }
         Stilize::get('vardump.css');
         echo '<div class="vardump-container">';
         $this->renderVar($var);
@@ -59,7 +66,7 @@ class VarDumper
             echo "<span class='vardump-limit'>[...]</span><br>";
             return;
         }
-    
+
         if (is_array($var)) {
             echo "<span class='vardump-type'>array</span>(" . count($var) . ") [<br>";
             foreach ($var as $key => $value) {
@@ -70,9 +77,9 @@ class VarDumper
         } elseif (is_object($var)) {
             $class = get_class($var);
             echo "<span class='vardump-type'>object</span>({$class}){ {$this->getFileName($var)} <br>";
-            
+
             foreach ((array) $var as $key => $value) {
-                
+
                 $prop = preg_replace('/^\0.+\0/', '', $key);
                 echo "{$pad}<span class='vardump-key'>{$prop}</span> => ";
                 $this->renderVar($value, $indent + 1, $countLoop + 1);
@@ -91,12 +98,12 @@ class VarDumper
         }
     }
 
-    private function getFileName($var){
+    private function getFileName($var)
+    {
         $reflector = new ReflectionClass(get_class($var));
         $fullPath = $reflector->getFileName();
-        $baseroot= baseRoot();
-        $fileName = str_replace( $baseroot,"", $fullPath);
-        echo "<span class='vardump-file'>defined in ".$fileName."</span> <br>";
-
+        $baseroot = baseRoot();
+        $fileName = str_replace($baseroot, "", $fullPath);
+        echo "<span class='vardump-file'>defined in " . $fileName . "</span> <br>";
     }
 }

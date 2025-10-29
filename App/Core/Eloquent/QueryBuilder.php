@@ -483,30 +483,30 @@ class QueryBuilder extends AbstractBuilder
         return $this;
     }
 
-    public function save(array $values): bool
-    {
-        if (empty($this->table)) {
-            throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
-        }
-        $fillable = $this->fillable;
-        if (!empty($fillable)) {
-            $values = array_filter($values, fn($key) => in_array($key, $fillable), ARRAY_FILTER_USE_KEY);
-        }
+    // public function save(array $values): bool
+    // {
+    //     if (empty($this->table)) {
+    //         throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
+    //     }
+    //     $fillable = $this->fillable;
+    //     if (!empty($fillable)) {
+    //         $values = array_filter($values, fn($key) => in_array($key, $fillable), ARRAY_FILTER_USE_KEY);
+    //     }
 
-        $values = array_map(fn($value) => self::removeSpecialChars($value), $values);
-        $keys = array_keys($values);
-        $fields = implode(',', $keys);
-        $placeholders = implode(',', array_map(fn($key) => ":$key", $keys));
+    //     $values = array_map(fn($value) => self::removeSpecialChars($value), $values);
+    //     $keys = array_keys($values);
+    //     $fields = implode(',', $keys);
+    //     $placeholders = implode(',', array_map(fn($key) => ":$key", $keys));
 
-        $query = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
-        $stmt = $this->pdo->prepare($query);
+    //     $query = "INSERT INTO $this->table ($fields) VALUES ($placeholders)";
+    //     $stmt = $this->pdo->prepare($query);
 
-        foreach ($values as $field => $fieldValue) {
-            $stmt->bindValue(":$field", $fieldValue);
-        }
+    //     foreach ($values as $field => $fieldValue) {
+    //         $stmt->bindValue(":$field", $fieldValue);
+    //     }
 
-        return $stmt->execute();
-    }
+    //     return $stmt->execute();
+    // }
 
     public static function removeSpecialChars(string $value): string
     {
