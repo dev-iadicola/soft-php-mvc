@@ -6,6 +6,7 @@ use \App\Core\Mvc;
 use App\Model\User;
 use App\Model\Contatti;
 use \App\Core\Controller;
+use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Http\Request;
 use App\Mail\BrevoMail;
 
@@ -16,7 +17,7 @@ class ContattiController extends Controller
     {
         parent::__construct($mvc);
     }
-
+    #[AttributeRoute('contatti')]
     public function index()
     {
 
@@ -24,7 +25,7 @@ class ContattiController extends Controller
     }
 
 
-
+    #[AttributeRoute('contatti', 'POST')]
     public function sendForm(Request $request)
     {
         if ($this->checkThsiForm()) {

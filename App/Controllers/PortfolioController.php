@@ -1,7 +1,7 @@
 <?php
 namespace App\Controllers;
 use \App\Core\Controller;
-use \App\Core\Component;
+use App\Core\Http\Attributes\AttributeRoute;
 use \App\Core\Mvc;
 use App\Model\Certificate;
 use App\Model\Curriculum;
@@ -13,6 +13,7 @@ class PortfolioController extends Controller {
         parent::__construct($mvc);
     }
 
+    #[AttributeRoute('portfolio')]
     public function index() {
   
         $projects = Project::orderBy('id', 'DESC')->get();

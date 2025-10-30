@@ -3,7 +3,6 @@ namespace App\Core;
 use \App\Core\Mvc;
 use App\Core\Validator;
 use App\Core\Storage;
-use App\Core\Services\SessionService;
 
 /**
  *  sommario di Controller
@@ -57,6 +56,11 @@ class Controller
         $this->mvc->response->redirect($back);
     }
 
+    /**
+     * @deprecated non esiste più
+     * @param mixed $view
+     * @param mixed $variables
+     */
     public function view($view, $variables)
     {
 
@@ -64,33 +68,25 @@ class Controller
 
     }
 
+    private function sessionStorage(){
+        return $this->mvc->sessionStorage;
+    }
     public function withError($message)
     {
-        SessionService::setFlashSession('error', $message);
+       $this->sessionStorage()->setFlashSession('error', $message);
     }
 
     public function withSuccess($message)
     {
-        SessionService::setFlashSession('success', $message);
+        $this->sessionStorage()
+        ->setFlashSession('success', $message);
     }
 
     public function withWarning($message)
     {
-        SessionService::setFlashSession('warning', $message);
+        $this->sessionStorage()->setFlashSession('warning', $message);
     }
-
-    public function resetImg(array $data)
-    {
-
-        if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-            unset($data['img']);
-        } elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-            (new Storage($this->mvc))->deleteFile($data['img']);
-            $data['img'] = $this->checkImage($data);
-
-        }
-    }
-    
+  
 
     public static function validateImage($file)
     {
@@ -101,26 +97,6 @@ class Controller
             return is_array($imageSize);
         }
         return false;
-    }
-
-   
-
-
-
-    public function checkPdf($data)
-    {
-        $validImage = Validator::validatePDF(
-            $data['img']
-        );
-        if ($validImage === FALSE) {
-            $this->withError('Non sono accettati formati che non sono immagini');
-            return $this->redirectBack();
-        }
-
-        $uploadFile = new Storage($this->mvc);
-        $uploadFile->storeFile($data['img']);
-
-        return $uploadFile->getPathImg();
     }
 
 

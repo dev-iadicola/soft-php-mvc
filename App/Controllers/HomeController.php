@@ -9,7 +9,7 @@ use \App\Core\Controller;
 use App\Model\Curriculum;
 use App\Model\Certificate;
 use App\Core\Eloquent\Model;
-use App\Core\Http\Attributes\Route;  
+use App\Core\Http\Attributes\AttributeRoute as Route;  
 
 class HomeController extends Controller {
 
