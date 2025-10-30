@@ -19,6 +19,78 @@ class VarDumper
         return $istance->$method(...$args);
     }
 
+
+    /**
+     * * serve SOLO per trovare metodo debug() o VarDumper::debug()
+     *
+     * @return void
+     */
+    private function debugTrace(): void
+    {
+        // Ottieni l'intero stack trace
+        $traces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
+        $fileWhereDebug = "";
+        $lineWhereDebug = 0;
+
+        foreach ($traces as $trace) {
+            //carico linee files
+            $lines = @file($trace['file']);
+            if (!$lines) continue;
+           
+            foreach ($lines as $num => $content) {
+                // trovato
+                //* rimuovi spazi e tab
+                $trimmed = trim($content);
+                //* Salta se è una riga vuota o commentata
+                if (
+                    $trimmed === '' ||
+                    str_starts_with($trimmed, '//') ||
+                    str_starts_with($trimmed, '#') ||
+                    str_starts_with($trimmed, '/*') ||
+                    str_contains($trimmed, '/*') && str_contains($trimmed, '*/')
+                ) {
+                    continue;
+                }
+                //* trova il metodo!
+                if (str_contains($content, 'debug(') || str_contains($content, 'VarDumper::debug(')) {
+                    $fileWhereDebug = $trace['file'];
+                    $lineWhereDebug = ($num + 1);
+                }
+            }
+        }
+
+        // * Mostra a vidoe
+   
+        echo "========================================= <br>";
+
+        echo "Debug delcared in: " . str_replace(baseRoot(), "", $fileWhereDebug ) . " at line " . $lineWhereDebug . " <br>";
+
+        echo "========================================= <br>";
+    }
+
+
+
+    private function debug(mixed $vars, bool $exit = true): void
+    {
+
+        ob_start();
+
+
+        echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        $this->debugTrace();
+        $this->renderVar($vars);
+        echo '</pre>';
+
+        $output = ob_get_clean();
+        echo $output;
+
+        if ($exit) exit;
+    }
+
+
+
+
+
     /**
      * Summary of dd
      * Dump and Die

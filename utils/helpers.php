@@ -94,6 +94,15 @@ if (!function_exists('urlExist')) {
 }
 
 }
+
+if (!function_exists('debug')){
+    /**
+     * Debug dump ad dies for extreme deep debug without complication 
+     */
+    function debug(...$vars): void{
+        VarDumper::debug(vars: $vars );
+    }
+}
 if (!function_exists('dd')) {
     /**
      * Dump and Die: Print variables and end execution
