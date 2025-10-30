@@ -5,12 +5,10 @@ namespace App\Middleware;
 use App\Core\Mvc;
 use App\Model\User;
 use App\Core\Services\AuthService;
-use App\Core\Services\SessionService;
 use App\Core\Services\SessionStorage;
 use App\Core\Contract\ITimeoutStrategy;
 use App\Core\Strategy\InactivityTimeout;
 use App\Core\Contract\MiddlewareInterface;
-use Exception;
 
 
 class AdminMiddleware implements MiddlewareInterface

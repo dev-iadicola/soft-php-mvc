@@ -1,9 +1,11 @@
 <?php
 namespace App\Core;
+
+use App\Core\Facade\Session;
 use \App\Core\Mvc;
+use App\Core\Services\SessionStorage;
 use App\Core\Validator;
 use App\Core\Storage;
-use App\Core\Services\SessionService;
 
 /**
  *  sommario di Controller
@@ -66,17 +68,17 @@ class Controller
 
     public function withError($message)
     {
-        SessionService::setFlashSession('error', $message);
+        Session::setFlash('error', $message);
     }
 
     public function withSuccess($message)
     {
-        SessionService::setFlashSession('success', $message);
+        Session::setFlash('success', $message);
     }
 
     public function withWarning($message)
     {
-        SessionService::setFlashSession('warning', $message);
+        Session::setFlash('warning', $message);
     }
 
     public function resetImg(array $data)
