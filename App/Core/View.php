@@ -3,7 +3,6 @@
 namespace App\Core;
 
 use \App\Core\Mvc;
-use App\Core\Services\SessionService;
 use App\Core\Services\SessionStorage;
 
 class View

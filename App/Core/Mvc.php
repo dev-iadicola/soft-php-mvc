@@ -9,15 +9,11 @@ use App\Mail\Mailer;
 use App\Core\Storage;
 use \App\Core\Database;
 use App\Core\Middleware;
-use App\Core\Helpers\Log;
 use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
-use App\Core\Eloquent\Model;
 use App\Core\Connection\SMTP;
-use App\Core\Services\SessionService;
 use Whoops\Handler\PrettyPageHandler;
-use App\Core\Support\Tree\TreeProject;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Services\SessionStorage;
 use App\Core\Support\Collection\BuildAppFile;
@@ -39,7 +35,7 @@ class Mvc
     public SMTP $Smtp;
     public Mailer $mailer;
     public Middleware  $middleware; //Gestione di Autenticazione utente
-    public SessionStorage $sessionService;
+    public SessionStorage $sessionStorage;
     /**
      * Costruttore della classe Mvc
      *
@@ -64,6 +60,8 @@ class Mvc
         $this->response = new Response($this->view);
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
+
+        $this->sessionStorage = SessionStorage::getInstance();
         /**
          //*! Deprecated Method, dont do use
          * @deprecated Verrà sostituito il sistema di Middleware attuale da quello nuovo,

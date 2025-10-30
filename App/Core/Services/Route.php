@@ -2,6 +2,10 @@
 namespace App\Core\Services;
 use App\Core\Http\Request;
 
+/**
+ * Summary of Route
+ * @deprecated 
+ */
 class Route {
 
     private static array $routes = [

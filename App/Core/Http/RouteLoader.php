@@ -2,9 +2,11 @@
 
 namespace App\Core\Http;
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use ReflectionClass;
-use App\Core\Http\Attributes\Middleware;
-use App\Core\Http\Attributes\Route;
+use App\Core\Http\Attributes\AttributeMiddleware;
+use App\Core\Http\Attributes\AttributeRoute;
 use ReflectionMethod;
 
 /**
@@ -16,70 +18,102 @@ use ReflectionMethod;
  */
 class RouteLoader
 {
+    /**
+     * Summary of __construct
+     * @param array @param array<string,string> $controllersPath  percorso files dei controller con chiave Namespace 
+     * ossia array: key:App\\Controllers => value:[percorso completo]/App/Controllers 
+     */
+    public function __construct(private array $_controllersPath) {}
 
     /**
-     * @param string   $controllersPath   percorso file (es. baseRoot()."/App/Controllers/*.php")
-     * @param string   $controllerNameSpace      namespace base (es. "App\\Controllers")
-     * @return array[] lista di rotte pronte: [
-     *   'path' => '/users/{id}',
-     *   'method' => 'GET',
-     *   'controller' => 'App\Controllers\UserController',
-     *   'action' => 'show',
-     *   'middlewares' => ['auth','admin'],
-     *   'name' => 'users.show'
-     * ]
+     * @param array<string,string> $controllersPath   percorso file (es. baseRoot()."/App/Controllers/*.php")
+     * @return array<string,string> lista dei controller pronti: [namespace => file.php] 
+     * 
      */
-    public static function load(string $controllersPath, string $controllerNameSpace): array
+    private function getAllControllers(): array
+    {
+        $controllers = [];
+        $principalPath = $this->_controllersPath;
+        foreach ($principalPath as $namespace => $path) {
+            // Scansiona ricorsivamente le sotto direcotry
+            $iterator = new RecursiveIteratorIterator(
+                new RecursiveDirectoryIterator($path)
+            );
+
+            foreach ($iterator as $file) {
+                // controllo se il file è php
+                if ($file->isFile() && $file->getExtension() === "php") {
+                    //* Ottieni il percors relativo al path base ottenendo per esempio 'Admin\NameController.php"
+                    $relative = str_replace($path . DIRECTORY_SEPARATOR, '', $file->getPathname());
+
+                    // * Conversione del path in namespace 
+                    $className = $namespace . '\\' . str_replace(
+                        [DIRECTORY_SEPARATOR, '.php'], // rimuovo la slash e l'estensione php
+                        ["\\", ""], // sostituisco slah con \\ e l'estensione con vuoto
+                        $relative // path che contiene Admin/nameController
+                    );
+
+
+                    // * inserimento dell classname e del file
+                    $controllers[$className] = $file->getPathname();
+                }
+            }
+        }
+        //* Ritorna un array pieno di [namespace => percorso completo + filecontroller.php] 
+        return $controllers;
+    }
+    public function load(): array
     {
         $routes = [];
-        foreach (glob($controllersPath) as $fileController) {
-            require_once $fileController; // includo il file (una sola volta)
-            $className = $controllerNameSpace . "\\" . basename($fileController, '.php');
-            dump($className);
+        // * Rirtona tutti i controllers con namespace e file
+        $controllers = $this->getAllControllers();
 
-            // se non esiste la classe, ignoro
+        foreach ($controllers as $className => $fileController) {
+            // inclusione del file se non esiste già
             if (!class_exists($className)) {
-                continue;
+                require_once $fileController;
             }
-            // prendo il pieno controllo della classe
-            $rc = new ReflectionClass($className);
+            // * reflection del controller 
+            $reflectionController = new ReflectionClass($className); // classname è una stringa del tipo App/Controller/UserController
 
-            /**
-             * * Middleware ereditatidalla gerarchia (superclassi / classi padre);
-             * Consentendomi di avere la possibilità di ereditare i middleware delle classi padri, meno codice da applicare al controller
-             */
-            $classMiddlewares = self::collectInheritedClassMiddlewares($rc);
-            // Metodi con #[Route]
-            foreach($rc->getMethods(ReflectionMethod::IS_PUBLIC) as $reflectionMethod){
-                $routeAttributes = $reflectionMethod->getAttributes(Route::class);
-                if(!$routeAttributes) continue; 
+            // * ignora classi astratte o interfaccie
+            if ( ! $reflectionController->isInstantiable() || $reflectionController->isAbstract()) continue;
 
-                // Middleware definiti sul metodo
-                $methodMiddlewares = [];
-                foreach($reflectionMethod->getAttributes(Middleware::class) as $middlewareAttributes){
-                    $instance = $middlewareAttributes->newInstance();
-                    $methodMiddlewares = array_merge($methodMiddlewares, (array) $instance->names);
+            // * Middleware ereditati (classi parent)
+            $classMiddlewares = self::collectInheritedClassMiddlewares($reflectionController);
+
+            foreach ($reflectionController->getMethods(ReflectionMethod::IS_PUBLIC) as $reflectionMethod) {
+                $routeAttributes = $reflectionMethod->getAttributes(AttributeRoute::class);
+
+                // se non ha attributi di Route, salta/ignora 
+                if (!$routeAttributes) continue;
+
+                // * Middleware definiti sul metodo del controller 
+                $middlewaresInMethodsController = [];
+                foreach ($reflectionMethod->getAttributes(AttributeMiddleware::class) as $middlewareAttribute) {
+                    $instance = $middlewareAttribute->newInstance(); // nuova instanza del AttributeMiddleware
+                    // aggiungiamo l'istanza all'interno della lista di array presenti nei metodi del controller
+                    $middlewaresInMethodsController = array_merge($middlewaresInMethodsController, (array) $instance->names);
                 }
-                foreach($routeAttributes as $attribute){
-                    /** @var Route $r */
+
+                // Per ogni attributo Route sul metodo 
+                foreach ($routeAttributes as $attribute) {
+                    /** @var AttributeRoute $route */
                     $route = $attribute->newInstance();
-                    // * Popolazione delle route dentro l'array
+                  
+                 
                     $routes[] = [
-                        'path' => $route->path,
-                        'method' => strtoupper($route->method),
-                        'controller' => $className,
-                        'action' => $reflectionMethod->getName(),
-                        // Unione: Gerarchia classe + metodi
-                        'middlewares' => array_values(array_unique(array_merge($classMiddlewares, $methodMws))),
-                        'name' => $route->name,
+                        'path'        => $route->path,
+                        'method'      => strtoupper($route->method),
+                        'controller'  => $className,
+                        'action'      => $reflectionMethod->getName(),
+                        'middlewares' => array_values(array_unique(array_merge($classMiddlewares, $middlewaresInMethodsController))),
+                        'name'        => $route->name,
                     ];
- 
-
                 }
             }
-
-           
         }
+       
         return $routes;
     }
 
@@ -95,7 +129,7 @@ class RouteLoader
         $chain = array_reverse($chain); //ordine dell'array: superclasse -> sottoclasse
 
         foreach ($chain as $classRef) {
-            foreach ($classRef->getAttributes(Middleware::class) as $middlewareAttribute) {
+            foreach ($classRef->getAttributes(AttributeMiddleware::class) as $middlewareAttribute) {
                 $instance = $middlewareAttribute->newInstance();
                 $stack = array_merge($stack, (array) $instance->names);
             }

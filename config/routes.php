@@ -24,15 +24,10 @@ use App\Controllers\Admin\ProjectManagerController;
 use App\Controllers\Admin\SkillMngController;
 
 // Guest Pages
-Route::get('/', HomeController::class, 'index');
-Route::get('/cookie', LawController::class, 'cookie');
-Route::get('/laws', LawController::class, 'home');
-Route::get('/portfolio', PortfolioController::class, 'index');
-Route::get('/progetti/{id}', ProgettiController::class, 'show');
-Route::get('/progetti', ProgettiController::class, 'index');
-Route::get('/coming-soon', ErrorsController::class, 'repair');
-Route::get('/contatti', ContattiController::class, 'index');
-Route::post('/contatti', ContattiController::class, 'sendForm');
+// Route::get('/cookie', LawController::class, 'cookie');
+// Route::get('/laws', LawController::class, 'home');
+
+
 Route::get('/certificati',CertificatiController::class,'index');
 
 

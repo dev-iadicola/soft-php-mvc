@@ -23,12 +23,14 @@ class Router
     private RouteRegister $registry;
     private RouteMatcher $matcher;
     private RouteDispatcher $dispatcher;
+    private RouteLoader $loader;
 
     public function __construct(?Mvc $mvc = null)
     {
         $this->mvc = $mvc ?? mvc();
         $this->request =  $mvc->request ?? mvc()->request;
         $this->config = $mvc->config ?? mvc()->config;
+        $this->loader = new RouteLoader($this->config->files['controllers']);
         $this->registry = new RouteRegister();
         $this->matcher = new RouteMatcher();
         $this->dispatcher = new RouteDispatcher();
@@ -40,20 +42,23 @@ class Router
      */
     private function boot()
     {
-        //dd($this->config->folder->controllers);
-        $routes = RouteLoader::load(
-            controllersPath: $this->config->folder->controllers . "/*.php",
-            controllerNameSpace: "App\\Controllers"
-        );
-        dd($routes);
-        $this->registry->register($routes);
+        // Carica tutti i controller e genera la lista piatta di rotte
+        $flatRoutes = $this->loader->load(); // Rirtona un array piatto con la lista di rotte pronte per essere registrate
+
+        //  Registra le rotte nel registro per metodo HTTP [GET, POST, PUT, DELETE]
+        $this->registry->register($flatRoutes);
     }
     public function handle()
     {
+       
         $this->boot();
         // ritorna la rotta da selezionare sendo la richiesta svolta.
         $route = $this->matcher->match($this->request->uri(), $this->request->getRequestMethod(), $this->registry);
-    
+        if ($route === null) {
+            throw new \App\Core\Exception\NotFoundException(
+                "Nessuna route trovata per " . $this->request->getRequestMethod() . " " . $this->request->uri()
+            );
+        }
         // Esegui il controller e la sua action
         $response = $this->dispatcher->dispatch($route);
 
@@ -67,7 +72,12 @@ class Router
 
 
 
-    public function getRoute()
+    /**
+     * Summary of getRoute
+     * @deprecated 
+     * @return array<array|mixed|null>|bool
+     */
+    public function getRoute(): array|bool
     {
         $method = $this->request->getRequestMethod();
         $path = $this->request->uri();
@@ -90,6 +100,12 @@ class Router
         return false;
     }
 
+    /**
+     * Summary of resolve
+     * @deprecated 
+     * @throws \App\Core\Exception\NotFoundException
+     * @return void
+     */
     public function resolve()
     {
         $route = $this->getRoute();
@@ -97,6 +113,13 @@ class Router
         $this->dispatch($route);
     }
 
+    /**
+     * Summary of dispatch
+     * @deprecated message
+     * @param array $route
+     * @throws \Exception
+     * @return void
+     */
     public function dispatch(array $route)
     {
 

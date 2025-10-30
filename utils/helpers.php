@@ -100,7 +100,7 @@ if (!function_exists('debug')){
      * Debug dump ad dies for extreme deep debug without complication 
      */
     function debug(...$vars): void{
-        VarDumper::debug(vars: $vars );
+        VarDumper::debug( ...$vars );
     }
 }
 if (!function_exists('dd')) {
@@ -112,7 +112,7 @@ if (!function_exists('dd')) {
     function dd(...$vars): void
     {
         getSource();
-        VarDumper::dd($vars);
+        VarDumper::dd(...$vars);
     }
 
     if (!function_exists(function: 'assets')) {
@@ -177,11 +177,19 @@ if (!function_exists('dd')) {
             }
         }
     }
-    if (!function_exists('dump')) {
-        function dump($vars)
-        {
+
+    if (!function_exists('logger')) {
+        function lg(...$vars)
+        { 
             getSource();
-            VarDumper::dump($vars);
+            VarDumper::lg(...$vars);
+        }
+    }
+    if (!function_exists('dump')) {
+        function dump(...$vars)
+        { 
+            getSource();
+            VarDumper::dump(...$vars);
         }
     }
     if (!function_exists('baseRoot')) {

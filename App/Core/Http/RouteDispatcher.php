@@ -12,10 +12,30 @@ use App\Core\Middleware\MiddlewareInterface;
  */
 class RouteDispatcher
 {
+    private string $path;
+    private string $method;
+    private string $action;
+
+    private string $controller;
+    private array $middlewares;
+
+    private ?string $name = null;
+
+    private RouteDispatcher $dispatche;
+
+
     public function dispatch(array $route)
     {
-        // 1) Esegui middleware
-        foreach ($route['middlewares'] as $name) {
+        $this->path = $route['path'];
+        $this->method = $route['method'];
+        $this->action = $route['action'];
+        $this->controller = $route['controller'];
+        $this->middlewares = $route['middlewares'];
+        $this->name = $route['name'];
+
+
+        // * Esegui middlewares ++
+        foreach ($this->middlewares as $name) {
             $class = "App\\Core\\Middleware\\" . ucfirst($name) . "Middleware";
             if (!class_exists($class)) {
                 throw new \RuntimeException("Middleware non trovato: $class");
@@ -24,15 +44,23 @@ class RouteDispatcher
             if (!$mw instanceof \App\Core\Contract\MiddlewareInterface) {
                 throw new \RuntimeException("$class deve implementare MiddlewareInterface");
             }
-            $mw->exec();
+            $mw->exec(); // esegui middleware
         }
 
-        // 2) Esegui controller
-        $controller = new $route['controller']();
-        $action     = $route['action'];
+        // * Prepara controller e azioni
+
+
+        $controller =  new $this->controller(mvc());
+
         $params     = $route['params'] ?? [];
 
-        // Invocazione con parametri nominati (PHP 8): se vuoi, puoi anche mappare by-name → signature
-        return call_user_func_array([$controller, $action], array_values($params));
+
+        $args = [mvc()->request];
+        foreach ($params as $item) {
+            $args[] = $item;
+        }
+
+        // Le magie di php
+        return call_user_func_array(callback: [$controller, $this->action], args: $args);
     }
 }

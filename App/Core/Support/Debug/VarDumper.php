@@ -33,6 +33,9 @@ class VarDumper
         $lineWhereDebug = 0;
 
         foreach ($traces as $trace) {
+            // file che non deve controllare.
+            if($trace['file'] === baseRoot()."\App\Core\Support\Debug\VarDumper.php") continue;
+            if($trace['file'] === baseRoot()."\utils\helpers.php") continue;
             //carico linee files
             $lines = @file($trace['file']);
             if (!$lines) continue;
@@ -55,6 +58,9 @@ class VarDumper
                 if (str_contains($content, 'debug(') || str_contains($content, 'VarDumper::debug(')) {
                     $fileWhereDebug = $trace['file'];
                     $lineWhereDebug = ($num + 1);
+
+                    // appena trova il file, esce da entrambi i cicli 
+                    break 2;
                 }
             }
         }
@@ -70,11 +76,10 @@ class VarDumper
 
 
 
-    private function debug(mixed $vars, bool $exit = true): void
+    private function debug( ...$vars): void
     {
 
         ob_start();
-
 
         echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
         $this->debugTrace();
@@ -84,8 +89,23 @@ class VarDumper
         $output = ob_get_clean();
         echo $output;
 
-        if ($exit) exit;
+       exit;
     }
+
+    private function logger(...$vars){
+        
+        // ob_start();
+
+
+        // echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        // $this->debugTrace();
+        // $this->renderVar($vars);
+        // echo '</pre>';
+
+        // $output = ob_get_clean();
+        // echo $output;
+    }
+
 
 
 

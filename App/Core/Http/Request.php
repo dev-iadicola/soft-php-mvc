@@ -2,18 +2,28 @@
 
 namespace App\Core\Http;
 
+use App\Core\Helpers\Log;
+use App\Traits\Getter;
+use App\Traits\Setter;
+
 class Request
 {
+    use Getter; use Setter;
     private string $path;
     private string $method;
     private array $post;
 
+    private array $attributes;
 
     public function __construct()
     {
         $this->path = $this->getRequestPath();
         $this->method = $this->getRequestMethod();
         $this->post = $this->getPost();
+    }
+
+    private function getValuesPostRequest(){
+
     }
 
     // Cattura richiesta post
@@ -26,8 +36,11 @@ class Request
         if( !is_null($index) && !empty($combinedData[$index])){
             return $combinedData[$index];
         }
-
         return $combinedData;
+    }
+
+    public function setParams(array|string $params){
+
     }
 
     // Preleva la request URI
@@ -45,10 +58,15 @@ class Request
         return $_SERVER['REQUEST_URI'];
     }
 
+
+    public function all():array{
+        return $this->attributes;
+    }
+
     // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
-        return strtolower($_SERVER['REQUEST_METHOD']);
+        return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
     public function getBack(): string|null
@@ -65,7 +83,7 @@ class Request
     {
         $backUrl = $this->getBack();
         if (headers_sent($file, $line)) {
-            error_log("Redirect fallito verso $backUrl: header già inviato in $file alla riga $line.");
+           Log::Info("Redirect fallito verso $backUrl: header già inviato in $file alla riga $line.");
 
             // Fallback con JavaScript
             echo "<script>window.location.href = '" . htmlspecialchars($backUrl) . "';</script>";
