@@ -24,6 +24,7 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 
 ## Design Pattern utilizzati 
 
+### QueryBuilder
 | Pattern | Descrizione |
 |----------|-------------|
 | **Builder** | Il `QueryBuilder` costruisce query SQL fluenti. |
@@ -33,6 +34,45 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 | **Singleton (PDO)** | La classe `Database` gestisce una sola connessione attiva. |
 | **Strategy ** | e in prospessitva: Possibile estensione futura per supportare dialetti SQL diversi. |
 | **Facade**    | Possibilità di eseguire con il Facade Auth i servizi come AuthService e SessionStorage |
+
+### Route Dinamiche (Novità!)
+| Pattern                           | Ruolo nel framework                                                                                                                                 |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Attribute Pattern (Metadata)**  | Usa gli *Attributes* di PHP 8 per dichiarare le rotte e i middleware direttamente sopra i metodi del controller, eliminando configurazioni manuali. |
+| **Reflection (Meta-programming)** | Permette di analizzare dinamicamente i controller, estrarre i metadati e costruire la mappa delle rotte in modo automatico.                         |
+| **Registry Pattern**              | Il `RouteRegister` funge da archivio centralizzato delle rotte, indicizzate per metodo HTTP (`GET`, `POST`, ecc.).                                  |
+| **Strategy Pattern**              | Implementato nel `RouteMatcher`, che può essere esteso con strategie di matching diverse (regex, path dinamici, nomi, ecc.).                        |
+| **Dispatcher Pattern**            | Il `RouteDispatcher` applica il principio di *Separation of Concerns*: prima esegue i middleware, poi chiama l’action del controller.               |
+| **Chain of Responsibility**       | I middleware vengono eseguiti in sequenza prima della logica del controller, come una catena di responsabilità.                                     |
+| **Factory Pattern (implicit)**    | Ogni controller viene istanziato in modo dinamico dal dispatcher tramite Reflection o factory interna .                   |
+
+
+
+# Sistema di Routing
+[HTTP Request]
+      │
+      ▼
+ ┌───────────────┐
+ │ RouteLoader   │ → Scansiona i controller e legge gli attributi
+ └───────────────┘
+      │
+      ▼
+ ┌───────────────┐
+ │ RouteRegister │ → Registra tutte le rotte per metodo HTTP
+ └───────────────┘
+      │
+      ▼
+ ┌───────────────┐
+ │ RouteMatcher  │ → Converte i path in regex e cattura i parametri dinamici
+ └───────────────┘
+      │
+      ▼
+ ┌───────────────┐
+ │ RouteDispatcher │ → Esegue middleware e chiama il controller/action
+ └───────────────┘
+      │
+      ▼
+[HTTP Response]
 
 ---
 
