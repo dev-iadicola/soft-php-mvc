@@ -23,7 +23,7 @@ class AdminMiddleware implements MiddlewareInterface
     private ITimeoutStrategy $_itimeout_strategy;
 
 
-    public function exec(Mvc $mvc)
+    public function exec(?Mvc $mvc = null)
     {
         $this->_authService = new AuthService(SessionStorage::getInstance());
         // dall'ultima attività devono pssare 30 minuti.
@@ -41,7 +41,7 @@ class AdminMiddleware implements MiddlewareInterface
          */
         $this->_itimeout_strategy = new InactivityTimeout(1800);
 
-        $validAuth = $this->_authService->isAuthenticated(); //&& $this->checkSession($this->_itimeout_strategy);
+        $validAuth = $this->_authService->isAuthenticated() && $this->checkSession($this->_itimeout_strategy);
 
         if (!$validAuth) {
             $this->_authService->destroySession();

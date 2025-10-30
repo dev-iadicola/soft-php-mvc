@@ -31,8 +31,17 @@ class Request
     }
 
     // Preleva la request URI
+    /**
+     * Summary of getRequestPath
+     * @deprecated utilizza il metodo uri()
+     * @return string
+     */
     public function getRequestPath(): string
     {
+        return $_SERVER['REQUEST_URI'];
+    }
+
+    public function uri():string{
         return $_SERVER['REQUEST_URI'];
     }
 

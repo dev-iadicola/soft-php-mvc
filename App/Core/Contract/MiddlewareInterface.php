@@ -5,6 +5,6 @@ use App\Core\Mvc;
 
 interface MiddlewareInterface{
 
-    public function exec(Mvc $mvc);
+    public function exec();
 
 }

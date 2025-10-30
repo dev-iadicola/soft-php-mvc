@@ -34,13 +34,10 @@ class Mvc
     public Router $router; // Gestione delle rotte
     public Controller $controller;
     public View $view; // Gestione delle viste
-
     public Storage $storage;
     public \PDO $pdo; // Connessione PDO al database
-
     public SMTP $Smtp;
     public Mailer $mailer;
-
     public Middleware  $middleware; //Gestione di Autenticazione utente
     public SessionStorage $sessionService;
     /**
@@ -48,13 +45,14 @@ class Mvc
      *
      * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public BuildAppFile $config)
+    public function __construct(public BuildAppFile|array $config)
     {
 
         // Inizalizzazione per la debug layout
         $this->getNativeErrorInLog();
         $this->initializeWhoops();
 
+        // TODO: trovare unaltra strategia per config
         $this->config = $config;
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
@@ -66,8 +64,13 @@ class Mvc
         $this->response = new Response($this->view);
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
-
-        $this->middleware = new Middleware($this, $config->middleware);
+        /**
+         //*! Deprecated Method, dont do use
+         * @deprecated Verrà sostituito il sistema di Middleware attuale da quello nuovo,
+         *  se il progetto riesce, i middleare saranno collegati al controller stesso. 
+         *  permettendo un sistema di manutenzione migliore per la gestione del middleware.  
+         */
+        $this->middleware = new Middleware($this, queueForBaseRoute: $config->middleware);
         // Inizializza la connessione al database e imposta il PDO per l'Model
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
@@ -165,11 +168,11 @@ class Mvc
     /**
      * Avvia l'applicazione, risolvendo la richiesta e inviando la risposta
      */
-    public function run()
+    public function run(): void
     {        
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
-            $this->router->resolve();
+            $this->router->handle();
         } catch (NotFoundException $e) {
             // Se la rotta non viene trovata, imposta una risposta 404
             $this->response->set404($e);

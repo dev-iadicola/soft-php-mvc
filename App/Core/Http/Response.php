@@ -7,11 +7,16 @@ class Response {
 
     private string $content = '';
     private int $statusCode = 200;
+    private array $headers = [];
 
     public function __construct(
         public View $view 
     ) {}
 
+    /**
+     * Summary of getContent
+     * @return string resituisce il contenuto corrente
+     */
     public function getContent(){
         return $this->content;
     }
@@ -20,13 +25,45 @@ class Response {
         http_response_code($this->statusCode);
         echo $this->content;
     }
+      /**
+     * Ritorna una risposta JSON.
+     * @param array|object $data  Dati da convertire in JSON
+     * @param int          $status Codice HTTP (default 200)
+     */
+    public function json(array|object $data, int $status = 200): self
+    {
+        $this->setCode($status);
+        $this->setHeader('Content-Type', 'application/json; charset=utf-8');
+
+        $this->content = json_encode($data, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+
+        return $this;
+    }
 
     public function redirect(string $toUrl, $status = 200): never {
         header("location: $toUrl");
         $this->setCode($status);
         exit;
     }
-
+    public function wantsJson(): bool
+    {
+        return (
+            isset($_SERVER['HTTP_ACCEPT']) &&
+            str_contains($_SERVER['HTTP_ACCEPT'], 'application/json')
+        ) || (
+            isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
+            strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest'
+        );
+    }
+    
+     /**
+     * Imposta un header personalizzato.
+     */
+    public function setHeader(string $key, string $value): void
+    {
+        $this->headers[$key] = $value;
+    }
+   
     public function setContent(string $content): void {
         $this->content = $content;
     }

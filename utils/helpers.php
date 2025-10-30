@@ -176,6 +176,11 @@ if (!function_exists('dd')) {
         }
     }
     if (!function_exists('baseRoot')) {
+        /**
+         * Summary of baseRoot
+         * 
+         * @return string rotirna semrpe la rotta di documento.
+         */
         function baseRoot(): string
         {
             return $_SERVER['DOCUMENT_ROOT'];

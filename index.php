@@ -1,9 +1,10 @@
 <?php
+
 /**
  * File entry point
  */
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Core\Mvc;
 use App\Core\Config;
@@ -11,8 +12,7 @@ use App\Core\Config;
 /**
  * Caricamento configurazioni dell'applicazione
  */
-
-Config::env(__DIR__.'/.env'); // caricamento variabili d'ambiente del file .env
+Config::env(__DIR__ . '/.env'); // caricamento variabili d'ambiente del file .env
 
 // istanza per la configurazione
 /**
@@ -22,7 +22,7 @@ Config::env(__DIR__.'/.env'); // caricamento variabili d'ambiente del file .env
  * $config è un oggetto con tre elementi:
  */
 
-$config = Config::dir(__DIR__.'/config'); //ritorna BuildAppFile
+$config = Config::dir(__DIR__ . '/config'); //ritorna BuildAppFile
 
 // istanza Mvc che è il CORE dell'architettura MVC
 /**
@@ -35,4 +35,3 @@ setMvc($mvc);
 $mvc->run();
 // (new Mvc($config))->run();
 //  inizializeMvc($config);
- 
