@@ -60,6 +60,8 @@ class Mvc
         $this->response = new Response($this->view);
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
+        // gestione sessioni 
+        $this->sessionStorage = SessionStorage::getInstance();
 
         $this->sessionStorage = SessionStorage::getInstance();
         /**

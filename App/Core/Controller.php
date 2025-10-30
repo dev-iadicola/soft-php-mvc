@@ -1,6 +1,9 @@
 <?php
 namespace App\Core;
+
+use App\Core\Facade\Session;
 use \App\Core\Mvc;
+use App\Core\Services\SessionStorage;
 use App\Core\Validator;
 use App\Core\Storage;
 
@@ -73,18 +76,29 @@ class Controller
     }
     public function withError($message)
     {
-       $this->sessionStorage()->setFlashSession('error', $message);
+        Session::setFlash('error', $message);
     }
 
     public function withSuccess($message)
     {
-        $this->sessionStorage()
-        ->setFlashSession('success', $message);
+        Session::setFlash('success', $message);
     }
 
     public function withWarning($message)
     {
-        $this->sessionStorage()->setFlashSession('warning', $message);
+        Session::setFlash('warning', $message);
+    }
+
+    public function resetImg(array $data)
+    {
+
+        if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
+            unset($data['img']);
+        } elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
+            (new Storage($this->mvc))->deleteFile($data['img']);
+            $data['img'] = $this->checkImage($data);
+
+        }
     }
   
 

@@ -9,7 +9,6 @@ use App\Core\Services\SessionStorage;
 use App\Core\Contract\ITimeoutStrategy;
 use App\Core\Strategy\InactivityTimeout;
 use App\Core\Contract\MiddlewareInterface;
-use Exception;
 
 
 class AdminMiddleware implements MiddlewareInterface

@@ -9,6 +9,7 @@ use App\Core\Mvc;
 use App\Core\Support\Collection\BuildAppFile;
 use App\Core\Support\Debug\VarDumper;
 use App\Core\CLI\System\Out;
+use App\Core\Facade\Session;
 
 // File: src/helpers.php
 // Defines a global helper function available everywhere
@@ -31,10 +32,13 @@ if (!function_exists('inizializeMvc')) {
 }
 
 if (!function_exists('setMvc')) {
-    function setMvc(Mvc $mvc){
+    function setMvc(Mvc $mvc)
+    {
         $GLOBALS['mvc'] = $mvc;
     }
 }
+
+
 
 
 
@@ -76,23 +80,22 @@ if (!function_exists('urlExist')) {
      * @param string $url
      * @return bool
      */
-   function urlExist($url)
-{
-    if (empty($url)) return false;
+    function urlExist($url)
+    {
+        if (empty($url)) return false;
 
-    $ch = curl_init($url);
-    curl_setopt($ch, CURLOPT_NOBODY, true); // non scaricare il corpo
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_TIMEOUT, 2); // timeout breve (2 secondi)
-    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // segue redirect
-    curl_exec($ch);
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_NOBODY, true); // non scaricare il corpo
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT, 2); // timeout breve (2 secondi)
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true); // segue redirect
+        curl_exec($ch);
 
-    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-    curl_close($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
 
-    return $httpCode >= 200 && $httpCode < 400;
-}
-
+        return $httpCode >= 200 && $httpCode < 400;
+    }
 }
 
 if (!function_exists('debug')){
@@ -217,5 +220,14 @@ if (!function_exists('dd')) {
         }
     }
 
-    
+    /**
+     * Funzioni per la gestione delle flash session (messaggi di UI)
+     */
+
+    if (!function_exists(function: 'flashMessage')) {
+        function flashMessage(string $key)
+        {
+            return Session::getFlash($key);
+        }
+    }
 }
