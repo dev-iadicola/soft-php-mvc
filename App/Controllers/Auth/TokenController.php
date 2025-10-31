@@ -8,6 +8,7 @@ use App\Mail\BrevoMail;
 use App\Model\User;
 use App\Core\Validator;
 use App\Core\Controller;
+use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Model\Token;
@@ -26,16 +27,20 @@ class TokenController extends Controller
     }
 
 
-
-    public function forgotPasswordToken()
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    #[AttributeRoute('/forgot','POST')]
+    public function forgotPasswordToken(Request $request)
     {
-        $post = $this->post;
 
 
         // Validazione dei campi input 
 
         $validator = Validator::validate(
-            [$post['email']  => 'email'],
+            [$request->email  => 'email'],
             ['email' => 'Formato email Non valido!']
         );
         if ($validator->fails() === true) {
@@ -45,7 +50,7 @@ class TokenController extends Controller
 
 
         // Validazione Presenza Utente nel DB
-        $user = User::where('email', $post['email'])->first();
+        $user = User::where('email', $request->email)->first();
         if (empty($user)) {
             $this->withError('Errore, utente non presente');
 
@@ -54,8 +59,8 @@ class TokenController extends Controller
 
         // Creazione Token
 
-        $token = Token::generateToken($post['email']);
-        $to = $post['email'];
+        $token = Token::generateToken($request->email);
+        $to = $request->email;
         $subject = 'Richiesta di reset Password';
         $page = 'token-mail';
 
@@ -67,22 +72,20 @@ class TokenController extends Controller
             $this->withError('Errore, la mail non è stata inviata');
             return $this->render('Auth.forgot', ['message' => 'ERRORE: La mail non è stata inviata']);
         }
-
-        // Reindirizzamento di successo 
+        // Reindirizzamento in caso di successo 
 
         $this->withSuccess('Mail inviata!');
         return $this->render('Auth.forgot', ['message' => 'Mail inviata con successo! Apri il link']);
     }
 
-    /**
-     * 
-     * 
-     * @return void
-     * 
-     * validazione token gestione richiesta POST e reindirizzamento per modifica password
-     */
+   
 
-     // Richiesta validaizone pin per poi cambiare credenziali
+    /**
+     * Summary of pagePin
+     * @param \App\Core\Http\Request $request
+     * @param mixed $token
+     */
+    #[AttributeRoute('/validate-pin/{token}')]
     public function pagePin(Request $request, $token)
     {
         if (Token::isBad($token)) {

@@ -1,13 +1,7 @@
 <style>
-    body {
-        margin: 0;
-        font-family: "JetBrains Mono", Consolas, monospace;
-        background: #0f1419;
-        color: #f8f8f2;
-      
-     
+    body{
+        background-color: var(--color-design) !important;
     }
-
     .error-container {
         background: #1e1e1e;
         border: 2px solid #ffffffff;
@@ -20,11 +14,21 @@
         width: 90%;
     }
 
+    section {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        /* altezza schermo */
+       
+       
+    }
+
     .error-container h2 {
         font-size: 5rem;
         color: #ffffffff;
         margin: 0;
-        text-shadow: 0 0 10px rgba(202, 160, 155, 0.5);
+        text-shadow: 0 0 10px rgba(22, 18, 18, 0.5);
     }
 
     .error-container h3 {
@@ -37,11 +41,25 @@
     /* Effetto animazione leggera */
     .error-container {
         animation: pop 0.3s ease-in-out;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+    }
+
+    .error-container:hover {
+        transform: scale(1.02);
+        box-shadow: 0 0 25px rgba(231, 76, 60, 0.3);
     }
 
     @keyframes pop {
-        0% { transform: scale(0.9); opacity: 0; }
-        100% { transform: scale(1); opacity: 1; }
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
     }
 
     /* Modalità chiara automatica */
@@ -62,7 +80,11 @@
         }
     }
 </style>
-<section class="container error-container">
-<h2><?= $code ?></h2>
-<h3><?= $errorMsg ?></h3>
+<section>
+
+    <div class="container error-container">
+        <h2><?= $code ?></h2>
+        <h3><?= $errorMsg ?></h3>
+    </div>
+
 </section>

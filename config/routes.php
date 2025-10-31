@@ -31,11 +31,6 @@ use App\Controllers\Admin\SkillMngController;
 
 
 // Auth
-Route::get('/forgot', AuthController::class, 'forgotPassword');
-Route::get('/sign-up', AuthController::class, 'signUp');
-Route::get('/validate-pin/{token}', TokenController::class, 'pagePin');
-Route::post('/login', AuthController::class, 'login');
-Route::post('/forgot', TokenController::class, 'forgotPasswordToken');
 Route::post('/sign-up', AuthController::class, 'registration');
 Route::post('/token/change-password', TokenController::class, 'validatePin');
 

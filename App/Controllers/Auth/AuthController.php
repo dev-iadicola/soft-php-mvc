@@ -26,20 +26,18 @@ class AuthController
     }
 
     #[AttributeRoute('login','POST', middleware:'auth')]
-    public function login()
+    public function login(Request $request)
     {
-        // login post (quando inserisce le credenziali)
-        $data = mvc()->request->post;
+    
         // verifica esistenza user
-        $user = User::where('email', $data['email'])->first();
+        $user = User::where('email', $request->email)->first();
 
         if(empty($user)){
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
         // conferma password
-        $confirmPassword = password_verify($data['password'], $user->password);
-
+        $confirmPassword = password_verify($request->password, $user->password);
         if ($confirmPassword === false) {
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
@@ -49,36 +47,33 @@ class AuthController
         return redirect('admin/dashboard');
     }
 
+    #[AttributeRoute('forgot')]
     public function forgotPassword()
     {
         return view('Auth.forgot');
     }
 
+    #[AttributeRoute('sign-up')]
     public function signUp()
     {
         $user = User::findAll();
         if (count($user) == 0) {
             return view('Auth.sign-up');
-        } else {
+        } 
             // se esiste un utente, ritorna alla pagina di login
-            redirect('/login');
-        }
+            return redirect('/');
+                
     }
 
+    #[AttributeRoute('/sign-up','post')]
     public function registration(Request $request)
     {
-       
-
-
         $confirmed =  Validator::confirmedPassword($request->all());
         if ($confirmed === false) {
             return view('Auth.sign-up', ['message' => 'Le password non corrispondono']);
         }
-
         $data['password'] = password_hash($request->password, PASSWORD_BCRYPT);
-
         User::upload($data);
-
         view('Auth.login', ['message' => 'Registrazione Effettuata, Ora Iscriviti!']);
     }
 }

@@ -53,11 +53,12 @@ class Router
 
         $this->boot();
         // ritorna la rotta da selezionare sendo la richiesta svolta.
-        // * già in questo metodo ti dice che la rotta non esiste come eccezione non c'è bisogno di verifiche
-        $routes = $this->matcher->match( $this->request, $this->registry);
+        $route = $this->matcher->match( $this->request, $this->registry);
+        if ($route === null) 
+            throw new NotFoundException( "No Route found for method " . $this->request->getRequestMethod() . " and request '{$this->request->uri()}'.");
         
-        //* Esegui il controller e la sua action
-        $response = $this->dispatcher->dispatch($routes);
+        // Esegui il controller e la sua action
+        $response = $this->dispatcher->dispatch($route);
     }
 
 

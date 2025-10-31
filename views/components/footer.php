@@ -1,4 +1,4 @@
-<footer class="bg-dark text-light py-1 mt-5">
+<footer class=" text-light py-1 mt-5">
   <div class="container mt-4">
     <!-- Navbar -->
     <ul class="nav justify-content-center mb-2 gap-3">

@@ -26,12 +26,16 @@
 
 /* OVERRIDE bootstrap*/
 body {
-        font-family: "JetBrains Mono", Consolas, monospace;
+    font-family: "JetBrains Mono", Consolas, monospace;
     font-optical-sizing: auto;
     font-weight: 700 !important;
     font-style: normal;
     color: var(--color-text);
     background-color: azure;
+}
+
+footer {
+    background-color: var(--color-design);
 }
 
 h1 {
