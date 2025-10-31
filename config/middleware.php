@@ -4,12 +4,10 @@
  * gestione tramite Array 
  */
 
-use App\Middleware\AdminMiddleware;
+use App\Middleware\AuthMiddleware;
 use App\Middleware\MaintenanceMiddleware;
 
 return [
-    '/' => [MaintenanceMiddleware::class],
-
-    '/admin' => [AdminMiddleware::class],
-  
+    'web' => [MaintenanceMiddleware::class],
+    'auth' => [AuthMiddleware::class]
 ];

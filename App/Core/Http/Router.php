@@ -50,22 +50,14 @@ class Router
     }
     public function handle()
     {
-       
+
         $this->boot();
         // ritorna la rotta da selezionare sendo la richiesta svolta.
-        $route = $this->matcher->match($this->request->uri(), $this->request->getRequestMethod(), $this->registry);
-        if ($route === null) {
-            throw new \App\Core\Exception\NotFoundException(
-                "Nessuna route trovata per " . $this->request->getRequestMethod() . " " . $this->request->uri()
-            );
-        }
-        // Esegui il controller e la sua action
-        $response = $this->dispatcher->dispatch($route);
-
-        // // Se invece la action restituisce qualcosa (es. array), lo puoi gestire facoltativamente.
-        // if ($response instanceof \App\Core\Http\Response) {
-        //     $response->send();
-        // }
+        // * già in questo metodo ti dice che la rotta non esiste come eccezione non c'è bisogno di verifiche
+        $routes = $this->matcher->match( $this->request, $this->registry);
+        
+        //* Esegui il controller e la sua action
+        $response = $this->dispatcher->dispatch($routes);
     }
 
 

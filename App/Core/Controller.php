@@ -2,6 +2,7 @@
 namespace App\Core;
 
 use App\Core\Facade\Session;
+use App\Core\Http\Attributes\AttributeMiddleware;
 use \App\Core\Mvc;
 use App\Core\Services\SessionStorage;
 use App\Core\Validator;
@@ -16,6 +17,7 @@ use App\Core\Storage;
  * 
  */
 
+#[AttributeMiddleware(['web'])]
 class Controller
 {
 

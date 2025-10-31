@@ -23,6 +23,10 @@ class Mvc
 {
     public static Mvc $mvc;
 
+    // Ci permetterà di gestire le eccezioni mostrando la schermata che vogliamo. 
+    public Run $whoops;
+    // ci permette di non mostrare il debug in produzione 
+    private bool $debugStatus = false;
 
     // Oggetti per gestire la richiesta, la risposta, le rotte e le viste
     public Request $request;
@@ -36,20 +40,29 @@ class Mvc
     public Mailer $mailer;
     public Middleware  $middleware; //Gestione di Autenticazione utente
     public SessionStorage $sessionStorage;
+
+    /** @var \App\Core\Support\Collection\BuildAppFile */
+    public array|object $config;
+
     /**
      * Costruttore della classe Mvc
      *
      * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public BuildAppFile|array $config)
+    public function __construct( array|object $config)
     {
 
-        // Inizalizzazione per la debug layout
+        $this->config = $config;
+        // * Peremtte di scrivere gli errori nativi di PHP nel file app.log
         $this->getNativeErrorInLog();
+
+        // * Se l'env ha il valore true, allora ritorna true e vediamo il debug 
+        $this->debugStatus = strtoupper(getenv('APP_DEBUG')) == 'TRUE';
+        // * Debug in video
         $this->initializeWhoops();
 
-        // TODO: trovare unaltra strategia per config
-        $this->config = $config;
+
+        
         // Imposta l'istanza statica dell'oggetto Mvc
         self::$mvc = $this;
         // inizializza l'oggetto Request per gestire le richieste HTTP
@@ -75,42 +88,52 @@ class Mvc
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
 
-       
         $this->controller = new Controller(mvc: $this);
     }
 
-    private function getNativeErrorInLog(): void{
+
+
+    /**
+     * Summary of getNativeErrorInLog
+     * * Permette di scrivere gli errori nativi di PHP nel log.
+     * @return void
+     */
+    private function getNativeErrorInLog(): void
+    {
+        // TODO: Bisognerò modificare il codice per renderlo pulito. 
         //  Intercetta anche errori PHP (warning, notice, deprecated, ecc.)
-    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-        // Crea un oggetto ErrorException per uniformità con Log::exception
-        $exception = new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        \App\Core\Helpers\Log::exception($exception);
-
-        // Restituisce false per lasciare proseguire i normali handler PHP/Whoops
-        return false;
-    });
-
-    // Intercetta fatal error, parse error, ecc.
-    register_shutdown_function(function () {
-        $error = error_get_last();
-        if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
-            $exception = new \ErrorException(
-                $error['message'],
-                0,
-                $error['type'],
-                $error['file'],
-                $error['line']
-            );
+        set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+            // Crea un oggetto ErrorException per uniformità con Log::exception
+            $exception = new \ErrorException($errstr, 0, $errno, $errfile, $errline);
             \App\Core\Helpers\Log::exception($exception);
-        }
-    });
+
+            // Restituisce false per lasciare proseguire i normali handler PHP/Whoops
+            return false;
+        });
+
+        // Intercetta fatal error, parse error, ecc.
+        register_shutdown_function(function () {
+            $error = error_get_last();
+            if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
+                $exception = new \ErrorException(
+                    $error['message'],
+                    0,
+                    $error['type'],
+                    $error['file'],
+                    $error['line']
+                );
+                \App\Core\Helpers\Log::exception($exception);
+            }
+        });
     }
+
+   
 
     //Layout per Debug
     private function initializeWhoops()
     {
-        $whoops = new Run;
-        if (strtolower(getenv('APP_DEBUG')) == 'true') {
+        $this->whoops = new Run;
+        if ($this->debugStatus) {
 
             $handler = new PrettyPageHandler();
             $handler->addDataTable('Environment', [
@@ -118,24 +141,24 @@ class Mvc
                 'Loaded Extensions' => implode(', ', get_loaded_extensions()),
                 'App Mode' => getenv('APP_ENV'),
             ]);
-            $whoops->pushHandler($handler);
+            $this->whoops->pushHandler($handler);
 
             // Logga l'eccezione anche in debug
-            $whoops->pushHandler(function ($exception, $inspector, $run) {
+            $this->whoops->pushHandler(function ($exception, $inspector, $run) {
                 \App\Core\Helpers\Log::exception($exception);
                 return \Whoops\Handler\Handler::DONE; // Continua con gli altri handler
             });
         } else {
-            $whoops->pushHandler(function (Throwable $exception, $inspector, $run) {
+            $this->whoops->pushHandler(function (Throwable $exception, $inspector, $run) {
                 \App\Core\Helpers\Log::exception($exception); /// logga l'eccezione in produzione
                 http_response_code(500);
                 include  __DIR__ . "/../../views/pages/errors/ops.php";
                 return \Whoops\Handler\Handler::QUIT; // Ferma l’esecuzione di Whoops
             });
         }
-        
 
-        $whoops->register();
+
+        $this->whoops->register();
     }
 
     /**
@@ -169,7 +192,7 @@ class Mvc
      * Avvia l'applicazione, risolvendo la richiesta e inviando la risposta
      */
     public function run(): void
-    {        
+    {
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             $this->router->handle();

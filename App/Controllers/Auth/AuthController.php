@@ -2,39 +2,34 @@
 
 namespace App\Controllers\Auth;
 
+use App\Core\Http\Attributes\AttributeMiddleware;
 use App\Core\Mvc;
 use App\Model\User;
 use App\Core\Validator;
 use App\Model\LogTrace;
 use App\Core\Controller;
 use App\Core\Facade\Auth;
+use App\Core\Http\Attributes\AttributeRoute;
+use App\Core\Http\Request;
 use App\Core\Http\Response;
 use App\Model\LogTraceTrace;
 use App\Core\Services\AuthService;
 
-class AuthController extends Controller
+class AuthController
 {
 
-    protected array|string|int|float $post;
-
-    private AuthService $_authService;
-
-    public function __construct(public Mvc $mvc)
-    {
-        parent::__construct($mvc);
-        $this->post =  $this->mvc->request->getPost();
-    }
-
+    #[AttributeRoute('/login')]
     public function index()
     {
         // pagina login
-        $this->render('Auth.login');
+        view('Auth.login');
     }
 
+    #[AttributeRoute('login','POST', middleware:'auth')]
     public function login()
     {
         // login post (quando inserisce le credenziali)
-        $data = $this->post;
+        $data = mvc()->request->post;
         // verifica esistenza user
         $user = User::where('email', $data['email'])->first();
 
@@ -51,7 +46,7 @@ class AuthController extends Controller
     
         Auth::login($user);
         LogTrace::ceateLog($user->id);
-        return $this->mvc->response->redirect('admin/dashboard');
+        return redirect('admin/dashboard');
     }
 
     public function forgotPassword()
@@ -66,24 +61,24 @@ class AuthController extends Controller
             return view('Auth.sign-up');
         } else {
             // se esiste un utente, ritorna alla pagina di login
-            $this->mvc->response->redirect('/login');
+            redirect('/login');
         }
     }
 
-    public function registration()
+    public function registration(Request $request)
     {
-        $data = $this->post;
+       
 
 
-        $confirmed =  Validator::confirmedPassword($data);
+        $confirmed =  Validator::confirmedPassword($request->all());
         if ($confirmed === false) {
             return view('Auth.sign-up', ['message' => 'Le password non corrispondono']);
         }
 
-        $data['password'] = password_hash($data['password'], PASSWORD_BCRYPT);
+        $data['password'] = password_hash($request->password, PASSWORD_BCRYPT);
 
         User::upload($data);
 
-        $this->render('Auth.login', ['message' => 'Registrazione Effettuata, Ora Iscriviti!']);
+        view('Auth.login', ['message' => 'Registrazione Effettuata, Ora Iscriviti!']);
     }
 }

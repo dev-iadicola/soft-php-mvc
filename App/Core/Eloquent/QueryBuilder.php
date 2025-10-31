@@ -3,14 +3,9 @@
 namespace App\Core\Eloquent;
 
 use PDO;
-use ErrorException;
-use App\Core\Database;
-use App\Core\Helpers\Log;
-use App\Core\CLI\System\Out;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
-use App\Core\Eloquent\Schema\Validation\CheckSchema;
 
 /**
  * Classe QueryBuilder
@@ -215,49 +210,41 @@ class QueryBuilder extends AbstractBuilder
         return $this->getInstances($data);
     }
 
-    /**
-     * Summary of toSql
-     * 
-     * Ritorna la query in stringa
-     * @return string
-     */
+   
 
+    /**
+     * Summary of get
+     * @param int $fetchType
+     * @throws \App\Core\Exception\ModelNotFoundException
+     * @return array<Model>
+     */
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
             throw new ModelNotFoundException("Name of table not set. Model: " . $this->modelClass);
         }
-
-        $query = $this->toSql();
-        $stmt = $this->pdo->prepare($query);
-
-        foreach ($this->bindings as $param => $value) {
-            $stmt->bindValue($param, $value);
-        }
-
-        $stmt->execute();
-        $data = $stmt->fetchAll($fetchType);
-
-        return $this->getInstances($data);
+        $rows =  $this->fetchAll($fetchType);
+        return $this->getInstances($rows);
     }
 
+    /**
+     * 
+     * 
+     * @param int $fetchType
+     * @throws \Exception
+     * @return Model|null
+     */
     public function first(int $fetchType = PDO::FETCH_ASSOC)
     {
         if (empty($this->table)) {
             throw new \Exception("Nome della tabella non impostato.");
         }
 
-        $query = "SELECT * FROM $this->table $this->whereClause $this->orderByClause LIMIT 1";
-        $stmt = $this->pdo->prepare($query);
+        $this->limitClause = "LIMIT 1";
 
-        foreach ($this->bindings as $param => $value) {
-            $stmt->bindValue($param, $value);
-        }
+        $rows =  $this->fetch(fetchTyep: $fetchType);
 
-        $stmt->execute();
-        $data = $stmt->fetch($fetchType);
-
-        return $this->getOneInstance($data);
+        return $this->getOneInstance($rows);
     }
 
     public function find(int|float|string $id, int $fetchType = PDO::FETCH_ASSOC)
@@ -288,8 +275,9 @@ class QueryBuilder extends AbstractBuilder
         $model = new $this->modelClass;
         $model->setQueryBuilder($this);
         foreach ($rows as $key => $value) {
-            $model->__set($key, $value);
+            $model->$key =  $value;
         }
+
         return $model;
         // if ($data) {
         //     $instance = new static();

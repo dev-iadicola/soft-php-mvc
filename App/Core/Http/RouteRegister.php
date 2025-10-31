@@ -2,13 +2,15 @@
 
 namespace App\Core\Http;
 
+use App\Core\Exception\NotFoundException;
+
 /**
  * Summary of RouteRegister
  * Registro in-memory: Indicizza per HTTP method
  */
 class RouteRegister
 {
-    private array $routesByMethos = [];
+    private array $routeByRequest = [];
 
     /**
      * Summary of register
@@ -28,7 +30,7 @@ class RouteRegister
     {
         foreach ($flatRoutes as $route) {
             $method = strtoupper($route['method']); // preniamo il metodo, rendiamolo Upper per facilitare la vita a tutti ;) 
-            $this->routesByMethos[$method][] = $route; // ogni metodo ha all'interno i metadati del controller, middleware, action etc
+            $this->routeByRequest[$method][] = $route; // ogni metodo ha all'interno i metadati del controller, middleware, action etc
         }
     }
 
@@ -38,12 +40,11 @@ class RouteRegister
      */
     public function all(): array
     {
-        return $this->routesByMethos;
+        return $this->routeByRequest;
     }
 
-    public function getMehtod(string $method){
+    public function getByRequestMethod(Request $request){
        
-
-        return $this->routesByMethos[$method];
+        return $this->routeByRequest[$request->method]?? throw new NotFoundException("Route not fount by $request->path and method $request->method");;
     }
 }

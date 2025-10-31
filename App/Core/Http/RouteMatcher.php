@@ -2,6 +2,7 @@
 // App/Core/Http/RouteMatcher.php
 namespace App\Core\Http;
 
+use App\Core\Exception\NotFoundException;
 use App\Utils\Casting;
 
 /**
@@ -13,36 +14,44 @@ class RouteMatcher
     /**
      * @return array|null rotta + ['params'=>['id'=>123]] se trovata, altrimenti null
      */
-    public function match(string $uri, string $method, RouteRegister $registry): ?array
+    public function match(Request $request, RouteRegister $registry): ?array
     {
-        $uri = parse_url($uri, PHP_URL_PATH) ?? '/';
- 
-       
-        $routes = $registry->all()[$method];
-        if(!$routes){
-            throw new \Exception("Your controllers dont have any function with method request");
-        }
-        
+
+        // * Rirtona un array di routes con il metodo di richiesta. es GET se la richiesta è GET.
+        $routes = $registry->getByRequestMethod($request);
+
+
 
         foreach ($routes as $route) {
-           
-            [$regex, $paramNames] = $this->compilePattern($route['path']);
+            // Compila il pattern della rotta (es: /user/{id})
+            $compiled = $this->compilePattern($route['path']);
+            $regex = $compiled[0];
+            $paramNames = $compiled[1];
 
-            if (preg_match($regex, $uri, $matches)) {
-                array_shift($matches); // rimuove il match completo
-                $paramsAssoc = [];
-                // Casting perché php è un linguaggio poco tipizzato
+            // Controlla se la richiesta corrisponde alla rotta
+            if (preg_match($regex, $request->uri(), $matches)) {
+                // Rimuove il primo indice dell'array che in questo caso sarebbe progetto/id a //(cancellatoprogetto)/id ritornando solo l'id e il resto.
+                array_shift($matches);
+                // Converte i valori in tipi corretti (int, bool, ecc.)
                 $matches = Casting::formatArray($matches);
-                foreach ($matches as $i => $val) {
-                    // Casting::formatValue();
-                    if (!isset($paramNames[$i])) continue; // se non c'è, salta
 
-                    $paramsAssoc[$paramNames[$i]] = $val;
+                // Associa i parametri trovati ai loro nomi
+                $paramsAssoc = [];
+                foreach ($matches as $index => $value) {
+                    if (isset($paramNames[$index])) {
+                        $paramName = $paramNames[$index];
+                        $paramsAssoc[$paramName] = $value;
+                    }
                 }
+
+                // Aggiunge i parametri elaborati alla rotta
                 $route['params'] = $paramsAssoc;
-                return $route;
+                 
+                 return $route;
             }
+          
         }
+        
 
         return null;
     }

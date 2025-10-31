@@ -28,11 +28,9 @@ use App\Controllers\Admin\SkillMngController;
 // Route::get('/laws', LawController::class, 'home');
 
 
-Route::get('/certificati',CertificatiController::class,'index');
 
 
 // Auth
-Route::get('/login', AuthController::class, 'index');
 Route::get('/forgot', AuthController::class, 'forgotPassword');
 Route::get('/sign-up', AuthController::class, 'signUp');
 Route::get('/validate-pin/{token}', TokenController::class, 'pagePin');

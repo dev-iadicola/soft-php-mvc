@@ -21,6 +21,7 @@ abstract class AbstractBuilder
     protected array $bindings = []; // Parametri di binding
     protected string $orderByClause = ''; // Clausola ORDER BY
     protected string $groupByClause = ''; // Clausola GROUP BY
+    protected string $limitClause = ""; // Clausola Limit
     protected PDO $pdo; // Oggetto PDO per la connessione al database
     public int|float|string|null $id = null; // ID dell'istanza
 
@@ -131,7 +132,7 @@ abstract class AbstractBuilder
      */
     public function toSql(): string
     {
-        return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause";
+        return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause $this->limitClause";
     }
 
     /**

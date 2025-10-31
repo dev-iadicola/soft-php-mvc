@@ -17,7 +17,7 @@ class Request
 
     public function __construct()
     {
-        $this->path = $this->getRequestPath();
+        $this->path = $this->uri();
         $this->method = $this->getRequestMethod();
         $this->post = $this->getPost();
     }
@@ -51,11 +51,12 @@ class Request
      */
     public function getRequestPath(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
 
     public function uri():string{
-        return $_SERVER['REQUEST_URI'];
+     
+        return $_SERVER['REQUEST_URI'] ?? '/';
     }
 
 

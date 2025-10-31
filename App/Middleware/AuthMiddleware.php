@@ -11,7 +11,7 @@ use App\Core\Strategy\InactivityTimeout;
 use App\Core\Contract\MiddlewareInterface;
 
 
-class AdminMiddleware implements MiddlewareInterface
+class AuthMiddleware implements MiddlewareInterface
 {
 
     protected User $user;
@@ -21,7 +21,7 @@ class AdminMiddleware implements MiddlewareInterface
     private ITimeoutStrategy $_itimeout_strategy;
 
 
-    public function exec(?Mvc $mvc = null)
+    public function exec()
     {
         $this->_authService = new AuthService(SessionStorage::getInstance());
         // dall'ultima attività devono pssare 30 minuti.
@@ -44,7 +44,7 @@ class AdminMiddleware implements MiddlewareInterface
         if (!$validAuth) {
             $this->_authService->destroySession();
           
-            return $mvc->response->redirect('/login');
+            return mvc()->response->redirect('/login');
         }
     }
 

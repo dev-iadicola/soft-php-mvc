@@ -28,12 +28,14 @@ class User extends Model
             return false;
         }
         $password = password_hash($password, PASSWORD_BCRYPT);
-        $user->update(['password' => $password]);
+        $user::update(['password' => $password]);
         return $user;
     }
-    public function log(){
-        return $this->hasMany(Log::class, 'log_id');
-    }
+
+    
+    // public function log(){
+    //     return $this->hasMany(LogTrace::class, 'log_id');
+    // }
 
 
 }

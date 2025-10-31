@@ -17,8 +17,9 @@ class AttributeRoute
     public function __construct(
         public string $path,
         public string $method = 'GET',
-        public array|string|null $middleware = null,
         public ?string $name = null,
+        public array|string|null $middleware = null,
+
     ) {
 
         /**
@@ -41,7 +42,5 @@ class AttributeRoute
         }
 
         $this->middleware = $middlewares;
-
-        
     }
 }
