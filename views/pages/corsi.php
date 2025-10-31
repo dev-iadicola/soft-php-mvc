@@ -7,7 +7,7 @@
         <div class="container  my-5">
             <div class="row">
                 <?php foreach ($certificati as $index => $certificato) : ?>
-                    <div class="position-relative py-2 pl-4 col-4">
+                    <div class="py-2 pl-4 col-12 col-md-4 col-sm-6 ">
 
                         <!-- Content box -->
                         <div class="card shadow border-primary">

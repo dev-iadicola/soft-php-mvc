@@ -26,11 +26,11 @@
         <div class="bg-white rounded">
             <h3 class="text-center py-4 mb-5">PROJECTS</h3>
         </div>
-        <div class="container  my-5">
+        <div class="container my-5">
             <div class="row">
                 <?php foreach ($projects as $project) : ?>
 
-                    <div class="py-2 pl-4 col-4">
+                    <div class="py-2 pl-4 col-12 col-md-4 col-sm-6 ">
                         <div class="card shadow border-primary">
 
                             <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
