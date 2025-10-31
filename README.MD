@@ -4,7 +4,7 @@
 > Scritto interamente in PHP per fini didattici e dimostrativi, con un'architettura estendibile, sicura e conforme ai principi SOLID.
 
 ---
-
+<br><br><br>
 ## Introduzione
 
 **Portfolio PHP MVC** è un mini-framework PHP progettato per offrire un ambiente di sviluppo leggero ma completo, integrando:
@@ -113,11 +113,190 @@ e la flessibilità della **Hexagonal Architecture**, guidato dai principi **SOLI
 > — *Salvatore Iadicola, 2025*
 
 
+____
 
+<br><br><br><br>
 
 # Design Pattern utilizzati 
 
+# Sistema di Sessioni SessionStorage / AuthService / Session / Auth
+Il sistema di sessioni in Soft MVC è progettato per offrire sicurezza, isolamento logico e compatibilità con il pattern architetturale del framework.
+È interamente costruito sopra PHP nativo, ma introduce concetti avanzati come timeout automatico, flash session, e validazione sicura tramite interfacce dedicate
+
+| Pattern             | Ruolo nel sistema                                                                                                                                                  |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Singleton**       | La classe `SessionStorage` garantisce un’unica istanza globale di sessione, centralizzando gestione e sicurezza.                                                   |
+| **Strategy**        | Implementato tramite `ITimeoutStrategy`, consente di sostituire la logica di timeout (es. inattività, tempo assoluto, ecc.) senza modificare la classe principale. |
+| **Facade**          | Facade come Session e Auth. L’interfaccia `AuthService` utilizza `SessionStorage` come *facciata* per la gestione di autenticazione, messaggi flash e logout.                                  |
+| **Template Method** | La sessione segue un flusso standard di avvio, verifica e distruzione, definito da metodi protetti e specializzabili.    
+
+## Descrizione funzionale 
+| Funzionalità                   | Descrizione                                                                                                                |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| **Inizializzazione sicura**    | Attiva automaticamente `session_start()` con opzioni di sicurezza (cookie HTTP-only, `strict_mode`, `secure` su HTTPS).    |
+| **Timeout automatico**         | Distrugge la sessione dopo un periodo di inattività (in futuro configurabile).                             |
+| **Flash session**              | Memorizza messaggi temporanei (`success`, `error`, `warning`) che vengono eliminati automaticamente dopo la prima lettura da mostrare all'UI come falsh message. |
+| **Strategia personalizzabile** | È possibile applicare strategie diverse di scadenza sessione tramite l’interfaccia `ITimeoutStrategy`.                     |
+| **Distruzione controllata**    | `destroy()` elimina completamente i dati utente, logga l’operazione e resetta il contesto.                                 |
+
+```text
+[HTTP Request]
+      │
+      ▼
+ ┌────────────────────┐
+ │  SessionStorage    │ → Controlla se la sessione è attiva
+ └────────────────────┘
+      │
+      ▼
+ ┌────────────────────┐
+ │ verifyTimeout()    │ → Verifica scadenza o inattività
+ └────────────────────┘
+      │
+      ▼
+ ┌────────────────────┐
+ │ Flash Session      │ → Recupera e rimuove messaggi temporanei
+ └────────────────────┘
+      │
+      ▼
+ ┌────────────────────┐
+ │ Sessione Attiva    │ → Accesso a dati utente, Auth, CSRF, ecc.
+ └────────────────────┘
+      │
+      ▼
+ ┌────────────────────┐
+ │ destroy()          │ → Cancella tutto in modo sicuro e loggato
+ └────────────────────┘
+      │
+      ▼
+[Session End]
+```
+---
+| Caratteristica         | Symfony                                                 | CodeIgniter                    | Laravel                                        | Soft MVC                                                       |
+| ---------------------- | ------------------------------------------------------- | ------------------------------ | ---------------------------------------------- | -------------------------------------------------------------- |
+| **Gestione sessione**  | Basata su `SessionInterface`, supporta file, DB o Redis | PHP nativo (`session_start()`) | `SessionManager` integrato con driver multipli | `SessionStorage` custom, Singleton + Facade                    |
+| **Configurabilità**    | Alta, tramite `framework.yaml`                          | Limitata                       | Media/Alta con `config/session.php`            | Zero-config, auto-avvio intelligente                           |
+| **Sicurezza cookie**   | Gestita da `SessionHandler`                             | Manuale                        | Automatica (Secure + HTTPOnly)                 | Automatica e forzata via `ini_set()`                           |
+| **Flash messages**     | Manuale (`addFlash()`)                                  | Manuale (`set_flashdata`)      | Integrato (`session()->flash()`)               | Integrato e autodistruttivo (`setFlashSession`)                |
+| **Timeout e scadenza** | Tramite listener evento                                 | Manuale                        | Richiede middleware custom                     | Integrato via `verifyInactivityTimeout()` e `ITimeoutStrategy` |
+| **Architettura**       | Service-oriented, dipende dal container                 | Procedurale                    | Basata su Service Container                    | Autonoma, centralizzata e indipendente                         |
+| **Pattern applicati**  | Strategy, Factory                                       | Singleton                      | Facade, Repository                             | Singleton, Strategy, Facade, Template Method                   |
+| **Filosofia**          | Configurabile e modulare                                | Essenziale e diretta           | Espressiva e fluida                            | Sicura, autonoma, e leggibile                                  |
+ 
+ ```php
+    use App\Core\Services\SessionStorage;
+
+    $session = SessionStorage::getInstance();
+
+    // Imposta un valore
+    $session->setOrCreate('user', ['id' => 1, 'name' => 'Luigi']);
+
+    // Recupera un valore
+    $user = $session->get('user');
+
+    // Imposta un messaggio flash
+    $session->setFlashSession('success', 'Login effettuato con successo!');
+
+    // Recupera e rimuove il messaggio flash
+    $message = $session->getFlashSession('success');
+
+    // Distrugge la sessione in modo sicuro
+    $session->destroy();
+
+    // * IN FUTURO
+    Session::setOrCreate('user', ['id' => 1, 'name' => 'Luigi'])
+    Auth::login(User::find(1));
+    Auth::logout(); // elimina le tracce dalla sessione.
+
+```
+>“Una sessione non è un contenitore di dati, ma un ponte tra due richieste.
+>Il suo scopo non è conservare, ma dare continuità all’esperienza umana del codice.”
+____
+<br><br><br><br>
+____
+## Sistema di autenticazione AuthService
+Il sistema di autenticazione di Soft MVC è costruito come servizio indipendente che si appoggia su SessionStorage e segue i principi SOA interna e Dependency Inversion, rendendolo facilmente sostituibile o estendibile.
+| Pattern                  | Ruolo nel sistema                                                                                                      |
+| ------------------------ | ---------------------------------------------------------------------------------------------------------------------- |
+| **Facade**               | L’interfaccia `Auth` funge da facciata per interagire con `AuthService`, semplificando le chiamate nei controller.     |
+| **Singleton**            | Il servizio utilizza `SessionStorage` singleton per mantenere lo stato utente.                                         |
+| **Strategy (Timeout)**   | L’autenticazione si integra con `ITimeoutStrategy` per gestire la scadenza automatica della sessione.                  |
+| **Template Method**      | Definisce il flusso standard `login → verify → logout`, mantenendo estendibilità per vari tipi di autenticazione.      |
+| **Dependency Inversion** | `AuthService` non dipende da implementazioni concrete, ma da interfacce (`SessionInterface`, `UserProviderInterface`). |
+
+| Funzionalità                    | Descrizione                                                                                     |
+| ------------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Login**                       | Verifica le credenziali, genera una sessione sicura e registra timestamp di accesso.            |
+| **Autenticazione persistente**  | Mantiene lo stato dell’utente tra le richieste tramite `SessionStorage`.                        |
+| **Logout sicuro**               | Elimina tutti i dati di sessione, invalida il token e logga l’evento.                           |
+| **Verifica autenticazione**     | Controlla se un utente è autenticato (`Auth::check()`).                                         |
+| **Recupero utente**             | Ritorna i dati utente autenticato (`Auth::user()`).                                             |
+| **Flash di benvenuto / errore** | Usa `SessionStorage` per messaggi temporanei come “Benvenuto Luigi” o “Credenziali non valide”. |
+
+```text
+[Login Form]
+     │
+     ▼
+ ┌────────────────┐
+ │ AuthService    │ → verifica credenziali
+ └────────────────┘
+     │
+     ▼
+ ┌────────────────┐
+ │ SessionStorage │ → salva ID utente, ruoli e token
+ └────────────────┘
+     │
+     ▼
+ ┌────────────────┐
+ │ Middleware Auth │ → controlla accesso a rotte protette
+ └────────────────┘
+     │
+     ▼
+ ┌────────────────┐
+ │ Controller     │ → utente autenticato accede alla risorsa
+ └────────────────┘
+     │
+     ▼
+[HTTP Response]
+```
+| Caratteristica                      | Symfony                                                   | CodeIgniter                | Laravel                                | Soft MVC                                                 |
+| ----------------------------------- | --------------------------------------------------------- | -------------------------- | -------------------------------------- | -------------------------------------------------------- |
+| **Autenticazione**                  | Basata su `Security Component` con provider configurabili | Manuale via sessione       | Sistema completo con `Auth` e `Guards` | Servizio autonomo `AuthService` con Facade `Auth`        |
+| **Gestione sessione**               | Integrata con session handler e firewall                  | Manuale (`$this->session`) | Integrata nel container                | Basata su `SessionStorage` (Singleton sicuro)            |
+| **Middleware di protezione**        | Firewall, Voters, RoleHierarchy                           | Filtri nel controller      | Middleware `auth`                      | `AttributeMiddleware('auth')` eseguito prima della route |
+| **Recupero utente**                 | Tramite `UserInterface`                                   | Array utente in sessione   | `Auth::user()`                         | `Auth::user()` semplice e diretto                        |
+| **Login persistente (Remember Me)** | Integrato                                                 | Manuale                    | Integrato                              | Pianificato tramite cookie/token hash                    |
+| **Ruoli e permessi**                | Avanzato (RoleHierarchy, voters)                          | Manuale                    | `Gate`, `Policy`                       | Da estendere via `PolicyInterface`                       |
+| **Architettura**                    | Event-driven, containerizzata                             | Procedurale                | Layered, containerizzata               | Service Oriented + Facade                                |
+| **Filosofia**                       | “Security is configuration”                               | “Manuale e veloce”         | “Expressive & fluent”                  | “Sicurezza integrata, senza complessità”                 |
+
+
+
+
+### Differenze con altri Frameworks
+
+
+
+| Caratteristica                      | Symfony                                                   | CodeIgniter                | Laravel                                | Soft MVC                                                 |
+| ----------------------------------- | --------------------------------------------------------- | -------------------------- | -------------------------------------- | -------------------------------------------------------- |
+| **Autenticazione**                  | Basata su `Security Component` con provider configurabili | Manuale via sessione       | Sistema completo con `Auth` e `Guards` | Servizio autonomo `AuthService` con Facade `Auth`        |
+| **Gestione sessione**               | Integrata con session handler e firewall                  | Manuale (`$this->session`) | Integrata nel container                | Basata su `SessionStorage` (Singleton sicuro)            |
+| **Middleware di protezione**        | Firewall, Voters, RoleHierarchy                           | Filtri nel controller      | Middleware `auth`                      | `AttributeMiddleware('auth')` eseguito prima della route |
+| **Recupero utente**                 | Tramite `UserInterface`                                   | Array utente in sessione   | `Auth::user()`                         | `Auth::user()` semplice e diretto                        |
+| **Login persistente (Remember Me)** | Integrato                                                 | Manuale                    | Integrato                              | Pianificato tramite cookie/token hash                    |
+| **Ruoli e permessi**                | Avanzato (RoleHierarchy, voters)                          | Manuale                    | `Gate`, `Policy`                       | Da estendere via `PolicyInterface`                       |
+| **Architettura**                    | Event-driven, containerizzata                             | Procedurale                | Layered, containerizzata               | Service Oriented + Facade                                |
+| **Filosofia**                       | “Security is configuration”                               | “Manuale e veloce”         | “Expressive & fluent”                  | “Sicurezza integrata, senza complessità”                 |
+
+
+
+
+_________
+<br><br>
+_________
+
+
 # QueryBuilder
+
 | Pattern | Descrizione |
 |----------|-------------|
 | **Builder** | Il `QueryBuilder` costruisce query SQL fluenti. |
@@ -187,7 +366,8 @@ Segue un flusso chiaro e leggibile, dove ogni Model rappresenta una tabella e il
 | **Obiettivo**                 | Rappresentare il dominio in modo astratto e portabile   | Offrire un accesso diretto e semplice ai dati | Fornire una sintassi espressiva e intuitiva       | Unire **chiarezza**, **controllo manuale** e **fluidità moderna**                   |
 > Sintassi Eloquent-like, struttura pulita, controllo diretto sul PDO, e ORM completamente scritto a mano.
 ----
-
+<br><br><br>
+___
 # Route Dinamiche (Novità!)
 | Pattern                           | Ruolo nel framework                                                                                                                                 |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -302,6 +482,8 @@ Di seguito una panoramica comparativa dei principali framework PHP moderni:
 >"Dove gli altri framework “configurano” le rotte, Soft le comprende."
 
 ---
+<br><br><br>
+___
 
 # Conclusioni 
 Il sistema di routing e l’intera architettura del framework sono costruiti per rispettare i principi:
