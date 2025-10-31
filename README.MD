@@ -511,7 +511,7 @@ Questo approccio rende il framework estendibile, scalabile e adatto come base pe
 
 ### Clona il progetto
 ```bash
-git clone https://github.com/dev-iadicola/portfolio-php-mvc.git
+git clone https://github.com/dev-iadicola/soft-php-mvc.git
  - Questo repository non è una base del framwork, ma sarà aggiunto.
 ### Start Software
  1. composer install
