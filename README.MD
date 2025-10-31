@@ -171,6 +171,23 @@ Segue un flusso chiaro e leggibile, dove ogni Model rappresenta una tabella e il
 
 ```
 
+| Caratteristica                | Symfony *(Doctrine ORM)*                                | CodeIgniter *(Query Builder)*                 | Laravel *(Eloquent ORM)*                          | Soft MVC *(Custom ORM + QueryBuilder)*                                              |
+| ----------------------------- | ------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| **Paradigma ORM**             | Completo (Data Mapper) con Entity Manager               | Assente (solo Query Builder fluente)          | Active Record + Fluent Builder                    | Active Record + Custom Query Builder con interfaccia fluente                        |
+| **Definizione del modello**   | Classi *Entity* + annotazioni o YAML/XML mapping        | Nessuna entità, solo array o oggetti stdClass | Classi `Model` con proprietà e metodi statici     | Classi `Model` con proprietà dinamiche e trait `Getter`, `Relation`                 |
+| **Costruzione Query**         | `QueryBuilder` basato su DQL (Doctrine Query Language)  | `$this->db->select()->from()->where()`        | `User::where('name', 'Luigi')->first()`           | `User::where('name', 'Luigi')->orderBy('id')->get()` (stile Eloquent)               |
+| **Esecuzione delle query**    | Traduzione DQL → SQL con `EntityManager`                | Esecuzione diretta su driver DB               | Lazy loading tramite PDO + builder                | Lazy execution via PDO + sistema di binding sicuro                                  |
+| **Relazioni**                 | Gestite tramite annotazioni (`@OneToMany`, ecc.)        | Manuali                                       | Definite nei model (`hasMany`, `belongsTo`, ecc.) | Supportate via trait `Relation` (`hasOne`, `hasMany`, `belongsTo`, `belongsToMany`) |
+| **Sicurezza (SQL Injection)** | Query parametrizzate automatiche                        | Escaping manuale/automatica nel builder       | Param binding automatico                          | Param binding sicuro via `bindValue` nel `QueryBuilder`                             |
+| **Validazione schema DB**     | Gestita da Doctrine Migrations                          | Manuale                                       | Migrations integrate                              | Da implementare: Validazione automatica via `CheckSchema` e riflessione delle tabelle                |
+| **Caching Query**             | Sì, con `DoctrineCache`                                 | No                                            | Cache automatica opzionale (`remember()`)         | Cache futura pianificata via `QueryCache` layer                                     |
+| **Gestione Errori**           | Eccezioni strutturate (`ORMException`, `DBALException`) | Codici errore driver                          | Eccezioni Laravel (`QueryException`)              | Eccezioni dedicate (`ModelStructureException`, `QueryBuilderException`, ecc.)       |
+| **Design Pattern principali** | Data Mapper, Unit of Work, Repository                   | Builder Pattern                               | Active Record, Builder, Proxy                     | Active Record, Builder, Template Method, Proxy, Facade                              |
+| **Architettura DB Layer**     | Separazione totale tra Entity e DB                      | Procedurale, senza mapping                    | Integrato nel Model                               | Architettura Layered con separazione `Model ↔ QueryBuilder ↔ PDO`                   |
+| **Obiettivo**                 | Rappresentare il dominio in modo astratto e portabile   | Offrire un accesso diretto e semplice ai dati | Fornire una sintassi espressiva e intuitiva       | Unire **chiarezza**, **controllo manuale** e **fluidità moderna**                   |
+> Sintassi Eloquent-like, struttura pulita, controllo diretto sul PDO, e ORM completamente scritto a mano.
+----
+
 # Route Dinamiche (Novità!)
 | Pattern                           | Ruolo nel framework                                                                                                                                 |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -260,7 +277,33 @@ class HomeController extends Controller{
 >
 ---
 
+## Differenze con altri Frameworks 
+Il sistema di routing e l’architettura di Soft si collocano a metà tra l’approccio minimalista di Laravel e la struttura modulare di Symfony, combinando chiarezza, riflessione dinamica e assenza di configurazione esterna.
+Di seguito una panoramica comparativa dei principali framework PHP moderni:
+| Caratteristica                | Symfony                                                                             | CodeIgniter                                                     | Laravel                                                         | Soft (Portfolio MVC)                                                                                                          |
+| ----------------------------- | ----------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| **Dichiarazione delle rotte** | In file YAML, XML o tramite attributi (`#[Route('/path', name: '...')]`)            | In file PHP con funzioni `$route['path'] = 'Controller/method'` | In file `routes/web.php` con closure o controller (`Route::get('/path', [C::class, 'm'])`) | Solo con **AttributeRoute**, nessun file esterno. Le rotte vivono direttamente nel controller.                                |
+| **Caricamento delle rotte**   | Basato su `RouteCollection` e `RouteLoader` configurati nel `Kernel`                | Statico, caricato all’avvio dell’app                            | Cache automatica (`php artisan route:cache`)                                               | Basato su `RouteLoader` personalizzato che usa *Reflection* per leggere dinamicamente i controller.                           |
+| **Matching dell’URI**         | Usa il `UrlMatcher` con *compiled regex cache*                                      | Basato su regex basilari, senza parametri dinamici complessi    | Regex dinamiche + caching ottimizzato                                                      | Usa un `RouteMatcher` che trasforma `/path/{id}` → regex runtime con supporto parametri dinamici e caching pianificato.       |
+| **Middleware**                | Usa `EventSubscriber` e `Kernel Events` (`kernel.request`, `kernel.response`, ecc.) | Middleware registrati manualmente nel `Config/Filters.php`      | Stack PSR-15 gestito centralmente                                                          | Sistema **Chain of Responsibility** basato su attributi `#[AttributeMiddleware]`, leggibile e indipendente dal kernel.        |
+| **Dependency Injection**      | Integrata nel Service Container Symfony                                             | Assente o manuale tramite costruttori                           | Completa (IoC Container)                                                                   | Possibile evoluzione futura del `RouteDispatcher` (ora usa `mvc()` come service locator, pronto per DI).                      |
+| **Configurazione**            | Centralizzata in `/config/routes/*.yaml` + Attributes opzionali                     | Tutto in un file globale `app/Config/Routes.php`                | Configurazione multipla con cache e Facade                                                 | Completamente **zero-config**, ogni controller si auto-descrive tramite attributi chiari e leggibili.                         |
+| **Cache del routing**         | Compila le rotte in PHP (directory `var/cache/`)                                    | Nessuna cache, parsing runtime                                  | Cache precompilata con `route:cache`                                                       | Attualmente runtime, ma predisposto per **route cache automatica** con file serializzato o precompilato.                      |
+| **Architettura software**     | Hexagonal / Event-driven                                                            | MVC puro e minimale                                             | Layered / Service Container                                                                | Layered MVC + Reflection-driven con *Registry, Strategy e Dispatcher Pattern*.                                                |
+| **Filosofia**                 | “Configuration is power” → forte astrazione e containerizzazione                    | “Semplicità e velocità” → focus sull’immediatezza               | “Expressive, elegant syntax” → convenzioni e sintassi fluenti                              | “Code is the configuration” → leggibilità, immediatezza e flusso logico umano. Il codice segue il pensiero, non il contrario.                                                     |
 ### Sintesi 
+>Symfony privilegia la configurazione e la modularità per grandi sistemi enterprise.
+>CodeIgniter si concentra sulla leggerezza e sulla velocità di esecuzione.
+>Laravel offre una sintassi elegante, ma richiede diversi layer e caching manuale.
+>Soft (Portfolio MVC) elimina la configurazione esterna e riflette direttamente il pensiero umano nel codice.
+>In Soft, ogni controller è auto-descrittivo:
+>la rotta, i middleware e la logica convivono nello stesso contesto, rendendo il flusso leggibile e naturale.
+
+>"Dove gli altri framework “configurano” le rotte, Soft le comprende."
+
+---
+
+# Conclusioni 
 Il sistema di routing e l’intera architettura del framework sono costruiti per rispettare i principi:
 
 SOLID
