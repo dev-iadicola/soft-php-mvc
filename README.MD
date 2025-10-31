@@ -49,6 +49,10 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 
 
 # Sistema di Routing
+
+Il sistema di routing segue una catena ben definita di componenti che gestiscono il ciclo di vita di una richiesta HTTP, dall’input dell’utente alla risposta del controller.
+
+```text
 [HTTP Request]
       │
       ▼
@@ -67,13 +71,13 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
  └───────────────┘
       │
       ▼
- ┌───────────────┐
- │ RouteDispatcher │ → Esegue middleware e chiama il controller/action
- └───────────────┘
+ ┌────────────────┐
+ │ RouteDispatcher│ → Esegue middleware e chiama il controller/action
+ └────────────────┘
       │
       ▼
 [HTTP Response]
-
+```
 ---
 
 ## Esempio di utilizzo 
