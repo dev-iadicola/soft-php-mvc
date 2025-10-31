@@ -485,6 +485,103 @@ Di seguito una panoramica comparativa dei principali framework PHP moderni:
 <br><br><br>
 ___
 
+# Validator 
+
+## utilizzo 
+```php
+use App\Core\Validation\Validator;
+
+$validator = Validator::make($request->all(), [
+    'email' => 'required|email',
+    'password' => 'required|min:8|max:20',
+]);
+
+// avanzato con messaggi personalizzati
+$validator = Validator::make($request->all(), [
+    'email' => 'required|email',
+    'password' => 'required|min:8|max:20',
+], [
+    'email.required' => 'Inserisci il tuo indirizzo email.',
+    'email.email' => 'L\'indirizzo email non è valido.',
+    'password.required' => 'La password è obbligatoria.',
+    'password.min' => 'La password deve avere almeno 8 caratteri.',
+]);
+
+// Utilizzo Closure 
+$validator = Validator::make($_POST, [
+    'username' => [
+        fn($value) => strlen($value) > 3 ?: 'Il nome utente deve essere lungo almeno 4 caratteri.'
+    ]
+]);
+
+// Utilizzo di Classi di Regole Personalizzate con esempio
+namespace App\Core\Validation\Rules;
+
+interface RuleInterface {
+    public function passes(string $field, $value, ?string $param = null): bool;
+    public function message(string $field, ?string $param = null): string;
+}
+use App\Core\Validation\Rules\RuleInterface;
+
+class StartsWithUppercase implements RuleInterface {
+    public function passes(string $field, $value, ?string $param = null): bool {
+        return preg_match('/^[A-Z]/', $value);
+    }
+
+    public function message(string $field, ?string $param = null): string {
+        return "Il campo {$field} deve iniziare con una lettera maiuscola.";
+    }
+}
+
+
+$validator = Validator::make($request->all(), [
+    'name' => [new StartsWithUppercase()],
+]);
+
+
+//verifica e stampa errori
+if ($validator->fails()) {
+    print_r($validator->errors());
+} else {
+    echo "Validazione superata!";
+}
+
+
+```
+## lista di regole
+| Regola              | Descrizione                                         |
+| ------------------- | --------------------------------------------------- |
+| `required`          | Il campo è obbligatorio                             |
+| `email`             | Deve essere un indirizzo email valido               |
+| `min:x`             | Lunghezza minima                                    |
+| `max:x`             | Lunghezza massima                                   |
+| `numeric`           | Deve essere un valore numerico                      |
+| `integer`           | Deve essere un numero intero                        |
+| `decimal`           | Deve essere un numero decimale                      |
+| `alpha`             | Solo lettere                                        |
+| `alpha_num`         | Solo lettere e numeri                               |
+| `boolean`           | Accetta true/false, 1/0, yes/no                     |
+| `same:altro`        | Deve essere uguale ad un altro campo                |
+| `different:altro`   | Deve essere diverso da un altro campo               |
+| `regex:/pattern/`   | Deve rispettare un pattern regex                    |
+| `in:a,b,c`          | Deve essere uno dei valori specificati              |
+| `not_in:a,b,c`      | Non deve essere uno dei valori specificati          |
+| `size:x`            | Deve avere lunghezza esatta                         |
+| `between:min,max`   | Deve essere compreso tra due valori                 |
+| `date`              | Deve essere una data valida                         |
+| `url`               | Deve essere un URL valido                           |
+| `ip`                | Deve essere un indirizzo IP valido                  |
+| `file`              | Deve essere un file caricato correttamente          |
+| `mimes:jpg,png,pdf` | Il file deve avere una delle estensioni specificate |
+| `uppercase`         | Deve contenere almeno una lettera maiuscola         |
+| `number`            | Deve contenere almeno un numero                     |
+| `symbol`            | Deve contenere almeno un carattere speciale         |
+| `array_min:x`       | L’array deve contenere almeno x elementi            |
+| `array_max:x`       | L’array può contenere al massimo x elementi         |
+
+___
+<br><br><br>
+
 # Conclusioni 
 Il sistema di routing e l’intera architettura del framework sono costruiti per rispettare i principi:
 
