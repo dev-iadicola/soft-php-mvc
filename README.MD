@@ -76,6 +76,31 @@ Il framework è stato costruito da zero per comprendere in modo pratico il funzi
 
 ---
 
+## Esempio di utilizzo 
+```php
+#[AttributeRoute('progetti/{id}/{slug}', method: 'GET', middleware: ['auth'])]
+public function show(Request $request, int $id, string $slug)
+{
+    $project = Project::find($id);
+    return view('project', compact('project'));
+}
+```
+
+### Sintesi 
+Il sistema di routing e l’intera architettura del framework sono costruiti per rispettare i principi:
+
+SOLID
+
+Dependency Inversion
+
+Open/Closed Principle
+
+Separation of Concerns
+
+Convention over Configuration
+
+Questo approccio rende il framework estendibile, scalabile e adatto come base per progetti più complessi o come laboratorio didattico di architettura software in PHP.
+
 # Requisiti
 
 - **PHP** ≥ 8.1-8.4  
