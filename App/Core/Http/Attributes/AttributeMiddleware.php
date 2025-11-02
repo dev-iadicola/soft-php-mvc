@@ -2,6 +2,7 @@
 namespace App\Core\Http\Attributes;
 
 use App\Core\Contract\MiddlewareInterface;
+use App\Core\Http\Request;
 
 #[\Attribute(\Attribute::TARGET_CLASS | \Attribute::TARGET_METHOD | \Attribute::IS_REPEATABLE)]
 class AttributeMiddleware implements MiddlewareInterface {
@@ -10,5 +11,5 @@ class AttributeMiddleware implements MiddlewareInterface {
      */
     public function __construct( public string|array|MiddlewareInterface $names){}
     
-    public function exec(){}
+    public function exec(Request $request){}
 }

@@ -37,7 +37,7 @@ class AuthController
         if ($confirmPassword === false) {
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
-    
+        // Autenticazione e traccia del log
         Auth::login($user);
         LogTrace::ceateLog($user->id);
         return redirect('admin/dashboard');

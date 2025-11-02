@@ -196,7 +196,7 @@ class QueryBuilder extends AbstractBuilder
      * @param int $fetchType
      * @return QueryBuilder[]
      */
-    public function query(string $query, array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
+    public function query(string $query, ?array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
     {
         $stmt = $this->pdo->prepare($query);
 

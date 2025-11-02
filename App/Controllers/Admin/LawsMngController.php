@@ -6,14 +6,8 @@ use App\Model\Law;
 use App\Core\Controller;
 use App\Core\Http\Request;
 
-class LawsMngController extends Controller{
+class LawsMngController extends AbstractAdminController{
 
-    public function __construct(public Mvc $mvc)
-    {
-      parent::__construct($mvc);
-  
-      $this->setLayout('admin');
-    }
   
     public function index(){
 
@@ -22,10 +16,10 @@ class LawsMngController extends Controller{
         }
         
         public function store(Request $request){        
-         Law::create( $request->getPost());
+         Law::create( $request->all());
         
          $this->withSuccess('New Law has be created');
-         return $this->redirectBack();
+         return response()->back();
         }
         
         public function edit(Request $req, $id){
@@ -40,29 +34,29 @@ class LawsMngController extends Controller{
         public function update(Request $request, $id){
           $law = Law::find($id);
 
-          $law->update($request->getPost());
+          $law->update($request->all());
           
           $this->withSuccess('Law is Updated');
-          return $this->redirectBack();
+          return response()->back();
         }
        
         public function destroy(Request $req, $id){
-          $data =  $req->getPost();
+          $data =  $req->all();
          if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
           return $this->statusCode413();
          }
           $law = Law::find(id: $id)->delete();
 
           if($law ===  true){
-            $this->withSuccess('Law DELETE');
-           return  $this->redirectBack();
+           return  response()->back()->withSuccess("Law DELETE");
           }
           if($law === null){
-            return $this->redirectBack();
+            return response()->back();
           }
+          
          
             $this->withError('LAW NOT WAS DELETED!');
-            return $this->redirectBack();
+            return response()->back();
         }
         
 }

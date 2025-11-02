@@ -9,7 +9,7 @@ use App\Core\Services\SessionStorage;
 use App\Core\Contract\ITimeoutStrategy;
 use App\Core\Strategy\InactivityTimeout;
 use App\Core\Contract\MiddlewareInterface;
-
+use App\Core\Http\Request;
 
 class AuthMiddleware implements MiddlewareInterface
 {
@@ -21,7 +21,7 @@ class AuthMiddleware implements MiddlewareInterface
     private ITimeoutStrategy $_itimeout_strategy;
 
 
-    public function exec()
+    public function exec(Request $request)
     {
         $this->_authService = new AuthService(SessionStorage::getInstance());
         // dall'ultima attività devono pssare 30 minuti.

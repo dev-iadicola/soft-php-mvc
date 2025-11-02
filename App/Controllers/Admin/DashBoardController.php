@@ -5,17 +5,13 @@ use App\Core\Eloquent\Model;
 use App\Model\Contatti;
 use App\Core\Controller;
 use App\Core\Facade\Auth;
+use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Services\AuthService;
 
-class DashBoardController extends Controller{
+class DashBoardController extends AbstractAdminController{
 
-    public function __construct(public Mvc $mvc) {
-        parent::__construct($mvc);
-        
-        $this->setLayout('admin');
-        
-    }
-
+    
+    #[AttributeRoute('/admin/dashboard','')]
     public function index(){
         $message = Contatti::orderBy('id', 'DESC')->get();
        return view('admin.dashboard', compact('message'));

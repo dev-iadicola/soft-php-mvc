@@ -12,22 +12,13 @@ use App\Core\Controller;
 use App\Core\Http\Request;
 use App\Model\Article;
 
-class ProfileMngController extends Controller 
+class ProfileMngController extends AbstractAdminController 
 {
-
-  public function __construct(public Mvc $mvc)
-  {
-    parent::__construct($mvc);
-
-    $this->setLayout('admin');
-  }
-
 
   public function store(Request $request)
   {   
-    Profile::create($request->getPost());
-
-    $this->redirectBack()->withSuccess('Skills Aggiornate conn Successo!');
+    Profile::create($request->all());
+    return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   public function edit(Request $request, $id)
@@ -41,7 +32,7 @@ class ProfileMngController extends Controller
 
   public function update(Request $request, $id)
   {
-    $data = $request->getPost();
+    $data = $request->all();
 
     $data['selected'] = isset($data['selected']) ? 1 : 0;
 
@@ -49,22 +40,20 @@ class ProfileMngController extends Controller
     $project = Profile::find($id);
     $project->update($data);
 
-    $this->withSuccess('Aggiornamento Eseguito');
-    $this->redirectBack();
+    return response()->back()->withSuccess('Aggiornamento Eseguito');
+    
   }
 
   public function destroy(Request $reqq, $id){
     // trova e azione
-   $data =  $reqq->getPost();
+   $data =  $reqq->all();
    if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
     return $this->statusCode413();
    }
 
     $project  = Skill::find($id);
-
     $project->delete();
-// Feedback Server
-    return $this->redirectBack()->withSuccess('Skills ELIMINATE');
+    return  response()->back()->withSuccess('Skills ELIMINATE');
 
  }
 

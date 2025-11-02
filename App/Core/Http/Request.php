@@ -13,6 +13,8 @@ class Request
     private string $method;
     private array $post;
 
+    private string $lastUri = '/';
+
     private array $attributes;
 
     public function __construct()
@@ -68,34 +70,15 @@ class Request
         return strtoupper($_SERVER['REQUEST_METHOD']);
     }
 
-    public function getBack(): string|null
+    public function getLastUri(): string|null
     {
         // Assicurati che HTTP_REFERER sia impostato
         if (isset($_SERVER['HTTP_REFERER'])) {
             return strtolower($_SERVER['HTTP_REFERER']);
         }
+        return '/';
 
-        return null;
     }
 
-    public function redirectBack(): never
-    {
-        $backUrl = $this->getBack();
-        if (headers_sent($file, $line)) {
-           Log::Info("Redirect fallito verso $backUrl: header già inviato in $file alla riga $line.");
-
-            // Fallback con JavaScript
-            echo "<script>window.location.href = '" . htmlspecialchars($backUrl) . "';</script>";
-            echo "<noscript>Redirezione non riuscita. <a href=\"" . htmlspecialchars($backUrl) . "\">Clicca qui</a>.</noscript>";
-            exit();
-        }
-        if (!empty($backUrl)) {
-            header("Location: $backUrl");
-            exit();
-        } else {
-            // Gestisci il caso in cui non c'è un URL di riferimento
-            header("Location: /"); // Reindirizza alla home page o ad un'altra pagina di default
-            exit();
-        }
-    }
+   
 }

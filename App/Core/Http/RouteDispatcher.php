@@ -70,7 +70,7 @@ class RouteDispatcher
                 if (!$mw instanceof MiddlewareInterface) {
                     throw new \RuntimeException("$$stringClass must implement MiddlewareInterface");
                 }
-                $mw->exec(); // esegui middleware
+                $mw->exec(new Request()); // esegui middleware
             }
         }
     }

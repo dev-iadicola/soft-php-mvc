@@ -88,7 +88,6 @@ class Mvc
         $this->getPdoConnection(); // Invochiamo la connessione
         $this->getSMTPConnection();
 
-        $this->controller = new Controller(mvc: $this);
     }
 
 

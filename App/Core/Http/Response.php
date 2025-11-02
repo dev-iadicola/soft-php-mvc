@@ -27,6 +27,11 @@ class Response
         return $this->content;
     }
 
+    public function back(): self{
+       $this->_redirectTo =- mvc()->request->getLastUri();
+       return $this;
+    }
+
     public function send(): void
     {
         if (!is_null($this->_redirectTo)) {
@@ -58,14 +63,14 @@ class Response
         return $this;
     }
 
-    public function redirect(string $toUrl, $status = 200): self
+    public function redirect(?string $toUrl = '/', $status = 200): self
     {
         $this->_redirectTo = $toUrl;
         $this->setCode($status);
         return $this;
     }
     /**
-     * per flash session veloci da impostare
+     * * per flash session veloci da impostare
      * 
      */
 
@@ -130,6 +135,17 @@ class Response
                 'errorMsg' => $e->getMessage()
             ])
         );
+    }
+
+    public function set405(){
+         $errorContent = $this->view->render('error', [
+            'code' => 405,
+            'errorMsg' => 'Method not allowed.'
+        ]);
+
+        // Imposta il codice di stato e il contenuto della risposta
+        $this->setCode(413);
+        $this->setContent($errorContent);
     }
 
     public function set413(): void

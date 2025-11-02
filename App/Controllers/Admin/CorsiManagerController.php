@@ -7,15 +7,10 @@ use App\Core\Controller;
 use App\Core\Http\Request;
 use App\Model\Certificate;
 
-class CorsiManagerController extends Controller
+class CorsiManagerController extends AbstractAdminController
 {
 
-   public function __construct(public Mvc $mvc)
-   {
-      parent::__construct($mvc);
 
-      $this->setLayout('admin');
-   }
 
    public function index()
    {
@@ -27,9 +22,9 @@ class CorsiManagerController extends Controller
    public function store(Request $request)
    {
 
-      Certificate::create($request->getPost());
+      Certificate::create($request->all());
 
-      return  $this->redirectBack()->withSuccess('Certificate Inserito');
+      return  redirect()->back()->withSuccess('Certificate Inserito');
    }
 
 
@@ -42,7 +37,7 @@ class CorsiManagerController extends Controller
 
       if (empty($corsi) || empty($element)) {
          $this->withError('Non è presente ciò che cercate!');
-         return $this->redirectBack();
+         return response()->back();
       }
 
       return view('/admin/portfolio/corsi', compact('corsi', 'element'));
@@ -52,11 +47,11 @@ class CorsiManagerController extends Controller
    {
       Certificate::where('id', $id)->update($request->getPost());
       $this->withSuccess('Corso Aggiornato con successo!');
-      return $this->redirectBack();
+      return response()->back();
    }
    public function destroy(Request $request, $id)
    {
-      $data = $request->getPost();
+      $data = $request->all();
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return $this->statusCode413();
       }
@@ -64,6 +59,6 @@ class CorsiManagerController extends Controller
       $corso = Certificate::where('id', $id);
       $corso->delete();
       $this->withSuccess('Corso ELIMINATO');
-      return $this->redirectBack();
+      return response()->back();
    }
 }

@@ -6,13 +6,8 @@ use App\Model\Contatti;
 use App\Core\Controller;
 use App\Core\Http\Request;
 
-class ContattiManagerController extends Controller{
-    public function __construct(public Mvc $mvc){
-       parent::__construct($mvc);
-
-       $this->setLayout('admin');
-    }
-
+class ContattiManagerController extends AbstractAdminController{
+  
     public function index(){
        $contatti = Contatti::orderBy('created_at', 'DESC')->get();
        return view('admin.portfolio.messaggi', compact('contatti'));
@@ -26,7 +21,7 @@ class ContattiManagerController extends Controller{
     }
 
     public function destroy(Request $req, $id){
-      $data =  $req->getPost();
+      $data =  $req->all();
       if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
        return $this->statusCode413();
       }
@@ -37,7 +32,7 @@ class ContattiManagerController extends Controller{
     $contatto->delete();
 
     $this->withSuccess('Messaggio ELIMINATO');
-   return $this->redirectBack();
+   return $this->redirect();
    }
 
 }

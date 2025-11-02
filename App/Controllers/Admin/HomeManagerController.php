@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers\Admin;
 
+use App\Core\Controllers\BaseController;
 use App\Core\Mvc;
 use App\Model\Skill;
 use App\Core\Storage;
@@ -8,18 +9,11 @@ use App\Model\Article;
 use App\Model\Profile;
 
 use App\Core\Validator;
-use App\Core\Controller;
 use App\Core\Http\Request;
 
-class HomeManagerController extends Controller
+class HomeManagerController extends BaseController
 {
 
-    public function __construct(public Mvc $mvc)
-    {
-        parent::__construct($mvc);
-
-        $this->setLayout('admin');
-    }
 
     public function index()
     {
@@ -34,7 +28,7 @@ class HomeManagerController extends Controller
 
     public function store(Request $request)
     {
-        $data = $request->getPost();
+        $data = $request->all();
         $storage = new Storage();
 
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -48,7 +42,7 @@ class HomeManagerController extends Controller
 
         Article::create($data);
 
-        return $this->redirectBack()->withSuccess('Articolo Inserito con successo nella Home Page!');
+        return response()->back()->withSuccess('Articolo Inserito con successo nella Home Page!');
 
         // inserisci un nuovo elemento
     }
@@ -68,7 +62,7 @@ class HomeManagerController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $data = $request->getPost();
+        $data = $request->all();
         $article = Article::find($id);
         if(isset($data['img'])){
             // Validazione Dati
@@ -91,7 +85,7 @@ class HomeManagerController extends Controller
         $project->update($data);
 
         // feedback server
-        $this->redirectBack()->withSuccess('Articolo Aggiornato con successo!');
+        redirect()->back('Articolo Aggiornato con successo!');
     }
 
     public function destroy(Request $reqq, $id)

@@ -4,10 +4,11 @@ namespace App\Middleware;
 
 use App\Core\Mvc;
 use App\Core\Contract\MiddlewareInterface;
+use App\Core\Http\Request;
 
 class MaintenanceMiddleware implements MiddlewareInterface
 {
-    public function exec()
+    public function exec(Request $request)
     {
 
         $stringManitence = strtoupper(getenv('MAINTENANCE')); // Prendiamo lo status di manutenzione

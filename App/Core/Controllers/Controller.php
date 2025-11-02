@@ -1,5 +1,5 @@
 <?php
-namespace App\Core;
+namespace App\Core\Controllers;
 
 use App\Core\Facade\Session;
 use App\Core\Http\Attributes\AttributeMiddleware;
@@ -17,13 +17,13 @@ use App\Core\Storage;
  * 
  */
 
-#[AttributeMiddleware(['web'])]
-class Controller
-{
 
-    public function __construct(public Mvc $mvc)
+abstract class Controller
+{
+    protected Mvc $mvc; 
+    public function __construct( ?Mvc $mvc = null)
     {
-       
+       $this->mvc = $mvc ?? mvc();
     }
 
  
@@ -45,9 +45,10 @@ class Controller
         $this->mvc->response->setContent($content);
     }
 
-    public function redirect(string $var)
+    public function redirect(?string $var = null): static
     {
         $this->mvc->response->redirect($var);
+        return $this;
     }
 
     public function statusCode413()
@@ -55,30 +56,13 @@ class Controller
         $this->mvc->response->set413();
     }
 
-    public function redirectBack()
-    {
-        $back = $this->mvc->request->redirectBack();
-        $this->mvc->response->redirect($back);
-    }
 
-    /**
-     * @deprecated non esiste più
-     * @param mixed $view
-     * @param mixed $variables
-     */
-    public function view($view, $variables)
-    {
 
-        return $this->mvc->view->view($view, $variables);
-
-    }
-
-    private function sessionStorage(){
-        return $this->mvc->sessionStorage;
-    }
-    public function withError($message)
+  
+    public function withError($message): static
     {
         Session::setFlash('error', $message);
+        return $this;
     }
 
     public function withSuccess($message)
@@ -90,32 +74,6 @@ class Controller
     {
         Session::setFlash('warning', $message);
     }
-
-    public function resetImg(array $data)
-    {
-
-        if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-            unset($data['img']);
-        } elseif ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-            (new Storage($this->mvc))->deleteFile($data['img']);
-            $data['img'] = $this->checkImage($data);
-
-        }
-    }
-  
-
-    public static function validateImage($file)
-    {
-        // Controlla se il file è stato caricato senza errori
-        if (isset($file['tmp_name']) && is_uploaded_file($file['tmp_name'])) {
-            // Verifica se il file è un'immagine
-            $imageSize = @getimagesize($file['tmp_name']);
-            return is_array($imageSize);
-        }
-        return false;
-    }
-
-
 
     /**
      * Modifica il Layout della pagina
