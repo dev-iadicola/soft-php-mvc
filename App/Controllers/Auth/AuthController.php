@@ -2,18 +2,15 @@
 
 namespace App\Controllers\Auth;
 
-use App\Core\Http\Attributes\AttributeMiddleware;
-use App\Core\Mvc;
+
 use App\Model\User;
 use App\Core\Validator;
 use App\Model\LogTrace;
-use App\Core\Controller;
+
 use App\Core\Facade\Auth;
 use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Http\Request;
-use App\Core\Http\Response;
-use App\Model\LogTraceTrace;
-use App\Core\Services\AuthService;
+
 
 class AuthController
 {
@@ -28,7 +25,6 @@ class AuthController
     #[AttributeRoute('login','POST', middleware:'auth')]
     public function login(Request $request)
     {
-    
         // verifica esistenza user
         $user = User::where('email', $request->email)->first();
 

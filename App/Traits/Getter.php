@@ -20,6 +20,8 @@ trait Getter
             return $this->$key;
         }
 
+        return $this->attributes[$key];
+
         // $class = static::class;
         // throw new \Exception("Undefined property: {$class}::\${$key}");
     }

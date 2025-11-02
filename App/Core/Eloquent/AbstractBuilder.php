@@ -2,6 +2,7 @@
 
 namespace App\Core\Eloquent;
 
+use App\Core\Exception\QueryBuilderException;
 use PDO;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
@@ -79,13 +80,6 @@ abstract class AbstractBuilder
     }
 
 
-    /**
-     * Summary of addBinding
-     * @param mixed $val
-     * @return mixed
-     * Ogni volta che la 
-     */
-
 
     // * Get e Setter di Id
     public function getKeyId(): float|int|string|null
@@ -110,8 +104,9 @@ abstract class AbstractBuilder
     //* METODI SMART PER POPOLAZIONE STATEMENT SQL 
     //───────────────────────────────────────────────────────────────
     #region SQL OPERAZIONI
-    protected function AddBind(string $val): mixed
-    {
+    protected function AddBind(?string $val = null): mixed
+    {   
+        if($val=== null) throw new QueryBuilderException("The value is NULL");
         $key = ":p_" . ++$this->paramCounter;
         $this->bindings[":p_" . $this->paramCounter] = $val;
         return $key;

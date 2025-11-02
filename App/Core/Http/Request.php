@@ -19,7 +19,8 @@ class Request
     {
         $this->path = $this->uri();
         $this->method = $this->getRequestMethod();
-        $this->post = $this->getPost();
+        $this->attributes = $this->getPost();
+       
     }
 
     private function getValuesPostRequest(){
@@ -27,7 +28,7 @@ class Request
     }
 
     // Cattura richiesta post
-    public function getPost($index = null): array|string|int|float
+    private function getPost($index = null): array|string|int|float
     {
         $postData = $_POST ?? [];
         $fileData = $_FILES ?? [];
@@ -39,10 +40,7 @@ class Request
         return $combinedData;
     }
 
-    public function setParams(array|string $params){
-
-    }
-
+   
     // Preleva la request URI
     /**
      * Summary of getRequestPath
