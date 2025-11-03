@@ -12,7 +12,7 @@ use App\Core\Services\SessionStorage;
 class Auth {
     protected static ?AuthService $instance = null;
 
-    protected static function getInstance(): AuthService{
+    public static function getInstance(): AuthService{
         if(!self::$instance){
             self::$instance = new AuthService(SessionStorage::getInstance());
         }

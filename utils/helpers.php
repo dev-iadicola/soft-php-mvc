@@ -19,6 +19,7 @@ require_once 'mvc.php';
 require_once 'response.php';
 require_once 'var_dumper.php';
 require_once 'view.php';
+require_once "facades.php";
 
 
 

@@ -7,9 +7,10 @@
 
 use App\Middleware\AuthMiddleware;
 use App\Middleware\MaintenanceMiddleware;
+use App\Middleware\MethodOverrideMiddleware;
 
 return [
-    'web' => [],
+    'web' => [MethodOverrideMiddleware::class],
     'guest' => [MaintenanceMiddleware::class],
     'auth' => [AuthMiddleware::class]
 ];

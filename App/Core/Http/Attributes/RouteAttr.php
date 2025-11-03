@@ -5,7 +5,7 @@ namespace App\Core\Http\Attributes;
 use App\Core\Contract\MiddlewareInterface;
 
 #[\Attribute(\Attribute::TARGET_METHOD)]
-class AttributeRoute
+class RouteAttr
 {
     /**
      * Summary of __construct

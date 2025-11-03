@@ -43,8 +43,6 @@ class Validator
                     if ($result !== true) {
                         $this->addError($field, $result ?? "The field $field is invalid.");
                     }
-
-
                     continue;
                 }
                 // * Gestione parametri tipo min:8
@@ -61,7 +59,7 @@ class Validator
                     }
                 }
 
-                // * metodo magico per richiamare il metodo
+                // * magic method for call the validator method by cases
                 $method = 'validate' . ucfirst($ruleName);
                 if (method_exists($this, $method)) {
                     $this->$method($field, $value, $param);
@@ -81,18 +79,24 @@ class Validator
      * Validation Rules - Default English messages
      */
 
-    protected function validateRequired(string $field, $value): void
+    protected function validateRequired(string $field, $value, $param): void
     {
         if (!isset($this->data[$field]) || $value === null || $value === '' || (is_array($value) && empty($value))) {
             $this->addError($field, "The {$field} field is required.", 'required');
         }
     }
 
-    protected function validateEmail(string $field, $value): void
+    protected function validateEmail(string $field, $value, $param): void
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $this->addError($field, "The {$field} field must be a valid email address.", 'email');
         }
+    }
+
+    // * Confirmed: when the input is equal with orher input with name "confirmed"
+    protected function validateConfimed(string $field, $value, $param)
+    {
+        return ($field === $this->data['confirmed']) ? true : false;
     }
 
     protected function validateMin(string $field, $value, $param): void

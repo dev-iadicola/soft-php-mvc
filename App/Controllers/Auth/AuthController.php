@@ -4,15 +4,16 @@ namespace App\Controllers\Auth;
 
 
 use App\Model\User;
-use App\Core\Validator;
 use App\Model\LogTrace;
-
 use App\Core\Facade\Auth;
-use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Http\Request;
 
+use App\Core\Validation\Validator;
+use App\Core\Controllers\BaseController;
+use App\Core\Http\Attributes\AttributeRoute;
 
-class AuthController
+
+class AuthController extends BaseController
 {
 
     #[AttributeRoute('/login')]
@@ -64,12 +65,13 @@ class AuthController
     #[AttributeRoute('/sign-up','post')]
     public function registration(Request $request)
     {
-        $confirmed =  Validator::confirmedPassword($request->all());
-        if ($confirmed === false) {
-            return view('Auth.sign-up', ['message' => 'Le password non corrispondono']);
+        $confirmed =  Validator::make($request->all(),["password" => ["confirmed","required","min:8"]]);
+        if ($confirmed->fails()) {
+            return response()->redirect()->back()->withError($confirmed->errors()); 
         }
         $data['password'] = password_hash($request->password, PASSWORD_BCRYPT);
         User::upload($data);
-        view('Auth.login', ['message' => 'Registrazione Effettuata, Ora Iscriviti!']);
+
+        response()->redirect("/login")->withSuccess("Sign in comoplete, now sign up!");
     }
 }

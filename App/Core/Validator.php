@@ -1,7 +1,10 @@
 <?php
 
 namespace App\Core;
-
+/**
+ * Summary of Validator
+ * @deprecated  use the new Validator from App/Core/Validation
+ */
 class Validator
 {
     protected $errors = [];

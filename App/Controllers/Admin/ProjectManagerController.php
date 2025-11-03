@@ -9,14 +9,9 @@ use App\Core\Storage;
 use App\Core\Validator;
 use App\Model\Project;
 
-class ProjectManagerController extends Controller
+class ProjectManagerController extends AbstractAdminController
 {
-   public function __construct(public Mvc $mvc)
-   {
-      parent::__construct($mvc);
 
-      $this->setLayout('admin');
-   }
 
    public function index()
    {
@@ -27,7 +22,7 @@ class ProjectManagerController extends Controller
    public function store(Request $request)
    {
       $projects = Project::orderBy('id', 'DESC')->get();
-      $data = $request->getPost();
+      $data = $request->all();
 
       // Controlla se è stato caricato un file immagine
       if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
@@ -37,7 +32,7 @@ class ProjectManagerController extends Controller
          // Verifica che sia un'immagine valida
          if (!Validator::verifyImage($file)) {
             // Gestisci errore (es. ritorna con errore, throw, ecc)
-            return $this->redirectBack()->withErrors('Il file caricato non è un\'immagine valida.');
+            return response()->back()->withError('Il file caricato non è un\'immagine valida.');
          }
          // Salva il file e ottieni il path relativo
          $storage = new Storage();
@@ -64,7 +59,7 @@ class ProjectManagerController extends Controller
 
    public function update(Request $request, $id)
    {
-      $data = $request->getPost();
+      $data = $request->all();
       $project = Project::find($id);
       // Validazione Dati
       if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -74,7 +69,7 @@ class ProjectManagerController extends Controller
          $stg = new Storage();
          $stg->deleteIfFileExist($project->img);
          $stg->disk('images')->put($data['img']);
-         $data['img'] = $stg->getRelativePath() ;
+         $data['img'] = $stg->getRelativePath();
          $this->withSuccess('Aggiornamento Eseguito');
       } else {
          unset($data['img']);
@@ -83,36 +78,35 @@ class ProjectManagerController extends Controller
       $project = Project::find($id);
       $project->update($data);
       // feedback server
-      
-      return $this->redirectBack();
+
+      response()->back()->withSuccess('Progetto aggiornato con successo!');
    }
 
    public function destroy(Request $reqq, $id)
    {
       // trova e azione
-      $data =  $reqq->getPost();
+      $data =  $reqq->all();
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return $this->statusCode413();
       }
 
       $project  = Project::find($id);
       if (!$project) {
-         $this->withError('Progetto non trovato');
-         return $this->redirectBack();
+         return response()->back()->withError('Progetto non trovato');
       }
       if (!isset($project->img) && !is_null($project->img)) {
          $stg = new Storage();
          if ($stg->deleteIfFileExist($project->img)) {
-            $this->withSuccess('Progetto Elimianto');
+            $project->delete();
+            response()->back()->withSuccess('Progetto Elimianto.');
          } else {
-            $this->withWarning('Progetto ELIMINATO, non è stata trovata alcuna immagine');
+
+            response()->back()->withWarning('Non è stato possibile eliminare il progetto, perchè manca il percorso dell\'immagine.');
          }
-         $project->delete();
-         return $this->redirectBack();
+
+         
       }
 
-
-      $this->withError('Progetto non eliminato correttamente');
-      return $this->redirectBack();
+      response()->back()->withError("Progetto non eliminato correttamente.");
    }
 }

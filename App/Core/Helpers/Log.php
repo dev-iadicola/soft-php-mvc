@@ -3,6 +3,10 @@
 namespace App\Core\Helpers;
 
 use Throwable;
+use App\Model\User;
+use App\Mail\BrevoMail;
+use App\Core\Contract\MailBaseInterface;
+use App\Mail\BaseMail;
 
 class Log
 {
@@ -14,31 +18,50 @@ class Log
     }
 
     public static function exception(Throwable $exception): void
-{
-    $arrExc = [
-        'Message'   => $exception->getMessage(),
-        'File'      => $exception->getFile(),
-        'Line'      => $exception->getLine(),
-        'Code'      => $exception->getCode(),
-        'Trace'     => $exception->getTraceAsString(),
-    ];
+    {
+        $arrExc = [
+            'Message'   => $exception->getMessage(),
+            'File'      => $exception->getFile(),
+            'Line'      => $exception->getLine(),
+            'Code'      => $exception->getCode(),
+            'Trace'     => $exception->getTraceAsString(),
+        ];
 
-    $strExc ="";
-    foreach ($arrExc as $key => $value) {
-        $strExc .= " {$key}: {$value} ";
+        $strExc = "";
+        foreach ($arrExc as $key => $value) {
+            $strExc .= " {$key}: {$value} ";
+        }
+        $strExc .= ".";
+
+        // Scrittura nel log (ipotizzando che writeLog accetti messaggio e testo)
+        self::writeLog('Exception', $strExc);
     }
-    $strExc .=".";
 
-    // Scrittura nel log (ipotizzando che writeLog accetti messaggio e testo)
-    self::writeLog('Exception', $strExc);
-}
+    // * Alert, important message (violation systme or other)
+    public static function Alert(string $message)
+    {
+        self::writeLog("ALERT⚠️", "====================\n!!! $message  !!!\n====================");
+    }
+
+
+    public static function Email(
+        string $message,
+        string $to,
+        string $subject = "",
+        string $page = "standard",
+        BaseMail $servceSMTP = new BrevoMail(),
+    ) {
+        $servceSMTP->bodyHtml($page, ["subject" => $subject,]);
+        $servceSMTP->setEmail($to, $subject, ["message" => $message]);
+        $servceSMTP->send();
+    }
 
     public static function error($message): void
     {
         self::writeLog('ERROR', $message);
     }
 
-    public static function debug( $message): void
+    public static function debug($message): void
     {
         self::writeLog('DEBUG', $message);
     }

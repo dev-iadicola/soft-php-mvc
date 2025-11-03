@@ -4,16 +4,14 @@ namespace App\Controllers;
 
 use App\Core\Mvc;
 use App\Core\Controller;
+use App\Core\Controllers\BaseController;
 use App\Core\Http\Attributes\AttributeRoute;
 use App\Model\Certificate;
 
-class CertificatiController extends Controller
+class CertificatiController extends BaseController
 {
 
-    public function __construct(public Mvc $mvc)
-    {
-        parent::__construct($mvc);
-    }
+ 
     #[AttributeRoute('certificati')]
     public function index()
     {

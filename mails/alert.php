@@ -1,3 +1,7 @@
+<?php
+
+use App\Utils\Date;
+?>
 <!-- token-mail.php -->
 <!DOCTYPE html>
 <html lang="en">
@@ -5,7 +9,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Notifica dal Portfolio - Un utente ti ha contattato</title>
+    <title>Alert!!!</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -33,7 +37,7 @@
         }
 
         .message {
-            border:  solid 1px black;
+            border: solid 1px black;
             padding: 20px;
             border-radius: 15px;
             background-color: rgba(0, 0, 0, 0.0.5);
@@ -43,23 +47,13 @@
 
 <body>
     <div class="container">
-        <h1>Ciao </h1>
-        <p>Qualcuno ti ha inviato un messaggio per il tuo portfolio</p>
-        <h3>Mittente: <?= $nome ?> <?= $typologie ?></h3>
-        <h5>data: <?= date('d-m-Y H:i:s')?></h5>
-        <p><strong>Messaggio:</strong></p>
-        <p class="message">``  <?= $messaggio ?>  `` </p>
-        <p>
-            Rispondi a <a href="mailto: <?= $email ?>"> <?= $email ?></a>
-        </p>
-
-
-
-        <p>
-            <a href="<?php echo 'http://' . $_SERVER['SERVER_NAME'] . '/login' ?>">Apri il link per accedere</a>
-
-        </p>
-
+        <h1>Alert! </h1>
+        <p>Message: <?= $message ?></p>
+        <h5>data: <?= Date::Rome('d-m-Y H:i:s') ?></h5>
+        <div>
+            <p><strong>Azioone/Messaggio:</strong></p>
+            <p class="message"> <?= $messaggio ?> </p>
+        </div>
 
     </div>
 </body>

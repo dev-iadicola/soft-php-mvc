@@ -1,6 +1,7 @@
 <?php 
 
 use App\Core\Mvc;
+use App\Core\Facade\Auth;
 use App\Core\Support\Collection\BuildAppFile;
 if (!function_exists('inizializeMvc')) {
     /**
@@ -39,3 +40,7 @@ if (!function_exists('mvc')) {
         return $GLOBALS['mvc'] ?? null;
     }
 }
+
+
+
+

@@ -2,9 +2,9 @@
 namespace App\Core\Controllers;
 
 use App\Core\Controllers\Controller;
-use App\Core\Http\Attributes\AttributeMiddleware;
+use App\Core\Http\Attributes\ControllerAttr;
 
-#[AttributeMiddleware('guest')]
+#[ControllerAttr(['guest'])]
 abstract class BaseController extends Controller {
     
 }
