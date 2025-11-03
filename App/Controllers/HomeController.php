@@ -5,13 +5,12 @@ use App\Model\Skill;
 use App\Model\Article;
 use App\Model\Profile;
 use App\Model\Project;
-use \App\Core\Controller;
-use App\Model\Curriculum;
+use App\Core\Controllers\BaseController;
 use App\Model\Certificate;
-use App\Core\Eloquent\Model;
-use App\Core\Http\Attributes\AttributeRoute as Route;  
+use App\Core\Http\Attributes\AttributeRoute as Route;
+use App\Core\Http\Attributes\RouteAttr;
 
-class HomeController extends Controller {
+class HomeController extends BaseController {
 
 
     public function __construct(public Mvc $mvc) {
@@ -20,7 +19,7 @@ class HomeController extends Controller {
      
     }
 
-    #[Route(path:'/')]
+    #[RouteAttr(path:'/')]
     public function index() {
         // recupero dati dal database
         $certificati = Certificate::orderBy('certified', 'DESC')->get();
@@ -34,7 +33,7 @@ class HomeController extends Controller {
         'certificati','projects','profiles','skills') );
     }
 
-    #[Route('/law')]
+    #[RouteAttr('/law')]
     public function cookie(){
         $this->render('cookie-law');
     }

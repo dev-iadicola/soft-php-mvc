@@ -3,11 +3,10 @@
 namespace App\Controllers;
 use \App\Core\Mvc;
 use App\Model\Law;
-use \App\Core\Controller;
-use App\Core\Http\Attributes\AttributeRoute;
-use App\Core\Http\Request;
+use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Controllers\BaseController;
 
-class LawController extends Controller {
+class LawController extends BaseController {
 
     public function __construct(public Mvc $mvc)
     {
@@ -16,7 +15,7 @@ class LawController extends Controller {
       $this->setLayout('default');
     }
 
-    #[AttributeRoute('/cookie')]
+    #[RouteAttr('/cookie')]
     public function home(){
         $laws = Law::findAll();
         return view('laws.law',compact('laws'));

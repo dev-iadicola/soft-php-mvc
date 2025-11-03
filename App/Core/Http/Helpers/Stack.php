@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Http\Collection;
+namespace App\Core\Http\Helpers;
 
 use App\Core\Support\Collection;
 use ArrayAccess;
@@ -10,6 +10,8 @@ class Stack
 
     private Collection $middleware;
     private Collection $path;
+
+    
 
     public function __construct()
     {
@@ -28,6 +30,7 @@ class Stack
         $this->path->merge((array)$name);
         return $this;
     }
+
 
     /**
      * Summary of clean
@@ -51,10 +54,19 @@ class Stack
         return $this->path;
     }
 
+  
     public function merge(Stack $stack): static
     {
         $this->middleware->merge($stack->Middleware());
         $this->path->merge($stack->Path());
+      
         return $this;
+    }
+
+    public function toArray(): array{
+        return [
+            "Middleware" => $this->middleware->toArray(),
+            "path" => $this->path->toArray(),
+        ];
     }
 }

@@ -6,6 +6,7 @@ use App\Controllers\Admin\DashBoardController;
 use \App\Core\Http\Request;
 use \App\Core\Mvc;
 use \App\Core\Exception\NotFoundException;
+use App\Core\Http\Helpers\RouteCollection;
 use App\Core\Support\Collection\BuildAppFile;
 
 /**
@@ -40,20 +41,18 @@ class Router
      * Summary of boot
      * @return void
      */
-    private function boot()
+    private function boot(): RouteCollection
     {
-        // Carica tutti i controller e genera la lista piatta di rotte
-        $flatRoutes = $this->loader->load(); // Rirtona un array piatto con la lista di rotte pronte per essere registrate
-
-        //  Registra le rotte nel registro per metodo HTTP [GET, POST, PUT, DELETE]
-        $this->registry->register($flatRoutes);
+        // Carica tutti i controller e genera una collection di rotte
+        return $this->loader->load(); 
     }
     public function handle()
     {
 
-        $this->boot();
+        $routeCollection = $this->boot();
         // ritorna la rotta da selezionare sendo la richiesta svolta.
-        $route = $this->matcher->match( $this->request, $this->registry);
+        $route = $this->matcher->match( $this->request, $routeCollection);
+        
         if ($route === null) 
             throw new NotFoundException( "No Route found for method " . $this->request->getRequestMethod() . " and request '{$this->request->uri()}'.");
         

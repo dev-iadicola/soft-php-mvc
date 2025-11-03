@@ -1,7 +1,10 @@
 <?php 
 namespace App\Core\Support;
 
-class Collection
+use ArrayIterator;
+use Traversable;
+
+class Collection implements \IteratorAggregate
 {
     public function __construct(private array $items = []) {}
 
@@ -34,8 +37,18 @@ class Collection
         return $this;
     }
 
+    public function filter(callable $callback): static {
+        return new static(array_filter($this->items, $callback));
+    }
+     public function map(callable $callback): static {
+        return new static(array_map($callback, $this->items));
+    }
     public function toArray(): array
     {
         return $this->items;
+    }
+
+     public function getIterator(): Traversable{
+        return new ArrayIterator($this->items);
     }
 }

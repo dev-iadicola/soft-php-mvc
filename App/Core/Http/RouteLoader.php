@@ -2,15 +2,18 @@
 
 namespace App\Core\Http;
 
+use App\Core\Http\Helpers\DynamicRoute;
 use ReflectionClass;
 use ReflectionMethod;
-use ArgumentCountError;
 use RecursiveIteratorIterator;
 use RecursiveDirectoryIterator;
-use App\Core\Http\Collection\Stack;
+use App\Core\Http\Helpers\Stack;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Attributes\ControllerAttr;
 use App\Core\Exception\LoaderAttributeException;
+use App\Core\Http\Helpers\ClassControllers;
+use App\Core\Http\Helpers\RouteCollection;
+use App\Core\Http\Helpers\RouteDefinition;
 
 /**
  * Summary of RouterLoader
@@ -33,78 +36,135 @@ class RouteLoader
         $this->controllersPath = $conntrollerPath;
     }
 
- 
 
 
-    public function load(): array
+    /**
+     * 2#
+     * Summary of getReflrectedController
+     * Filtriamo tutte le classi controller eccetto astratte e interfacce
+     * @param array $controllers
+     * @return Stack
+     */
+    private function getReflrectedController(array $controllers): ClassControllers
     {
-        $routes = [];
-        // * Rirtona tutti i controllers con namespace e file
-        $controllers = $this->getAllControllers();
-
+        $reflected = new ClassControllers();
         foreach ($controllers as $className => $fileController) {
-      
-                // * reflection dei controller trovati
-                $reflectionController = new ReflectionClass($className); // classname è una stringa del tipo App/Controller/UserController
-                // if($reflectionController->isInstantiable()){
 
-                // }
-                // * path e middleware di ogni controllers (e classi parent)
-                $classStack = $this->collectInheritedClassAttributes($reflectionController);
-
-                /**
-                 * Filtro per metodi solo pubblici all'interno di ogni controller.
-                 */
-                $publicMethodOfController = $reflectionController->getMethods(ReflectionMethod::IS_PUBLIC);
-                foreach ($publicMethodOfController as $reflectionMethod) {
-                    // * Prendi i Meotdi che hanno solo gli attributi #[RouteAttr]
-                    $routeAttributes = $reflectionMethod->getAttributes(RouteAttr::class);
-                    if (!$routeAttributes) continue; 
-
-                    
-                    $controllerAttribute = [];
-                    foreach ($reflectionMethod->getAttributes(ControllerAttr::class) as $middlewareAttribute) {
-                        $instance = $middlewareAttribute->newInstance(); // nuova instanza del AttributeMiddleware
-                        // aggiungiamo l'istanza all'interno della lista di array presenti nei metodi del controller
-                        $controllerAttribute['routes'] = array_merge($controllerAttribute['routes'], (array) $instance->middlewareNames);
-                        $controllerAttribute['basepath'] = array_merge($controllerAttribute['basepath'], (array) $instance->basePath);
-                    }
-
-                    // Per ogni attributo Route sul metodo 
-                    foreach ($routeAttributes as $attribute) {
-                        /** @var RouteAttr $route */
-                        $route = $attribute->newInstance();
-
-
-                        $routes[] = [
-                            'path'        => $route->path,
-                            'method'      => strtoupper($route->method),
-                            'controller'  => $className,
-                            'action'      => $reflectionMethod->getName(),
-                            'middlewares' => 'boh',
-                            'name'        => $route->name,
-                        ];
-                    }
-                }
+            if (!class_exists($className)) {
+                require_once $fileController;
             }
 
-            return $routes;
+            $refleciton = new ReflectionClass($className);
+
+            /**
+             * * Al momento igoriamo classi astratte e interfacce
+             * 
+             * Le riprenderemo nel metodo collectInheritedClassAttributes
+             *
+             * @return array
+             */
+            if ($refleciton->isAbstract() || !$refleciton->isInstantiable())
+                continue;
+
+            $reflected->addController($className);
         }
 
-        private getControllerAttributeCollection(): Stack{
-            $stack = new Stack();
+        return $reflected;
+    }
+
+    /**
+     * 3#
+     *
+     * @param ClassControllers $classControllers
+     * @return ClassControllers
+     */
+    public function getControllerStacks(ClassControllers $classControllers): ClassControllers
+    {
+        foreach ($classControllers as $className => $stack) {
+            $reflection = new ReflectionClass($className);
+            // * creiamo diversi stack per popolarli all'interno di ClassController
+            $creteStackOdCpntrollers  = $this->GetAttributesOfController($reflection);
+            $classControllers->setStack($className, $creteStackOdCpntrollers);
         }
+        return $classControllers;
+    }
+
+    private function extractRoutes(ClassControllers $controllers): RouteCollection
+    {
+        $routes = new RouteCollection();
+
+        foreach ($controllers->all() as $className => $stack) {
+            // ottieni la reflection del controller
+            $reflection = new ReflectionClass($className);
+
+            foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+                $routeAttributes = $method->getAttributes(RouteAttr::class);
+
+                if (empty($routeAttributes)) {
+                    continue;
+                }
+
+                foreach ($routeAttributes as $attr) {
+                    $route = $attr->newInstance();
+
+                    // Path base ereditato + path del metodo
+                    $basePath = implode('', $stack->Path()->toArray());
+                    $fullPath = rtrim($basePath, '/') . $route->path;
+                    $fullPath = preg_replace('#/+#', '/', $fullPath); // normalizza //
+
+                    // Merge middleware controller + rotta
+                    $middlewares = array_merge(
+                        $stack->Middleware()->toArray(),
+                        $route->middleware ?? []
+                    );
+
+                    // * inserisco la classe RouteDefintion nella collection RouteCollection
+
+                    $routes->add(new RouteDefinition(
+                        $fullPath,
+                        strtoupper($route->method),
+                        $className,
+                        $method->getName(),
+                        $route->name,
+                        array_unique($middlewares)
+                    ));
+                }
+            }
+        }
+        return $routes;
+    }
+
+    public function load(): RouteCollection
+    {
+        // *1 Rirtona tutti i controllers con namespace e file
+        $controllers = $this->getAllControllers();
+
+        // *2 Filtriamo tutte le classi controller eccetto astratte e interfacce
+        $classControllers = $this->getReflrectedController($controllers);
+
+        //  *3 Prepara lo stack (middleware/basePath) per ogni controller
+        $controllerStacks = $this->getControllerStacks($classControllers);
+        // $listOfPathAndMw = [];
+        // foreach ($controllerStacks->all() as $class => $stack) {
+        //     $listOfPathAndMw[$class] = $stack->toArray();
+        // }
+        // dd($listOfPathAndMw);
+        // * Prepara e compila un array con tutte le rotte.
+        return $this->extractRoutes($controllerStacks);
+    }
+
+
 
 
 
     /**
+     * 1 #
      * @param array<string,string> $controllersPath   percorso file (es. baseRoot()."/App/Controllers/*.php")
      * @return array<string,string> lista dei controller pronti: [namespace => file.php] 
      * 
      */
     private function getAllControllers(): array
     {
-        $controllers = [];
         $principalPath = $this->controllersPath;
         foreach ($principalPath as $namespace => $path) {
             // Scansiona ricorsivamente le sotto direcotry
@@ -136,13 +196,13 @@ class RouteLoader
     }
 
 
-    //     /**
-    //      * Summary of collectInheritedClassAttributes
+    //     
+    //      * 
     //      *  get attributes of any controller class
     //      *  @param \ReflectionClass $rc
     //      * @return array
     //      */
-    private  function collectInheritedClassAttributes(ReflectionClass $rc): Stack
+    private  function GetAttributesOfController(ReflectionClass $rc): Stack
     {
         // Una classe che ha la collection di Middleware e di Path
         $stack = new Stack();
@@ -162,11 +222,13 @@ class RouteLoader
                     // crea una istanza dell'attributo
                     $instance = $controllerAttribute->newInstance();
                     // Unisce i middleware e opath trovati
-                    if($instance->middlewareNames)
-                        $stack->addMiddleware($instance->middlewareNames);
-                    if($instance->basePath)
+                    if (property_exists($instance, 'middlewareNames') && !empty($instance->middlewareNames)) {
+                        $stack->addMiddleware((array)$instance->middlewareNames);
+                    }
+
+                    if (property_exists($instance, 'basePath') && !empty($instance->basePath)) {
                         $stack->addPath($instance->basePath);
-            
+                    }
                 } catch (LoaderAttributeException $e) {
                     $file = $classRef->getFileName();
                     $className = $classRef->getName();
@@ -180,7 +242,7 @@ class RouteLoader
             }
         }
 
-        $stack->clean();// rimuove duplicati
+        $stack->clean(); // rimuove duplicati
 
         return $stack;
     }

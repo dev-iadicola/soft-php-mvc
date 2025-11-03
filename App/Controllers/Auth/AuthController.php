@@ -11,19 +11,19 @@ use App\Core\Http\Request;
 use App\Core\Validation\Validator;
 use App\Core\Controllers\BaseController;
 use App\Core\Http\Attributes\AttributeRoute;
-
+use App\Core\Http\Attributes\RouteAttr;
 
 class AuthController extends BaseController
 {
 
-    #[AttributeRoute('/login')]
+    #[RouteAttr('/login')]
     public function index()
     {
         // pagina login
         view('Auth.login');
     }
 
-    #[AttributeRoute('login','POST', middleware:'auth')]
+    #[RouteAttr('login','POST', middleware:'auth')]
     public function login(Request $request)
     {
         // verifica esistenza user
@@ -44,13 +44,13 @@ class AuthController extends BaseController
         return redirect('admin/dashboard');
     }
 
-    #[AttributeRoute('forgot')]
+    #[RouteAttr('forgot')]
     public function forgotPassword()
     {
         return view('Auth.forgot');
     }
 
-    #[AttributeRoute('sign-up')]
+    #[RouteAttr('sign-up')]
     public function signUp()
     {
         $user = User::findAll();
@@ -62,7 +62,7 @@ class AuthController extends BaseController
                 
     }
 
-    #[AttributeRoute('/sign-up','post')]
+    #[RouteAttr('/sign-up','post')]
     public function registration(Request $request)
     {
         $confirmed =  Validator::make($request->all(),["password" => ["confirmed","required","min:8"]]);

@@ -1,19 +1,19 @@
 <?php
 namespace App\Controllers;
-use \App\Core\Controller;
-use App\Core\Http\Attributes\AttributeRoute;
+use App\Core\Controllers\BaseController;
+use App\Core\Http\Attributes\RouteAttr;
 use \App\Core\Mvc;
 use App\Model\Certificate;
 use App\Model\Curriculum;
 use App\Model\Project;
 
-class PortfolioController extends Controller {
+class PortfolioController extends BaseController {
 
     public function __construct(public Mvc $mvc) {
         parent::__construct($mvc);
     }
 
-    #[AttributeRoute('portfolio')]
+    #[RouteAttr('portfolio')]
     public function index() {
   
         $projects = Project::orderBy('id', 'DESC')->get();

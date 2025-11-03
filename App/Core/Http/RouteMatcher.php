@@ -3,6 +3,7 @@
 namespace App\Core\Http;
 
 use App\Core\Exception\NotFoundException;
+use App\Core\Http\Helpers\RouteCollection;
 use App\Utils\Casting;
 
 /**
@@ -14,17 +15,17 @@ class RouteMatcher
     /**
      * @return array|null rotta + ['params'=>['id'=>123]] se trovata, altrimenti null
      */
-    public function match(Request $request, RouteRegister $registry): ?array
+    public function match(Request $request, RouteCollection $routeCollection): ?array
     {
-
-        // * Rirtona un array di routes con il metodo di richiesta. es GET se la richiesta è GET.
-        $routes = $registry->getByRequestMethod($request);
+        // * Ritorno la route secondo due parametri di ricerca Meotodo HTTP e URI
+        $result = $routeCollection->findByMethodAndUri($request->getRequestMethod(), $request->uri());
+        dd($result);
 
 
 
         foreach ($routes as $route) {
             // Compila il pattern della rotta (es: /user/{id})
-            $compiled = $this->compilePattern($route['path']);
+            $compiled = $this->compilePattern($route['uri']);
             $regex = $compiled[0];
             $paramNames = $compiled[1];
 

@@ -3,6 +3,7 @@
 namespace App\Core\Http;
 
 use App\Core\Exception\NotFoundException;
+use App\Core\Http\Helpers\RouteCollection;
 
 /**
  * Summary of RouteRegister
@@ -26,10 +27,10 @@ class RouteRegister
      *   ]
      * 
      */
-    public function register(array $flatRoutes): void
+    public function register(RouteCollection $routeCollection): void
     {
-        foreach ($flatRoutes as $route) {
-            $method = strtoupper($route['method']); // preniamo il metodo, rendiamolo Upper per facilitare la vita a tutti ;) 
+        foreach ($routeCollection as $route) {
+            $method = $route->method;
             $this->routeByRequest[$method][] = $route; // ogni metodo ha all'interno i metadati del controller, middleware, action etc
         }
     }
