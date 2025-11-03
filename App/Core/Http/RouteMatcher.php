@@ -4,6 +4,7 @@ namespace App\Core\Http;
 
 use App\Core\Exception\NotFoundException;
 use App\Core\Http\Helpers\RouteCollection;
+use App\Core\Http\Helpers\RouteDefinition;
 use App\Utils\Casting;
 
 /**
@@ -15,24 +16,25 @@ class RouteMatcher
     /**
      * @return array|null rotta + ['params'=>['id'=>123]] se trovata, altrimenti null
      */
-    public function match(Request $request, RouteCollection $routeCollection): ?array
+    public function match(Request $request, RouteCollection $routeCollection): ?RouteDefinition
     {
         // * Ritorno la route secondo due parametri di ricerca Meotodo HTTP e URI
-        $result = $routeCollection->findByMethodAndUri($request->getRequestMethod(), $request->uri());
-        dd($result);
-
-
+        $routes = $routeCollection->filter($request->getRequestMethod());
 
         foreach ($routes as $route) {
+
+
             // Compila il pattern della rotta (es: /user/{id})
-            $compiled = $this->compilePattern($route['uri']);
+            $compiled = $this->compilePattern($route->uri);
             $regex = $compiled[0];
             $paramNames = $compiled[1];
 
             // Controlla se la richiesta corrisponde alla rotta
             if (preg_match($regex, $request->uri(), $matches)) {
-                // Rimuove il primo indice dell'array che in questo caso sarebbe progetto/id a //(cancellatoprogetto)/id ritornando solo l'id e il resto.
+                // Rimuove il primo indice dell'array che in questo caso sarebbe progetto/id/slug a /id/slug ritornando solo l'id e il resto.
                 array_shift($matches);
+
+
                 // Converte i valori in tipi corretti (int, bool, ecc.)
                 $matches = Casting::formatArray($matches);
 
@@ -44,15 +46,14 @@ class RouteMatcher
                         $paramsAssoc[$paramName] = $value;
                     }
                 }
-
                 // Aggiunge i parametri elaborati alla rotta
-                $route['params'] = $paramsAssoc;
-                 
-                 return $route;
+                $route->setParam($paramsAssoc);
+
+                return $route;
             }
-          
         }
-        
+
+
 
         return null;
     }

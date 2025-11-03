@@ -3,6 +3,7 @@
 namespace App\Core\Http;
 
 use App\Core\Contract\MiddlewareInterface;
+use App\Core\Http\Helpers\RouteDefinition;
 use InvalidArgumentException;
 
 /**
@@ -24,35 +25,31 @@ class RouteDispatcher
     private RouteDispatcher $dispatche;
 
 
-    public function dispatch(array $route)
+    public function dispatch(RouteDefinition $route)
     {
-        $this->method = $route['method'];
-        $this->action = $route['action'];
-        $this->controller = $route['controller'];
-        $this->nameOfListMiddleware = $route['middlewares'];
-        $this->name = $route['name'];
-
+   
+        // dd($route);
 
         // * Esegui middlewares ++
-        $this->executeMiddleware();
+        $this->executeMiddleware($route->middleware);
         
         // * Prepara controller e azioni
-        $controller =  new $this->controller(mvc());
-        $params     = $route['params'] ?? [];
+        $controller =  new $route->controller(mvc());
+        // $params     = $route['params' ?? [];
 
 
         $args = [mvc()->request];
-        foreach ($params as $item) {
+        foreach ($route->getParams() as $item) {
             $args[] = $item;
         }
 
         // Le magie di php
-        return call_user_func_array(callback: [$controller, $this->action], args: $args);
+        return call_user_func_array(callback: [$controller, $route->action], args: $args);
     }
 
-    private function executeMiddleware(): void
+    private function executeMiddleware(array $middlewareArray): void
     {
-        foreach ($this->nameOfListMiddleware as $name) {
+        foreach ($middlewareArray as $name) {
             $middlewareArray = mvc()->config->middleware;
 
             // se non esiste nel config/middleware lancia l'eccezione.

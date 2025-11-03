@@ -19,12 +19,13 @@ class RouteCollection implements \IteratorAggregate
         return $this->routes;
     }
 
-    public function findByMethodAndUri(string $method, string $uri): RouteDefinition|null{
+    public function filter(string $method): RouteCollection{
+        $newRoutes = new RouteCollection();
         foreach($this->routes as $route){
-            if($route->matches($method, $uri))
-                return $route;
+            if($route->findByMethod($method))
+                $newRoutes->add($route);
         }
-        return null;
+        return $newRoutes;
     }
 
 
