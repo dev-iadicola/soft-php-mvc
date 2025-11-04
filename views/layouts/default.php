@@ -35,12 +35,7 @@
                 <span id="barra-3"></span>
             </div>
             <div id="menu" class="chiuso">
-                <?php
-                function isActivePage($menuItem, $currentPage)
-                {
-                    return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
-                }
-                ?>
+               
                 <nav>
                     <ul>
                         <li><a href="/" class="<?= isActivePage('home', $page) ?>">Home</a></li>

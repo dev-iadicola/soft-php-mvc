@@ -15,6 +15,10 @@ class Session {
     public static function getFlash(string $key): string{
         return SessionStorage::getInstance()->getFlashSession($key);
     }
+
+    public static function get($key){
+        return SessionStorage::getInstance()->get($key);
+    }
     
 
 }

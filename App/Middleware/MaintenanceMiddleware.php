@@ -18,6 +18,7 @@ class MaintenanceMiddleware implements MiddlewareInterface
         
         if ($stringManitence === 'TRUE' && $actualPath !== '/coming-soon' && $actualPath !== '/login'){
            return mvc()->response->redirect('/coming-soon');
+
         }
     }
 }

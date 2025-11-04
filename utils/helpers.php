@@ -1,16 +1,8 @@
 <?php
 
 use App\Core\Connection\SMTP;
-use App\Core\Controller;
-use App\Core\Database;
-use App\Core\Design\Stilize;
-use App\Core\Http\Router;
-use App\Core\Mvc;
-use App\Core\Support\Collection\BuildAppFile;
-use App\Core\Support\Debug\VarDumper;
-use App\Core\CLI\System\Out;
+
 use App\Core\Facade\Session;
-use App\Core\Http\Response;
 
 // File: utils/helpers.php
 // Defines a global helper function available everywhere
@@ -30,7 +22,13 @@ if (!function_exists(function: 'implodeMessage')) {
     }
 }
 
-
+// * Used for layout pages.
+if (!function_exists(function: 'isActivePage')) {
+    function isActivePage($menuItem, $currentPage)
+    {
+        return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
+    }
+}
 if (!function_exists(function: 'printLn')) {
     function printLn(string $var)
     {

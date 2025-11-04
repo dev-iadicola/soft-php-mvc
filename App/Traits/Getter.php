@@ -20,7 +20,7 @@ trait Getter
             return $this->$key;
         }
 
-        return $this->attributes[$key];
+        return $this->attributes[$key] ?? null;
 
         // $class = static::class;
         // throw new \Exception("Undefined property: {$class}::\${$key}");

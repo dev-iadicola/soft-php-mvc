@@ -10,8 +10,9 @@ class MethodOverrideMiddleware implements MiddlewareInterface{
         if(isset($request->_method)){
             // Permetti solo metodi validi
             if(!in_array(strtoupper($request->_method), ['PUT', 'PATCH','DELETE'])){
-
-                 response()->set405();
+                
+                return response()->set405();
+                
             }
         }
     }

@@ -2,9 +2,24 @@
 namespace App\Core\CLI\System;
 
 use BadMethodCallException;
+/**
+ * Classe per output colorato nel terminale.
+ *
+ * @method static void error(string $message, ?int $codeError = 400)
+ * @method static void warn(string $message)
+ * @method static void warning(string $message)
+ * @method static void ok(string $message, ?int $code = 200)
+ * @method static void success(string $message, ?int $code = 200)
+ * @method static void ln(string $message)
+ * @method static void info(string $message)
+ * @method static void p(string $message)
+ * @method static void foreach(array|object $vars)
+ * @method static void debug(string $message)
+ * @method static void exe(array $command)
+ */
 class Out
 {
-
+    // Strange singleton system, i know.
     public static function __callStatic($method, $args)
     {
         $instance = new self();
@@ -59,8 +74,6 @@ class Out
                 $this->print("{$file} ", 'e');
                 $this->log("{$line} ", 'e');
             }
-
-
 
         }
 

@@ -27,10 +27,6 @@ class Response
         return $this->content;
     }
 
-    public function back(): self{
-       $this->_redirectTo =- mvc()->request->getLastUri();
-       return $this;
-    }
 
     public function send(): void
     {
@@ -63,7 +59,7 @@ class Response
         return $this;
     }
 
-    public function redirect(?string $toUrl = '/', $status = 200): self
+    public function redirect(?string $toUrl = '/', $status = 302): self
     {
         $this->_redirectTo = $toUrl;
         $this->setCode($status);
@@ -125,6 +121,14 @@ class Response
     {
         $this->statusCode = $code;
     }
+    public function back(?int $code = 302): self
+    {
+        $this->setCode($code);
+        $this->_redirectTo = mvc()->request->getLastUri();
+        return $this;
+    }
+
+
 
     public function set404($e): void
     {
@@ -137,8 +141,9 @@ class Response
         );
     }
 
-    public function set405(){
-         $errorContent = $this->view->render('error', [
+    public function set405()
+    {
+        $errorContent = $this->view->render('error', [
             'code' => 405,
             'errorMsg' => 'Method not allowed.'
         ]);
@@ -162,5 +167,18 @@ class Response
         // Imposta il codice di stato e il contenuto della risposta
         $this->setCode(413);
         $this->setContent($errorContent);
+    }
+
+    public function set419(?string $errorMsg = null): static
+    {
+        $errorContent = $this->view->render('error', [
+            'code' => 419,
+            'errorMsg' => $errorMsg ?? 'Invalid CSRF token.'
+        ]);
+
+        // Imposta il codice di stato e il contenuto della risposta
+        $this->setCode(419);
+        $this->setContent($errorContent);
+        return $this;
     }
 }
