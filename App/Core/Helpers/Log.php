@@ -3,85 +3,118 @@
 namespace App\Core\Helpers;
 
 use Throwable;
-use App\Model\User;
 use App\Mail\BrevoMail;
-use App\Core\Contract\MailBaseInterface;
 use App\Mail\BaseMail;
 
 class Log
 {
-    protected static string $logFile = __DIR__ . '/../../../storage/logs/app.log';
+    // base path robusto
+    protected static string $logFile = '';
 
-    public static function info($message): void
+    /** Inizializza il path del log una sola volta */
+    protected static function init(): void
+    {
+        if (self::$logFile !== '') {
+            return;
+        }
+
+        // /App/Core/Helpers -> salgo di 3 livelli fino alla root del progetto
+        $base = dirname(__DIR__, 3);
+        $dir  = $base . '/storage/logs';
+
+        if (!is_dir($dir)) {
+            // 0775 va bene su linux; su windows viene ignorato
+            @mkdir($dir, 0775, true);
+        }
+
+        self::$logFile = $dir . '/app.log';
+    }
+
+    public static function info(mixed $message): void
     {
         self::writeLog('INFO', $message);
     }
 
-    public static function exception(Throwable $exception): void
-    {
-        $arrExc = [
-            'Message'   => $exception->getMessage(),
-            'File'      => $exception->getFile(),
-            'Line'      => $exception->getLine(),
-            'Code'      => $exception->getCode(),
-            'Trace'     => $exception->getTraceAsString(),
-        ];
-
-        $strExc = "";
-        foreach ($arrExc as $key => $value) {
-            $strExc .= " {$key}: {$value} ";
-        }
-        $strExc .= ".";
-
-        // Scrittura nel log (ipotizzando che writeLog accetti messaggio e testo)
-        self::writeLog('Exception', $strExc);
-    }
-
-    // * Alert, important message (violation systme or other)
-    public static function Alert(string $message)
-    {
-        self::writeLog("ALERT⚠️", "====================\n!!! $message  !!!\n====================");
-    }
-
-
-    public static function Email(
-        string $message,
-        string $to,
-        string $subject = "",
-        string $page = "standard",
-        BaseMail $servceSMTP = new BrevoMail(),
-    ) {
-        $servceSMTP->bodyHtml($page, ["subject" => $subject,]);
-        $servceSMTP->setEmail($to, $subject, ["message" => $message]);
-        $servceSMTP->send();
-    }
-
-    public static function error($message): void
+    public static function error(mixed $message): void
     {
         self::writeLog('ERROR', $message);
     }
 
-    public static function debug($message): void
+    public static function debug(mixed $message): void
     {
         self::writeLog('DEBUG', $message);
     }
 
-
-    protected static function writeLog(string $level,  $message = 'NA'): void
+    public static function exception(Throwable $exception): void
     {
-        // Se è array o object, serializzo in JSON
+        $payload = [
+            'message' => $exception->getMessage(),
+            'file'    => $exception->getFile(),
+            'line'    => $exception->getLine(),
+            'code'    => $exception->getCode(),
+            'trace'   => $exception->getTraceAsString(),
+        ];
+
+        self::writeLog('EXCEPTION', $payload);
+    }
+
+    /** Messaggio importante / violazione */
+    public static function alert(string $message): void
+    {
+        self::writeLog('ALERT', "====================\n!!! {$message} !!!\n====================");
+    }
+
+    /**
+     * Invia una mail e logga eventuali errori.
+     * @return bool true se spedita, false se errore
+     */
+    public static function email(
+        string $message,
+        string $to,
+        string $subject = '',
+        string $page = 'standard',
+        ?BaseMail $serviceSMTP = null,
+    ): bool {
+        try {
+            $serviceSMTP ??= new BrevoMail();
+            $serviceSMTP->bodyHtml($page, ['subject' => $subject]);
+            $serviceSMTP->setEmail($to, $subject, ['message' => $message]);
+            $serviceSMTP->send();
+
+            self::info("Email inviata a {$to} con subject '{$subject}'");
+            return true;
+        } catch (Throwable $e) {
+            self::exception($e);
+            return false;
+        }
+    }
+
+    /** Scrittura su file con fallback a error_log */
+    protected static function writeLog(string $level, mixed $message = 'NA'): void
+    {
+        self::init();
+
+        // Normalizza il messaggio
         if (is_array($message) || is_object($message)) {
-            $message = json_encode(
-                $message,
-                JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT
-            );
+            $message = json_encode($message, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
         }
 
+        // Timestamp locale Roma; se preferisci, impostalo nel bootstrap una sola volta
         date_default_timezone_set('Europe/Rome');
         $date = date('Y-m-d H:i:s');
 
-        $formattedMessage = "[{$level}]: {$date} | {$message}\n";
+        $line = "[{$level}] {$date} | {$message}\n";
 
-        file_put_contents(self::$logFile, $formattedMessage, FILE_APPEND);
+        try {
+            // LOCK_EX evita corruzione in scritture concorrenti
+            $ok = @file_put_contents(self::$logFile, $line, FILE_APPEND | LOCK_EX);
+            if ($ok === false) {
+                // Fallback sul log di PHP
+                error_log("LOG WRITE FAIL: " . $line);
+            }
+        } catch (Throwable $e) {
+            // Ultimo fallback
+            error_log("LOG EXCEPTION: " . $e->getMessage() . " | original: " . $line);
+        }
     }
 }

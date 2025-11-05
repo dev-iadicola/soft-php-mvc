@@ -46,7 +46,7 @@ class Router
         // Carica tutti i controller e genera una collection di rotte
         return $this->loader->load(); 
     }
-    public function handle()
+    public function resolve()
     {
 
         $routeCollection = $this->boot();
@@ -98,7 +98,7 @@ class Router
      * @throws \App\Core\Exception\NotFoundException
      * @return void
      */
-    public function resolve()
+    public function Exresolve()
     {
         $route = $this->getRoute();
         if (!$route) throw new NotFoundException();

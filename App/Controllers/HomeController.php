@@ -7,7 +7,6 @@ use App\Model\Profile;
 use App\Model\Project;
 use App\Core\Controllers\BaseController;
 use App\Model\Certificate;
-use App\Core\Http\Attributes\AttributeRoute as Route;
 use App\Core\Http\Attributes\RouteAttr;
 
 class HomeController extends BaseController {

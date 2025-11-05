@@ -171,13 +171,33 @@ class Response
 
     public function set419(?string $errorMsg = null): static
     {
+      
+        $this->setCode(419);
+       
         $errorContent = $this->view->render('error', [
             'code' => 419,
             'errorMsg' => $errorMsg ?? 'Invalid CSRF token.'
         ]);
+        $this->setContent($errorContent);
+        return $this;
+    }
 
-        // Imposta il codice di stato e il contenuto della risposta
-        $this->setCode(419);
+    public function set500(?string $errorMsg = 'Server Error.', int $status = 500){
+          $this->setCode($status);
+          $errorContent = $this->view->render('error', [
+            'code' => $status,
+            'errorMsg' => $errorMsg
+        ]);
+        $this->setContent($errorContent);
+        return $this;
+    }
+    // If SMTP exception, do this.
+      public function set550(?string $errorMsg = 'Server Error.', int $status = 550){
+          $this->setCode($status);
+          $errorContent = $this->view->render('error', [
+            'code' => $status,
+            'errorMsg' => $errorMsg
+        ]);
         $this->setContent($errorContent);
         return $this;
     }

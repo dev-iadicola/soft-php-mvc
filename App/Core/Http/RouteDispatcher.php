@@ -33,18 +33,14 @@ class RouteDispatcher
 
         // * Esegui middlewares 
         $response = $this->executeMiddleware($route->middleware);
+        
         if ($response) {
-            if (method_exists($response, 'send')) {
-                $response->send();
-            }
-            return; // FERMA il flusso prima del controller
+            return; 
         }
 
 
         // * Prepara controller e azioni
         $controller =  new $route->controller(mvc());
-      
-
 
         $args = [mvc()->request];
         foreach ($route->getParams() as $item) {
@@ -54,6 +50,8 @@ class RouteDispatcher
         // Le magie di php
         return call_user_func_array(callback: [$controller, $route->action], args: $args);
     }
+
+
 
     private function executeMiddleware(array $middlewareArray): Response|null
     {

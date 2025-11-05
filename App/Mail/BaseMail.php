@@ -18,14 +18,17 @@ abstract class BaseMail implements MailBaseInterface
         $this->fromName = getenv('APP_NAME') ?? null;
     }
 
-    public function directoryPage($dir): void
-    {
-        $page = convertDotToSlash($dir);
+    public function directoryPage($page): void
+    {   
+        
+        $page = convertDotToSlash($page);
         $this->page = mvc()->config->folder->mails . '/' . $page . '.php';
+        
     }
 
     public function bodyHtml(string $page, $content = '')
-    {
+    {   
+        
         $this->directoryPage($page);
         $this->getContent($content);
     }

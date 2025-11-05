@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
+
 
     <title>Software Developer - Luigi Iadicola</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
@@ -21,7 +23,7 @@
     <link rel="stylesheet" href="/assets/cards.css" />
     <link rel="stylesheet" href="/assets/effect.css" />
     <link rel="stylesheet" href="/assets/colors.css" />
-        <!-- CDN favicon --> 
+    <!-- CDN favicon -->
 
     <script src="/assets/lib.js" defer></script>
 </head>
@@ -35,7 +37,7 @@
                 <span id="barra-3"></span>
             </div>
             <div id="menu" class="chiuso">
-               
+
                 <nav>
                     <ul>
                         <li><a href="/" class="<?= isActivePage('home', $page) ?>">Home</a></li>
@@ -68,7 +70,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
         crossorigin="anonymous"></script>
-    
+
 </body>
 
 </html>

@@ -2,19 +2,21 @@
 namespace App\Controllers;
 
 use App\Core\Controller;
+use App\Core\Controllers\BaseController;
 use App\Core\Http\Attributes\AttributeRoute;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Mvc;
+use App\Utils\Enviroment;
 
-class ErrorsController {
+class ErrorsController extends BaseController {
    
-    #[AttributeRoute('coming-soon')]
-    public function repair() {
-        if(getenv('MAINTENANCE') == 'true' || getenv('CLOUD') == 'true'){
-           return view('coming-soon');
-            
-        }else{
-          return  redirect('/');
-        }
+    // #[RouteAttr('coming-soon')]
+    // public function repair() {
+    //     if(Enviroment::isMaintenance()){
+    //        return view('coming-soon');
+    //     }else{
+    //       return  redirect('/');
+    //     }
         
-    }
+    // }
 }

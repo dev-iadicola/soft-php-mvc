@@ -34,10 +34,10 @@ if (!function_exists('dump')) {
 }
 
 if (!function_exists('logger')) {
-    function lg(...$vars)
+    function softdb(...$vars)
     {
         getSource();
-        VarDumper::lg(...$vars);
+        VarDumper::softdb(...$vars);
     }
 }
 

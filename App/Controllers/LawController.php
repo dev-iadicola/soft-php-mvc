@@ -8,12 +8,7 @@ use App\Core\Controllers\BaseController;
 
 class LawController extends BaseController {
 
-    public function __construct(public Mvc $mvc)
-    {
-      parent::__construct($mvc);
-  
-      $this->setLayout('default');
-    }
+   
 
     #[RouteAttr('/cookie')]
     public function home(){

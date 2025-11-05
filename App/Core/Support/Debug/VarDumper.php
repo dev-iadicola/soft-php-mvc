@@ -74,7 +74,17 @@ class VarDumper
         echo "========================================= <br>";
     }
 
+    private function softdb(...$vars){
+        ob_start();
 
+        echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        $this->debugTrace();
+        $this->renderVar($vars);
+        echo '</pre>';
+
+        $output = ob_get_clean();
+        echo $output;
+    }
 
     private function debug( ...$vars): void
     {

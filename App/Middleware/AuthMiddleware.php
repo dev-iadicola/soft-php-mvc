@@ -14,8 +14,6 @@ use App\Core\Http\Request;
 class AuthMiddleware implements MiddlewareInterface
 {
 
-    protected User $user;
-
     private AuthService $_authService;
 
     private ITimeoutStrategy $_itimeout_strategy;
@@ -37,7 +35,7 @@ class AuthMiddleware implements MiddlewareInterface
          * se scelgie il tipo di check da svolgere
          * 
          */
-        $this->_itimeout_strategy = new InactivityTimeout(1800);
+        $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->settings["session"]["auth-lifetime"]);
 
         $validAuth = $this->_authService->isAuthenticated() && $this->checkSession($this->_itimeout_strategy);
 

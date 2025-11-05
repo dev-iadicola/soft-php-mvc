@@ -3,17 +3,17 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Admin\AbstractAdminController;
+use App\Core\Controllers\BaseController;
 use App\Core\Helpers\Log;
-use App\Core\Mvc;
 use App\Core\Validation\Validator;
 use App\Mail\BrevoMail;
 use App\Model\User;
 use App\Core\Http\Attributes\AttributeRoute;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
-use App\Core\Validation\Validator as ValidationValidator;
 use App\Model\Token;
 
-class TokenController extends AbstractAdminController
+class TokenController extends BaseController
 {
 
     /**
@@ -21,7 +21,7 @@ class TokenController extends AbstractAdminController
      * request of token via mail for reset password
      * @return void
      */
-    #[AttributeRoute('/forgot', 'POST', 'email.send')]
+    #[RouteAttr('/forgot', 'POST', 'email.send')]
     public function forgotPasswordToken(Request $request)
     {
         // * Input fields validation
@@ -41,8 +41,7 @@ class TokenController extends AbstractAdminController
         // * email adress verificatrioin
         $user = User::where('email', $request->email)->first();
         if (empty($user)) {
-            $this->withError("Whoops,something went worng!");
-            return $this->render('Auth.forgot');
+            return response()->back()->withError("Whoops,something went worng!");
         }
         // * Generation of token
         $token = Token::generateToken($request->email);
@@ -56,12 +55,10 @@ class TokenController extends AbstractAdminController
         $brevoMail->setEmail($to, $subject);
         $sended = $brevoMail->send();
         if (! $sended) {
-            $this->withError("The mail wasn't sent. Verify your Brevo Account");
-            return $this->render('Auth.forgot', ['message' => "The mail wasn't sent. Verify your Brevo Account"]);
+            return response()->back()->withError("The mail wasn't sent. Verify your Brevo Account");
         }
-        // Redirect with successs case
-        $this->withSuccess('Mail was sent!');
-        return $this->render('Auth.forgot', ['message' => 'Visit your email!']);
+        Log::info("Richiesta token per cambiare passowrd accettata");
+        return response()->back()->withSuccess('Mail was sent!, visit you email.');
     }
 
 
@@ -71,7 +68,7 @@ class TokenController extends AbstractAdminController
      * @param \App\Core\Http\Request $request
      * @param mixed $token
      */
-    #[AttributeRoute('/validate-pin/{token}')]
+    #[RouteAttr('/validate-pin/{token}')]
     public function pagePin(Request $request, string $token)
     {
         if (Token::isBad($token)) {
@@ -80,7 +77,7 @@ class TokenController extends AbstractAdminController
         return $this->render('Auth.validate-token', compact('token'));
     }
 
-    #[AttributeRoute("/token/change-password", "POST")]
+    #[RouteAttr("/token/change-password", "POST")]
     public function cahngePassword(Request $request)
     {
         $data = $request->all();

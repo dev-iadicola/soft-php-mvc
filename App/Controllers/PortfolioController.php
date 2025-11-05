@@ -9,10 +9,6 @@ use App\Model\Project;
 
 class PortfolioController extends BaseController {
 
-    public function __construct(public Mvc $mvc) {
-        parent::__construct($mvc);
-    }
-
     #[RouteAttr('portfolio')]
     public function index() {
   

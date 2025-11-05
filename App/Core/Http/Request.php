@@ -8,7 +8,8 @@ use App\Traits\Setter;
 
 class Request
 {
-    use Getter; use Setter;
+    use Getter;
+    use Setter;
     private string $path;
     private string $method;
     private array $post;
@@ -22,22 +23,21 @@ class Request
         $this->path = $this->uri();
         $this->method = $this->getRequestMethod();
         $this->attributes = $this->getPost();
-       
     }
 
     public function getRequestInfo(): string
-{
-    $ip = $this->getIp();
-    $userAgent = $this->getUserAgent();
-    $method = $this->getRequestMethod();
-    $uri = $this->uri();
-    $referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
-    $host = $this->getHost();
-    $time = date('Y-m-d H:i:s');
+    {
+        $ip = $this->getIp();
+        $userAgent = $this->getUserAgent();
+        $method = $this->getRequestMethod();
+        $uri = $this->uri();
+        $referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
+        $host = $this->getHost();
+        $time = date('Y-m-d H:i:s');
 
-    $body = !empty($_POST) ? json_encode($_POST, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 'No body data';
+        $body = !empty($_POST) ? json_encode($_POST, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 'No body data';
 
-    return <<<INFO
+        return <<<INFO
     ========= HTTP REQUEST INFO =========
       Time:        $time
       IP Address:  $ip
@@ -50,23 +50,26 @@ class Request
     $body
     =====================================
     INFO;
-}
+    }
 
 
-    public function getIp(){
+    public function getIp()
+    {
         return  $server['REMOTE_ADDR'] ?? 'Unknown';
     }
 
-    public function getUserAgent(){
+    public function getUserAgent()
+    {
         return  $server['HTTP_USER_AGENT'] ?? 'Unknown';
     }
 
 
-    public function getHost(){
+    public function getHost()
+    {
         return  $server['HTTP_HOST'] ?? 'localhost';
     }
 
-   
+
     // Preleva la request URI
     /**
      * Summary of getRequestPath
@@ -77,24 +80,31 @@ class Request
     {
         return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
-     // Cattura il metodo della richiesta
+    // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
         return strtoupper($_SERVER['REQUEST_METHOD']) ?? "CLI";
     }
 
 
-    public function uri():string{
-     
-        return $_SERVER['REQUEST_URI'] ?? '/';
+    public function uri(): string
+    {
+
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+    }
+    public function getURI(): string
+    {
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
 
 
-    public function all():array{
+
+    public function all(): array
+    {
         return $this->attributes;
     }
 
-   
+
     public function getLastUri(): string|null
     {
         // Assicurati che HTTP_REFERER sia impostato
@@ -102,21 +112,18 @@ class Request
             return strtolower($_SERVER['HTTP_REFERER']);
         }
         return '/';
-
     }
 
-      // Cattura richiesta post
+    // Cattura richiesta post
     private function getPost($index = null): array|string|int|float
     {
         $postData = $_POST ?? [];
         $fileData = $_FILES ?? [];
-      
+
         $combinedData = array_merge($postData, $fileData);
-        if( !is_null($index) && !empty($combinedData[$index])){
+        if (!is_null($index) && !empty($combinedData[$index])) {
             return $combinedData[$index];
         }
         return $combinedData;
     }
-
-   
 }

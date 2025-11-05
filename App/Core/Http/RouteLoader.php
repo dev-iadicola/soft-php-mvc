@@ -96,7 +96,7 @@ class RouteLoader
         foreach ($controllers->all() as $className => $stack) {
             // ottieni la reflection del controller
             $reflection = new ReflectionClass($className);
-
+            // * Doesn't acceppt private and protected  methods | Non accetta metodi privati o protetti.
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
                 $routeAttributes = $method->getAttributes(RouteAttr::class);
 

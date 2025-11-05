@@ -1,5 +1,6 @@
 <article class="fade-in-section mt-5 py-5">
     <div class="container">
+        
         <div>
             <?php foreach ($profiles as $profile): ?>
                 <div class=" p-5 shadow-lg mb-4 bg-dark rounded">
@@ -32,7 +33,8 @@
 
 
 
-@include('pages.progetti')
+
+@include('pages.portfolio')
 
 <div class="bg-white rounded-lg shadow-lg">
 <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
@@ -56,7 +58,7 @@
     </div>
 </div>
 
-
+@include('pages.contatti')
 <!-- Scroll to top button -->
 <a class="fa fa-arrow-up btn-arrow" id="btn-arrow" href="#top" aria-hidden="true"></a>
 <script src="<?= assets('js/typewrite.js') ?>"></script>

@@ -71,26 +71,27 @@ class Model implements JsonSerializable
     {
         $this->queryBuilder = $queryBuilder;
     }
-
+    
     public function save(): bool|QueryBuilder
     {
         if (!$this->queryBuilder) {
             throw new RuntimeException("Querybuilder not connected to Model");
         }
-
+        // recover data to save
         $data = $this->attributes;
 
+        // Filter with fillable
         $this->fillable = $this->queryBuilder->getFillable();
         $data = array_filter(
             $data,
             fn($key) => in_array($key, $this->fillable),
             ARRAY_FILTER_USE_KEY
         );
-        // se l'attributo id esiste , aggiorna
+        // if the key id exist, update the record.
         if (isset($this->attributes['id'])) {
             return $this->queryBuilder->where('id', $this->attributes['id'])->update($data);
         }
-        // senno crea un nuovo record
+        // else, create e new record in DB
         return $this->queryBuilder->create($data);
     }
 

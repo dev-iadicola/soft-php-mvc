@@ -7,6 +7,7 @@ namespace App\Core\Support\Collection;
  * @property-read array $middleware
  * @property-read array $routes
  * @property-read array $storage
+ * @property-read array $settings
  *
  * @method array controllers()
  * @method array folder()

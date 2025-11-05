@@ -16,10 +16,11 @@ abstract class AbstractBuilder
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
     protected array $fillable = []; // Attributi che possono essere assegnati in massa
+    protected array $bindings = []; // Parametri di binding
+
     protected array $systemColumns = ['id', 'created_at', 'updated_at'];
     protected string $selectValues = '*'; // Campi da selezionare
     protected string $whereClause = ''; // Clausola WHERE
-    protected array $bindings = []; // Parametri di binding
     protected string $orderByClause = ''; // Clausola ORDER BY
     protected string $groupByClause = ''; // Clausola GROUP BY
     protected string $limitClause = ""; // Clausola Limit
@@ -70,6 +71,13 @@ abstract class AbstractBuilder
             throw new ModelNotFoundException("Table " + $table + " Not Exist in Schema. Correct yout Model: " + $this->modelClass);
         }
     }
+ 
+    /**
+     * Summary of setFillable
+     * Utilizzata solo quando viene instanziato il queryBuilder nella classe Model, precisamente nel metodo boot(). 
+     * @param array $fillable
+     * @return void
+     */
     public function setFillable(array $fillable): void
     {
         $this->fillable = $fillable;
@@ -78,7 +86,6 @@ abstract class AbstractBuilder
     {
         return $this->fillable;
     }
-
 
 
     // * Get e Setter di Id
@@ -105,8 +112,8 @@ abstract class AbstractBuilder
     //───────────────────────────────────────────────────────────────
     #region SQL OPERAZIONI
     protected function AddBind(?string $val = null): mixed
-    {   
-        if($val=== null) throw new QueryBuilderException("The value is NULL");
+    {
+        if ($val === null) throw new QueryBuilderException("The value is NULL");
         $key = ":p_" . ++$this->paramCounter;
         $this->bindings[":p_" . $this->paramCounter] = $val;
         return $key;
@@ -149,6 +156,7 @@ abstract class AbstractBuilder
     //* ESECUZIONE QUERY E FETCH/FETCHALL 
     //───────────────────────────────────────────────────────────────
     #region STATMENT - EXECUTION - FETCH
+
     private function prepareAndExecute(): PDOStatement
     {
         // ritorno la generazione della stringa query con i parametri da bindare

@@ -2,20 +2,22 @@
 
 namespace App\Middleware;
 
+use App\Core\Helpers\Log;
 use App\Core\Http\Request;
+use App\Core\Services\CsrfService;
 use App\Core\Contract\MiddlewareInterface;
-use App\Core\Facade\Session;
 
 class CsrfMiddleware implements MiddlewareInterface
-{
+{   
     public function exec(Request $request)
     {
         if(in_array($request->getRequestMethod(), ['POST','PUT','DELETE'])){
-            $token = Session::get('csrf_token');
+            $csfr = new CsrfService();
+            $token = $csfr->getToken();
             $incoming =  $request->_token  ?? null;
             
-            if(! $token || !$incoming || is_null($token) || is_null($incoming) || hash_equals($token, $incoming)){
-               
+            if(! $token || !$incoming || !hash_equals($token, $incoming)){
+               Log::alert("Invalid CSRF: token in session = $token, token in request = $incoming");
                 return response()->set419();
                 
             }

@@ -8,7 +8,7 @@ use App\Core\Contract\ITimeoutStrategy;
 /**
  * Summary of SessionStorage
  * Questa classe rispetta il pattern singleton ha la responsabilità di gestire la sessione 
- * Viene implementato attualmente dalla clase AuthService
+ * Viene implementato attualmente dalla clase AuthService e CsrfService
  */
 class SessionStorage
 {
@@ -16,6 +16,9 @@ class SessionStorage
 
     private static ?SessionStorage $instance = null;
     private ITimeoutStrategy $inactivityTimeout;
+
+    private int $timeout; // set the last activity
+    private int $lifetime; // set the life of the sessiuon
 
     /**
      * Singleton Pattern
@@ -29,12 +32,23 @@ class SessionStorage
             ini_set('session.cookie_secure', 1); // il cookie viaggia solo su HTTPS
         }
         $this->startSession();
+        $this->setLifeTime();
+        $this->setTimeout();
     }
 
+
+   
     // Impedisci clonazione e unserialize
     private function __clone(): void {}
     public function __wakeup(): void {}
 
+
+    public function setLifeTime(?int $lifetime = null){
+        $this->lifetime = $lifetime ?? mvc()->config->settings["session"]["lifetime"];
+    }
+    public function setTimeout(?int $time = null):void{
+        $this->timeout = $time ?? mvc()->config->settings["session"]["timeout"]; ;
+    }
 
     public static function getInstance(): SessionStorage
     {
@@ -84,9 +98,8 @@ class SessionStorage
      */
     private function verifyInactivityTimeout(): void
     {
-        $timeout = 600; // 10 minuti
-
-        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $timeout) {
+        
+        if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $this->timeout) {
             $this->destroy();
             Log::info("Sessione scaduta per inattività.");
         }

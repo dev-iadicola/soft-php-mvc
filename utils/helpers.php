@@ -3,14 +3,13 @@
 use App\Core\Connection\SMTP;
 
 use App\Core\Facade\Session;
+use App\Core\Services\CsrfService;
 
 // File: utils/helpers.php
 // Defines a global helper function available everywhere
 
-require_once 'mvc.php';
 require_once 'response.php';
 require_once 'var_dumper.php';
-require_once 'view.php';
 require_once "facades.php";
 
 
@@ -22,6 +21,11 @@ if (!function_exists(function: 'implodeMessage')) {
     }
 }
 
+if(! function_exists(function:'csrf_token')){
+    function csrf_token():null|string{
+        return new CsrfService()->getToken();
+    }
+}
 // * Used for layout pages.
 if (!function_exists(function: 'isActivePage')) {
     function isActivePage($menuItem, $currentPage)
@@ -36,6 +40,11 @@ if (!function_exists(function: 'printLn')) {
     }
 }
 
+if (!function_exists(function: 'printLn')) {
+    function settings(){
+        return mvc()->config->settings;
+    }
+}
 
 
 if (!function_exists('urlExist')) {

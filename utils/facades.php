@@ -1,15 +1,18 @@
 <?php
 
+use App\Core\Mvc;
 use App\Core\Facade\Auth;
 use App\Core\Facade\View;
 use App\Core\Services\AuthService;
+use App\Core\Support\Collection\BuildAppFile;
 
 /**
  * facade for Auth
  */
 if (!function_exists(function: 'auth')) {
-    function auth(): AuthService{
-        return Auth::getInstance() ;
+    function auth(): AuthService
+    {
+        return Auth::getInstance();
     }
 }
 // TODO: fare facade sia per Route che per View(migliorando prima la struttura base) 
@@ -21,3 +24,38 @@ if (!function_exists(function: 'view')) {
     }
 }
 
+
+
+
+if (!function_exists('inizializeMvc')) {
+    /**
+     * Summary of setMvc:
+     * It allows you to initialize the MVC Pattern as well as make access to the instance globally.
+     * @deprecated non verrà più utilizzato, si inizializza in modo OOP non con metodi globali.
+     * @param App\Core\Support\Collection\BuildAppFile $config
+     * @return void
+     */
+    function inizializeMvc(BuildAppFile $config)
+    {
+        $mvc = new Mvc($config);
+        $GLOBALS['mvc'] = $mvc;
+        $mvc->run();
+    }
+}
+
+/**
+ * Setta l'mvc rendendolo globale
+ */
+
+
+if (!function_exists('mvc')) {
+    /**
+     * Summary of mvc
+     * This function allows to access the MVC istance, which is important and necessary for many framework operations
+     * @return Mvc
+     */
+    function mvc(): Mvc|null
+    {
+        return Mvc::$mvc ?? null;
+    }
+}
