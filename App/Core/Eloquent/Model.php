@@ -3,6 +3,7 @@
 namespace App\Core\Eloquent;
 
 
+use App\Traits\Attributes;
 use App\Traits\Getter;
 use App\Traits\Setter;
 use JsonSerializable;
@@ -10,7 +11,6 @@ use App\Core\Database;
 use App\Core\Eloquent\QueryBuilder;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelStructureException;
-use Override;
 use RuntimeException;
 
 /**
@@ -42,12 +42,10 @@ use RuntimeException;
  */
 class Model implements JsonSerializable
 {
-    use Getter; use Setter;
+   use Attributes;
     protected string $table; // Nome della tabella
     protected array $fillable; // Campi riempibili
     private ?QueryBuilder $queryBuilder = null; // Permettendo di ereditare i suoi metodi, costruisce la query
-
-    protected array $attributes = [];
 
 
     protected function boot(): void

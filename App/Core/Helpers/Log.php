@@ -5,6 +5,7 @@ namespace App\Core\Helpers;
 use Throwable;
 use App\Mail\BrevoMail;
 use App\Mail\BaseMail;
+use App\Utils\Enviroment;
 
 class Log
 {
@@ -42,6 +43,10 @@ class Log
 
     public static function debug(mixed $message): void
     {
+        // * the app in production dont write in file app.log.
+        if(! Enviroment::isDebug()){
+            return;
+        }
         self::writeLog('DEBUG', $message);
     }
 
