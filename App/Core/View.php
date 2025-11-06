@@ -70,17 +70,17 @@ class View
         // step 1: seach all @include (recursive)
         // step 2: search all @csrf
         // step 3: search all @delete
-        $content = new IncludeDirectiveHandler($this)->cleanPlaceHolders($content, $variables);
+        $content = (new IncludeDirectiveHandler($this))->cleanPlaceHolders($content, $variables);
         return $content;
     }
 
 
     /**
-     * Renderizza una vista.
+     * Manipulation of the file, render a view
      *
-     * @param string $view Nome della vista (senza estensione)
-     * @param array $variables Variabili da passare alla vista
-     * @return string Contenuto della vista
+     * @param string $view file name of the view witohout exstension
+     * @param array $variables value to insert into the view
+     * @return string view content.
      */
     private function renderContent(string $content, array|null $message): string
     {
