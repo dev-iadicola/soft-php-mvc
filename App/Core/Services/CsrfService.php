@@ -10,13 +10,15 @@ class CsrfService {
         $this->_sessionStorage = SessionStorage::getInstance();
     }
 
-     public function generateToken(): string
+     public function generateToken(): void
     {   
-        if($this->_sessionStorage->)
+        if($this->_sessionStorage->has($this->_key)){
+            return;
+        }
         $token = bin2hex(random_bytes(32));
         $this->_sessionStorage->setOrCreate($this->_key, $token);
-        $this->_sessionStorage->setTimeout(mvc()->config->settings["session"]["lifetime"]);
-        return $token;
+        $this->_sessionStorage->setLifeTime(mvc()->config->settings["session"]["lifetime"]);
+       
     }
     public function getToken(){
         return $this->_sessionStorage->get($this->_key);

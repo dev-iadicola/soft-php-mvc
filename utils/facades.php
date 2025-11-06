@@ -25,24 +25,6 @@ if (!function_exists(function: 'view')) {
 }
 
 
-
-
-if (!function_exists('inizializeMvc')) {
-    /**
-     * Summary of setMvc:
-     * It allows you to initialize the MVC Pattern as well as make access to the instance globally.
-     * @deprecated non verrà più utilizzato, si inizializza in modo OOP non con metodi globali.
-     * @param App\Core\Support\Collection\BuildAppFile $config
-     * @return void
-     */
-    function inizializeMvc(BuildAppFile $config)
-    {
-        $mvc = new Mvc($config);
-        $GLOBALS['mvc'] = $mvc;
-        $mvc->run();
-    }
-}
-
 /**
  * Setta l'mvc rendendolo globale
  */
@@ -56,6 +38,7 @@ if (!function_exists('mvc')) {
      */
     function mvc(): Mvc|null
     {
+     
         return Mvc::$mvc ?? null;
     }
 }

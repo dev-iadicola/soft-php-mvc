@@ -19,41 +19,78 @@ class AuthMiddleware implements MiddlewareInterface
     private ITimeoutStrategy $_itimeout_strategy;
 
 
+    /**
+     * Executes the authentication middleware.
+     * 
+     * This middleware validates the current user's authentication and session integrity.
+     * It ensures that:
+     *  - The user is authenticated and has a valid active session.
+     *  - The session has not expired according to the configured inactivity timeout strategy.
+     *  - The IP address matches the one used at login (prevents session hijacking).
+     * 
+     * If any of these checks fail, the session is destroyed and the user
+     * is redirected to the login page.
+     * 
+     * ---
+     * 
+     * Esegue il middleware di autenticazione.
+     * 
+     * Questo middleware valida l’autenticazione e l’integrità della sessione corrente.
+     * Garantisce che:
+     *  - L’utente sia autenticato e disponga di una sessione valida e attiva.
+     *  - La sessione non sia scaduta secondo la strategia di timeout configurata.
+     *  - L’indirizzo IP corrisponda a quello utilizzato durante il login (evita furti di sessione).
+     * 
+     * Se uno di questi controlli fallisce, la sessione viene distrutta
+     * e l’utente viene reindirizzato alla pagina di login.
+     * 
+     * @param Request $request
+     *     The current HTTP request instance.
+     *     Istanza corrente della richiesta HTTP.
+     * 
+     * @return \App\Core\Http\Response|null
+     *     Redirects to the login page if the session is invalid,
+     *     otherwise allows the request to continue.
+     *     Reindirizza alla pagina di login se la sessione è invalida,
+     *     altrimenti consente di proseguire con la richiesta.
+     */
+
     public function exec(Request $request)
     {
         $this->_authService = new AuthService(SessionStorage::getInstance());
-        // dall'ultima attività devono pssare 30 minuti.
-        // * perché strategy? 
-        /**
-         * * Perché strategy?
-         * Se in futuro volessimo implementare pià timeout secondo la tipologia di utenti, 
-         * sarò possibile farlo tramite il file config
-         * esempio array config[timeout_session][user_role]['admin'] return int 800;
-         * esempio array config[timeout_session]['user_role']['cliente'] return int 1800;
-         * esempio array config[timeout_session]['user_role']['1'] return int 1800;
-         * si cicla su questo array, secondo la tipologia dell'utente Auth()->user()->role return 'admin' oppure 1
-         * se scelgie il tipo di check da svolgere
-         * 
-         */
-        $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->settings["session"]["auth-lifetime"]);
+
+        $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->settings["session"]["timeout"]);
 
         $validAuth = $this->_authService->isAuthenticated() && $this->checkSession($this->_itimeout_strategy);
 
         if (!$validAuth) {
             $this->_authService->destroySession();
-          
+
             return mvc()->response->redirect('/login');
         }
     }
 
 
+    /**
+     * Validates the current session using the given inactivity timeout strategy.
+     * 
+     * Checks:
+     *  - If the user is logged in.
+     *  - If the IP address is consistent with the one stored at login.
+     *  - If the session has not expired due to inactivity.
+     * 
+     * Aggiorna il timestamp dell’ultima attività in caso di sessione valida.
+     * 
+     * @param InactivityTimeout $strategy The timeout validation strategy.
+     * @return bool True if the session is valid, false otherwise.
+     */
 
     protected function checkSession(InactivityTimeout $strategy)
     {
         // verifica se ha effettuato il login
         if ($this->_authService->isLogged()) {
             // Validazione IP
-           
+
             if (! $this->_authService->checkIpAddressSessionAndRemoteAddr()) {
                 $this->_authService->logout();
                 return false;

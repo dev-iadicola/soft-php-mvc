@@ -23,7 +23,7 @@ if (!function_exists(function: 'implodeMessage')) {
 
 if(! function_exists(function:'csrf_token')){
     function csrf_token():null|string{
-        return new CsrfService()->getToken();
+        return (new CsrfService())->getToken();
     }
 }
 // * Used for layout pages.

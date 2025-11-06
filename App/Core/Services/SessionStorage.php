@@ -25,29 +25,87 @@ class SessionStorage
      */
     private function __construct()
     {
-        // Imposta sicurezza prima dell'avvio della sessione. 
-        ini_set('session.cookie_httponly', 1); // il codice non è legginile da JS
-        ini_set('session.use_strict_mode', 1); // PHP non accetta ID sessione non validi
-        if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) === 'on') {
-            ini_set('session.cookie_secure', 1); // il cookie viaggia solo su HTTPS
-        }
-        $this->startSession();
+        // Imposta la durata e la configurazione prima di aprire la sessione
         $this->setLifeTime();
         $this->setTimeout();
+
+        //  Imposta sicurezza dei cookie
+        ini_set('session.cookie_httponly', 1);
+        ini_set('session.use_strict_mode', 1);
+        if (isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) === 'on') {
+            ini_set('session.cookie_secure', 1);
+        }
+
+        //  Avvio della sesssione.
+        $this->startSession();
     }
 
 
-   
+
+
     // Impedisci clonazione e unserialize
     private function __clone(): void {}
     public function __wakeup(): void {}
 
+    /**
+     * Sets the maximum lifetime of the current session.
+     * 
+     * This method defines how long a session should remain valid,
+     * both on the server (via `gc_maxlifetime`) and on the client
+     * (via `session.cookie_lifetime`).
+     * 
+     * It also synchronizes the cookie parameters to ensure consistency
+     * and security across HTTPS and HTTP environments.
+     * 
+     * ---
+     * 
+     * Imposta la durata massima della sessione corrente.
+     * 
+     * Questo metodo definisce per quanto tempo una sessione rimane valida,
+     * sia lato server (tramite `gc_maxlifetime`) che lato client
+     * (tramite `session.cookie_lifetime`).
+     * 
+     * Inoltre, sincronizza i parametri del cookie per garantire coerenza
+     * e sicurezza sia in ambienti HTTPS che HTTP.
+     * 
+     * @param int|null $lifetime
+     *     The lifetime of the session in seconds.  
+     *     If null, uses the value defined in the configuration file.
+     *     Durata della sessione in secondi.  
+     *     Se nullo, utilizza il valore definito nel file di configurazione.
+     * 
+     * @return void
+     * 
+     * @see https://www.php.net/manual/en/session.configuration.php
+     * @see https://owasp.org/www-project-cheat-sheets/cheatsheets/Session_Management_Cheat_Sheet.html
+     */
 
-    public function setLifeTime(?int $lifetime = null){
-        $this->lifetime = $lifetime ?? mvc()->config->settings["session"]["lifetime"];
+    public function setLifeTime(?int $lifetime = null): void
+    {
+        // Se non è passato un valore, prendi quello dal file di configurazione
+        $this->lifetime = $lifetime ?? (int) mvc()->config->settings["session"]["lifetime"];
+
+        // Imposta la durata massima dei dati di sessione lato server
+        ini_set('session.gc_maxlifetime', $this->lifetime);
+
+        // Imposta la durata del cookie di sessione lato client
+        ini_set('session.cookie_lifetime', $this->lifetime);
+
+        // Reimposta i parametri del cookie in modo coerente
+        session_set_cookie_params([
+            'lifetime' => $this->lifetime,
+            'httponly' => true,
+            'secure' => isset($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) === 'on',
+            'samesite' => 'Lax',
+        ]);
+
+        // Log utile per debug o monitoraggio
+        Log::debug("Session lifetime set to {$this->lifetime} seconds.");
     }
-    public function setTimeout(?int $time = null):void{
-        $this->timeout = $time ?? mvc()->config->settings["session"]["timeout"]; ;
+
+    public function setTimeout(?int $time = null): void
+    {
+        $this->timeout = $time ?? (int) mvc()->config->settings["session"]["timeout"];;
     }
 
     public static function getInstance(): SessionStorage
@@ -80,11 +138,12 @@ class SessionStorage
      * Rimuove la flash session (messaggi di successo, warning ed errore nel Frontend) dopo un breve periodo di tempo. 
      * todo: da creare una classe apposita per gestione la sessione della flash session/message
      */
-    public function verifyTimeFlashSession(): void {
+    public function verifyTimeFlashSession(): void
+    {
         if (!isset($_SESSION['FLASH_TIME'], $_SESSION['FLASH_TTL'])) {
             return;
         }
-    
+
         $elapsed = time() - $_SESSION['FLASH_TIME'];
         if ($elapsed >= $_SESSION['FLASH_TTL']) {
             $this->flashSessionDestroy();
@@ -98,7 +157,7 @@ class SessionStorage
      */
     private function verifyInactivityTimeout(): void
     {
-        
+
         if (isset($_SESSION['LAST_ACTIVITY']) && (time() - $_SESSION['LAST_ACTIVITY']) > $this->timeout) {
             $this->destroy();
             Log::info("Sessione scaduta per inattività.");
@@ -106,6 +165,12 @@ class SessionStorage
 
         $_SESSION['LAST_ACTIVITY'] = time(); // aggiorna il timestamp
     }
+
+    /**
+     * GETTER , SETTER AND HAS
+     *
+     */
+
 
     public function setOrCreate(int|string $key, int|float|string|array|bool|null $value): mixed
     {
@@ -129,6 +194,11 @@ class SessionStorage
     public  function get(string $key): mixed
     {
         return $_SESSION[$key] ?? null;
+    }
+
+    public function has(string $key): bool
+    {
+        return isset($_SESSION[$key]);
     }
 
     public function unset($key): array|null
@@ -160,7 +230,8 @@ class SessionStorage
         return $flash;
     }
 
-    private function flashSessionDestroy(): void {
+    private function flashSessionDestroy(): void
+    {
         unset($_SESSION['FLASH'], $_SESSION['FLASH_TIME'], $_SESSION['FLASH_TTL']);
         Log::info("Flash session distrutta.");
     }

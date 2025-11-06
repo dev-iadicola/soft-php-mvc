@@ -4,10 +4,8 @@ namespace App\Core\Services;
 
 use App\Model\User;
 use App\Model\LogTrace;
-use App\Core\Helpers\Log;
 use App\Core\Eloquent\Model;
-use App\Model\LogTraceTrace;
-use App\Core\Eloquent\QueryBuilder;
+
 
 class AuthService
 {

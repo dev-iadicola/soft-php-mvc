@@ -31,15 +31,26 @@ class VarDumper
         $traces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
         $fileWhereDebug = "";
         $lineWhereDebug = 0;
-
+        // origini da escludere.
+         $excludedFiles = [
+                baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
+                baseRoot() . '/utils/helpers.php',
+                baseRoot() . '/utils/var_dumper.php',
+                baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
+            ];
         foreach ($traces as $trace) {
             // file che non deve controllare.
-            if($trace['file'] === baseRoot()."\App\Core\Support\Debug\VarDumper.php") continue;
-            if($trace['file'] === baseRoot()."\utils\helpers.php") continue;
+           
+
+            // Salta i file esclusi dal trace
+            if (in_array(str_replace('\\', '/', $trace['file']), $excludedFiles, true)) {
+                continue;
+            }
+
             //carico linee files
             $lines = @file($trace['file']);
             if (!$lines) continue;
-           
+
             foreach ($lines as $num => $content) {
                 // trovato
                 //* rimuovi spazi e tab
@@ -66,15 +77,16 @@ class VarDumper
         }
 
         // * Mostra a vidoe
-   
+
         echo "========================================= <br>";
 
-        echo "Debug delcared in: " . str_replace(baseRoot(), "", $fileWhereDebug ) . " at line " . $lineWhereDebug . " <br>";
+        echo "Debug delcared in: " . str_replace(baseRoot(), "", $fileWhereDebug) . " at line " . $lineWhereDebug . " <br>";
 
         echo "========================================= <br>";
     }
 
-    private function softdb(...$vars){
+    private function softdb(...$vars)
+    {
         ob_start();
 
         echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
@@ -86,7 +98,7 @@ class VarDumper
         echo $output;
     }
 
-    private function debug( ...$vars): void
+    private function debug(...$vars): void
     {
 
         ob_start();
@@ -99,11 +111,12 @@ class VarDumper
         $output = ob_get_clean();
         echo $output;
 
-       exit;
+        exit;
     }
 
-    private function logger(...$vars){
-        
+    private function logger(...$vars)
+    {
+
         // ob_start();
 
 
