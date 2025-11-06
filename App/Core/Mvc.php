@@ -56,26 +56,16 @@ class Mvc
      */
     public function __construct(array|object $config)
     {
-        // * Generates a fresh CSRF token on every request, storing it in session for immediate use.  
-        // * This approach prioritizes security by invalidating old tokens,  
-        //   mitigating replay, token reuse, and session fixation vulnerabilities.  
-        // * Rigenera un token CSRF ad ogni richiesta, salvandolo in sessione per l’utilizzo immediato.  
-        //   Questo approccio privilegia la sicurezza, invalidando i token precedenti  
-        //   e riducendo i rischi di replay, riutilizzo o fissazione di sessione.  
-        (new CsrfService())->generateToken();
-        
-        // * Enable the programs's error and crash handlers and register all error and warning in app.log file
-        // Abilita i gestori di errori e arresti anomali dei programmi e registra tutti gli errori e gli avvisi nel file app.log
-        $this->nativeErrorProvider = new NativeErrorProvider();
-        // * Enable or disable the display of exception trought Whoops. 
-        // * If in the file .env the propriety APP_DEBUG is true, it will then show exceptions and errors and warning to screen.
-        // Abilita o disabilita la visualizzazione delle eccezioni tramite Whoops.
-        // Se nel file .env la proprietà APP_DEBUG è impostata su true, verranno visualizzate eccezioni, errori e avvisi sullo schermo.
-        $this->debugStatus = strtoupper(getenv('APP_DEBUG')) == 'TRUE';
+
         // * This class configures and register Whoops, 
         //* the exception handler that displays a detailed in case of error.
         // Questa classe configura e registra Whoops,  visualizza un messaggio dettagliato in caso di errore.
-        $this->whoopsProvider = new WhoopsProvider($this->debugStatus);
+        $this->whoopsProvider = new WhoopsProvider();
+        $this->whoopsProvider->register();
+        // * Enable the programs's error and crash handlers and register all error and warning in app.log file
+        // Abilita i gestori di errori e arresti anomali dei programmi e registra tutti gli errori e gli avvisi nel file app.log
+        $this->nativeErrorProvider = new NativeErrorProvider();
+
         // * Array of the dir config.
         $this->config = $config;
 
@@ -90,18 +80,7 @@ class Mvc
         // Inizializza l'oggetto Router per gestire il routing delle richieste
         $this->router = new Router($this);
 
-
-
-        // * This class follows the singleton pattern and is responsible for managing the session.
-        // * It is currently implemented by the AuthService and CsrfService classes.
-        //  Questa classe rispetta il pattern singleton ha la responsabilità di gestire la sessione 
-        //  Viene implementato attualmente dalla clase AuthService e CsrfService
-        $this->sessionStorage = SessionStorage::getInstance();
-
-        // Inizializza la connessione al database e imposta il PDO per l'Model
-
-
-
+        // can access the methods of the class everywhere
         self::$mvc = $this;
     }
 
@@ -134,10 +113,18 @@ class Mvc
 
         // * Enable the programs's error and crash handlers and register all error and warning in app.log file
         $this->nativeErrorProvider->register();
+        
+        // * This class follows the singleton pattern and is responsible for managing the session.
+        // * It is currently implemented by the AuthService and CsrfService classes.
+        //  Questa classe rispetta il pattern singleton ha la responsabilità di gestire la sessione 
+        //  Viene implementato attualmente dalla clase AuthService e CsrfService
+        $this->sessionStorage = SessionStorage::getInstance();
 
-        // * This class provider configures and register Whoops, 
-        //  the exception handler that displays a detailed in case of error.
-        $this->whoopsProvider->register();
+        // * Generate token for Csrf if is not set.
+        (new CsrfService())->generateToken();
+
+        
+      
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             $this->router->resolve();
