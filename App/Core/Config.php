@@ -15,7 +15,7 @@ class Config
          * @param string $file //string
          * @return bool
          * 
-         * verifica che sia un file
+         * che the $file is a file.
          */
         if (!is_file($file)) {
             return false;
@@ -26,8 +26,7 @@ class Config
    
     /**
      * Summary of env
-     * @param string $env // il fil .env
-     * @return string ritrona il parametro 
+     * @param string $env 
      * 
      */
     public static function env($envFile)
@@ -36,8 +35,7 @@ class Config
         $envVars = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
         foreach ($envVars as $envVar) {
             $envVar = trim($envVar);
-            // Debug: Output linea corrente
-           // echo "Processing: '$envVar'\n"; // decommenta per il debug
+          
             // Ignora le righe che iniziano con # (commenti) o che non contengono un '='
             if ($envVar === '' || $envVar[0] === '#' || strpos($envVar, '=') === false) {
                // echo "Skipped: '$envVar'\n"; //decommenta per il debug
@@ -46,6 +44,7 @@ class Config
             putenv($envVar);
         }
     }
+    
 
     public static function dir($dir): bool|BuildAppFile
     {
@@ -55,7 +54,7 @@ class Config
         $conf = [];
         $files = scandir($dir);
         foreach ($files as $file) {
-            if ($file === '.' || $file === '..') continue; // evitiamo di inserire cartella corrente o cartella parent
+            if ($file === '.' || $file === '..') continue; // Avoid inserting current folder or parent folder.
             $nomeFile = pathinfo($file, PATHINFO_FILENAME);
             $conf[$nomeFile] = include $dir . '/' . $file;
         }
@@ -63,7 +62,8 @@ class Config
             return throw new Exception("No files found in directory " . $dir);
         }
 
-        // ritorna un oggetto BuildAppFile con i file caricati
+        // Returns a BuilaAppFile object with 
+        //To access the file, simply call Mvc::$mvc->config->$fileName where $filename must be present in the config foler, and return the array of the file.
         return new BuildAppFile($conf);
     }
 
