@@ -5,6 +5,7 @@ namespace App\Core\Provider;
 use Throwable;
 use Whoops\Run;
 use App\Core\Helpers\Log;
+use App\Utils\Enviroment;
 use Whoops\Handler\Handler;
 use Whoops\Handler\PrettyPageHandler;
 
@@ -18,23 +19,22 @@ class WhoopsProvider
     private Run $whoops;
     private bool $debug;
 
-    public function __construct(bool $debug = false)
+    public function __construct()
     {
-        // according to the APP_DEBUG propriety of the file .env
-        $this->debug = $debug;
+        
 
         // Create a new instance of the Whoops main handdle, this obj coordinates the entire error handling system.
         $this->whoops = new Run();
     }
 
-    public function register(){
+    public function register(): Run{
         // if debug is true, significa che nell'app env APP_DEBUG e' settato a true
-        if($this->debug){
-            $this->setupDebugMode();
+        if(Enviroment::isDebug()){
+         $this->setupDebugMode();
         }else{
             $this->setupProductionMode();
         }
-        $this->whoops->register();
+        return $this->whoops->register();
     }
  /**
      * Imposta Whoops in modalità produzione.
@@ -45,10 +45,10 @@ class WhoopsProvider
         // Aggiunge un handler anonimo che cattura tutte le eccezioni.
         $this->whoops->pushHandler(function (Throwable $exception) {
 
-            // Salva l’errore nel file di log (così lo sviluppatore può leggerlo più tardi).
+            // Save the error in the file log.  
             Log::exception($exception);
 
-            // Imposta il codice di risposta HTTP a 500 (errore interno del server).
+            // set HTTP code 
             http_response_code(500);
 
             // Include un file PHP che contiene la pagina di errore generica (es. “Ops! Qualcosa è andato storto”).
