@@ -24,7 +24,7 @@ class AuthService
             $token = static::generateToken();
      
            $model->token = $token;
-           dump([$model->token , $token]);
+          
            $model->save();
             static::startUserSession(token: $token);
 
