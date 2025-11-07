@@ -48,45 +48,21 @@ Route::get('/admin/logout', DashBoardController::class, 'logout');
 
 
 // Administration Logs ad Messages
-Route::get('/admin/logs', LogsController::class,'index');
-Route::get('/admin/contatti',ContattiManagerController::class,'index');
-Route::get('/admin/contatti/{id}',ContattiManagerController::class,'get');
-Route::post('/admin/contatti-delete/{id}',ContattiManagerController::class,'destroy');
+Route::get('/admin/logs',  LogsController::class,'index');
+
 
 
 
 // Asministrarion  Projects
-Route::get('/admin/progetti',ProjectManagerController::class,'index');
-Route::post('/admin/progetti',ProjectManagerController::class,'store');
-Route::get('/admin/progetti-edit/{id}', ProjectManagerController::class,'edit');
 Route::post('/admin/progetti-edit/{id}', ProjectManagerController::class,'update');
 Route::delete('/admin/project-delete/{id}', ProjectManagerController::class,'destroy');
 
-// Administration Courses
-Route::get('/admin/corsi',CorsiManagerController::class,'index');
-Route::post('/admin/corsi',CorsiManagerController::class,'store');
-Route::get('/admin/corso-edit/{id}', CorsiManagerController::class,'edit');
-Route::post('/admin/corso-update/{id}', CorsiManagerController::class,'update');
-Route::delete('/admin/corso-delete/{id}', CorsiManagerController::class,'destroy');
 
-// Administration curriculum
-Route::get('/admin/cv', CurriculumManagmentController::class,'index');
-Route::post('/admin/cv', CurriculumManagmentController::class,'store');
-Route::delete('/admin/cv-delete/{id}', CurriculumManagmentController::class,'destroy');
-Route::post('/download/{id}',CurriculumManagmentController::class,'download');
 
-// Administration laws
-Route::get('/admin/laws', LawsMngController::class,'index');
-Route::post('/admin/laws', LawsMngController::class,'store');
-Route::get('/admin/law-edit/{id}',LawsMngController::class,'edit');
-Route::post('/admin/law-edit/{id}',LawsMngController::class,'update');
-Route::delete('/admin/law-delete/{id}',LawsMngController::class,'destroy');
 
 // Administration Article
-Route::get('/admin/home',HomeManagerController::class, 'index');
-Route::post('/admin/home',HomeManagerController::class, 'store');
-Route::get('/admin/home/{id}',HomeManagerController::class, 'edit');
-Route::post('/admin/home/{id}',HomeManagerController::class, 'update');
+
+
 Route::post('/admin/home-delete/{id}',HomeManagerController::class,'destroy');
 
 // Administration Profile

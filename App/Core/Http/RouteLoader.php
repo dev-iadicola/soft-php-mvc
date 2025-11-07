@@ -107,7 +107,7 @@ class RouteLoader
                 foreach ($routeAttributes as $attr) {
                     $route = $attr->newInstance();
 
-                    // Path base ereditato + path del metodo
+                    // Path base ereditato dalla superclasse  + path del metodo
                     $basePath = implode('', $stack->Path()->toArray());
                     $fullPath = rtrim($basePath, '/') . $route->path;
                     $fullPath = preg_replace('#/+#', '/', $fullPath); // normalizza //

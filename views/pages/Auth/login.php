@@ -3,9 +3,8 @@
     <div class="card-body p-4">
       <h2 class="card-title text-center text-uppercase fw-bold mb-3">Login</h2>
       <p class="text-center text-muted mb-4">Please enter your login and password!</p>
-
-      <!-- Messaggio di errore o avviso -->
-      {{message}}
+      <!-- C S R F -->
+      @csrf
 
       <div class="mb-3">
         <label for="email" class="form-label small fw-medium">Email</label>
@@ -15,8 +14,7 @@
           id="email"
           name="email"
           placeholder="Enter your email"
-          required
-        >
+          required>
       </div>
 
       <div class="mb-4">
@@ -27,9 +25,8 @@
           id="password"
           name="password"
           placeholder="Enter your password"
-          required
-        > 
-       <p onclick="seePassword()">See</p>
+          required>
+        <p onclick="seePassword()">See</p>
       </div>
 
       <div class="d-flex flex-column text-center mb-4">
@@ -44,21 +41,21 @@
   </div>
 </form>
 <script>
-const seePassword = () => {
-  const passwordFields = document.querySelectorAll('input[type="password"], input[data-toggled="true"]');
+  const seePassword = () => {
+    const passwordFields = document.querySelectorAll('input[type="password"], input[data-toggled="true"]');
 
-  passwordFields.forEach(field => {
-    if (field.type === 'password') {
-      // Salva name originale se non presente
-      if (!field.name) {
-        field.name = 'password';
+    passwordFields.forEach(field => {
+      if (field.type === 'password') {
+        // Salva name originale se non presente
+        if (!field.name) {
+          field.name = 'password';
+        }
+        field.setAttribute('data-toggled', 'true');
+        field.type = 'text';
+      } else if (field.dataset.toggled === 'true') {
+        field.type = 'password';
+        field.removeAttribute('data-toggled');
       }
-      field.setAttribute('data-toggled', 'true');
-      field.type = 'text';
-    } else if (field.dataset.toggled === 'true') {
-      field.type = 'password';
-      field.removeAttribute('data-toggled');
-    }
-  });
-}
+    });
+  }
 </script>

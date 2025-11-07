@@ -2,6 +2,7 @@
 
 use App\Core\Connection\SMTP;
 
+use App\Core\Facade\RouteHelper;
 use App\Core\Facade\Session;
 use App\Core\Services\CsrfService;
 
@@ -24,6 +25,12 @@ if (!function_exists(function: 'implodeMessage')) {
 if(! function_exists(function:'csrf_token')){
     function csrf_token():null|string{
         return (new CsrfService())->getToken();
+    }
+}
+
+if (!function_exists('route')) {
+    function route(string $name, array $params = []):string{
+        return RouteHelper::getByName($name, $params);
     }
 }
 // * Used for layout pages.

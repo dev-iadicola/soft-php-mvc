@@ -5,6 +5,7 @@ namespace App\Core;
 use \App\Core\Mvc;
 use App\Core\Services\CsrfService;
 use App\Core\Services\SessionStorage;
+use RuntimeException;
 
 class View
 {
@@ -41,6 +42,7 @@ class View
             'menu' => $this->mvc->config->menu,
         ];
 
+
         // Ricerca layouts e page
         $layoutContent = $this->getViewContent("layouts", $this->layout, $layoutValue);
         $pageContent = $this->getViewContent("pages", $page, $layoutValue, $variables);
@@ -51,7 +53,7 @@ class View
         ini_set('display_errors', 1);
         error_reporting(E_ALL);
 
-        // Sostituzione dei placeholder {{page}} con un file.php
+        // Sostituzione dei placeholder <<page>> con un file.php
         $pageContent = $this->renderContent($pageContent, $message);
         return $this->renderContent($layoutContent, [
             'page' => $pageContent,
@@ -70,6 +72,7 @@ class View
         // step 1: seach all @include (recursive)
         // step 2: search all @csrf
         // step 3: search all @delete
+        // setp 4 search all placheolder << John >> for convertn<<?= $name >> 
         $content = (new IncludeDirectiveHandler($this))->cleanPlaceHolders($content, $variables);
         return $content;
     }
@@ -85,7 +88,7 @@ class View
     private function renderContent(string $content, array|null $message): string
     {
         $chiavi = array_keys($message);
-        $chiavi = array_map(fn($chiave) => "{{" . $chiave . "}}", $chiavi);
+        $chiavi = array_map(fn($chiave) => "<<" . $chiave . ">>", $chiavi);
 
         foreach ($message as $key => $value) {
             if ($value instanceof Component) {
@@ -113,10 +116,26 @@ class View
     {
         extract($values);
         extract($variables);
-        extract(SessionStorage::getInstance()->getAll()); // per visualizzare i messaggi di errore e successo
+        // per visualizzare i messaggi di errore e successo
         $views = $this->mvc->config->folder->views;
+        // The full path and file with the content 
+        $file = "$views/$folder/$item.php";
+        if(!file_exists($file)){
+            throw new RuntimeException("View file not found, it lost like you: $file");
+        }
+        // Read the file content
+        $content = file_get_contents($file);
+
+        // compile blade-like syntax to php
+        // {{{ var }}} -> unescaped echo
+        $content = preg_replace('/\{\{\{\s*(.*?)\s*\}\}\}/s', '<?php echo $1; ?>', $content);
+         // {{ var }} -> escaped echo
+        $content = preg_replace('/\{\{\s*(.*?)\s*\}\}/s', '<?= htmlspecialchars($1, ENT_QUOTES, "UTF-8") ?>', $content);
+
+
+       // Evaluate the compiled PHP safely
         ob_start();
-        include "$views/$folder/$item.php";
+        eval('?>'. $content);
         return ob_get_clean();
     }
 }
@@ -138,6 +157,9 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
         // * replace placeholder @csrf and @delete
         $content = $this->processCsrf($content);
         $content = $this->processDelete($content);
+        // replace in frontend {{ $json }} $john >> in <?= $john ?/> or funcrion 
+
+
         // This pattern captures directives such as:
         // @include('partials.header')  
         // @include("partials.header")  
@@ -174,6 +196,8 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
         return $content;
     }
 
+    
+
     /**
      * Summary of processCsrf
      * @param string $content il contenuto php della pagina.
@@ -185,6 +209,8 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
         $input = "<input type='hidden' name='_token' value='{$token}'>";
         return str_replace('@csrf', $input, $content);
     }
+
+
 
     /**
      * Summary of processDelete

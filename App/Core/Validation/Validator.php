@@ -86,6 +86,13 @@ class Validator
         }
     }
 
+    public function  validateImage(string $field,  $value, $param): void
+    {
+        if (!$value || is_null($value) || empty($value['tmp_name'] || $value['tmp_name']) !== false) {
+            $this->addError($field, "The $field field is not image", 'image');
+        }
+    }
+
     protected function validateEmail(string $field, $value, $param): void
     {
         if (!filter_var($value, FILTER_VALIDATE_EMAIL)) {

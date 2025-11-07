@@ -6,17 +6,20 @@ use App\Core\Mvc;
 use App\Core\Config;
 use App\Core\Controller;
 use App\Core\Http\Request;
+use App\Core\Http\Attributes\RouteAttr;
 
 class MaintenanceController extends AbstractAdminController
 {
 
 
+    #[RouteAttr(path: 'set', method: 'get', name: 'set')]
     public function index()
     {
         $env = getenv('MAINTENANCE');
         return $this->render('admin.settings', [], compact('env'));
     }
 
+    #[RouteAttr(path: 'set', method: 'POST', name: 'set.submit')]
     public function submit(Request $request)
     {
         // Prendo la rotta dell 'env

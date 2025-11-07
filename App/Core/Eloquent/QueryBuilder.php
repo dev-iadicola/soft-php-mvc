@@ -380,7 +380,7 @@ class QueryBuilder extends AbstractBuilder
                 throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
             }
         }
-
+        
         $query = "DELETE FROM {$this->table} $where";
 
         $stmt = $this->pdo->prepare($query);

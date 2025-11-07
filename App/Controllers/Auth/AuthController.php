@@ -23,7 +23,7 @@ class AuthController extends BaseController
         view('Auth.login');
     }
 
-    #[RouteAttr('login','POST', middleware:'auth')]
+    #[RouteAttr('login','POST')]
     public function login(Request $request)
     {
         // verifica esistenza user

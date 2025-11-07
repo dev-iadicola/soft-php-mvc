@@ -1,6 +1,4 @@
-<?php
-$urlArticle = isset($article->id) ? "/admin/home/{$article->id}" : '/admin/home';
-?>
+
 <div class="card">
     <div class="p-0 m-0" id="headingArticle">
         <h5 class="mb-0">

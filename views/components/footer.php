@@ -36,6 +36,6 @@
     </ul>
 
     <!-- Copyright -->
-    <p class="text-center text-secondary mb-0">© <?= date('Y') ?> Luigi Iadicola, Web Developer</p>
+    <p class="text-center text-secondary mb-0">© 2022 - {{ date('Y') }} LS Iadicola, Software Developer</p>
   </div>
 </footer>

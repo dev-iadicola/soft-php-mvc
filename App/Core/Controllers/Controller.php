@@ -24,7 +24,7 @@ abstract class Controller
     protected Mvc $mvc; 
     public function __construct( ?Mvc $mvc = null)
     {
-       $this->mvc = $mvc ?? mvc();
+       $this->mvc = $mvc ?? Mvc::$mvc;
     }
 
  
@@ -86,7 +86,7 @@ abstract class Controller
             $layout = str_replace('.php', '', $layout);
         }
 
-        $this->mvc->view->layout = $layout;
+        Mvc::$mvc->view->layout = $layout;
     }
 
 

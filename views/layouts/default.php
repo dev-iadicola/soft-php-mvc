@@ -40,11 +40,11 @@
 
                 <nav>
                     <ul>
-                        <li><a href="/" class="<?= isActivePage('home', $page) ?>">Home</a></li>
-                        <li><a href="/contatti" class="<?= isActivePage('contatti', $page) ?>">Contatti</a></li>
-                        <li><a href="/portfolio" class="<?= isActivePage('portfolio', $page) ?>">Portfolio</a></li>
-                        <li><a href="/progetti" class="<?= isActivePage('progetti', $page) ?>">Progetti</a></li>
-                        <li><a href="/certificati" class="<?= isActivePage('corsi', $page) ?>">Certificati</a></li>
+                        <li><a href="/" class="{{ isActivePage('home', $page) }}">Home</a></li>
+                        <li><a href="/contatti" class="{{ isActivePage('contatti', $page) }}">Contatti</a></li>
+                        <li><a href="/portfolio" class="{{ isActivePage('portfolio', $page) }}">Portfolio</a></li>
+                        <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">Progetti</a></li>
+                        <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">Certificati</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/">GitHub <i class="fa fa-github text-white" aria-hidden="true"></i></a></li>
                     </ul>
                 </nav>
@@ -55,7 +55,7 @@
         @include('session.messages')
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 min-h-screen border-solid border-2 border-gray-200 rounded-xl p-10 m-10">
-            {{page}}
+            <<page>>
         </div>
     </main>
 

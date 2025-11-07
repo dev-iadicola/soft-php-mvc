@@ -9,6 +9,6 @@ class ControllerAttr  {
     /**
      * @param string|string[] $name Nome/i middelware. Es "auth" o ["auth","admin"]
      */
-    public function __construct( public null|string|array|MiddlewareInterface $middlewareNames, public  ?string $basePath = null){}
+    public function __construct( public null|string|array $middlewareNames, public  ?string $basePath = null){}
     
 }

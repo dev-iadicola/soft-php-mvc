@@ -8,41 +8,52 @@ use ArrayIterator;
 class RouteCollection implements \IteratorAggregate
 {
     /** @var RouteDefinition[] */
-    private array $routes = [];
+    private array $routes = []; //rotta
+    private array $namedRoutes = []; // name che diamo alla rotta
 
-    public function add(RouteDefinition $route):static{
+    public function getByName(string $name): RouteDefinition{
+       return $this->namedRoutes[$name];
+    }
+    public function add(RouteDefinition $route): static
+    {
         $this->VeirfyDuplicateRoute($route);
         $this->routes[] = $route;
+        if(!empty($route->name)){
+            $this->namedRoutes[$route->name] = $route;
+        }
         return $this;
     }
     // * Verify that a controller does not have the same route and method of other controller
     // Verifica che piu' controllers non abbia la stessa rotta e stesso metodo
-    private function VeirfyDuplicateRoute(RouteDefinition $route){
+    private function VeirfyDuplicateRoute(RouteDefinition $route)
+    {
         foreach ($this->routes as $existing) {
-        if ($existing->method === $route->method && $existing->uri === $route->uri) {
-            throw new \RuntimeException(
-                sprintf(
-                    "Duplicate route detected for [%s %s]\nExisting: %s::%s\nNew: %s::%s",
-                    $route->method,
-                    $route->uri,
-                    $existing->controller,
-                    $existing->action,
-                    $route->controller,
-                    $route->action
-                )
-            );
+            if ($existing->method === $route->method && $existing->uri === $route->uri) {
+                throw new \RuntimeException(
+                    sprintf(
+                        "Duplicate route detected for [%s %s]\nExisting: %s::%s\nNew: %s::%s",
+                        $route->method,
+                        $route->uri,
+                        $existing->controller,
+                        $existing->action,
+                        $route->controller,
+                        $route->action
+                    )
+                );
+            }
         }
     }
-    }
 
-    public function all(): array{
+    public function all(): array
+    {
         return $this->routes;
     }
 
-    public function filter(string $method): RouteCollection{
+    public function filter(string $method): RouteCollection
+    {
         $newRoutes = new RouteCollection();
-        foreach($this->routes as $route){
-            if($route->findByMethod($method))
+        foreach ($this->routes as $route) {
+            if ($route->findByMethod($method))
                 $newRoutes->add($route);
         }
         return $newRoutes;

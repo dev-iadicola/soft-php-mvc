@@ -2,6 +2,7 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Controllers\BaseController;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Mvc;
 use App\Model\Skill;
 use App\Core\Storage;
@@ -11,10 +12,11 @@ use App\Model\Profile;
 use App\Core\Validator;
 use App\Core\Http\Request;
 
-class HomeManagerController extends BaseController
+class HomeManagerController extends AbstractAdminController
 {
 
 
+    #[RouteAttr('/dashboard','get','admin.dashboard')]
     public function index()
     {
         // visualizza per la gestione della home

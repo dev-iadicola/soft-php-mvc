@@ -4,6 +4,7 @@ namespace App\Core\Services;
 
 use App\Model\User;
 use App\Model\LogTrace;
+use App\Core\Helpers\Log;
 use App\Core\Eloquent\Model;
 
 
@@ -106,6 +107,7 @@ class AuthService
         if ($this->_sessionStorage->get('AUTH_TOKEN')) {
 
             $token = $this->_sessionStorage->get('AUTH_TOKEN');
+          
             return $this->verifyTokenInDatabase($token);
         }
         return false;
@@ -151,8 +153,7 @@ class AuthService
             'DEVICE' =>  $_SERVER['HTTP_USER_AGENT'],
             'SESSION_CONTEXT' => 'auth'
         ]);
-        // setting life/duration of session by variabile in file env.
-        $this->_sessionStorage->setLifeTime(mvc()->config->settings["session"]['auth-lifetime']);
+     
     }
 
 

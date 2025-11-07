@@ -42,7 +42,7 @@ use RuntimeException;
  */
 class Model implements JsonSerializable
 {
-   use Attributes;
+    use Attributes;
     protected string $table; // Nome della tabella
     protected array $fillable; // Campi riempibili
     private ?QueryBuilder $queryBuilder = null; // Permettendo di ereditare i suoi metodi, costruisce la query
@@ -69,7 +69,7 @@ class Model implements JsonSerializable
     {
         $this->queryBuilder = $queryBuilder;
     }
-    
+
     public function save(): bool|QueryBuilder
     {
         if (!$this->queryBuilder) {
@@ -93,6 +93,14 @@ class Model implements JsonSerializable
         return $this->queryBuilder->create($data);
     }
 
+    public function delete(): bool
+    {
+        if (isset($this->attributes['id'])) {
+            return $this->queryBuilder->where('id', $this->attributes['id'])->delete();
+        }
+        return false;
+    }
+
 
 
     /**
@@ -111,15 +119,49 @@ class Model implements JsonSerializable
      * @throws \App\Core\Exception\QueryBuilderException
      * @return mixed Il risultato del metodo chiamato sul QueryBuilder.
      */
+
+
+    public function __call($method, $parameters)
+    {
+        // Se il metodo è definito nel Model (non statico)
+        if (method_exists($this, $method)) {
+            return $this->$method(...$parameters);
+        }
+
+        // Altrimenti, fallback al QueryBuilder
+        $builder = $this->queryBuilder ?? $this->boot();
+        if ($builder && method_exists($builder, $method)) {
+            return $builder->$method(...$parameters);
+        }
+
+        throw new \BadMethodCallException("Metodo {$method} non trovato nel Model " . static::class);
+    }
+
     public static function __callStatic($method, $parameters)
     {
+
+        // ✅ Se il metodo statico è definito nella sottoclasse (es. LogTrace::createLog)
+        if (method_exists(static::class, $method)) {
+            // Usa forward_static_call_array per chiamarlo in modo pulito e statico
+            return forward_static_call_array([static::class, $method], $parameters);
+        }
+
         // Per ogni chiamata statica, creiamo un'istanza dell'Model
         $instance = new static();
+
+
+        // Se il metodo esiste nell'istanza (es. non statico del Model)
+        if (method_exists($instance, $method)) {
+            return $instance->$method(...$parameters);
+        }
+
+
         $instance->boot();
         $queryBuilder = $instance->queryBuilder;  // Prendi l'istanza di QueryBuilder
         try {
-            return call_user_func_array([$queryBuilder, $method], args: $parameters);  // Esegui il metodo su QueryBuilder con tutte le proprietà del Model
-
+            if ($queryBuilder && method_exists($queryBuilder, $method)) {
+                return call_user_func_array(callback: [$queryBuilder, $method], args: $parameters);  // Esegui il metodo su QueryBuilder con tutte le proprietà del Model
+            }
         } catch (QueryBuilderException $e) {
             // Ottieni il backtrace completo
             $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
@@ -148,7 +190,7 @@ class Model implements JsonSerializable
         }
     }
 
-   
+
 
 
     public function jsonSerialize(): mixed

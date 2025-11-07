@@ -3,36 +3,49 @@
 namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
+use App\Core\Storage;
+use App\Model\Project;
 use App\Core\Controller;
 use App\Core\Http\Request;
-use App\Core\Storage;
-use App\Core\Validator;
-use App\Model\Project;
+use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Validation\Validator;
 
 class ProjectManagerController extends AbstractAdminController
 {
 
-
+   #[RouteAttr(path: 'project', method: 'get', name: 'project')]
    public function index()
    {
       $projects = Project::orderBy('id', 'DESC')->get();
       return view('admin.portfolio.project',  compact('projects'));
    }
 
+
+   #[RouteAttr(path: 'project/{id}', method: 'get', name: 'project')]
+   public function edit(Request $request, $id)
+   {
+
+      $project = Project::find($id);
+      $projects = Project::orderBy('id', 'DESC')->get();
+      return view('admin.portfolio.project', compact('project', 'projects'));
+   }
+
+
+   #[RouteAttr(path: 'project', method: 'POST', name: 'project')]
    public function store(Request $request)
    {
-      $projects = Project::orderBy('id', 'DESC')->get();
+
       $data = $request->all();
 
       // Controlla se è stato caricato un file immagine
       if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
 
          $file = $data['img'];
-
+         $validator = Validator::make($request->all(), ['img' => ['required', 'image']], ['img' => "Il file caricato non è un'immagine valida."]);
          // Verifica che sia un'immagine valida
-         if (!Validator::verifyImage($file)) {
+         if ($validator->fails()) {
             // Gestisci errore (es. ritorna con errore, throw, ecc)
-            return response()->back()->withError('Il file caricato non è un\'immagine valida.');
+            return response()->back()->withError($validator->errors());
          }
          // Salva il file e ottieni il path relativo
          $storage = new Storage();
@@ -44,19 +57,11 @@ class ProjectManagerController extends AbstractAdminController
 
       // Crea il progetto
       Project::create($data);
-
-      $this->withSuccess('Progetto salvato con Successo!');
-      return view('admin.portfolio.project', compact('projects'));
+      return redirect()->back()->withSuccess("Progetto salvato con Successo!");
    }
 
-   public function edit(Request $request, $id)
-   {
 
-      $project = Project::find($id);
-      $projects = Project::orderBy('id', 'DESC')->get();
-      return view('admin.portfolio.project', compact('project', 'projects'));
-   }
-
+   #[RouteAttr(path: 'project/{id}', method: 'POST', name: 'project')]
    public function update(Request $request, $id)
    {
       $data = $request->all();
@@ -79,9 +84,10 @@ class ProjectManagerController extends AbstractAdminController
       $project->update($data);
       // feedback server
 
-      response()->back()->withSuccess('Progetto aggiornato con successo!');
+     return response()->back()->withSuccess('Progetto aggiornato con successo!');
    }
 
+   #[RouteAttr(path: 'project', method: 'DELETE', name: 'project')]
    public function destroy(Request $reqq, $id)
    {
       // trova e azione
@@ -103,8 +109,6 @@ class ProjectManagerController extends AbstractAdminController
 
             response()->back()->withWarning('Non è stato possibile eliminare il progetto, perchè manca il percorso dell\'immagine.');
          }
-
-         
       }
 
       response()->back()->withError("Progetto non eliminato correttamente.");

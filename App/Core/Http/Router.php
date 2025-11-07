@@ -41,7 +41,7 @@ class Router
      * Summary of boot
      * @return void
      */
-    private function boot(): RouteCollection
+    public function boot(): RouteCollection
     {
         // Carica tutti i controller e genera una collection di rotte
         return $this->loader->load(); 

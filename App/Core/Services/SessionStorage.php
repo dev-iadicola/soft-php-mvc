@@ -81,7 +81,12 @@ class SessionStorage
      */
 
     public function setLifeTime(?int $lifetime = null): void
-    {
+    {   
+        // Se la sessione è già avviata, non modificare i parametri
+        if (session_status() === PHP_SESSION_ACTIVE) {
+            return;
+        }
+
         // Se non è passato un valore, prendi quello dal file di configurazione
         $this->lifetime = $lifetime ?? (int) mvc()->config->settings["session"]["lifetime"];
 
@@ -100,12 +105,14 @@ class SessionStorage
         ]);
 
         // Log utile per debug o monitoraggio
+       
         Log::debug("Session lifetime set to {$this->lifetime} seconds.");
     }
 
     public function setTimeout(?int $time = null): void
     {
-        $this->timeout = $time ?? (int) mvc()->config->settings["session"]["timeout"];;
+        $this->timeout = $time ?? (int) mvc()->config->settings["session"]["timeout"];
+        Log::debug("Session timeout set to {$this->timeout} seconds.");
     }
 
     public static function getInstance(): SessionStorage
@@ -127,8 +134,11 @@ class SessionStorage
     {
         if (session_status() == PHP_SESSION_NONE) {
             session_start();
+            Log::debug('Sessione Avviata');
+            Log::debug($_SESSION);
             return true;
         }
+       
         return false;
     }
 

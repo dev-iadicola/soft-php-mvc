@@ -1,78 +1,138 @@
-    .img-thumbnail {
-        height: 300px;
-        border: 1px solid #000;
+:root {
+    /* Font di default */
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-optical-sizing: auto;
+    font-weight: 700 !important;
+    font-style: normal;
 
+    /* Palette colori */
+    --color-text: #474747;
+    --color-design: #272424;
+    --color-layout: #ffffff;
+    --color-text-footer: white;
+    --backgound-color: rgb(209, 222, 224);
+
+    /* Altri font disponibili */
+    --font-poppins: "Poppins", sans-serif;
+    --font-fira: "Fira Sans", sans-serif;
+    --font-inter: "Inter", sans-serif;
+    --font-raleway: "Raleway", sans-serif;
+    --font-space-grotesk: "Space Grotesk", sans-serif;
+    --font-jetbrains: "JetBrains Mono", monospace;
+    --font-manrope: "Manrope", sans-serif;
+    --font-playfair: "Playfair Display", serif;
+}
+
+/* OVERRIDE bootstrap*/
+body {
+    font-family: "JetBrains Mono", Consolas, monospace;
+    font-optical-sizing: auto;
+    font-weight: 700 !important;
+    font-style: normal;
+    color: var(--color-text);
+    background-color: var(--backgound-color);
+}
+
+footer {
+    background-color: var(--color-design);
+}
+
+.img-thumbnail {
+    height: 300px;
+    border: 1px solid #000;
+
+}
+
+.fix-object {
+    object-fit: cover;
+    height: 200px;
+    /* Altezza fissa per l'immagine */
+}
+
+
+
+
+.card-img-top {
+    max-height: 200px;
+    /* Altezza massima per l'immagine */
+}
+
+
+/* Stili per la sidebar */
+.sidebar {
+    width: 270px;
+    /* Dimensione della sidebar */
+    height: 100vh;
+    /* Altezza della sidebar */
+    background-color: #343a40;
+    /* Colore di sfondo della sidebar */
+    position: fixed;
+    /* Posizionamento fisso */
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    /* Nascondere la sidebar fuori dallo schermo */
+    transition: transform 0.3s ease;
+    /* Transizione dolce per la chiusura */
+    z-index: 1000;
+    /* Assicurati che sia sopra altri elementi */
+}
+
+.sidebar.open {
+    transform: translateX(0);
+    /* Mostra la sidebar */
+}
+
+/* Pulsante per aprire e chiudere la sidebar */
+#toggle-sidebar {
+    position: fixed;
+    /* Posizionalo fisso */
+    top: 10px;
+    /* Posizionalo in alto */
+    left: 10px;
+    /* Posizionalo a sinistra */
+    z-index: 1001;
+    /* Assicurati che sia sopra la sidebar */
+}
+
+/* Contenuto principale */
+section {
+    margin-left: 270px;
+    /* Sposta il contenuto per fare spazio alla sidebar */
+    transition: margin-left 0.3s ease;
+    /* Transizione dolce per lo spostamento */
+}
+
+.sidebar.open~section {
+    margin-left: 0;
+    /* Rimuove lo spazio quando la sidebar è aperta */
+}
+
+/* Media Queries per smartphone */
+@media (max-width: 767px) {
+    .sidebar {
+        width: 100vw;
+        /* Occupare l'intera larghezza dello schermo sui dispositivi mobili */
+        height: 100vh;
+        /* Altezza della sidebar */
+        transform: translateX(-100%);
+        /* Nascondere la sidebar fuori dallo schermo */
     }
 
-    .fix-object {
-        object-fit: cover;
-        height: 200px;
-        /* Altezza fissa per l'immagine */
-    }
-
-   
-    
-
-    .card-img-top {
-        max-height: 200px;
-        /* Altezza massima per l'immagine */
-    }
-
-
-     /* Stili per la sidebar */
-     .sidebar {
-        width: 270px; /* Dimensione della sidebar */
-        height: 100vh; /* Altezza della sidebar */
-        background-color: #343a40; /* Colore di sfondo della sidebar */
-        position: fixed; /* Posizionamento fisso */
-        top: 0;
-        left: 0;
-        transform: translateX(-100%); /* Nascondere la sidebar fuori dallo schermo */
-        transition: transform 0.3s ease; /* Transizione dolce per la chiusura */
-        z-index: 1000; /* Assicurati che sia sopra altri elementi */
-    }
-
-    .sidebar.open {
-        transform: translateX(0); /* Mostra la sidebar */
-    }
-
-    /* Pulsante per aprire e chiudere la sidebar */
-    #toggle-sidebar {
-        position: fixed; /* Posizionalo fisso */
-        top: 10px; /* Posizionalo in alto */
-        left: 10px; /* Posizionalo a sinistra */
-        z-index: 1001; /* Assicurati che sia sopra la sidebar */
-    }
-
-    /* Contenuto principale */
     section {
-        margin-left: 270px; /* Sposta il contenuto per fare spazio alla sidebar */
-        transition: margin-left 0.3s ease; /* Transizione dolce per lo spostamento */
+        margin-left: 0;
+        /* Non spostare il contenuto su smartphone */
     }
 
-    .sidebar.open ~ section {
-        margin-left: 0; /* Rimuove lo spazio quando la sidebar è aperta */
+    #toggle-sidebar {
+        top: 10px;
+        /* Posizionalo in alto */
+        left: 10px;
+        /* Posizionalo a sinistra */
     }
+}
 
-    /* Media Queries per smartphone */
-    @media (max-width: 767px) {
-        .sidebar {
-            width: 100vw; /* Occupare l'intera larghezza dello schermo sui dispositivi mobili */
-            height: 100vh; /* Altezza della sidebar */
-            transform: translateX(-100%); /* Nascondere la sidebar fuori dallo schermo */
-        }
 
-        section {
-            margin-left: 0; /* Non spostare il contenuto su smartphone */
-        }
-
-        #toggle-sidebar {
-            top: 10px; /* Posizionalo in alto */
-            left: 10px; /* Posizionalo a sinistra */
-        }
-    }
-
-    
-.foo{
+.foo {
     margin-bottom: 200px;
 }

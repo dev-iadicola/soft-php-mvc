@@ -4,14 +4,14 @@ namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
 use App\Core\Controller;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Model\Certificate;
 
 class CorsiManagerController extends AbstractAdminController
 {
 
-
-
+   #[RouteAttr('/corsi')]
    public function index()
    {
       $corsi = Certificate::orderBy('certified', 'DESC')->get();
@@ -19,16 +19,8 @@ class CorsiManagerController extends AbstractAdminController
       return view('/admin/portfolio/corsi',  compact('corsi'));
    }
 
-   public function store(Request $request)
-   {
-
-      Certificate::create($request->all());
-
-      return  redirect()->back()->withSuccess('Certificate Inserito');
-   }
-
-
-   public function edit(Request $request, $id)
+   #[RouteAttr('corsi-edit/{id}', 'GET')]
+   public function edit(Request $request, int  $id)
    {
       $corsi = Certificate::orderBy('id', 'DESC')->get();
 
@@ -43,19 +35,31 @@ class CorsiManagerController extends AbstractAdminController
       return view('/admin/portfolio/corsi', compact('corsi', 'element'));
    }
 
+   #[RouteAttr('/corsi', 'POST')]
+   public function store(Request $request)
+   {
+      Certificate::create($request->all());
+      return  redirect()->back()->withSuccess('Certificate creato con successo!');
+   }
+
+
+
+
+   #[RouteAttr('corsi-edit/{id}', 'PATCH')]
    public function update(Request $request, $id)
    {
-      Certificate::where('id', $id)->update($request->getPost());
+      Certificate::where('id', $id)->update($request->all());
       $this->withSuccess('Corso Aggiornato con successo!');
       return response()->back();
    }
+
+   #[RouteAttr('corso-delete/{id}','DELETE')]
    public function destroy(Request $request, $id)
    {
       $data = $request->all();
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return $this->statusCode413();
       }
-
       $corso = Certificate::where('id', $id);
       $corso->delete();
       $this->withSuccess('Corso ELIMINATO');
