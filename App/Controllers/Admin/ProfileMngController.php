@@ -23,7 +23,7 @@ class ProfileMngController extends AbstractAdminController
     return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
-  #[RouteAttr(path: 'profile/{id]', method: 'get', name: 'profile.edit')]
+  #[RouteAttr(path: 'profile/{id}', method: 'get', name: 'profile.edit')]
   public function edit(Request $request, $id)
   {
     $profile = Profile::find($id);
@@ -33,7 +33,7 @@ class ProfileMngController extends AbstractAdminController
     return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
   }
 
-  #[RouteAttr(path: 'profile/{id}', method: 'PATCH', name: 'profile.update')]
+  #[RouteAttr(path: 'profile/{id}', method: 'POST', name: 'profile.update')]
   public function update(Request $request, $id)
   {
     $data = $request->all();
