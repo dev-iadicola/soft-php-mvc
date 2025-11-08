@@ -125,10 +125,27 @@ class View
         // per visualizzare i messaggi di errore e successo
         $views = $this->mvc->config->folder->views;
         // The full path and file with the content 
-
+        // Easet Egg
+        $quotes = [
+            "it vanished like my weekend plans",
+            "Have you tried turning it off and on again?",
+            "it rage-quit the project",
+            "it was sacrificed to the compiler gods",
+            "Perhaps in another timeline, it exists",
+            "it went to fetch coffee and never came back",
+            "AI said it's fine, so we're doomed",
+            "it's not missing, it's just on vacation",
+            "unexpected behavior is now expected",
+            "it refused to render without coffee",
+            "your bug report just became a trilogy",
+            "runtime decided the problem it's me, not you"
+        ];
+        $message = $quotes[array_rand($quotes)];
         $file = "$views/$folder/$item.php";
+        
         if (!file_exists($file)) {
-            throw new RuntimeException("View file not found, it lost like you: $file");
+            $debugNameFile = str_replace(baseRoot(),'',$file);
+            throw new RuntimeException("View file $debugNameFile not found... $message? ");
         }
         // Read the file content
         $content = file_get_contents($file);
@@ -180,9 +197,11 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
     public function cleanPlaceHolders(string $content, ?array $variables = []): string
     {
 
-        // * replace placeholder @csrf and @delete
+        // * replace placeholder @csrf, @patch and @delete
         $content = $this->processCsrf($content);
         $content = $this->processDelete($content);
+        $content = $this->processPatch($content);
+        $content = $this->processPut($content);
         // replace in frontend {{ $json }} $john >> in <?= $john ?/> or funcrion 
 
 
@@ -248,5 +267,17 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
     {
         $inputDelete = "<input type=\"hidden\" name=\"_method\" value=\"DELETE\">";
         return str_replace('@delete', $inputDelete, $content);
+    }
+
+    private function processPatch(string $content): string
+    {
+        $inputPatch = "<input type=\"hidden\" name=\"_method\" value=\"PATCH\">";
+        return str_replace('@patch', $inputPatch, $content);
+    }
+
+    private function processPut(string $content): string
+    {
+        $inputPut = "<input type=\"hidden\" name=\"_method\" value=\"PATCH\">";
+        return str_replace('@put', $inputPut, $content);
     }
 }
