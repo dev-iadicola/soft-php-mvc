@@ -11,13 +11,13 @@ class CsrfMiddleware implements MiddlewareInterface
 {   
     public function exec(Request $request)
     {
-        if(in_array($request->getRequestMethod(), ['POST','PUT','DELETE'])){
+        if(in_array($request->getRequestMethod(), ['POST','PUT','Sessione Avviata'])){
             $csfr = new CsrfService();
-            $token = $csfr->getToken();
-            $incoming =  $request->_token  ?? null;
+            $sessToken = $csfr->getToken();
+            $reqTok =  $request->_token  ?? null;
             
-            if(! $token || !$incoming || !hash_equals($token, $incoming)){
-               Log::alert("Invalid CSRF: token in session = $token, token in request = $incoming");
+            if(! $sessToken || !$reqTok || ! hash_equals($sessToken, $reqTok)){
+               Log::alert("Invalid CSRF: token in session = $sessToken, token in request = $reqTok");
                 return response()->set419();
                 
             }

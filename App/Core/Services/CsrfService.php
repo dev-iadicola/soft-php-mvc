@@ -7,18 +7,12 @@ class CsrfService {
     public string $_key = 'csrf_token';
     public function __construct()
     {
-        $this->_sessionStorage = SessionStorage::getInstance();
+        $this->_sessionStorage = mvc()->sessionStorage;
     }
 
      public function generateToken(): void
-    {   
-        if($this->_sessionStorage->has($this->_key)){
-            return;
-        }
-        $token = bin2hex(random_bytes(32));
-        $this->_sessionStorage->setOrCreate($this->_key, $token);
-        $this->_sessionStorage->setLifeTime(mvc()->config->settings["session"]["lifetime"]);
-       
+    {   $token = bin2hex(random_bytes(32));
+        $this->_sessionStorage->getOrCreate($this->_key,$token );   
     }
     public function getToken(){
         return $this->_sessionStorage->get($this->_key);
