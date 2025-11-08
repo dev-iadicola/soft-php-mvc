@@ -4,6 +4,8 @@ namespace App\Core\Eloquent;
 
 use App\Core\Eloquent\Query\Execute;
 use App\Core\Eloquent\Query\SqlClauses;
+use App\Core\Eloquent\Query\SqlOperation;
+use App\Core\Eloquent\Query\Transaction;
 use App\Core\Exception\QueryBuilderException;
 use PDO;
 use App\Core\Exception\ModelNotFoundException;
@@ -13,18 +15,16 @@ use PDOStatement;
 
 abstract class AbstractBuilder
 {
-    use SqlClauses; use Execute;
+    use SqlClauses; use SqlOperation;  use Transaction;
+    use Execute;
     protected static ?QueryBuilder $_instance = null;
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
     protected array $fillable = []; // Attributi che possono essere assegnati in massa
     protected array $bindings = []; // Parametri di binding
-
-    protected array $systemColumns = ['id', 'created_at', 'updated_at'];
-    
+    protected array $systemColumns = ['id', 'created_at', 'updated_at'];    
     protected PDO $pdo; // Oggetto PDO per la connessione al database
     public int|float|string|null $id = null; // ID dell'istanza
-
     private int $paramCounter = 0;
 
     //───────────────────────────────────────────────────────────────

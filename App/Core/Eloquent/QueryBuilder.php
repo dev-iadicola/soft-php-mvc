@@ -28,8 +28,20 @@ use App\Core\Exception\ModelStructureException;
  */
 class QueryBuilder extends AbstractBuilder
 {
-    
 
+
+    public function exists(): bool
+    {
+        $sql = "SELECT EXISTS(" . $this->toSql() . ")";
+        $stmt = $this->pdo->prepare($sql);
+        foreach ($this->bindings as $bind => $val) $stmt->bindValue($bind, $val);
+        $stmt->execute();
+        return (bool) $stmt->fetchColumn();
+    }
+
+    //* ───────────────────────────────────────────────────────────────
+    #region GETTER
+    //* ───────────────────────────────────────────────────────────────
     /**
      * Summary of get
      * @param int $fetchType
@@ -58,7 +70,7 @@ class QueryBuilder extends AbstractBuilder
             throw new \Exception("Nome della tabella non impostato.");
         }
 
-        $this->limitClause = "LIMIT 1";
+        $this->limit(1);
 
         $rows =  $this->fetch(fetchTyep: $fetchType);
 
@@ -114,8 +126,13 @@ class QueryBuilder extends AbstractBuilder
             //aggiunfo il model su result
         }
         return $arrayModels;
-       
+    }
 
+    // * Create new record in DB and get the id of new record.
+    public function insertGetId(array $values): int
+    {
+        $this->create($values);
+        return (int) $this->pdo->lastInsertId();
     }
 
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
@@ -123,14 +140,7 @@ class QueryBuilder extends AbstractBuilder
         if (empty($this->table)) {
             throw new \Exception("Nome della tabella non impostato.");
         }
-
-        // $query = "SELECT * FROM $this->table";
-        // $stmt = $this->pdo->prepare($query);
-        // $stmt->execute();
-        // $rows = $stmt->fetchAll($fetchType);
         $rows = $this->fetchAll($fetchType);
-
-
         return $this->getInstances($rows);
     }
 
@@ -140,43 +150,17 @@ class QueryBuilder extends AbstractBuilder
         if (empty($this->table)) {
             throw new ModelStructureException("Table name hasn't been set in Mosdel " . $this->modelClass);
         }
-
-
         $this->setKeyId($id);
         $id = self::removeSpecialChars($id);
-
-        $query = "SELECT * FROM $this->table WHERE id = :id";
-        $stmt = $this->pdo->prepare($query);
-        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-        $stmt->execute();
-        $data = $stmt->fetch($fetchType);
-
-        return $this->getOneInstance($data) ?? throw new ModelNotFoundException($id . " Not Found in Model " . $this->modelClass);
+        $this->where('id', $id);
+        return $this->fetch() ?? throw new ModelNotFoundException($id . " Not Found in Model " . $this->modelClass);
     }
 
-    public function delete(): bool
-    {
 
-        if (empty($this->table)) {
-            throw new \Exception("Nome della tabella non impostato.");
-        }
-        if (empty($this->whereClause)) {
-            if (!isset($this->id)) {
-                throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
-            }
-        }
-        // TODO: imoplementare con str replace select clause, sostiuire select con delete. 
-        $query = "DELETE FROM {$this->table} $this->whereClause";
 
-        $stmt = $this->pdo->prepare($query);
-
-        foreach ($this->bindings as $param => $value) {
-            $stmt->bindValue($param, $value);
-        }
-
-        return $stmt->execute();
-    }
-
+    //* ───────────────────────────────────────────────────────────────
+    #region SETTER UPDATE
+    //* ───────────────────────────────────────────────────────────────
     public function update(array $values): self
     {
         if (empty($this->table)) {
@@ -236,8 +220,6 @@ class QueryBuilder extends AbstractBuilder
             throw new ModelStructureException("Table name hasn't been set in Model " . $this->modelClass);
         }
 
-        $fillable = $this->fillable;
-
         // Filtra i valori per tenere solo quelli presenti in $fillable
         $filteredValues = $this->fill($values);
 
@@ -262,6 +244,33 @@ class QueryBuilder extends AbstractBuilder
         return $this;
     }
 
+
+
+    //* ───────────────────────────────────────────────────────────────
+    #region DELETE
+    //* ───────────────────────────────────────────────────────────────
+    public function delete(): bool
+    {
+
+        if (empty($this->table)) {
+            throw new \Exception("Nome della tabella non impostato.");
+        }
+        if (empty($this->whereClause)) {
+            if (!isset($this->id)) {
+                throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
+            }
+        }
+        // TODO: imoplementare con str replace select clause, sostiuire select con delete. 
+        $query = "DELETE FROM {$this->table} $this->whereClause";
+
+        $stmt = $this->pdo->prepare($query);
+
+        foreach ($this->bindings as $param => $value) {
+            $stmt->bindValue($param, $value);
+        }
+
+        return $stmt->execute();
+    }
     // public function save(array $values): bool
     // {
     //     if (empty($this->table)) {
@@ -286,7 +295,10 @@ class QueryBuilder extends AbstractBuilder
 
     //     return $stmt->execute();
     // }
-
+    
+    //* ───────────────────────────────────────────────────────────────
+    #region UTILS
+    //* ───────────────────────────────────────────────────────────────
     public static function removeSpecialChars(string $value): string
     {
         return htmlspecialchars(strip_tags($value), ENT_QUOTES, 'UTF-8');
@@ -356,86 +368,17 @@ class QueryBuilder extends AbstractBuilder
         return $validated;
     }
 
+    //───────────────────────────────────────────────────────────────
+    #region CLONE    
+    //───────────────────────────────────────────────────────────────
+    public function clone(): static
+    {
+        return clone $this;
+    }
 
 
     //───────────────────────────────────────────────────────────────
-    // TRANSAZIONI
+    #region TRANSAZIONI
     //───────────────────────────────────────────────────────────────
-    private int $transactionLevel = 0;
 
-    /**
-     * Avvia una transazione, gestendo livelli annidati.
-     */
-    public function beginTransaction(): void
-    {
-        try {
-            if ($this->transactionLevel === 0) {
-                $this->pdo->beginTransaction();
-            } else {
-                // Usa SAVEPOINT per le transazioni annidate (se supportate)
-                $this->pdo->exec("SAVEPOINT LEVEL{$this->transactionLevel}");
-            }
-
-            $this->transactionLevel++;
-        } catch (\PDOException $e) {
-            \App\Core\Helpers\Log::exception($e);
-            throw $e;
-        }
-    }
-
-    /**
-     * Conferma la transazione o rilascia un savepoint.
-     */
-    public function commit(): void
-    {
-        if ($this->transactionLevel === 0) {
-            return; // nessuna transazione attiva
-        }
-
-        $this->transactionLevel--;
-
-        try {
-            if ($this->transactionLevel === 0) {
-                $this->pdo->commit();
-            } else {
-                // Rilascia il savepoint invece di committare tutto
-                $this->pdo->exec("RELEASE SAVEPOINT LEVEL{$this->transactionLevel}");
-            }
-        } catch (\PDOException $e) {
-            \App\Core\Helpers\Log::exception($e);
-            throw $e;
-        }
-    }
-
-    /**
-     * Annulla la transazione o ripristina un savepoint.
-     */
-    public function rollBack(): void
-    {
-        if ($this->transactionLevel === 0) {
-            return;
-        }
-
-        $this->transactionLevel--;
-
-        try {
-            if ($this->transactionLevel === 0) {
-                $this->pdo->rollBack();
-            } else {
-                // Ripristina lo stato al savepoint precedente
-                $this->pdo->exec("ROLLBACK TO SAVEPOINT LEVEL{$this->transactionLevel}");
-            }
-        } catch (\PDOException $e) {
-            \App\Core\Helpers\Log::exception($e);
-            throw $e;
-        }
-    }
-
-    /**
-     * Restituisce true se c'è una transazione attiva.
-     */
-    public function inTransaction(): bool
-    {
-        return $this->transactionLevel > 0 && $this->pdo->inTransaction();
-    }
 }
