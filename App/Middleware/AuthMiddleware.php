@@ -57,7 +57,7 @@ class AuthMiddleware implements MiddlewareInterface
 
     public function exec(Request $request)
     {
-        $this->_authService = new AuthService(SessionStorage::getInstance());
+        $this->_authService = new AuthService(mvc()->sessionStorage);
 
         $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->settings["session"]["timeout"]);
 

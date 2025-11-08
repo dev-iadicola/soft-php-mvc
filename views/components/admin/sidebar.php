@@ -2,19 +2,14 @@
     <svg class="bi me-2" width="16" height="70">
         <use xlink:href="#bootstrap"></use>
     </svg>
-    <span class="fs-4 mt-5">Visita il tuo portflio</span>
+    <span class="fs-4 mt-5">Visita il tuo sito</span>
 </a>
 <hr>
-<?php
-function isActive($menuItem, $currentPage)
-{
-    return strtolower($menuItem) === strtolower($currentPage) ? 'active' : '';
-}
 
-?>
+<?php $page  = request()->uri() ?>
 <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item my-2">
-        <a href="/admin/dashboard" class="nav-link text-white <?php echo isActive('/admin/dashboard', $page) ?>" aria-current="page">
+        <a href="/admin/dashboard" class="nav-link text-white <?php echo isActivePage('/admin/dashboard', request()->uri()) ?>" aria-current="page">
             <svg class="bi me-2" width="16" height="16">
                 <use xlink:href="#home"></use>
             </svg>
@@ -29,16 +24,16 @@ function isActive($menuItem, $currentPage)
 
             <div class="collapse" id="collapsePortfolio">
                 <div class="card card-body mt-2">
-                    <a class="dropdown-item  text-dark<?php echo isActive(route('admin.dashboard'), $page) ?>"
-                     href=" {{{ route('admin.dashboard') }}}  ">Gestione Home Page</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/contatti', $page) ?>" 
-                    href="/admin/contatti">Messaggi</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/progetti', $page) ?>" 
-                    href="/admin/progetti">Progetti</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/corsi', $page) ?>" 
-                    href="/admin/corsi">Corsi Professionali</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/cv', $page) ?>" 
-                    href="/admin/cv">Curriculum</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.dashboard'), $page) ?>"
+                        href=" {{{ route('admin.dashboard') }}}  ">Gestione Home Page</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/contatti', $page) ?>"
+                        href="/admin/contatti">Messaggi</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/progetti', $page) ?>"
+                        href="/admin/progetti">Progetti</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/corsi', $page) ?>"
+                        href="/admin/corsi">Corsi Professionali</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/cv', $page) ?>"
+                        href="/admin/cv">Curriculum</a>
                 </div>
             </div>
         </div>
@@ -51,7 +46,7 @@ function isActive($menuItem, $currentPage)
 
             <div class="collapse" id="collapseLaws">
                 <div class="card card-body mt-2">
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/laws', $page) ?>" href="/admin/laws">Policy and Laws</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/laws', $page) ?>" href="/admin/laws">Policy and Laws</a>
                 </div>
             </div>
         </div>
@@ -64,10 +59,10 @@ function isActive($menuItem, $currentPage)
 
             <div class="collapse" id="collapseUser">
                 <div class="card card-body mt-2">
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/settings', $page) ?>" href="/admin/settings">Impostazioni</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/password', $page) ?>" href="/admin/password">Cambia Password</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/edit', $page) ?>" href="/admin/edit">Edit Profile</a>
-                    <a class="dropdown-item  text-dark<?php echo isActive('/admin/logs', $page) ?>" href="/admin/logs">Logs</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/settings', $page) ?>" href="/admin/settings">Impostazioni</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/password', $page) ?>" href="/admin/password">Cambia Password</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/edit', $page) ?>" href="/admin/edit">Edit Profile</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/logs', $page) ?>" href="/admin/logs">Logs</a>
                 </div>
             </div>
         </div>

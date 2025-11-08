@@ -35,7 +35,7 @@ if (!function_exists('route')) {
 }
 // * Used for layout pages.
 if (!function_exists(function: 'isActivePage')) {
-    function isActivePage($menuItem, $currentPage)
+    function isActivePage(string $menuItem, string $currentPage)
     {
         return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
     }
@@ -145,3 +145,5 @@ if (!function_exists(function: 'flashMessage')) {
         return Session::getFlash($key);
     }
 }
+
+
