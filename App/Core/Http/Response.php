@@ -201,4 +201,14 @@ class Response
         $this->setContent($errorContent);
         return $this;
     }
+
+    public function setErrorHandle(string $errorMsg, int $status){
+        $this->setCode($status);
+         $errorContent = $this->view->render('error', [
+            'code' => $status,
+            'errorMsg' => $errorMsg
+        ]);
+        $this->setContent($errorContent);
+        return $this;
+    }
 }
