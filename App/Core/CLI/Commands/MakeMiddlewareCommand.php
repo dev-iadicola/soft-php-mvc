@@ -96,6 +96,6 @@ PHP;
         // ✅ Mostra risultato formattato nel terminale
         Out::ok("Middleware '{$name}' created successfully!");
         Out::ln("Path: {$path}");
-        Out::ln("Config your Middleware in App/config/middleware.php");
+        Out::ln("Config your Middleware in config/middleware.php");
     }
 }
