@@ -87,14 +87,12 @@ class ProjectManagerController extends AbstractAdminController
      return response()->back()->withSuccess('Progetto aggiornato con successo!');
    }
 
-   #[RouteAttr(path: 'project', method: 'DELETE', name: 'project')]
+   #[RouteAttr(path: 'project-delete/{id}', method: 'DELETE', name: 'project')]
    public function destroy(Request $reqq, $id)
    {
       // trova e azione
       $data =  $reqq->all();
-      if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
-         return $this->statusCode413();
-      }
+      
 
       $project  = Project::find($id);
       if (!$project) {

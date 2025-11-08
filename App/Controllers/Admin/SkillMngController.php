@@ -2,34 +2,29 @@
 
 namespace   App\Controllers\Admin;
 
-
-
-
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;
 use App\Model\Profile;
 use App\Core\Http\Request;
 
-class SkillMngController extends AbstractAdminController 
+class SkillMngController extends AbstractAdminController
 {
 
-  
+
 
   public function store(Request $request)
-  {   
+  {
     Skill::create($request->all());
-
+    
     response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   public function edit(Request $request, $id)
   {
     $skill = Skill::find($id);
-    $skills = Skill::orderBy('id', 'DESC')->get();
-    $articles = Article::orderBy('created_at', 'DESC')->get();
-    $profiles = Profile::orderBy('id', 'DESC')->get();
-    return view('admin.portfolio.home', compact('skill','skills','articles','profiles'));
+    return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
 
   public function update(Request $request, $id)
@@ -42,19 +37,14 @@ class SkillMngController extends AbstractAdminController
     return response()->back()->withSuccess('Aggiornamento Eseguito');
   }
 
-  public function destroy(Request $reqq, $id){
-    // trova e azione
-   $data =  $reqq->all();
-   if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-    return $this->statusCode413();
-   }
+  #[RouteAttr('skill-delete/{id}', 'delete')]
+  public function destroy(Request $reqq, $id)
+  {
 
     $project  = Skill::find($id);
 
     $project->delete();
-  // Feedback Server
+
     return response()->back()->withSuccess('Skills Eliminata con Successo!');
-
- }
-
+  }
 }

@@ -8,7 +8,6 @@ use App\Model\Skill;
 use App\Core\Storage;
 use App\Model\Article;
 use App\Model\Profile;
-
 use App\Core\Validator;
 use App\Core\Http\Request;
 
@@ -89,14 +88,12 @@ class HomeManagerController extends AbstractAdminController
         // feedback server
         redirect()->back('Articolo Aggiornato con successo!');
     }
-
+    #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
     public function destroy(Request $reqq, $id)
     {
         // trova e azione
         $data =  $reqq->getPost();
-        if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
-            return $this->statusCode413();
-        }
+    
 
         $project  = Article::find($id);
 

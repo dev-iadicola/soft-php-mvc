@@ -47,9 +47,7 @@ class LawsMngController extends AbstractAdminController{
         #[RouteAttr(path: 'laws-delete/{id}', method: 'DELETE', name: 'laws.delete')]
         public function destroy(Request $req, $id){
           $data =  $req->all();
-         if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-          return $this->statusCode413();
-         }
+       
           $law = Law::find(id: $id)->delete();
 
           if($law ===  true){

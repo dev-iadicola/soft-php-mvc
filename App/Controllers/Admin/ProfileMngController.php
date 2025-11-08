@@ -47,14 +47,12 @@ class ProfileMngController extends AbstractAdminController
     
   }
 
-  #[RouteAttr(path: 'profile-delete/{id}', method: 'DELETE', name: 'profile.delete')]
-  public function destroy(Request $reqq, $id){
+  #[RouteAttr(path: '/profile-delete/{id}', method: 'DELETE', name: 'profile.delete')]
+  public function destroy(Request $reqq, int $id){
     // trova e azione
-   $data =  $reqq->all();
-   if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-    return $this->statusCode413();
-   }
-    $project  = Skill::find($id);
+    $data =  $reqq->all();
+
+    $project  = Profile::find($id);
     $project->delete();
     return  response()->back()->withSuccess('Skills ELIMINATE');
 

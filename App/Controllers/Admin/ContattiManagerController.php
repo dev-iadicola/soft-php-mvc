@@ -34,6 +34,6 @@ class ContattiManagerController extends AbstractAdminController
     if($contatto->delete()){
       return response()->back()->withSuccess("Messaggio eliminato $info");
     }
-    return response()->back()->withError("Impossibile eliminare il messaggio $nfo");
+    return response()->back()->withError("Impossibile eliminare il messaggio $info");
   }
 }
