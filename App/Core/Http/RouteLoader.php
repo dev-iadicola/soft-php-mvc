@@ -83,8 +83,8 @@ class RouteLoader
         foreach ($classControllers as $className => $stack) {
             $reflection = new ReflectionClass($className);
             // * creiamo diversi stack per popolarli all'interno di ClassController
-            $creteStackOdCpntrollers  = $this->GetAttributesOfController($reflection);
-            $classControllers->setStack($className, $creteStackOdCpntrollers);
+            $StackOfControllerAttr  = $this->GetAttributesOfController($reflection);
+            $classControllers->setStack(className: $className, stack: $StackOfControllerAttr);
         }
         return $classControllers;
     }
