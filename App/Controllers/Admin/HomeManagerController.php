@@ -1,9 +1,9 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Controllers\BaseController;
+
+use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Attributes\RouteAttr;
-use App\Core\Mvc;
 use App\Model\Skill;
 use App\Core\Storage;
 use App\Model\Article;
@@ -11,7 +11,7 @@ use App\Model\Profile;
 use App\Core\Validator;
 use App\Core\Http\Request;
 
-class HomeManagerController extends AbstractAdminController
+class HomeManagerController extends AuthenticationController
 {
 
 

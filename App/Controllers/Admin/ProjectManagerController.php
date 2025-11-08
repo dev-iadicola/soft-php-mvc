@@ -2,15 +2,14 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
 use App\Core\Storage;
 use App\Model\Project;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Validation\Validator;
 
-class ProjectManagerController extends AbstractAdminController
+class ProjectManagerController extends AuthenticationController
 {
 
    #[RouteAttr(path: 'project', method: 'get', name: 'project')]

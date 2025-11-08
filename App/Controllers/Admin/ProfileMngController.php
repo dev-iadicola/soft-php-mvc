@@ -2,18 +2,14 @@
 
 namespace   App\Controllers\Admin;
 
-
-
-
-use App\Core\Mvc;
 use App\Model\Skill;
 use App\Model\Article;
 use App\Model\Profile;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 
-class ProfileMngController extends AbstractAdminController 
+class ProfileMngController extends AuthenticationController 
 {
 
   #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]

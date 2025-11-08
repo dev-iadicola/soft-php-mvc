@@ -2,12 +2,11 @@
 
 namespace App\Controllers\Admin;
 
-
+use App\Core\Controllers\AuthenticationController;
 use App\Model\LogTrace;
 use App\Core\Http\Attributes\RouteAttr;
-use App\Core\Controllers\BaseController;
 
-class LogsController extends BaseController
+class LogsController extends AuthenticationController
 {
 
     #[RouteAttr(path: '/log', method: 'get', name: 'logs')]

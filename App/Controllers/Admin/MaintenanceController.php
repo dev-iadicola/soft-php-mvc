@@ -2,13 +2,13 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
+
 use App\Core\Config;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 
-class MaintenanceController extends AbstractAdminController
+class MaintenanceController extends AuthenticationController
 {
 
 

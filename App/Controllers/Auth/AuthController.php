@@ -9,11 +9,10 @@ use App\Core\Facade\Auth;
 use App\Core\Http\Request;
 
 use App\Core\Validation\Validator;
-use App\Core\Controllers\BaseController;
-use App\Core\Http\Attributes\AttributeRoute;
+use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\RouteAttr;
 
-class AuthController extends BaseController
+class AuthController extends Controller
 {
 
     #[RouteAttr('/login')]

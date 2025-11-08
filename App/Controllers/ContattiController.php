@@ -6,11 +6,12 @@ use \App\Core\Mvc;
 use App\Model\User;
 use App\Model\Contatti;
 use App\Core\Controllers\BaseController;
+use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Mail\BrevoMail;
 
-class ContattiController extends BaseController
+class ContattiController extends Controller
 {
 
     public function __construct(public Mvc $mvc)

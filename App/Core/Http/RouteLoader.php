@@ -131,6 +131,7 @@ class RouteLoader
                 }
             }
         }
+      
         return $routes;
     }
 

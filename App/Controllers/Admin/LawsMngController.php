@@ -1,13 +1,13 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
+
 use App\Model\Law;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 
-class LawsMngController extends AbstractAdminController{
+class LawsMngController extends AuthenticationController{
 
     #[RouteAttr('/laws')]  
     public function index(){

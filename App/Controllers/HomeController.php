@@ -5,11 +5,11 @@ use App\Model\Skill;
 use App\Model\Article;
 use App\Model\Profile;
 use App\Model\Project;
-use App\Core\Controllers\BaseController;
+use App\Core\Controllers\Controller;
 use App\Model\Certificate;
 use App\Core\Http\Attributes\RouteAttr;
 
-class HomeController extends BaseController {
+class HomeController extends Controller {
 
 
     public function __construct(public Mvc $mvc) {

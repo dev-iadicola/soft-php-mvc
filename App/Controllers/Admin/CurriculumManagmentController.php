@@ -2,14 +2,11 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
-use App\Core\Validator;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Model\Curriculum;
 use App\Core\Http\Request;
-use App\Core\Storage;
 
-class CurriculumManagmentController extends AbstractAdminController
+class CurriculumManagmentController extends AuthenticationController
 {
    public function index()
    {

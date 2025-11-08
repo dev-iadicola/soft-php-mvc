@@ -3,7 +3,7 @@
 namespace App\Controllers\Auth;
 
 use App\Controllers\Admin\AbstractAdminController;
-use App\Core\Controllers\BaseController;
+use App\Core\Controllers\Controller;
 use App\Core\Helpers\Log;
 use App\Core\Validation\Validator;
 use App\Mail\BrevoMail;
@@ -13,7 +13,7 @@ use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Model\Token;
 
-class TokenController extends BaseController
+class TokenController extends Controller
 {
 
     /**
