@@ -83,14 +83,30 @@ class Request
     // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
-        return strtoupper($_SERVER['REQUEST_METHOD']) ?? "CLI";
+        // Metodo base (GET, POST, ecc.)
+        $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'CLI');
+
+        // Se è POST, verifica se c’è un override
+        if ($method === 'POST') {
+            $override = $_POST['_method'] ?? $_GET['_method'] ?? null;
+
+            if ($override) {
+                $override = strtoupper($override);
+
+                // Permetti solo metodi validi
+                if (in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+                    return $override;
+                }
+            }
+        }
+
+        return $method;
     }
 
 
     public function uri(): string
     {
-
-        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? $_SERVER['REQUEST_URI'];
     }
     public function getURI(): string
     {
