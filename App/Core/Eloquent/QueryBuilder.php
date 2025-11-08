@@ -364,28 +364,22 @@ class QueryBuilder extends AbstractBuilder
 
     public function delete(): bool
     {
+      
         if (empty($this->table)) {
             throw new \Exception("Nome della tabella non impostato.");
         }
-
-        // condizioni
-        $where = $this->whereClause ?? '';
-        $bindigns = $this->bindings = [];
-
         if (empty($where)) {
-            if (isset($this->id)) {
-                $where = "WHERE id = :id";
-                $bindigns = [':id' => $this->id];
-            } else {
+            if (!isset($this->id)) {
                 throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
             }
         }
-        
-        $query = "DELETE FROM {$this->table} $where";
+      
+        $query = "DELETE FROM {$this->table} $this->whereClause";
+
 
         $stmt = $this->pdo->prepare($query);
 
-        foreach ($bindigns as $param => $value) {
+        foreach ($this->bindings as $param => $value) {
             $stmt->bindValue($param, $value);
         }
 
