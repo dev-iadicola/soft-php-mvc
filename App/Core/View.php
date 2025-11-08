@@ -3,9 +3,10 @@
 namespace App\Core;
 
 use \App\Core\Mvc;
-use App\Core\Services\CsrfService;
-use App\Core\Services\SessionStorage;
 use RuntimeException;
+use App\Core\Helpers\Log;
+use App\Core\Services\CsrfService;
+
 
 class View
 {
@@ -36,6 +37,7 @@ class View
         }
 
         $page = convertDotToSlash($page);
+
 
         $layoutValue = [
             'page' => $page,
@@ -114,13 +116,18 @@ class View
 
     public function getViewContent(string $folder, string $item, array $values = [], array $variables = []): string
     {
+        if (!isset($page) && isset($values['page'])) {
+            $page = $values['page'];
+        }
+
         extract($values);
         extract($variables);
         // per visualizzare i messaggi di errore e successo
         $views = $this->mvc->config->folder->views;
         // The full path and file with the content 
+
         $file = "$views/$folder/$item.php";
-        if(!file_exists($file)){
+        if (!file_exists($file)) {
             throw new RuntimeException("View file not found, it lost like you: $file");
         }
         // Read the file content
@@ -129,14 +136,33 @@ class View
         // compile blade-like syntax to php
         // {{{ var }}} -> unescaped echo
         $content = preg_replace('/\{\{\{\s*(.*?)\s*\}\}\}/s', '<?php echo $1; ?>', $content);
-         // {{ var }} -> escaped echo
+        // {{ var }} -> escaped echo
         $content = preg_replace('/\{\{\s*(.*?)\s*\}\}/s', '<?= htmlspecialchars($1, ENT_QUOTES, "UTF-8") ?>', $content);
 
 
-       // Evaluate the compiled PHP safely
-        ob_start();
-        eval('?>'. $content);
-        return ob_get_clean();
+        // $previousLevel = error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);
+
+        // ob_start();
+        // eval('?/>' . $content ?? ' ');
+        // $output = ob_get_clean();
+
+        // // Restore original error level
+        // error_reporting($previousLevel);
+
+        // return $output;
+
+        try {
+            ob_start();
+            eval('?>' . $content ?? ' ');
+            $output = ob_get_clean();
+            return $output;
+        } catch (\Throwable $e) {
+            //  Log utile per sapere quale view ha causato l'errore
+            Log::exception($e);
+            Log::debug(['view_file' => $file]);
+            throw new RuntimeException("Error rendering view: {$file}
+             message: {$e->getMessage()}", 0, $e);
+        }
     }
 }
 
@@ -179,7 +205,7 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
         // * As long as we find inclusions, we processed them.
         while (preg_match_all($pattern, $content, $matches)) {
             foreach ($matches[1] as $includeContent) {
-                $includePath = str_replace('.', '/', $includeContent); // get the content in @include()
+                $includePath = ltrim(str_replace('.', '/', $includeContent), '/'); // get the content in @include()
                 $includeFileContent = $this->view->getViewContent('', $includePath, [], $variables);
 
                 // * If the string include() exist in file, recursive for clear all recirusive
@@ -196,7 +222,7 @@ class IncludeDirectiveHandler extends BaseDirectiveHandler
         return $content;
     }
 
-    
+
 
     /**
      * Summary of processCsrf
