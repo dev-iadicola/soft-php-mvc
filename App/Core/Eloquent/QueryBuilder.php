@@ -28,189 +28,7 @@ use App\Core\Exception\ModelStructureException;
  */
 class QueryBuilder extends AbstractBuilder
 {
-
-    #region COSTRUZIONE QUERY
-
-    /**
-     * Summary of where
-     * 
-     * Aggiunge una clausola Where alla query
-     * 
-     *  Semplice confronto di uguaglianza:
-     *    ```php
-     *    $query->where('id', 5);
-     *     genera: WHERE id = :param
-     *    ```
-     * 
-     *  Con operatore personalizzato:
-     *    ```php
-     *    $query->where('prezzo', '>', 100);
-     *     genera: WHERE prezzo > :param
-     *    ```
-     * @param string $columnName Nome della colonna su cui applicare la condizione
-     * @param string|int|float|bool|null $conditionOrValue Operatore di contonto SQL oppure valore se non è specificato l'operatore
-     * @param  string|int|float|bool|null $value Valore del parametro, opzionale se il secondo parametro non è inserito.
-     * @return QueryBuilder 
-     */
-    public function where(string $columnName, string|int|float|bool|null $conditionOrValue, string|int|float|bool|null $value = null): self
-    {
-        if ($value === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->AddBind($conditionOrValue)} ";
-        } else {
-            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->AddBind($value)} ";
-        }
-        return $this;
-    }
-
-    /**
-     * Summary of whereNot
-     * 
-     * Aggiunge una clausola Where NOT alla query
-     * 
-     *  Semplice confronto di uguaglianza:
-     *    ```php
-     *    $query->where('id', 5);
-     *     genera: WHERE id = :param
-     *    ```
-     * 
-     *  Con operatore personalizzato:
-     *    ```php
-     *    $query->where('prezzo', '>', 100);
-     *     genera: WHERE prezzo > :param
-     *    ```
-     * @param string $columnName Nome della colonna su cui applicare la condizione
-     * @param string|int|float|bool|null $value  Valore del parametro
-     * @param  string|int|float|bool|null $value Valore del parametro, opzionale se il secondo parametro non è inserito.
-     * @return QueryBuilder 
-     */
-    public function whereNot(string $columnName, string $value, $parameter = null): self
-    {
-        if ($parameter === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName <> {$this->AddBind($value)} ";
-        }
-        return $this;
-    }
-    /**
-     * Summary of getPrefix
-     * @return string Se la clausola where è vuota, ritorna WHERE altrimenti concatena le altre condizioni con AND
-     */
-
-    /**
-     * Imposta i campi da selezionare nella query SQL.
-     * 
-     * Può ricevere una stringa singola o un array di colonne:
-     * 
-     *  Stringa singola:
-     *    ```php
-     *    $query->select('id, nome, email');
-     *      genera: SELECT id, nome, email
-     *    ```
-     * 
-     * Array di colonne:
-     *    ```php
-     *    $query->select(['id', 'nome', 'email']);
-     *     genera: SELECT id, nome, email
-     *    ```
-     * 
-     * Se non viene specificato alcun campo, la query di default selezionerà `*`.
-     * 
-     * @param array<string>|string $value Elenco dei campi da selezionare.
-     * 
-     * @return self Ritorna l’istanza corrente per permettere chiamate fluide.
-     */
-    public function select(array|string $value): self
-    {
-        if (is_array($value)) {
-            $this->selectValues = implode(', ', $value);
-        } else {
-            $this->selectValues = $value;
-        }
-        return $this;
-    }
-
-    /**
-     * Summary of orderBy
-     * @param array<string>|string $columns
-     * @param string $direction
-     * @throws \App\Core\Exception\QueryBuilderException
-     * @return QueryBuilder
-     */
-    public function orderBy(array|string $columns, string $direction = 'ASC'): self
-    {
-        if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelClass} ");
-        // validazione delle colonne
-        $validated = $this->validateColumns($columns, true);
-
-        $allowedDirections = ['ASC', 'DESC'];
-        $direction = strtoupper(trim($direction));
-        // è possibile solo che ci sia ASC o DESC e nient'altro
-        if (!in_array($direction, $allowedDirections, true)) {
-            throw new QueryBuilderException("Invalid direction '$direction' in orderBy()");
-        }
-        // costruzione della clausola orderBy.
-        $this->orderByClause = 'ORDER BY ' . implode(', ', array_map(fn($col) => "$col $direction", $validated));
-        return $this;
-    }
-
-
-    /**
-     * Raggruppa i risultati per una o più colonne.
-     *
-     * Utilizza validateColumns() per garantire che le colonne siano ammesse
-     * (presenti in $fillable o $systemColumns).
-     * 
-     * Se groupBy() viene richiamato più di una volta nella stessa query,
-     * viene lanciata un'eccezione per evitare ambiguità.
-     *
-     * @param string|array<string> $columns  Una o più colonne per la clausola GROUP BY
-     * @return self
-     *
-     * @throws QueryBuilderException Se le colonne non sono valide o se il metodo viene richiamato più volte
-     */
-    public function groupBy(string|array $columns): self
-    {
-        // Evita l’uso multiplo
-        if (!empty($this->groupByClause)) {
-            throw new QueryBuilderException(
-                "You can't use groupBy() more than once in the same query for model {$this->modelClass}"
-            );
-        }
-
-        // Validazione colonne con context automatico
-        $validated = $this->validateColumns($columns, true);
-
-        // Costruisce la clausola SQL
-        $this->groupByClause = 'GROUP BY ' . implode(', ', $validated);
-
-        return $this;
-    }
-
-
-    /**
-     * Summary of query 
-     * 
-     * Prepara la tua query. Questo metodo è molto utile se si tratta di una query complessa. 
-     * 
-     * @param string $query 
-     * @param array<string> $params parametri da serire per il bindValue
-     * @param int $fetchType
-     * @return QueryBuilder[]
-     */
-    public function query(string $query, ?array $params = [], int $fetchType = PDO::FETCH_ASSOC): array
-    {
-        $stmt = $this->pdo->prepare($query);
-
-        foreach ($params as $param => $value) {
-            $stmt->bindValue($param, $value);
-        }
-
-        $stmt->execute();
-
-        $data = $stmt->fetchAll($fetchType);
-        return $this->getInstances($data);
-    }
-
-   
+    
 
     /**
      * Summary of get
@@ -277,22 +95,7 @@ class QueryBuilder extends AbstractBuilder
         foreach ($rows as $key => $value) {
             $model->$key =  $value;
         }
-
         return $model;
-        // if ($data) {
-        //     $instance = new static();
-        //     $instance->setPDO($this->pdo);
-        //     $instance->setFillable($this->fillable);
-        //     $instance->setTable($this->table);
-        //     $instance->setClassModel($this->modelClass);
-
-        //     foreach ($data as $key => $value) {
-        //         $instance->$key = $value;
-        //     }
-        //     return $instance;
-        // }
-
-
     }
 
     private function getInstances($rows): array
@@ -311,18 +114,7 @@ class QueryBuilder extends AbstractBuilder
             //aggiunfo il model su result
         }
         return $arrayModels;
-        // $results = [];
-        // foreach ($data as $row) {
-        //     $instance = new static();
-        //     $instance->setPDO($this->pdo);
-        //     $instance->setFillable($this->fillable);
-        //     $instance->setTable($this->table);
-        //     $instance->setClassModel($this->modelClass);
-        //     foreach ($row as $key => $value) {
-        //         $instance->$key = $value;
-        //     }
-        //     $results[] = $instance;
-        // }
+       
 
     }
 
@@ -364,18 +156,17 @@ class QueryBuilder extends AbstractBuilder
 
     public function delete(): bool
     {
-      
+
         if (empty($this->table)) {
             throw new \Exception("Nome della tabella non impostato.");
         }
-        if (empty($where)) {
+        if (empty($this->whereClause)) {
             if (!isset($this->id)) {
                 throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
             }
         }
-      
+        // TODO: imoplementare con str replace select clause, sostiuire select con delete. 
         $query = "DELETE FROM {$this->table} $this->whereClause";
-
 
         $stmt = $this->pdo->prepare($query);
 
@@ -403,7 +194,7 @@ class QueryBuilder extends AbstractBuilder
         if (!isset($this->bindings[':id']) && !$this->whereClause) {
             $this->bindings[':id'] = $this->id;
         }
-
+        // TODO: IMPLEMENTARE STESSA cosa del delete str replace e sostituire SELECT con UPDATE 
         $query = "UPDATE {$this->table} SET {$setClause} {$whereClause}";
         $stmt = $this->pdo->prepare($query);
 
@@ -428,7 +219,17 @@ class QueryBuilder extends AbstractBuilder
         return $this;
     }
 
+    private function fill(array $values)
+    {
+        $fillable = $this->fillable;
 
+        // Filtra i valori per tenere solo quelli presenti in $fillable
+        return $filteredValues = array_filter(
+            $values,
+            fn($key) => in_array($key, $fillable),
+            ARRAY_FILTER_USE_KEY
+        );
+    }
     public function create(array $values)
     {
         if (empty($this->table)) {
@@ -438,14 +239,10 @@ class QueryBuilder extends AbstractBuilder
         $fillable = $this->fillable;
 
         // Filtra i valori per tenere solo quelli presenti in $fillable
-        $filteredValues = array_filter(
-            $values,
-            fn($key) => in_array($key, $fillable),
-            ARRAY_FILTER_USE_KEY
-        );
+        $filteredValues = $this->fill($values);
 
         if (empty($filteredValues)) {
-            throw new \InvalidArgumentException("Nessun valore valido da inserire.");
+            throw new \InvalidArgumentException("Impossible enter any value.");
         }
 
         // Prepara colonne e placeholder per PDO

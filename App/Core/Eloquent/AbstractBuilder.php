@@ -2,6 +2,8 @@
 
 namespace App\Core\Eloquent;
 
+use App\Core\Eloquent\Query\Execute;
+use App\Core\Eloquent\Query\SqlClauses;
 use App\Core\Exception\QueryBuilderException;
 use PDO;
 use App\Core\Exception\ModelNotFoundException;
@@ -11,7 +13,7 @@ use PDOStatement;
 
 abstract class AbstractBuilder
 {
-
+    use SqlClauses; use Execute;
     protected static ?QueryBuilder $_instance = null;
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
@@ -19,11 +21,7 @@ abstract class AbstractBuilder
     protected array $bindings = []; // Parametri di binding
 
     protected array $systemColumns = ['id', 'created_at', 'updated_at'];
-    protected string $selectValues = '*'; // Campi da selezionare
-    protected string $whereClause = ''; // Clausola WHERE
-    protected string $orderByClause = ''; // Clausola ORDER BY
-    protected string $groupByClause = ''; // Clausola GROUP BY
-    protected string $limitClause = ""; // Clausola Limit
+    
     protected PDO $pdo; // Oggetto PDO per la connessione al database
     public int|float|string|null $id = null; // ID dell'istanza
 
@@ -68,7 +66,7 @@ abstract class AbstractBuilder
         if (CheckSchema::tableExist($table))
             $this->table = $table;
         else {
-            throw new ModelNotFoundException("Table " + $table + " Not Exist in Schema. Correct yout Model: " + $this->modelClass);
+            throw new ModelNotFoundException("Table $table Not Exist in Schema. Correct yout Model :  {$this->modelClass} or Schema");
         }
     }
  
@@ -107,85 +105,4 @@ abstract class AbstractBuilder
 
     #ENDREGION
 
-    //───────────────────────────────────────────────────────────────
-    //* METODI SMART PER POPOLAZIONE STATEMENT SQL 
-    //───────────────────────────────────────────────────────────────
-    #region SQL OPERAZIONI
-    protected function AddBind(?string $val = null): mixed
-    {
-        if ($val === null) throw new QueryBuilderException("The value is NULL");
-        $key = ":p_" . ++$this->paramCounter;
-        $this->bindings[":p_" . $this->paramCounter] = $val;
-        return $key;
-    }
-    /**
-     * Summary of getPrefix
-     * @return string
-     */
-    protected function getPrefix(): string
-    {
-        return empty($this->whereClause) ? "WHERE" : "AND";
-    }
-
-    /**
-     * Summary of toSql
-     * Ritorna la query construita con le clausole.
-     * @return string
-     */
-    public function toSql(): string
-    {
-        return "SELECT $this->selectValues FROM $this->table $this->whereClause $this->groupByClause $this->orderByClause $this->limitClause";
-    }
-
-    /**
-     * Summary of executeQuery
-     * 
-     * prendo la query con i paramentri da sostituire.
-     * 
-     * Preparo lo statement della stringa con i parametri.
-     *
-     * ciclo l'array @property array<string,string> $this->bindings 
-     * per allegare i parametri ai bindings
-     *  
-     * 
-     * 
-     * @return bool
-     * */
-
-    //───────────────────────────────────────────────────────────────
-    //* ESECUZIONE QUERY E FETCH/FETCHALL 
-    //───────────────────────────────────────────────────────────────
-    #region STATMENT - EXECUTION - FETCH
-
-    private function prepareAndExecute(): PDOStatement
-    {
-        // ritorno la generazione della stringa query con i parametri da bindare
-        $query = $this->toSql();
-
-        $stmt = $this->pdo->prepare($query);
-        foreach ($this->bindings as $bind => $value) {
-            $stmt->bindParam($bind, $value);
-        }
-        $stmt->execute();
-        return  $stmt;
-        // return $stmt->fetch($fetchTyep);
-    }
-
-    protected function fetch(int $fetchTyep = PDO::FETCH_ASSOC): array|object|bool
-    {
-        $stmt = $this->prepareAndExecute();
-        if (!$stmt instanceof PDOStatement) {
-            return false; // errore o query non eseguita
-        }
-        return $stmt->fetch($fetchTyep);
-    }
-
-    protected function fetchAll(int $fetchType = PDO::FETCH_ASSOC): array|object|bool
-    {
-        $stmt = $this->prepareAndExecute();
-        if (!$stmt instanceof PDOStatement) {
-            return false; // errore o query non eseguita
-        }
-        return $stmt->fetchAll($fetchType);
-    }
 }
