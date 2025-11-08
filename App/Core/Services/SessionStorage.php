@@ -4,6 +4,8 @@ namespace App\Core\Services;
 
 use App\Core\Helpers\Log;
 use App\Core\Contract\ITimeoutStrategy;
+use App\Traits\Attributes;
+use App\Utils\Enviroment;
 
 /**
  * Summary of SessionStorage
@@ -25,8 +27,7 @@ class SessionStorage
      */
     private function __construct()
     {
-        // Imposta la durata e la configurazione prima di aprire la sessione
-        $this->setLifeTime();
+
         $this->setTimeout();
 
         //  Imposta sicurezza dei cookie
@@ -38,6 +39,18 @@ class SessionStorage
 
         //  Avvio della sesssione.
         $this->startSession();
+    }
+
+
+
+
+    public static function getInstance(): SessionStorage
+    {
+        // Se è già stato inzializzato con get instance, prende instance altrimenti crea instanza privata
+        if (self::$instance === null) {
+            return self::$instance = new SessionStorage();
+        }
+        return self::$instance;
     }
 
 
@@ -80,8 +93,46 @@ class SessionStorage
      * @see https://owasp.org/www-project-cheat-sheets/cheatsheets/Session_Management_Cheat_Sheet.html
      */
 
+    public function __get($key)
+    {
+
+        if (array_key_exists($key, $this->attributes)) {
+            return $this->attributes[$key];
+        }
+        if (property_exists($this, $key)) {
+            return $this->$key;
+        }
+        if (property_exists($this, $key)) {
+            return $this->$key;
+        }
+        return $_SESSION[$key];
+    }
+
+    public function __set($key, mixed $val)
+    {
+        if (method_exists($this, $key)) {
+            return $this->$key($val);
+        }
+        if (property_exists($this, $key)) {
+            $this->$key = $val;
+            return;
+        }
+        // ! NOT CHANGE IT WORK
+        $_SESSION[$key] = $val;
+    }
+
+    // * Bisogna utilizzarlo solo quando l'utente effettua il login
+    /**
+     * Sets the session lifetime.
+     * 
+     * Should be called only when the user logs in,
+     * to define how long the session remains valid.
+     *
+     * @param int|null $lifetime Session duration in seconds (default from config)
+     * @return void
+     */
     public function setLifeTime(?int $lifetime = null): void
-    {   
+    {
         // Se la sessione è già avviata, non modificare i parametri
         if (session_status() === PHP_SESSION_ACTIVE) {
             return;
@@ -105,7 +156,7 @@ class SessionStorage
         ]);
 
         // Log utile per debug o monitoraggio
-       
+
         Log::debug("Session lifetime set to {$this->lifetime} seconds.");
     }
 
@@ -113,15 +164,6 @@ class SessionStorage
     {
         $this->timeout = $time ?? (int) mvc()->config->settings["session"]["timeout"];
         Log::debug("Session timeout set to {$this->timeout} seconds.");
-    }
-
-    public static function getInstance(): SessionStorage
-    {
-        // Se è già stato inzializzato con get instance, prende instance altrimenti crea instanza privata
-        if (self::$instance === null) {
-            return self::$instance = new SessionStorage();
-        }
-        return self::$instance;
     }
 
 
@@ -133,12 +175,15 @@ class SessionStorage
     private function startSession()
     {
         if (session_status() == PHP_SESSION_NONE) {
-            session_start();
-            Log::debug('Sessione Avviata');
-            Log::debug($_SESSION);
+            session_start(); // serve per riavviare la sessione.
+            if (Enviroment::isDebug()) {
+                Log::debug('session_start: ' . session_id());
+                Log::debug($_SESSION);
+            }
+
             return true;
         }
-       
+
         return false;
     }
 
@@ -158,6 +203,10 @@ class SessionStorage
         if ($elapsed >= $_SESSION['FLASH_TTL']) {
             $this->flashSessionDestroy();
         }
+    }
+
+    public function set(string $key , mixed $value){
+        $_SESSION[$key]  = $value;
     }
 
     /**
@@ -187,13 +236,13 @@ class SessionStorage
         return  $_SESSION[$key] = $value;
     }
 
-    public  function create(array $arraySession): array|null
+    public  function create(array $arraySession): static
     {
 
         foreach ($arraySession as $key => $value) {
             $_SESSION[$key] = $value;
         }
-        return $this->getAll();
+        return $this;
     }
 
     public function getAll(): array|null
@@ -205,7 +254,33 @@ class SessionStorage
     {
         return $_SESSION[$key] ?? null;
     }
+    /**
+     * Summary of hasOrCreate
+     * Allows you to check whether a key exist in the current session.
+     * 
+     * - if exist, return true
+     * - else if it donesn't exist, 
+     *   it take the array|string $value and insert into the session and save it with 
+     *   key $key value your use for search a value in array.
+     *    
+     * @param string $key
+     * @param array|string $value
+     * @return array|bool|null
+     */
+    public function getOrCreate(string $key, mixed $value): mixed
+    {
+        if (!$this->has($key)) {
+             $this->create([$key => $value]);
+        }
+        return $this->get($key);
+    }
 
+    /**
+     * Summary of has
+     * Check if the key in session esist.
+     * @param string $key
+     * @return bool
+     */
     public function has(string $key): bool
     {
         return isset($_SESSION[$key]);
@@ -217,6 +292,7 @@ class SessionStorage
         unset($_SESSION[$key]);
         return $this->getAll() ?? null;
     }
+
 
     public function setFlashSession($key, $value, $ttl = 1)
     {

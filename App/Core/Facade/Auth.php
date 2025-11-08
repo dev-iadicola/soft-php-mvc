@@ -14,7 +14,7 @@ class Auth {
 
     public static function getInstance(): AuthService{
         if(!self::$instance){
-            self::$instance = new AuthService(SessionStorage::getInstance());
+            self::$instance = new AuthService(mvc()->sessionStorage);
         }
         return self::$instance;
     }

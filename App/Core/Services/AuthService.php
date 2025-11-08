@@ -46,6 +46,8 @@ class AuthService
         if ($model) {
             // Generate token from server and save the value
             $token = static::generateToken();
+            // * Set lifetime of the session.
+             $this->_sessionStorage->setLifeTime(mvc()->config->settings['session']['auth-lifetime']);
 
             $model->token = $token;
             // Save token in the database.
@@ -53,9 +55,6 @@ class AuthService
 
             // Save the data of user and the token in session
             static::startUserSession(token: $token);
-
-            // Save the user in tracelog.
-            LogTrace::createLog($model->id);
 
             // Save the model
             $this->setUser($model);
