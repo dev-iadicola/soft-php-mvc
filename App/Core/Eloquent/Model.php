@@ -93,13 +93,7 @@ class Model implements JsonSerializable
         return $this->queryBuilder->create($data);
     }
 
-    public function delete(): bool
-    {
-        if (isset($this->attributes['id'])) {
-            return $this->queryBuilder->where('id', $this->attributes['id'])->delete();
-        }
-        return false;
-    }
+  
 
 
 
@@ -140,7 +134,7 @@ class Model implements JsonSerializable
     public static function __callStatic($method, $parameters)
     {
 
-        // ✅ Se il metodo statico è definito nella sottoclasse (es. LogTrace::createLog)
+    // If the static method is defined in the subclass (e.g. LogTrace::createLog)       
         if (method_exists(static::class, $method)) {
             // Usa forward_static_call_array per chiamarlo in modo pulito e statico
             return forward_static_call_array([static::class, $method], $parameters);
