@@ -12,11 +12,7 @@ use App\Core\Http\Attributes\RouteAttr;
 class HomeController extends Controller {
 
 
-    public function __construct(public Mvc $mvc) {
-        parent::__construct($mvc);
-        
-     
-    }
+    
 
     #[RouteAttr(path:'/')]
     public function index() {
