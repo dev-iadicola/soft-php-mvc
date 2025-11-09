@@ -5,88 +5,92 @@ namespace App\Core\Eloquent\Query;
 trait SqlOperation
 {
     use SqlClauses;
-  
-    public function count(string $column = '*', string $alias = 'aggregate'): self
+    use Execute;   
+    public function count(string $column = '*'):int|false
     {
-        $agg = "COUNT({$column}) AS {$alias}";
-        $this->selectValues .= ", {$agg}";
-        return $this;
+        $this->selectValues = " COUNT({$column}) AS count";
+        return $this->fetchColumn();
     }
-    public function max(string $column, string $alias): self
+    
+    public function max(string $column): int|false
     {
-        $this->selectValues .= ", MAX({$column}) as $alias";
-        return $this;
-    }
-
-    public function min(string $column, string $alias): self
-    {
-        $this->selectValues .= ", MIN({$column}) as $alias";
-        return $this;
+        $this->selectValues = " MAX({$column})";
+        return $this->fetchColumn();
     }
 
-    public function countDistinct(string $column, string $alias = 'distinct_count'): self
+    public function min(string $column ): int|false
     {
-        $this->selectValues .= ", COUNT(DISTINCT {$column}) as {$alias}";
-        return $this;
-    }
-    public function sum(string $column, string $alias): self
-    {
-        $this->selectValues .= ", SUM({$column}) as $alias";
-        return $this;
-    }
-    public function avg(string $column, string $alias): self
-    {
-        $this->selectValues .= ", AVG({$column}) as $alias";
-        return $this;
+        $this->selectValues = " MIN({$column})";
+        return $this->fetchColumn();
     }
 
-    public function avgDistinct(string $column, string $alias = 'avg_distinct'): self
+    public function countDistinct(string $column): int|false
     {
-        $this->selectValues .= ", AVG(DISTINCT {$column}) as {$alias}";
-        return $this;
+        $this->selectValues = " COUNT(DISTINCT {$column}) ";
+        return $this->fetchColumn();
+    }
+    public function sum(string $column ): int|false
+    {
+        $this->selectValues = " SUM({$column}) ";
+        return $this->fetchColumn();
+    }
+    public function sumDistinct(string $column): int|false
+    {
+        $this->selectValues = " SUM( DISTINCT {$column}) ";
+        return $this->fetchColumn();
+    }
+    public function avg(string $column ): int|false
+    {
+        $this->selectValues = " AVG({$column}) ";
+        return $this->fetchColumn();
     }
 
-    public function coalesce(string $column, string $default, string $alias): self
+    public function avgDistinct(string $column): int|false
     {
-        $this->selectValues .= ", COALESCE({$column}, '{$default}') as {$alias}";
-        return $this;
+        $this->selectValues = " AVG(DISTINCT {$column}) ";
+        return $this->fetchColumn();
     }
 
-    public function length(string $column, string $alias = 'length'): self
-    {
-        $this->selectValues .= ", LENGTH({$column}) as {$alias}";
-        return $this;
-    }
+    // public function coalesce(string $column, string $default, ): int|false
+    // {
+    //     $this->selectValues .= ", COALESCE({$column}, '{$default}') as {$alias}";
+    //     return $this->fetchColumn();
+    // }
 
-    public function upper(string $column, string $alias = 'upper'): self
-    {
-        $this->selectValues .= ", UPPER({$column}) as {$alias}";
-        return $this;
-    }
+    // public function length(string $column): int|false
+    // {
+    //     $this->selectValues .= ", LENGTH({$column})";
+    //     return $this->fetchColumn();
+    // }
 
-    public function lower(string $column, string $alias = 'lower'): self
-    {
-        $this->selectValues .= ", LOWER({$column}) as {$alias}";
-        return $this;
-    }
+    // public function upper(string $column, string $alias = 'upper'): int|false
+    // {
+    //     $this->selectValues .= ", UPPER({$column}) as {$alias}";
+    //     return $this->fetchColumn();
+    // }
 
-    public function concat(array $columns, string $alias = 'concat'): self
-    {
-        $joined = implode(", ' ', ", $columns);
-        $this->selectValues .= ", CONCAT({$joined}) as {$alias}";
-        return $this;
-    }
+    // public function lower(string $column, string $alias = 'lower'): int|false
+    // {
+    //     $this->selectValues .= ", LOWER({$column}) as {$alias}";
+    //     return $this->fetchColumn();
+    // }
 
-    public function dateFormat(string $column, string $format = '%Y-%m-%d', string $alias = 'formatted'): self
-    {
-        $this->selectValues .= ", DATE_FORMAT({$column}, '{$format}') as {$alias}";
-        return $this;
-    }
+    // public function concat(array $columns, string $alias = 'concat'): int|false
+    // {
+    //     $joined = implode(", ' ', ", $columns);
+    //     $this->selectValues .= ", CONCAT({$joined}) as {$alias}";
+    //     return $this->fetchColumn();
+    // }
 
-    public function ifNull(string $column, string $default, string $alias = null): self
-    {
-        $alias ??= $column;
-        $this->selectValues .= ", IFNULL({$column}, '{$default}') as {$alias}";
-        return $this;
-    }
+    // public function dateFormat(string $column, string $format = '%Y-%m-%d', string $alias = 'formatted'): int|false
+    // {
+    //     $this->selectValues .= ", DATE_FORMAT({$column}, '{$format}') as {$alias}";
+    //     return $this->fetchColumn();
+    // }
+
+    // public function ifNull(string $column, string $default): int|false
+    // {
+    //     $this->selectValues .= ", IFNULL({$column}, '{$default}') ";
+    //     return $this->fetchColumn();
+    // }
 }

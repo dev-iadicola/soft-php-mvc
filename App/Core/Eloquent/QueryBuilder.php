@@ -8,24 +8,26 @@ use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
 
 /**
- * Classe QueryBuilder
+ * Class QueryBuilder
+ * _________________________________________
  *
- * Responsabile della costruzione ed esecuzione dinamica delle query SQL
- * utilizzando un approccio fluente e sicuro tramite parametri bindati.
+ * Responsible for building and executing dynamic SQL queries
+ * using a fluent, secure, and parameterized approach.
  *
- * Questa classe estende {@see AbstractBuilder} e fornisce metodi
- * di alto livello per la definizione di clausole come:
- * - SELECT, WHERE, GROUP BY, ORDER BY, LIMIT, ecc.
+ * This class extends {@see AbstractBuilder} and provides
+ * high-level methods for defining clauses such as:
+ * - SELECT, WHERE, GROUP BY, ORDER BY, LIMIT, etc.
  *
- * È progettata per essere utilizzata internamente dai Model, ma può
- * essere usata anche in modo diretto per query personalizzate.
+ * It is designed to be used internally by Models but can
+ * also be utilized directly for custom query operations.
  *
- * Nota:
- * In una versione iniziale era previsto l'utilizzo del pattern Singleton,
- * ma è stato rimosso per evitare problemi di stato condiviso tra query diverse.
+ * Note:
+ * The Singleton pattern was initially considered but removed
+ * to avoid shared-state issues between different queries.
  *
  * @package App\Core\Eloquent
  */
+
 class QueryBuilder extends AbstractBuilder
 {
 
@@ -33,10 +35,7 @@ class QueryBuilder extends AbstractBuilder
     public function exists(): bool
     {
         $sql = "SELECT EXISTS(" . $this->toSql() . ")";
-        $stmt = $this->pdo->prepare($sql);
-        foreach ($this->bindings as $bind => $val) $stmt->bindValue($bind, $val);
-        $stmt->execute();
-        return (bool) $stmt->fetchColumn();
+        return (bool) $this->fetchColumn();
     }
 
     //* ───────────────────────────────────────────────────────────────
@@ -103,6 +102,7 @@ class QueryBuilder extends AbstractBuilder
         }
         // instanzio il model al quale viene effettuato il querybuilder
         $model = new $this->modelClass;
+        // * Important
         $model->setQueryBuilder($this);
         foreach ($rows as $key => $value) {
             $model->$key =  $value;
@@ -114,16 +114,8 @@ class QueryBuilder extends AbstractBuilder
     {
         $arrayModels = [];
         foreach ($rows as $row) {
-            // instanzio classe model 
-            $model = new $this->modelClass;
-            //popolo secondo i nuovi dati rows l'array attrebutes ma utilizzo i setter magici per farlo
-            foreach ($row as $key => $value) {
-                // andiamo sul sicuro utilizzando __set anziché direttamente la chiave in modo da non chiamare prorpeità del model, popolando bene l'array attributes
-                $model->__set($key, $value);
-            }
-
+            $model = $this->getOneInstance($row);
             $arrayModels[] = $model;
-            //aggiunfo il model su result
         }
         return $arrayModels;
     }
@@ -135,6 +127,12 @@ class QueryBuilder extends AbstractBuilder
         return (int) $this->pdo->lastInsertId();
     }
 
+    /**
+     * Summary of findAll
+     * @param int $fetchType
+     * @throws \Exception
+     * @return array<Model>
+     */
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
     {
         if (empty($this->table)) {
@@ -295,7 +293,7 @@ class QueryBuilder extends AbstractBuilder
 
     //     return $stmt->execute();
     // }
-    
+
     //* ───────────────────────────────────────────────────────────────
     #region UTILS
     //* ───────────────────────────────────────────────────────────────
@@ -367,6 +365,11 @@ class QueryBuilder extends AbstractBuilder
 
         return $validated;
     }
+    public function toArray(): array
+    {
+        return array_map(fn($m) => get_object_vars($m), $this->get());
+    }
+
 
     //───────────────────────────────────────────────────────────────
     #region CLONE    
@@ -375,10 +378,4 @@ class QueryBuilder extends AbstractBuilder
     {
         return clone $this;
     }
-
-
-    //───────────────────────────────────────────────────────────────
-    #region TRANSAZIONI
-    //───────────────────────────────────────────────────────────────
-
 }

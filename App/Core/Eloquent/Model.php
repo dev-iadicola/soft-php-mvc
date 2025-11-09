@@ -14,21 +14,6 @@ use App\Core\Exception\ModelStructureException;
 use RuntimeException;
 
 /**
- * Classe base per tutti i Model del framework.
- *
- * Fornisce un'interfaccia statica verso {@see QueryBuilder} tramite il metodo magico {@see Model::__callStatic()}.
- *
- * I metodi statici come `where()`, `orderBy()`, `get()`, ecc.
- * vengono automaticamente inoltrati a una nuova istanza di QueryBuilder
- * configurata in base al Model corrente.
- *
- * Esempio:
- * ```php
- * $profiles = Profile::where('selected', true)
- *                    ->orderBy('id', 'DESC')
- *                    ->get();
- * ```
- *
  * @method static QueryBuilder select(array|string $columns)
  * @method static QueryBuilder where(string $columnName, string|int|float|bool|null $operatorOrValue, string|int|float|bool|null $value = null)
  * @method static QueryBuilder orderBy(array|string $columns, string $direction = 'ASC')
@@ -37,7 +22,6 @@ use RuntimeException;
  * @method static QueryBuilder first()
  * @method static QueryBuilder find(int|string $id)
  * @method static QueryBuilder findOrFail(int|string $id)
- *
  * @see QueryBuilder
  */
 class Model implements JsonSerializable
@@ -48,73 +32,16 @@ class Model implements JsonSerializable
     private ?QueryBuilder $queryBuilder = null; // Permettendo di ereditare i suoi metodi, costruisce la query
 
 
-    protected function boot(): void
-    {
-
-        if (!$this->table) {
-            $calledClass = get_class($this); // Ottieni il nome completo del Model
-            throw new ModelStructureException("create variable table in : {$calledClass}");
-        }
-
-        $this->queryBuilder = new QueryBuilder();
-        $this->queryBuilder->setPDO(Database::getInstance()->getConnection());
-        $this->queryBuilder->setClassModel(get_called_class());
-        $this->queryBuilder->setTable(table: $this->table);
-        $this->queryBuilder->setFillable(fillable: $this->fillable);
-        // TODO: vedere se implementare oppure no Instance::context
-        //Instance::context(builder: $this->queryBuilder); 
-    }
-
-    public function setQueryBuilder(QueryBuilder $queryBuilder)
-    {
-        $this->queryBuilder = $queryBuilder;
-    }
-
-    public function save(): bool|QueryBuilder
-    {
-        if (!$this->queryBuilder) {
-            throw new RuntimeException("Querybuilder not connected to Model");
-        }
-        // recover data to save
-        $data = $this->attributes;
-
-        // Filter with fillable
-        $this->fillable = $this->queryBuilder->getFillable();
-        $data = array_filter(
-            $data,
-            fn($key) => in_array($key, $this->fillable),
-            ARRAY_FILTER_USE_KEY
-        );
-        // if the key id exist, update the record.
-        if (isset($this->attributes['id'])) {
-            return $this->queryBuilder->where('id', $this->attributes['id'])->update($data);
-        }
-        // else, create e new record in DB
-        return $this->queryBuilder->create($data);
-    }
-
-  
-
-
-
     /**
-     * Gestisce le chiamate statiche ai metodi del Model e le inoltra al QueryBuilder.
-     *
-     * Questo metodo intercetta tutte le chiamate statiche come:
-     * ```php
-     * User::where('id', 1)->first();
-     * ```
-     * e le delega ai metodi equivalenti definiti in {@see QueryBuilder}.
-     *
-     * @param string $method     Nome del metodo chiamato staticamente.
-     * @param array  $parameters Parametri passati al metodo.
-     *
+     | Handles static method calls on the Model and delegates them to the QueryBuilder.
+     | and forwards them to the corresponding methods in {@see QueryBuilder}.
+     __________________________________________________________________________
+     * @param string $method     The name of the called static method.
+     * @param array  $parameters The parameters passed to the method.
      * @see QueryBuilder
      * @throws \App\Core\Exception\QueryBuilderException
-     * @return mixed Il risultato del metodo chiamato sul QueryBuilder.
+     * @return mixed The result of the executed QueryBuilder method.
      */
-
-
     public function __call($method, $parameters)
     {
         // Se il metodo è definito nel Model (non statico)
@@ -134,7 +61,7 @@ class Model implements JsonSerializable
     public static function __callStatic($method, $parameters)
     {
 
-    // If the static method is defined in the subclass (e.g. LogTrace::createLog)       
+        // If the static method is defined in the subclass (e.g. LogTrace::createLog)       
         if (method_exists(static::class, $method)) {
             // Usa forward_static_call_array per chiamarlo in modo pulito e statico
             return forward_static_call_array([static::class, $method], $parameters);
@@ -183,6 +110,54 @@ class Model implements JsonSerializable
             throw new QueryBuilderException($e->getMessage() . $origin);
         }
     }
+    protected function boot(): void
+    {
+
+        if (!$this->table) {
+            $calledClass = get_class($this); // Ottieni il nome completo del Model
+            throw new ModelStructureException("create variable table in : {$calledClass}");
+        }
+
+        $this->queryBuilder = new QueryBuilder();
+        $this->queryBuilder->setPDO(Database::getInstance()->getConnection());
+        $this->queryBuilder->setClassModel(get_called_class());
+        $this->queryBuilder->setTable(table: $this->table);
+        $this->queryBuilder->setFillable(fillable: $this->fillable);
+
+    }
+
+    public function setQueryBuilder(QueryBuilder $queryBuilder)
+    {
+        $this->queryBuilder = $queryBuilder;
+    }
+
+    public function save(): bool|QueryBuilder
+    {
+        if (!$this->queryBuilder) {
+            throw new RuntimeException("Querybuilder not connected to Model");
+        }
+        // recover data to save
+        $data = $this->attributes;
+
+        // Filter with fillable
+        $this->fillable = $this->queryBuilder->getFillable();
+        $data = array_filter(
+            $data,
+            fn($key) => in_array($key, $this->fillable),
+            ARRAY_FILTER_USE_KEY
+        );
+        // if the key id exist, update the record.
+        if (isset($this->attributes['id'])) {
+            return $this->queryBuilder->where('id', $this->attributes['id'])->update($data);
+        }
+        // else, create e new record in DB
+        return $this->queryBuilder->create($data);
+    }
+
+
+
+
+
 
 
 

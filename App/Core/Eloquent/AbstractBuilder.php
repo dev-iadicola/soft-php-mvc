@@ -7,6 +7,7 @@ use App\Core\Eloquent\Query\SqlClauses;
 use App\Core\Eloquent\Query\SqlOperation;
 use App\Core\Eloquent\Query\Transaction;
 use App\Core\Exception\QueryBuilderException;
+use App\Traits\Attributes;
 use PDO;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
@@ -16,7 +17,7 @@ use PDOStatement;
 abstract class AbstractBuilder
 {
     use SqlClauses; use SqlOperation;  use Transaction;
-    use Execute;
+    use Execute; use Attributes;
     protected static ?QueryBuilder $_instance = null;
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
@@ -102,7 +103,5 @@ abstract class AbstractBuilder
         return $this->table;
     }
 
-
-    #ENDREGION
 
 }

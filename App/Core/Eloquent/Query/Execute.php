@@ -57,4 +57,13 @@ trait Execute
         }
         return $stmt->fetchAll($fetchType);
     }
+
+    protected function fetchColumn(?string $query = null){
+        $stmt = $this->prepareAndExecute($query);
+        if (!$stmt instanceof PDOStatement) {
+            return false; // errore o query non eseguita
+        }
+        return (int) $stmt->fetchColumn();
+
+    }
 }

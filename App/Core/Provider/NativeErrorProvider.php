@@ -16,7 +16,7 @@ class NativeErrorProvider
     public function register()
     {
         // handle for "non-fatal" error. (eg. warning, notice, deprecated)
-        set_error_handler([$this, 'waringPhpError']);
+        // set_error_handler([$this, 'waringPhpError']);
         // Handle fatal error to close script
         register_shutdown_function([$this,'fatalError']);
     }
