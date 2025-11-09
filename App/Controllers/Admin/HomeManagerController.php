@@ -15,7 +15,7 @@ class HomeManagerController extends AuthenticationController
 {
 
 
-    #[RouteAttr('/dashboard','get','admin.dashboard')]
+    #[RouteAttr('/home','get','admin.home')]
     public function index()
     {
         // visualizza per la gestione della home
@@ -26,7 +26,7 @@ class HomeManagerController extends AuthenticationController
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
-
+    
     public function store(Request $request)
     {
         $data = $request->all();

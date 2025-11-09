@@ -9,16 +9,15 @@ use App\Core\Http\Attributes\RouteAttr;
 class DashBoardController extends AuthenticationController{
 
     
-    #[RouteAttr('/admin/dashboard','GET')]
+    #[RouteAttr('/dashboard','GET', 'admin.dashboard')]
     public function index(){
+       
         $message = Contatti::orderBy('id', 'DESC')->get();
+       
        return view('admin.dashboard', compact('message'));
     }
 
-    public function logout(){
-        $this->setLayout('default');
-        Auth::logout();
-        return $this->mvc->response->redirect('/login');
-    }
+
+   
 
 }
