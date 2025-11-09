@@ -73,4 +73,12 @@ class AuthController extends Controller
 
         response()->redirect("/login")->withSuccess("Sign in comoplete, now sign up!");
     }
+    #[RouteAttr('/logout', 'POST', 'logout')]
+    public function logout(){
+        $this->setLayout('default');
+        Auth::logout();
+        return $this->mvc->response->redirect('/login');
+    }
+
+
 }
