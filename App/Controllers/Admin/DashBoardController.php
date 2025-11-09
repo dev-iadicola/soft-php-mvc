@@ -12,9 +12,9 @@ class DashBoardController extends AuthenticationController{
     #[RouteAttr('/dashboard','GET', 'admin.dashboard')]
     public function index(){
        
-        $message = Contatti::orderBy('id', 'DESC')->get();
+        $messages = Contatti::orderBy('id', 'DESC')->get();
        
-       return view('admin.dashboard', compact('message'));
+       return view('admin.dashboard', compact('messages'));
     }
 
 
