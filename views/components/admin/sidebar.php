@@ -9,7 +9,8 @@
 <?php $page  = request()->uri() ?>
 <ul class="nav nav-pills flex-column mb-auto">
     <li class="nav-item my-2">
-        <a href="/admin/dashboard" class="nav-link text-white <?php echo isActivePage('/admin/dashboard', request()->uri()) ?>" aria-current="page">
+        <a href="{{route('admin.dashboard')}}" class="nav-link text-white {{ isActivePage("{{{route('admin.dashboard')}}}",
+         request()->uri()) }} aria-current="page">
             <svg class="bi me-2" width="16" height="16">
                 <use xlink:href="#home"></use>
             </svg>
@@ -25,7 +26,7 @@
             <div class="collapse" id="collapsePortfolio">
                 <div class="card card-body mt-2">
                     <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.dashboard'), $page) ?>"
-                        href=" {{{ route('admin.dashboard') }}}  ">Gestione Home Page</a>
+                        href=" {{{ route('admin.home') }}}  ">Gestione Home Page</a>
                     <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/contatti', $page) ?>"
                         href="/admin/contatti">Messaggi</a>
                     <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/progetti', $page) ?>"

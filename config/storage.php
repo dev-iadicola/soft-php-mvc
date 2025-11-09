@@ -6,4 +6,5 @@ return [
         'logs' => baseRoot() . '/storage/logs/',
         'cache' => baseRoot() . '/storage/cache/',
         'sessions' => baseRoot() . '/storage/sessions/',
+        'views' => baseRoot().'/storage/cache/view',
 ];

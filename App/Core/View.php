@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use Throwable;
 use \App\Core\Mvc;
 use RuntimeException;
 use App\Core\Helpers\Log;
@@ -142,10 +143,10 @@ class View
         ];
         $message = $quotes[array_rand($quotes)];
         $file = "$views/$folder/$item.php";
-        
+
         if (!file_exists($file)) {
-            $debugNameFile = str_replace(baseRoot(),'',$file);
-            throw new RuntimeException("View file $debugNameFile not found... $message? ");
+            $debugNameFile = str_replace(baseRoot(), '', $file);
+            throw new RuntimeException("View file $debugNameFile not found... $message ");
         }
         // Read the file content
         $content = file_get_contents($file);
@@ -168,17 +169,62 @@ class View
 
         // return $output;
 
+        // try {
+        //     ob_start();
+        //     $compiled = explode("\n", $content);
+        //     $compiledWithMarkers = '';
+
+        //     foreach ($compiled as $i => $line) {
+        //         $compiledWithMarkers .= "// line: " . ($i + 1) . " in " . basename($file) . "\n" . $line . "\n";
+        //     }
+
+        //     eval("? >$compiledWithMarkers");
+
+        //     $output = ob_get_clean();
+        //     return $output;
+        // } catch (\Throwable $e) {
+        //     //  Log utile per sapere quale view ha causato l'errore
+        //     Log::exception($e);
+        //     Log::debug(['view_file' => $file]);
+        //     throw new RuntimeException("Error rendering view: {$file}
+        //      \nmessage: {$e->getMessage()} \ncode: {$e->getCode()}", 0, $e);
+        // }
+
+        // * use storage for save temp file 
+        $storage = new Storage();
+        $disk = $storage->disk('views'); /// defined how storage/cache/view in config/storage.php 
+
+        // unic name of compiled file
+        $compiledFile = md5($file) . '.php';
+        $compiledFilePath = $this->mvc->config->storage['views'] . $compiledFile;
+
+
+        // create or update file if not exists or view edited
+        // Crea o aggiorna il file solo se non esiste o la view è stata modificata
+        if (!file_exists($compiledFilePath) || filemtime($compiledFilePath) < filemtime($file)) {
+            file_put_contents($compiledFilePath, $content);
+        }
+
+        // Esecuzione sicura del file compilato
         try {
             ob_start();
-            eval('?>' . $content ?? ' ');
+            include $compiledFilePath;
             $output = ob_get_clean();
             return $output;
-        } catch (\Throwable $e) {
-            //  Log utile per sapere quale view ha causato l'errore
+        } catch (Throwable $e) {
             Log::exception($e);
             Log::debug(['view_file' => $file]);
-            throw new RuntimeException("Error rendering view: {$file}
-             message: {$e->getMessage()}", 0, $e);
+
+            $errorFile = $e->getFile();
+            $errorLine = $e->getLine();
+
+            throw new RuntimeException(
+                "Error rendering view: {$file}\n" .
+                    "Message: {$e->getMessage()}\n" .
+                    "Occurred in: {$file} (line {$errorLine})",
+                $e->getCode(),
+                $e
+            );
         }
     }
 }
