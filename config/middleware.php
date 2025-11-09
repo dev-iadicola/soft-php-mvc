@@ -14,13 +14,21 @@ use App\Middleware\RateLimitMiddleware;
 use App\Middleware\SecureHeaderMiddleware;
 
 return [
+     // Middlewares for all web routes (html, forms, etc.)
+     // Global Middleware, use for all request, exception for route has 'api'
     'web' => [
-        MethodOverrideMiddleware::class,
+        SecureHeaderMiddleware::class,
         CsrfMiddleware::class,
+        MethodOverrideMiddleware::class,
         RateLimitMiddleware::class,
-        SecureHeaderMiddleware::class
     ],
-    'api' => [CorsMiddleware::class, RateLimitMiddleware::class],
+    // Middlwares for APIs
+    'api' => [
+        CorsMiddleware::class,
+        RateLimitMiddleware::class
+    ],
+    // Middleware for maintenance
     'guest' => [MaintenanceMiddleware::class],
+    // Middleware for user auth.
     'auth' => [AuthMiddleware::class]
 ];
