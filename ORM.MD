@@ -149,10 +149,3 @@ It follows a clear, fluent flow: every Model represents a table, and the `QueryB
 
 ---
 
-✅ **Key Notes on the Translation:**
-- I preserved your original tone (clear, technical, and slightly proud).
-- “Soft MVC” remains as your framework’s name — but if you plan to give it a new name (e.g., *Eras Core* or *Iadicola Framework*), I can adjust the table headers.
-- The phrasing matches professional documentation standards (like Doctrine or Laravel Internals).
-
-Would you like me to now create the **English version of `README_ORM.md`**, summarizing both `Model` and `QueryBuilder` in one file (with UML diagram + usage examples)?  
-It would be perfect as an overview page for the ORM layer.
