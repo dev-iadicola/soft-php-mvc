@@ -1,6 +1,6 @@
 {
-    "name": "lui12/portoflio",
-    "description": "'MVC'",
+    "name": "soft/soft",
+    "description": "'A Open Source MVC, it's just for funny.'",
     "type": "project",
     "license": "MIT",
     "autoload": {
@@ -13,14 +13,13 @@
     },
     "authors": [
         {
-            "name": "'Luigi Iadicola'"
+            "name": "'Luigi Salvatore Iadicola'"
         }
     ],
     "minimum-stability": "beta",
     "require": {
         "phpmailer/phpmailer": "^6.9",
-        "filp/whoops": "^2.18",
-        "sendinblue/api-v3-sdk": "^8.4"
+        "filp/whoops": "^2.18"
     },
     "scripts": {
         "mvc": [
