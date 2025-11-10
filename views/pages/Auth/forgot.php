@@ -5,7 +5,6 @@
         <div class="card-body text-center">
           <h2 class="card-title text-uppercase mb-3">Reset Password</h2>
           <p class="text-secondary mb-3">Inserisci la tua Email</p>
-          <p class="text-secondary mb-4">{{message}}</p>
 
           <div class="mb-3 text-start">
             <label for="email" class="form-label">Email</label>
