@@ -1,9 +1,10 @@
 <?php
+
 /**
  * File entry point
  */
 
-require_once __DIR__.'/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 use App\Core\Mvc;
 use App\Core\Config;
@@ -11,28 +12,19 @@ use App\Core\Config;
 /**
  * Caricamento configurazioni dell'applicazione
  */
-
-Config::env(__DIR__.'/.env'); // caricamento variabili d'ambiente del file .env
+Config::env(__DIR__ . '/.env'); // caricamento variabili d'ambiente del file .env
 
 // istanza per la configurazione
 /**
  * Configurazione dei file principali che si trovano all'interno del
- *  percorso "/config" ove all'interno sono presenti i file  per la connfigurazione, folder.php, routes.php, middleware.php
+ *  percorso "/config" ove all'interno sono presenti i file  per la connfigurazione, folder.php, routes.php, middleware.php, etc.
  * 
- * $config è un oggetto con tre elementi:
  */
 
-$config = Config::dir(__DIR__.'/config'); //ritorna BuildAppFile
+$config = Config::dir(__DIR__ . '/config'); //ritorna BuildAppFile
 
-// istanza Mvc che è il CORE dell'architettura MVC
 /**
  * Passiamo l'ogggetto con i valori delle cartelle
- * la funzione globale setMvc() permette di recuperare i dati principali del software dandoci molta flessibilità per prendere una variabile MVC.
- * Questo settaggio ci permette di accedere alle proprietà della classe MVC con il metodo mvc();
+ * New instance of MVC, and Initialize all proividers in the run method
  */
-$mvc = new Mvc($config);
-setMvc($mvc);
-$mvc->run();
-// (new Mvc($config))->run();
-//  inizializeMvc($config);
- 
+(new Mvc($config))->run();

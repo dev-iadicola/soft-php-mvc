@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
 
     <title>Persona MVC - Admin</title>
     <link rel="icon" type="image/x-icon" href="<?= assets('/img/favicon.png') ?>">
@@ -17,6 +18,8 @@
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= assets('admin.css') ?>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+
 
     <!-- Editor di test -->
         <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css')?>">
@@ -40,14 +43,14 @@
         <div class="d-flex flex-row">
             <section class="container justify-content-center m-auto foo">
                 @include('session.messages')
-                {{page}}
+                <<page>>
             </section>
         </div>
 
     </main>
 
 
-    @include('components.admin.footer')
+    @include('components.footer')
 
     <!-- JavaScript per gestire la visibilità della sidebar -->
     <script>

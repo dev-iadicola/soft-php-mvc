@@ -1,9 +1,11 @@
 <section class="container mt-5">
     <div class="bg-white rounded">
-    <h2 class="text-center display-4 mb-4">Contattami</h2>
+        <h2 class="text-center display-4 mb-4">Contattami</h2>
     </div>
 
-    <form action="/contatti" method="post" class="bg-dark p-4 p-md-5 rounded shadow-lg text-light">
+    <form action="/contatti" method="post" class="bg-dark p-4 p-md-5 rounded shadow-lg text-light text-start">
+
+        @csrf
         <div class="form-group">
             <label for="nome">Nome e Cognome <span class="text-danger">*</span></label>
             <input type="text" id="nome" name="nome" class="form-control" placeholder="Mario" maxlength="100" required>

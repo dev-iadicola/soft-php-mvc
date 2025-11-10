@@ -2,74 +2,144 @@
 
 namespace App\Core\Http;
 
+use App\Core\Helpers\Log;
+use App\Traits\Getter;
+use App\Traits\Setter;
+
 class Request
 {
+    use Getter;
+    use Setter;
     private string $path;
     private string $method;
     private array $post;
 
+    private string $lastUri = '/';
+
+    private array $attributes;
 
     public function __construct()
     {
-        $this->path = $this->getRequestPath();
+        $this->path = $this->uri();
         $this->method = $this->getRequestMethod();
-        $this->post = $this->getPost();
+        $this->attributes = $this->getPost();
     }
 
-    // Cattura richiesta post
-    public function getPost($index = null): array|string|int|float
+    public function getRequestInfo(): string
     {
-        $postData = $_POST ?? [];
-        $fileData = $_FILES ?? [];
-      
-        $combinedData = array_merge($postData, $fileData);
-        if( !is_null($index) && !empty($combinedData[$index])){
-            return $combinedData[$index];
-        }
+        $ip = $this->getIp();
+        $userAgent = $this->getUserAgent();
+        $method = $this->getRequestMethod();
+        $uri = $this->uri();
+        $referrer = $_SERVER['HTTP_REFERER'] ?? 'Direct';
+        $host = $this->getHost();
+        $time = date('Y-m-d H:i:s');
 
-        return $combinedData;
+        $body = !empty($_POST) ? json_encode($_POST, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 'No body data';
+
+        return <<<INFO
+    ========= HTTP REQUEST INFO =========
+      Time:        $time
+      IP Address:  $ip
+      Method:      $method
+      URI:         $uri
+      Referrer:    $referrer
+      Host:        $host
+      User-Agent:  $userAgent
+      Payload:
+    $body
+    =====================================
+    INFO;
     }
+
+
+    public function getIp()
+    {
+        return  $server['REMOTE_ADDR'] ?? 'Unknown';
+    }
+
+    public function getUserAgent()
+    {
+        return  $server['HTTP_USER_AGENT'] ?? 'Unknown';
+    }
+
+
+    public function getHost()
+    {
+        return  $server['HTTP_HOST'] ?? 'localhost';
+    }
+
 
     // Preleva la request URI
+    /**
+     * Summary of getRequestPath
+     * @deprecated utilizza il metodo uri()
+     * @return string
+     */
     public function getRequestPath(): string
     {
-        return $_SERVER['REQUEST_URI'];
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
-
     // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
-        return strtolower($_SERVER['REQUEST_METHOD']);
+        // Metodo base (GET, POST, ecc.)
+        $method = strtoupper($_SERVER['REQUEST_METHOD'] ?? 'CLI');
+
+        // Se è POST, verifica se c’è un override
+        if ($method === 'POST') {
+            $override = $_POST['_method'] ?? $_GET['_method'] ?? null;
+
+            if ($override) {
+                $override = strtoupper($override);
+
+                // Permetti solo metodi validi
+                if (in_array($override, ['PUT', 'PATCH', 'DELETE'], true)) {
+                    return $override;
+                }
+            }
+        }
+
+        return $method;
     }
 
-    public function getBack(): string|null
+
+    public function uri(): string
+    {
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? $_SERVER['REQUEST_URI'];
+    }
+    public function getURI(): string
+    {
+        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+    }
+
+
+
+    public function all(): array
+    {
+        return $this->attributes;
+    }
+
+
+    public function getLastUri(): string|null
     {
         // Assicurati che HTTP_REFERER sia impostato
         if (isset($_SERVER['HTTP_REFERER'])) {
             return strtolower($_SERVER['HTTP_REFERER']);
         }
-
-        return null;
+        return '/';
     }
 
-    public function redirectBack(): never
+    // Cattura richiesta post
+    private function getPost($index = null): array|string|int|float
     {
-        $backUrl = $this->getBack();
-        if (headers_sent($file, $line)) {
-            error_log("Redirect fallito verso $backUrl: header già inviato in $file alla riga $line.");
+        $postData = $_POST ?? [];
+        $fileData = $_FILES ?? [];
 
-            // Fallback con JavaScript
-            echo "<script>window.location.href = '" . htmlspecialchars($backUrl) . "';</script>";
-            echo "<noscript>Redirezione non riuscita. <a href=\"" . htmlspecialchars($backUrl) . "\">Clicca qui</a>.</noscript>";
-            exit();
+        $combinedData = array_merge($postData, $fileData);
+        if (!is_null($index) && !empty($combinedData[$index])) {
+            return $combinedData[$index];
         }
-        if (!empty($backUrl)) {
-            header("Location: $backUrl");
-            exit();
-        } else {
-            // Gestisci il caso in cui non c'è un URL di riferimento
-            header("Location: /"); // Reindirizza alla home page o ad un'altra pagina di default
-            exit();
-        }
+        return $combinedData;
     }
 }

@@ -1,43 +1,39 @@
-<?php 
+<?php
+
 namespace App\Controllers\Admin;
 
 use App\Core\Mvc;
 use App\Model\Contatti;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 
-class ContattiManagerController extends Controller{
-    public function __construct(public Mvc $mvc){
-       parent::__construct($mvc);
+class ContattiManagerController extends AuthenticationController
+{
 
-       $this->setLayout('admin');
-    }
+  #[RouteAttr('/contatti')]
+  public function index()
+  {
+    $contatti = Contatti::orderBy('created_at', 'DESC')->get();
+    return view('admin.portfolio.messaggi', compact('contatti'));
+  }
 
-    public function index(){
-       $contatti = Contatti::orderBy('created_at', 'DESC')->get();
-       return view('admin.portfolio.messaggi', compact('contatti'));
-    }
-
-    public function get(Request $request, $id){
-      $contatti = Contatti::orderBy('created_at', 'DESC')->get();
-      $contatto = Contatti::find($id);
-      return view('admin.portfolio.messaggi',compact('contatti','contatto'));
-
-    }
-
-    public function destroy(Request $req, $id){
-      $data =  $req->getPost();
-      if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-       return $this->statusCode413();
-      }
-    
-
+  #[RouteAttr('contatti/{id}')]
+  public function get(Request $request, $id)
+  {
+    $contatti = Contatti::orderBy('created_at', 'DESC')->get();
     $contatto = Contatti::find($id);
+    return view('admin.portfolio.messaggi', compact('contatti', 'contatto'));
+  }
 
-    $contatto->delete();
+  #[RouteAttr('/contatti-delete/{id}','DELETE')]
+  public function destroy(Request $req, Contatti $contatto)
+  {
+    $info = $contatto->nome . " " .$contatto->email;
 
-    $this->withSuccess('Messaggio ELIMINATO');
-   return $this->redirectBack();
-   }
-
+    if($contatto->delete()){
+      return response()->back()->withSuccess("Messaggio eliminato $info");
+    }
+    return response()->back()->withError("Impossibile eliminare il messaggio $info");
+  }
 }

@@ -6,11 +6,21 @@ trait Setter
 {
     public function __set($key, mixed $val)
     {
-        // todo: decidere se sarà funzionale al sistema
+
+
+
+
+        // Setter personalizzato
         if (method_exists($this, $key)) {
             return $this->$key($val);
         }
-        // ritorna valore dentro attributes 
-        return $this->attributes[$key] = $val;
+
+        // Proprietà dichiarata nella classe
+        if (property_exists($this, $key)) {
+            $this->$key = $val;
+            return;
+        }
+        // ! NOT CHANGE IT WORK
+        $this->attributes[$key] = $val;
     }
 }

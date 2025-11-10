@@ -2,34 +2,24 @@
 
 namespace   App\Controllers\Admin;
 
-
-
-
-use App\Core\Mvc;
 use App\Model\Skill;
-use App\Model\Profile;
-use App\Core\Controller;
-use App\Core\Http\Request;
 use App\Model\Article;
+use App\Model\Profile;
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Request;
+use App\Core\Http\Attributes\RouteAttr;
 
-class ProfileMngController extends Controller 
+class ProfileMngController extends AuthenticationController 
 {
 
-  public function __construct(public Mvc $mvc)
-  {
-    parent::__construct($mvc);
-
-    $this->setLayout('admin');
-  }
-
-
+  #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]
   public function store(Request $request)
   {   
-    Profile::create($request->getPost());
-
-    $this->redirectBack()->withSuccess('Skills Aggiornate conn Successo!');
+    Profile::create($request->all());
+    return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
+  #[RouteAttr(path: 'profile/{id}', method: 'get', name: 'profile.edit')]
   public function edit(Request $request, $id)
   {
     $profile = Profile::find($id);
@@ -39,32 +29,28 @@ class ProfileMngController extends Controller
     return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
   }
 
+  #[RouteAttr(path: 'profile/{id}', method: 'POST', name: 'profile.update')]
   public function update(Request $request, $id)
   {
-    $data = $request->getPost();
+    $data = $request->all();
 
     $data['selected'] = isset($data['selected']) ? 1 : 0;
-
 
     $project = Profile::find($id);
     $project->update($data);
 
-    $this->withSuccess('Aggiornamento Eseguito');
-    $this->redirectBack();
+    return response()->back()->withSuccess('Aggiornamento Eseguito');
+    
   }
 
-  public function destroy(Request $reqq, $id){
+  #[RouteAttr(path: '/profile-delete/{id}', method: 'DELETE', name: 'profile.delete')]
+  public function destroy(Request $reqq, int $id){
     // trova e azione
-   $data =  $reqq->getPost();
-   if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-    return $this->statusCode413();
-   }
+    $data =  $reqq->all();
 
-    $project  = Skill::find($id);
-
+    $project  = Profile::find($id);
     $project->delete();
-// Feedback Server
-    return $this->redirectBack()->withSuccess('Skills ELIMINATE');
+    return  response()->back()->withSuccess('Skills ELIMINATE');
 
  }
 

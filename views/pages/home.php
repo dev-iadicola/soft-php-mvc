@@ -1,5 +1,6 @@
 <article class="fade-in-section mt-5 py-5">
     <div class="container">
+        
         <div>
             <?php foreach ($profiles as $profile): ?>
                 <div class=" p-5 shadow-lg mb-4 bg-dark rounded">
@@ -7,7 +8,7 @@
                     <div class="d-flex flex-row justify-content-center mb-5">
                         <h1 class="display-4 mb-2 fw-bold text-center dodgerblu w-100" id="name">
                             <i class="fa fa-code text-white" style="font-size:3rem" aria-hidden="true"></i>
-                            <?php echo $profile->name; ?>
+                            <?php echo strtoupper($profile->name); ?>
                         </h1>
 
                     </div>
@@ -32,7 +33,8 @@
 
 
 
-@include('pages.progetti')
+
+@include('pages.portfolio')
 
 <div class="bg-white rounded-lg shadow-lg">
 <div class="fade-in-section mt-5 bg-white m-5 rounded-xl">
@@ -56,7 +58,7 @@
     </div>
 </div>
 
-
+@include('pages.contatti')
 <!-- Scroll to top button -->
 <a class="fa fa-arrow-up btn-arrow" id="btn-arrow" href="#top" aria-hidden="true"></a>
 <script src="<?= assets('js/typewrite.js') ?>"></script>

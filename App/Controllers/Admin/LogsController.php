@@ -1,43 +1,24 @@
 <?php
+
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
-use App\Core\Eloquent\Model;
+use App\Core\Controllers\AuthenticationController;
 use App\Model\LogTrace;
-use App\Core\Component;
-use App\Core\Controller;
-use App\Core\Http\Request;
-use App\Core\Services\AuthService;
+use App\Core\Http\Attributes\RouteAttr;
 
-class LogsController extends Controller{
+class LogsController extends AuthenticationController
+{
 
-    public function __construct(public Mvc $mvc) {
-        parent::__construct($mvc);
-        
-        $this->setLayout('admin');
-        
-    }
-
-    public function index() {
-        $orm = new Model($this->mvc->pdo); 
-
-        $query ="SELECT indirizzo, device, COUNT(*) AS login_count, MAX(last_log) AS last_log
+    #[RouteAttr(path: '/log', method: 'get', name: 'logs')]
+    public function index()
+    {
+        $query = "SELECT indirizzo, device, COUNT(*) AS login_count, MAX(last_log) AS last_log
         FROM logs
         GROUP BY indirizzo, device;";
-        $logs = $orm->query($query);
+
+        $logs = LogTrace::query($query);
 
         // Utilizza la funzione `view` per passare direttamente le variabili alla vista
-        return $this->render('admin.logs',[] ,compact('logs'));
-
-        
+        return view('admin.logs',compact('logs') );
     }
- 
-    private function getComponent($items) {
-        $portfolio = new Component('logsitem');
-        $portfolio->setItems($items);
-        return $portfolio;
-    }
-
-
-
 }

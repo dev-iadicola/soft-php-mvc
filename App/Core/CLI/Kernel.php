@@ -8,6 +8,7 @@ use App\Core\CLI\Commands\MakeModelCommand;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeControllerCommand;
 use App\Core\CLI\Commands\Clear\ClearCacheCommand;
+use App\Core\CLI\Commands\MakeMiddlewareCommand;
 use App\Core\CLI\Commands\StorageCommand;
 
 class Kernel
@@ -30,6 +31,7 @@ class Kernel
         $this->commands = [
             'make:model' => MakeModelCommand::class,
             'make:controller' => MakeControllerCommand::class,
+            'make:mw' => MakeMiddlewareCommand::class,
             'migrate' => MakeMigrationCommand::class,
             'serve' => ServeCommand::class,
             'print' => Out::class,

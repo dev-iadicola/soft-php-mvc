@@ -3,7 +3,6 @@
         <div class="mb-4">
             <label for="password" class="form-label text-white fs-5">Inserisci la nuova password</label>
 
-            <h3 class="text-danger mb-3">{{message}}</h3>
 
             <div class="mb-3">
                 <label for="password" class="form-label">Password *</label>

@@ -2,8 +2,9 @@
 
 namespace App\Core;
 
-use Throwable;
-use Whoops\Run;
+use App\Core\Provider\DatabaseProvider;
+use App\Core\Provider\SmtpProvider;
+use PDOException;
 use \App\Core\View;
 use App\Mail\Mailer;
 use App\Core\Storage;
@@ -12,160 +13,103 @@ use App\Core\Middleware;
 use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
-use App\Core\Eloquent\Model;
 use App\Core\Connection\SMTP;
-use Whoops\Handler\PrettyPageHandler;
-use \App\Core\Exception\NotFoundException;
 use App\Core\Services\SessionStorage;
-use App\Core\Support\Collection\BuildAppFile;
-use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
+use \App\Core\Exception\NotFoundException;
+use App\Core\Provider\NativeErrorProvider;
+use App\Core\Provider\WhoopsProvider;
+use App\Core\Services\CsrfService;
 
 class Mvc
 {
     public static Mvc $mvc;
 
+    // Boolean that allows displaying or hiding errors on the screen
+    private bool $debugStatus = false;
 
-    // Oggetti per gestire la richiesta, la risposta, le rotte e le viste
+    /**
+     * Summary of WhoopsError
+     * This class configures and register Whoops, 
+     * the exception handler that displays a detailed in case of error.
+     */
+    private WhoopsProvider $whoopsProvider;
+    private NativeErrorProvider $nativeErrorProvider;
+
+    // Object to handle the rquest
     public Request $request;
-    public Response $response; // Gestione della risposta al client
-    public Router $router; // Gestione delle rotte
-    public Controller $controller;
-    public View $view; // Gestione delle viste
-
+    // to handle the response to client.
+    public Response $response;
+    public Router $router;
+    public View $view;
     public Storage $storage;
-    public \PDO $pdo; // Connessione PDO al database
-
+    public \PDO $pdo;
     public SMTP $Smtp;
     public Mailer $mailer;
-
-    public Middleware  $middleware; //Gestione di Autenticazione utente
     public SessionStorage $sessionStorage;
+
+    /** @var \App\Core\Support\Collection\BuildAppFile */
+    public array|object $config;
+
     /**
-     * Costruttore della classe Mvc
-     *
-     * @param array $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
+     *Constructor of the foundamental class
+     * @param array|object $config Configurazione per l'applicazione (es. impostazioni delle routes, view, ecc.)
      */
-    public function __construct(public BuildAppFile $config)
+    public function __construct(array|object $config)
     {
+        // * Enable the programs's error and crash handlers and register all error and warning in app.log file
+        $this->nativeErrorProvider = new NativeErrorProvider();
+        // * This class configures and register Whoops, 
+        //* the exception handler that displays a detailed in case of error.
+        // Questa classe configura e registra Whoops,  visualizza un messaggio dettagliato in caso di errore.
+        $this->whoopsProvider = new WhoopsProvider();
+        $this->whoopsProvider->register();
 
-        // Inizalizzazione per la debug layout
-        $this->getNativeErrorInLog();
-        $this->initializeWhoops();
 
+        // * object of the dir config.
         $this->config = $config;
-        // Imposta l'istanza statica dell'oggetto Mvc
-        self::$mvc = $this;
-        // inizializza l'oggetto Request per gestire le richieste HTTP
+
+        // * Inizializes the Request to handle HTTP request. Rappresent the client's HTTP request.
         $this->request = new Request();
-        // Inizializza l'oggetto View per gestire le viste
+        // * Initializes the View object to manage views.
         $this->view = new View($this);
-        // inizializza l'oggetto Response per gestire la risposta HTTP
+        // * Rappresent the response that the server return.
         $this->response = new Response($this->view);
-        // Inizializza l'oggetto Router per gestire il routing delle richieste
+        // * Initializes the Router object to handle request routing
         $this->router = new Router($this);
-        // gestione sessioni 
+
+        // * can access the methods of the class everywhere
+        self::$mvc = $this;
+    }
+
+
+
+
+    /**
+     * Initialize all proividers in the run method
+     */
+    public function run(): void
+    {
+        // * This class follows the singleton pattern and is responsible for managing the session.
+        // * It is currently implemented by the AuthService and CsrfService  classes and Midlleware for count requests.
         $this->sessionStorage = SessionStorage::getInstance();
 
-        $this->middleware = new Middleware($this, $config->middleware);
-        // Inizializza la connessione al database e imposta il PDO per l'Model
-        $this->getPdoConnection(); // Invochiamo la connessione
-        $this->getSMTPConnection();
+        // * Initializes the Database Provider, which manages the PDO connection lifecycle.  
+        // * It creates a single PDO instance through the Database singleton and handles connection errors.  
+        //   In case of failure, it redirects to the errore page (in production) or prints the exception (in debug mode).  
+        $this->pdo = (new DatabaseProvider($this->response))->register();
 
-       
-        $this->controller = new Controller(mvc: $this);
-    }
+        // * Initializes the SMTP Provider, which configures and manages the mail transport layer.  
+        // * It creates a single mailer instance 
+        //   to send transactional and system emails.  
+        //   It loads SMTP credentials from environment variables and validates the connection on startup.    
+        $this->Smtp = (new SmtpProvider($this->response))->register();
 
-    private function getNativeErrorInLog(): void{
-        //  Intercetta anche errori PHP (warning, notice, deprecated, ecc.)
-    set_error_handler(function ($errno, $errstr, $errfile, $errline) {
-        // Crea un oggetto ErrorException per uniformità con Log::exception
-        $exception = new \ErrorException($errstr, 0, $errno, $errfile, $errline);
-        \App\Core\Helpers\Log::exception($exception);
 
-        // Restituisce false per lasciare proseguire i normali handler PHP/Whoops
-        return false;
-    });
 
-    // Intercetta fatal error, parse error, ecc.
-    register_shutdown_function(function () {
-        $error = error_get_last();
-        if ($error && in_array($error['type'], [E_ERROR, E_CORE_ERROR, E_COMPILE_ERROR, E_PARSE], true)) {
-            $exception = new \ErrorException(
-                $error['message'],
-                0,
-                $error['type'],
-                $error['file'],
-                $error['line']
-            );
-            \App\Core\Helpers\Log::exception($exception);
-        }
-    });
-    }
+        // * Generate token for Csrf if is not set.
+        (new CsrfService())->generateToken();
 
-    //Layout per Debug
-    private function initializeWhoops()
-    {
-        $whoops = new Run;
-        if (strtolower(getenv('APP_DEBUG')) == 'true') {
 
-            $handler = new PrettyPageHandler();
-            $handler->addDataTable('Environment', [
-                'PHP Version' => phpversion(),
-                'Loaded Extensions' => implode(', ', get_loaded_extensions()),
-                'App Mode' => getenv('APP_ENV'),
-            ]);
-            $whoops->pushHandler($handler);
-
-            // Logga l'eccezione anche in debug
-            $whoops->pushHandler(function ($exception, $inspector, $run) {
-                \App\Core\Helpers\Log::exception($exception);
-                return \Whoops\Handler\Handler::DONE; // Continua con gli altri handler
-            });
-        } else {
-            $whoops->pushHandler(function (Throwable $exception, $inspector, $run) {
-                \App\Core\Helpers\Log::exception($exception); /// logga l'eccezione in produzione
-                http_response_code(500);
-                include  __DIR__ . "/../../views/pages/errors/ops.php";
-                return \Whoops\Handler\Handler::QUIT; // Ferma l’esecuzione di Whoops
-            });
-        }
-        
-
-        $whoops->register();
-    }
-
-    /**
-     * Crea una connessione PDO e la assegna alla proprietà $pdo
-     * Se la connessione fallisce, stampa un messaggio di errore e termina l'esecuzione
-     */
-    private function getPdoConnection()
-    {
-        try {
-            $this->pdo = Database::getInstance()->getConnection();
-        } catch (\PDOException $e) {
-            if (getenv('CLOUD') == 'true')
-                $this->response->redirect('/coming-soon');
-            else
-                echo "Errore di connessione al database: " . $e->getMessage();
-            exit;
-        }
-    }
-
-    private function getSMTPConnection()
-    {
-        try {
-            $this->Smtp = new SMTP();
-        } catch (ExceptionSMTP $e) {
-            echo "Errore di connessione al servizio di posta elettronica " . $e->getMessage();
-            exit;
-        }
-    }
-
-    /**
-     * Avvia l'applicazione, risolvendo la richiesta e inviando la risposta
-     */
-    public function run()
-    {        
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             $this->router->resolve();
@@ -173,7 +117,6 @@ class Mvc
             // Se la rotta non viene trovata, imposta una risposta 404
             $this->response->set404($e);
         }
-
         // Invia la risposta al client
         $this->response->send();
     }

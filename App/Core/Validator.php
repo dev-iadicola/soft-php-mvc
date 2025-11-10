@@ -2,6 +2,10 @@
 
 namespace App\Core;
 
+/**
+ * Summary of Validator
+ * @deprecated  use the new Validator from App/Core/Validation
+ */
 class Validator
 {
     protected $errors = [];
@@ -38,42 +42,42 @@ class Validator
         }
     }
 
-    public static function  verifyImage(?array $file = null): bool
+    // public static function  verifyImage(?array $file = null): bool
+    // {
+    //     if (!$file || is_null($file)) {
+    //         return false;
+    //     }
+
+    //     if (empty($file['tmp_name'])) {
+    //         return false;
+    //     }
+
+    //     return getimagesize($file['tmp_name']) !== false;
+    // }
+
+    public static function validatePDF(array $input)
     {
-        if(!$file || is_null($file)) {
-           return false;
-        }
-      
-        if (empty($file['tmp_name'])) {
-            return false;
-        }
-
-        return getimagesize($file['tmp_name']) !== false;
-    }
-
-    public static function validatePDF(array $input){
         $format = array('.pdf');
-        foreach ($format  as $item){
-            if(preg_match("/$item\$/i", $input['name'])){
+        foreach ($format  as $item) {
+            if (preg_match("/$item\$/i", $input['name'])) {
                 return true;
             }
-              return  false;
-            
+            return  false;
         }
     }
-   public static function validateImage($file)
-{
-    // Controlla se il file è un array e ha una chiave 'tmp_name'
-    if (is_array($file) && isset($file['tmp_name'])) {
-        // Verifica se il file è stato caricato senza errori
-        if (is_uploaded_file($file['tmp_name'])) {
-            // Ottieni le dimensioni dell'immagine
-            $imageSize = @getimagesize($file['tmp_name']);
-            return is_array($imageSize);
+    public static function validateImage(array $file)
+    {
+        // Controlla se il file è un array e ha una chiave 'tmp_name'
+        if (is_array($file) && isset($file['tmp_name'])) {
+            // Verifica se il file è stato caricato senza errori
+            if (is_uploaded_file($file['tmp_name'])) {
+                // Ottieni le dimensioni dell'immagine
+                $imageSize = @getimagesize($file['tmp_name']);
+                return is_array($imageSize);
+            }
         }
+        return false;
     }
-    return false;
-}
 
 
     public function fails()
@@ -84,7 +88,7 @@ class Validator
     public function errors()
     {
         $errors = $this->errors;
-        $errors =  array_map(fn ($error) => "<li>" . $error . "</li>", $errors);
+        $errors =  array_map(fn($error) => "<li>" . $error . "</li>", $errors);
         $stringErrors =  implode(' ', $errors);
         $stringErrors = '<ul>' . $stringErrors . '</ul>';
         return  $stringErrors;

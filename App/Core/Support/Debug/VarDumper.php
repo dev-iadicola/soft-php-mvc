@@ -19,6 +19,121 @@ class VarDumper
         return $istance->$method(...$args);
     }
 
+
+    /**
+     * * serve SOLO per trovare metodo debug() o VarDumper::debug()
+     *
+     * @return void
+     */
+    private function debugTrace(): void
+    {
+        // Ottieni l'intero stack trace
+        $traces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
+        $fileWhereDebug = "";
+        $lineWhereDebug = 0;
+        // origini da escludere.
+        $excludedFiles = [
+            baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
+            baseRoot() . '/utils/helpers.php',
+            baseRoot() . '/utils/var_dumper.php',
+            baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
+        ];
+        foreach ($traces as $trace) {
+            // file che non deve controllare.
+
+
+            // Salta i file esclusi dal trace
+            if (in_array(str_replace('\\', '/', $trace['file']), $excludedFiles, true)) {
+                continue;
+            }
+
+            //carico linee files
+            $lines = @file($trace['file']);
+            if (!$lines) continue;
+
+            foreach ($lines as $num => $content) {
+                // trovato
+                //* rimuovi spazi e tab
+                $trimmed = trim($content);
+                //* Salta se è una riga vuota o commentata
+                if (
+                    $trimmed === '' ||
+                    str_starts_with($trimmed, '//') ||
+                    str_starts_with($trimmed, '#') ||
+                    str_starts_with($trimmed, '/*') ||
+                    str_contains($trimmed, '/*') && str_contains($trimmed, '*/')
+                ) {
+                    continue;
+                }
+                //* trova il metodo!
+                if (str_contains($content, 'debug(') || str_contains($content, 'VarDumper::debug(')) {
+                    $fileWhereDebug = $trace['file'];
+                    $lineWhereDebug = ($num + 1);
+
+                    // appena trova il file, esce da entrambi i cicli 
+                    break 2;
+                }
+            }
+        }
+
+        // * Mostra a vidoe
+
+        echo "========================================= <br>";
+
+        echo "Debug delcared in: " . str_replace(baseRoot(), "", $fileWhereDebug) . " at line " . $lineWhereDebug . " <br>";
+
+        echo "========================================= <br>";
+    }
+
+    private function softdb(...$vars)
+    {
+        ob_start();
+
+        echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        $this->debugTrace();
+        $this->renderVar($vars);
+        echo '</pre>';
+
+        $output = ob_get_clean();
+        echo $output;
+    }
+
+    private function debug(...$vars): void
+    {
+
+        ob_start();
+
+        echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        $this->debugTrace();
+        $this->renderVar($vars);
+        echo '</pre>';
+
+        $output = ob_get_clean();
+        echo $output;
+
+        exit;
+    }
+
+    private function logger(...$vars)
+    {
+
+        // ob_start();
+
+
+        // echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
+        // $this->debugTrace();
+        // $this->renderVar($vars);
+        // echo '</pre>';
+
+        // $output = ob_get_clean();
+        // echo $output;
+    }
+
+
+
+
+
+
     /**
      * Summary of dd
      * Dump and Die
@@ -68,7 +183,7 @@ class VarDumper
         }
 
         if (is_array($var)) {
-            echo "<span class='vardump-type'>array</span>(" . count($var) . ") [<br>";
+            echo "<span class='vardump-type'>[array]</span>(" . count($var) . ") [<br>";
             foreach ($var as $key => $value) {
                 echo "{$pad}<span class='vardump-key'>[{$key}]</span> => ";
                 $this->renderVar($value, $indent + 1, $countLoop + 1);
@@ -76,7 +191,7 @@ class VarDumper
             echo "{$pad}]<br>";
         } elseif (is_object($var)) {
             $class = get_class($var);
-            echo "<span class='vardump-type'>object</span>({$class}){ {$this->getFileName($var)} <br>";
+            echo "<span class='vardump-type'>[object]</span>({$class}){ {$this->getFileName($var)} <br>";
 
             foreach ((array) $var as $key => $value) {
 
@@ -86,11 +201,15 @@ class VarDumper
             }
             echo "{$pad}}<br>";
         } elseif (is_string($var)) {
-            echo "<span class='vardump-string'>'" . htmlspecialchars($var) . "'</span><br>";
+            echo "<span class='vardump-string'>[string]: '" . htmlspecialchars($var) . "'</span><br>";
         } elseif (is_int($var) || is_float($var)) {
-            echo "<span class='vardump-number'>{$var}</span><br>";
+            // if (is_octal($var)) {
+            //     $var = decoct($var);
+            //     "<span class='vardump-number'>[octal]: {$var}</span><br>";
+            // } else
+                echo "<span class='vardump-number'>[numeric]: {$var}</span><br>";
         } elseif (is_bool($var)) {
-            echo "<span class='vardump-type'>" . ($var ? "true" : "false") . "</span><br>";
+            echo "<span class='vardump-type'>[boolean]: " . ($var ? "true" : "false") . "</span><br>";
         } elseif (is_null($var)) {
             echo "<span class='vardump-type'>null</span><br>";
         } else {

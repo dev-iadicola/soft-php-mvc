@@ -1,33 +1,30 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
+
 use App\Model\Law;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 
-class LawsMngController extends Controller{
+class LawsMngController extends AuthenticationController{
 
-    public function __construct(public Mvc $mvc)
-    {
-      parent::__construct($mvc);
-  
-      $this->setLayout('admin');
-    }
-  
+    #[RouteAttr('/laws')]  
     public function index(){
 
         $laws=  Law::orderBy('id', 'DESC')->get();
          return view('admin.laws.index',compact('laws'));
         }
-        
+       
+       
+        #[RouteAttr('/laws', 'POST')]  
         public function store(Request $request){        
-         Law::create( $request->getPost());
+         Law::create( $request->all());
         
          $this->withSuccess('New Law has be created');
-         return $this->redirectBack();
+         return response()->back();
         }
-        
+        #[RouteAttr(path: 'laws/{id}', method: 'get', name: 'laws.edit')]
         public function edit(Request $req, $id){
          $law = Law::find($id);
         
@@ -37,32 +34,31 @@ class LawsMngController extends Controller{
         
         }
 
+        #[RouteAttr(path: 'laws/{id}', method: 'patch', name: 'laws.update')]
         public function update(Request $request, $id){
           $law = Law::find($id);
 
-          $law->update($request->getPost());
+          $law->update($request->all());
           
           $this->withSuccess('Law is Updated');
-          return $this->redirectBack();
+          return response()->back();
         }
        
+        #[RouteAttr(path: 'laws-delete/{id}', method: 'DELETE', name: 'laws.delete')]
         public function destroy(Request $req, $id){
-          $data =  $req->getPost();
-         if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-          return $this->statusCode413();
-         }
+          $data =  $req->all();
+       
           $law = Law::find(id: $id)->delete();
 
           if($law ===  true){
-            $this->withSuccess('Law DELETE');
-           return  $this->redirectBack();
+           return  response()->back()->withSuccess("Law DELETE");
           }
           if($law === null){
-            return $this->redirectBack();
+            return response()->back();
           }
          
             $this->withError('LAW NOT WAS DELETED!');
-            return $this->redirectBack();
+            return response()->back();
         }
         
 }

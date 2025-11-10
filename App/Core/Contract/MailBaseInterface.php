@@ -4,14 +4,8 @@ namespace App\Core\Contract;
 interface MailBaseInterface {
 
 
-    public function sendEmail(
-        string $to,
-        string $subject,
-        string $body,
-        string $from = NULL,
-        string $fromName = NULL,
-    );
+    public function send():object;
 
-    public function mailPage(string $page): void;
+    public function directoryPage(string $page): void;
 
 }

@@ -2,22 +2,12 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
-use App\Core\Validator;
-use App\Core\Controller;
+use App\Core\Controllers\AuthenticationController;
 use App\Model\Curriculum;
 use App\Core\Http\Request;
-use App\Core\Storage;
 
-class CurriculumManagmentController extends Controller
+class CurriculumManagmentController extends AuthenticationController
 {
-   public function __construct(Mvc $mvc)
-   {
-      parent::__construct($mvc);
-
-      $this->setLayout('admin');
-   }
-
    public function index()
    {
       $curricula = Curriculum::findAll();
@@ -25,7 +15,7 @@ class CurriculumManagmentController extends Controller
    }
    public function store(Request $request)
    {
-      $data = $request->getPost();
+      $data = $request->all();
    
       if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
        
@@ -35,7 +25,7 @@ class CurriculumManagmentController extends Controller
       Curriculum::save($data);
 
       $this->withSuccess('CV salvato con Successo!');
-      return $this->redirectBack();
+      return response()->back();
    }
 
 

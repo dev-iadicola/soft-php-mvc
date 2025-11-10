@@ -1,12 +1,13 @@
 <?php
 namespace App\Core\Exception;
 
+use App\Core\Exception\Base\CoreException;
 use Exception;
 class QueryBuilderException extends Exception
 {
     public function __construct(
         string $message = 'Exception in Query!',
-        int $code = 404
+        int $code = 500
     ) {
         $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
         $caller = $trace[1] ?? null;

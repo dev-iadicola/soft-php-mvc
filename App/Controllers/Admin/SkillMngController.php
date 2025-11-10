@@ -1,68 +1,48 @@
 <?php
 
-namespace   App\Controllers\Admin;
+namespace App\Controllers\Admin;
 
-
-
-
-use App\Core\Mvc;
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Model\Skill;
-use App\Model\Article;
-use App\Model\Profile;
-use App\Core\Controller;
 use App\Core\Http\Request;
 
-class SkillMngController extends Controller 
+class SkillMngController extends AuthenticationController
 {
 
-  public function __construct(public Mvc $mvc)
-  {
-    parent::__construct($mvc);
-
-    $this->setLayout('admin');
-  }
 
 
   public function store(Request $request)
-  {   
-    Skill::create($request->getPost());
-
-    $this->redirectBack()->withSuccess('Skills Aggiornate conn Successo!');
+  {
+    Skill::create($request->all());
+    
+    response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   public function edit(Request $request, $id)
   {
     $skill = Skill::find($id);
-    $skills = Skill::orderBy('id', 'DESC')->get();
-    $articles = Article::orderBy('created_at', 'DESC')->get();
-    $profiles = Profile::orderBy('id', 'DESC')->get();
-    return view('admin.portfolio.home', compact('skill','skills','articles','profiles'));
+    return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
 
   public function update(Request $request, $id)
   {
-    $data = $request->getPost();
+    $data = $request->all();
 
     $project = Skill::find($id);
     $project->update($data);
 
-    $this->withSuccess('Aggiornamento Eseguito');
-    $this->redirectBack();
+    return response()->back()->withSuccess('Aggiornamento Eseguito');
   }
 
-  public function destroy(Request $reqq, $id){
-    // trova e azione
-   $data =  $reqq->getPost();
-   if( !isset($data['_method']) ||!$data['_method'] === 'DELETE'){
-    return $this->statusCode413();
-   }
+  #[RouteAttr('skill-delete/{id}', 'delete')]
+  public function destroy(Request $reqq, $id)
+  {
 
     $project  = Skill::find($id);
 
     $project->delete();
-// Feedback Server
-    return $this->redirectBack()->withSuccess('Skills ELIMINATE');
 
- }
-
+    return response()->back()->withSuccess('Skills Eliminata con Successo!');
+  }
 }

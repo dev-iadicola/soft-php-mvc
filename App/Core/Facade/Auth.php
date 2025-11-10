@@ -1,6 +1,7 @@
 <?php 
 namespace App\Core\Facade;
 
+use App\Core\Mvc;
 use App\Core\Eloquent\Model;
 use App\Core\Services\AuthService;
 use App\Core\Eloquent\QueryBuilder;
@@ -12,9 +13,9 @@ use App\Core\Services\SessionStorage;
 class Auth {
     protected static ?AuthService $instance = null;
 
-    protected static function getInstance(): AuthService{
+    public static function getInstance(): AuthService{
         if(!self::$instance){
-            self::$instance = new AuthService(SessionStorage::getInstance());
+            self::$instance = new AuthService(Mvc::$mvc->sessionStorage);
         }
         return self::$instance;
     }

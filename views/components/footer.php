@@ -1,4 +1,4 @@
-<footer class="bg-dark text-light py-1 mt-5">
+<footer class=" text-light py-1 mt-5">
   <div class="container mt-4">
     <!-- Navbar -->
     <ul class="nav justify-content-center mb-2 gap-3">
@@ -36,6 +36,6 @@
     </ul>
 
     <!-- Copyright -->
-    <p class="text-center text-secondary mb-0">© <?= date('Y') ?> Luigi Iadicola, Web Developer</p>
+    <p class="text-center text-secondary mb-0">© 2022 - {{ date('Y') }} LS Iadicola, Software Developer</p>
   </div>
 </footer>

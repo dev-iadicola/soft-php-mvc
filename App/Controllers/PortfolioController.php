@@ -1,18 +1,15 @@
 <?php
 namespace App\Controllers;
-use \App\Core\Controller;
-use \App\Core\Component;
-use \App\Core\Mvc;
+
+use App\Core\Controllers\Controller;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Model\Certificate;
 use App\Model\Curriculum;
 use App\Model\Project;
 
 class PortfolioController extends Controller {
 
-    public function __construct(public Mvc $mvc) {
-        parent::__construct($mvc);
-    }
-
+    #[RouteAttr('portfolio')]
     public function index() {
   
         $projects = Project::orderBy('id', 'DESC')->get();

@@ -8,7 +8,6 @@
 
             <h2 class="text-2xl font-bold mb-2 uppercase">Sign Up</h2>
             <p class="text-gray-400 mb-4">Inserisci i tuoi dati</p>
-            <p class="text-gray-400 mb-4">{{message}}</p>
 
             <div class="mb-4">
               <label for="email" class="block text-sm font-medium text-gray-300 mb-1">Email</label>

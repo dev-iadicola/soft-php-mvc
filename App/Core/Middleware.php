@@ -9,7 +9,7 @@ class Middleware{
     public function __construct(
         public Mvc $mvc, 
         // Array config/middleware.php definito 
-        public array $queueForBaseRoute = [],
+        public array|object $queueForBaseRoute = [],
         // Gestione richiesta controller
         public array $queueRoute = []
     ){
@@ -22,7 +22,7 @@ class Middleware{
 
     public function execute(){
         // Prendiamo la request URI
-        $requestPath = $this->mvc->request->getRequestPath();
+        $requestPath = $this->mvc->request->uri();
        
         // Prendiamo l'array presente nel file /congif/middleware.php
        $middlewareFileArray = $this->queueForBaseRoute;

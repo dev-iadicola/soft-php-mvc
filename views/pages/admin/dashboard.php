@@ -129,7 +129,7 @@
 
           <div class="list-group" style="max-height: 300px; overflow-y: auto;">
 
-            <?php foreach ($message as $msg) : ?>
+            <?php foreach ($messages as $msg) : ?>
              
               <div class="list-group-item list-group-item-action my-2 rounded-2 ">
                 <h5 class="mb-1">Mittente: <?= $msg->nome ?> - <?= $msg->typologie ?></h5>

@@ -20,12 +20,7 @@
 
     <div class="row justify-content-center d-flex flex-row">
         <!-- Colonna per i moduli -->
-        <div id="accordion" class="col-lg-12 col-md-12 mb-4 mb-md-0">
-            <!-- Forms -->
-            @include('components.admin.article-form')
-            @include('components.admin.profile-form')
-            @include('components.admin.skill-form')
-        </div>
+        @include('pages.admin.portfolio.home-create')
 
         <!-- Colonna per le visualizzazioni -->
         <div class="admin-panel col-lg-12 col-md-12">
@@ -43,11 +38,12 @@
                                 <?php endif ?>
                                 <h5><?= $article->title ?></h5>
                                 <p class="text-muted"><?= $article->subtitle ?></p>
-                                <p><small><strong>Date:</strong> <?= $article->created_at ?></small></p>
+                                <p><small><strong>creato il:</strong> <?= $article->created_at ?></small></p>
                                
                                 <div class="mt-2">
-                                    <a href="/admin/home/<?= $article->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
-                                    <form action="/admin/home-delete/<?= $article->id ?>" method="POST" style="display: inline;">
+                                 <a href="/admin/article/create" class="btn btn-outline-success btn-sm">Create</a>
+                                    <a href="/admin/article/<?= $article->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
+                                    <form action="/admin/article-delete/<?= $article->id ?>" method="POST" style="display: inline;">
                                         @delete
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete <?= $article->title ?>?')" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>
@@ -72,8 +68,10 @@
                                 <p><small><?= $profile->welcome_message ?></small></p>
                                 <p><small><strong>Selected:</strong> <?= $profile->selected ? 'Yes' : 'No' ?></small></p>
                                 <div class="mt-2">
+                                <a href="/admin/profile/create" class="btn btn-outline-success btn-sm">Create</a>
                                     <a href="/admin/profile/<?= $profile->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="/admin/profile-delete/<?= $profile->id ?>" method="POST" style="display: inline;">
+                                        @csrf
                                         @delete
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete <?= $profile->name ?>?')" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>
@@ -96,9 +94,11 @@
                                 <h5><?= $skill->title ?></h5>
                                 <p class="text-muted"><?= substr($skill->description, 0, 20) ?>...</p>
                                 <div class="mt-2">
+                                <a href="/admin/skill/create" class="btn btn-outline-success btn-sm">Create</a>
                                     <a href="/admin/skill/<?= $skill->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="/admin/skill-delete/<?= $skill->id ?>" method="POST" style="display: inline;">
                                         @delete
+                                        @csrf
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete <?= $skill->title ?>?')" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>
                                 </div>

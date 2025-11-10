@@ -5,8 +5,9 @@ namespace App\Mail;
 use GuzzleHttp\Client;
 use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Model\SendSmtpEmail;
-use SendinBlue\Client\Model\CreateEmailCampaign;
 use SendinBlue\Client\Api\EmailCampaignsApi;
+use SendinBlue\Client\Model\CreateSmtpEmail;
+use SendinBlue\Client\Model\CreateEmailCampaign;
 use SendinBlue\Client\Api\TransactionalEmailsApi;
 
 class BrevoMail extends BaseMail
@@ -40,10 +41,9 @@ class BrevoMail extends BaseMail
         'htmlContent' => $this->bodyHtml,
     ]);
     
-
     }
 
-    public function send()
+    public function send(): CreateSmtpEmail
     {
         return $this->transactionalEmailsApi->sendTransacEmail($this->mail);
     }

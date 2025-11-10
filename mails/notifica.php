@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Email Confirmation</title>
+    <title>Notifica dal Portfolio - Un utente ti ha contattato</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,7 +43,7 @@
 
 <body>
     <div class="container">
-        <h1>Ciao dal tuo Personale MVC,</h1>
+        <h1>Ciao </h1>
         <p>Qualcuno ti ha inviato un messaggio per il tuo portfolio</p>
         <h3>Mittente: <?= $nome ?> <?= $typologie ?></h3>
         <h5>data: <?= date('d-m-Y H:i:s')?></h5>

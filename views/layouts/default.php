@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="<?= csrf_token() ?>">
+
 
     <title>Software Developer - Luigi Iadicola</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
@@ -21,7 +23,7 @@
     <link rel="stylesheet" href="/assets/cards.css" />
     <link rel="stylesheet" href="/assets/effect.css" />
     <link rel="stylesheet" href="/assets/colors.css" />
-        <!-- CDN favicon --> 
+    <!-- CDN favicon -->
 
     <script src="/assets/lib.js" defer></script>
 </head>
@@ -35,19 +37,14 @@
                 <span id="barra-3"></span>
             </div>
             <div id="menu" class="chiuso">
-                <?php
-                function isActivePage($menuItem, $currentPage)
-                {
-                    return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
-                }
-                ?>
+
                 <nav>
                     <ul>
-                        <li><a href="/" class="<?= isActivePage('home', $page) ?>">Home</a></li>
-                        <li><a href="/contatti" class="<?= isActivePage('contatti', $page) ?>">Contatti</a></li>
-                        <li><a href="/portfolio" class="<?= isActivePage('portfolio', $page) ?>">Portfolio</a></li>
-                        <li><a href="/progetti" class="<?= isActivePage('progetti', $page) ?>">Progetti</a></li>
-                        <li><a href="/certificati" class="<?= isActivePage('corsi', $page) ?>">Certificati</a></li>
+                        <li><a href="/" class="{{ isActivePage('home', $page) }}">Home</a></li>
+                        <li><a href="/contatti" class="{{ isActivePage('contatti', $page) }}">Contatti</a></li>
+                        <li><a href="/portfolio" class="{{ isActivePage('portfolio', $page) }}">Portfolio</a></li>
+                        <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">Progetti</a></li>
+                        <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">Certificati</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/">GitHub <i class="fa fa-github text-white" aria-hidden="true"></i></a></li>
                     </ul>
                 </nav>
@@ -58,7 +55,7 @@
         @include('session.messages')
 
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 min-h-screen border-solid border-2 border-gray-200 rounded-xl p-10 m-10">
-            {{page}}
+            <<page>>
         </div>
     </main>
 
@@ -73,7 +70,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
         crossorigin="anonymous"></script>
-    
+
 </body>
 
 </html>

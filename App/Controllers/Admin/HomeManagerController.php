@@ -1,26 +1,21 @@
 <?php
 namespace App\Controllers\Admin;
 
-use App\Core\Mvc;
+
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Attributes\RouteAttr;
 use App\Model\Skill;
 use App\Core\Storage;
 use App\Model\Article;
 use App\Model\Profile;
-
 use App\Core\Validator;
-use App\Core\Controller;
 use App\Core\Http\Request;
 
-class HomeManagerController extends Controller
+class HomeManagerController extends AuthenticationController
 {
 
-    public function __construct(public Mvc $mvc)
-    {
-        parent::__construct($mvc);
 
-        $this->setLayout('admin');
-    }
-
+    #[RouteAttr('/home','get','admin.home')]
     public function index()
     {
         // visualizza per la gestione della home
@@ -31,11 +26,11 @@ class HomeManagerController extends Controller
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
-
+    
     public function store(Request $request)
     {
-        $data = $request->getPost();
-        $storage = new Storage();
+        $data = $request->all();
+        $storage = new Storage('images');
 
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
             unset($data['img']);
@@ -48,7 +43,7 @@ class HomeManagerController extends Controller
 
         Article::create($data);
 
-        return $this->redirectBack()->withSuccess('Articolo Inserito con successo nella Home Page!');
+        return response()->back()->withSuccess('Articolo Inserito con successo nella Home Page!');
 
         // inserisci un nuovo elemento
     }
@@ -68,7 +63,7 @@ class HomeManagerController extends Controller
     }
     public function update(Request $request, $id)
     {
-        $data = $request->getPost();
+        $data = $request->all();
         $article = Article::find($id);
         if(isset($data['img'])){
             // Validazione Dati
@@ -78,7 +73,7 @@ class HomeManagerController extends Controller
         if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
             
             Validator::verifyImage($data['img']);
-            $stg = new Storage();
+            $stg = new Storage('images');
             $stg->deleteIfFileExist($article->img);
             $stg->disk('images')->put($data['img']);
             $data['img'] = $stg->getRelativePath();
@@ -91,28 +86,23 @@ class HomeManagerController extends Controller
         $project->update($data);
 
         // feedback server
-        $this->redirectBack()->withSuccess('Articolo Aggiornato con successo!');
+        redirect()->back('Articolo Aggiornato con successo!');
     }
-
+    #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
     public function destroy(Request $reqq, $id)
     {
-        // trova e azione
-        $data =  $reqq->getPost();
-        if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
-            return $this->statusCode413();
-        }
+        // TODO: make validator 
+    
+        $article  = Article::find($id);
+        $name = $article->title;
 
-        $project  = Article::find($id);
-
-
-        $elem = $project->first();
+        $elem = $article->first();
 
         if(isset($elem->img)){
-            $stg = new Storage();
+            $stg = new Storage('images');
             $stg->deleteIfFileExist($elem->img);
         }
-
-        $project->delete();
-        $this->redirectBack()->withSuccess('Articolo ELIMINATO');
+        $article->delete();
+        return response()->back()->withSuccess('Articolo $name eliminato.');
     }
 }
