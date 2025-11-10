@@ -1,15 +1,17 @@
 
-name: 🚀 Deploy website on push
+name: Deploy website on push
 
 on: 
   push: 
     branches:
-      - main # deploy solo quando il push avviene su main
+      - production 
 
 jobs:
   web-deploy:
-    name: 🎉 Deploy
+    name: Deploy
     runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
 
     - name: 🚚 Get latest code
