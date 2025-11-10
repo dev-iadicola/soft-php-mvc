@@ -374,7 +374,7 @@ class QueryBuilder extends AbstractBuilder
     //───────────────────────────────────────────────────────────────
     #region CLONE    
     //───────────────────────────────────────────────────────────────
-    public function clone(): static
+    public function duplicate(): static
     {
         return clone $this;
     }

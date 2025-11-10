@@ -1,4 +1,5 @@
 <?php 
+/** @deprecated use filesystem */
 return [
         'path' => baseRoot() . '/storage/',
         'images' => baseRoot() . '/storage/images/',

@@ -2,6 +2,7 @@
 
 namespace App\Core;
 
+use App\Core\Facade\Storage;
 use Throwable;
 use \App\Core\Mvc;
 use RuntimeException;
@@ -31,11 +32,9 @@ class View
      * @param array $message other probably deprecable in future
      * @return string the page render
      */
-    public function render(string $page, array $variables = [], array|null $message = ['message' => '']): string
+    public function render(string $page, array $variables = [], array|null $message = []): string
     {
-        if ($message === null) {
-            $message = ['message' => ''];
-        }
+
 
         $page = convertDotToSlash($page);
 
@@ -57,7 +56,7 @@ class View
         error_reporting(E_ALL);
 
         // Sostituzione dei placeholder <<page>> con un file.php
-        $pageContent = $this->renderContent($pageContent, $message);
+        // $pageContent = $this->renderContent($pageContent, $message);
         return $this->renderContent($layoutContent, [
             'page' => $pageContent,
         ]);
@@ -75,7 +74,7 @@ class View
         // step 1: seach all @include (recursive)
         // step 2: search all @csrf
         // step 3: search all @delete
-        // setp 4 search all placheolder << John >> for convertn<<?= $name >> 
+        // setp 4 search all placheolder  {{$John}} for convertn<<?= $john >> 
         $content = (new IncludeDirectiveHandler($this))->cleanPlaceHolders($content, $variables);
         return $content;
     }
@@ -88,8 +87,9 @@ class View
      * @param array $variables value to insert into the view
      * @return string view content.
      */
-    private function renderContent(string $content, array|null $message): string
+    private function renderContent(string $content, array|null $message = []): string
     {
+
         $chiavi = array_keys($message);
         $chiavi = array_map(fn($chiave) => "<<" . $chiave . ">>", $chiavi);
 
@@ -142,15 +142,15 @@ class View
             "runtime decided the problem it's me, not you"
         ];
         $message = $quotes[array_rand($quotes)];
-        $file = "$views/$folder/$item.php";
-
-        if (!file_exists($file)) {
+        $originFile = "$views/$folder/$item.php";
+        
+        $originFilePath = $originFile;
+        if (!file_exists($originFile)) {
             $debugNameFile = str_replace(baseRoot(), '', $file);
             throw new RuntimeException("View file $debugNameFile not found... $message ");
         }
         // Read the file content
-        $content = file_get_contents($file);
-
+        $content = file_get_contents($originFile);
         // compile blade-like syntax to php
         // {{{ var }}} -> unescaped echo
         $content = preg_replace('/\{\{\{\s*(.*?)\s*\}\}\}/s', '<?php echo $1; ?>', $content);
@@ -190,38 +190,24 @@ class View
         //      \nmessage: {$e->getMessage()} \ncode: {$e->getCode()}", 0, $e);
         // }
 
-        // * use storage for save temp file 
-        $storage = new Storage();
-        $disk = $storage->disk('views'); /// defined how storage/cache/view in config/storage.php 
-
         // unic name of compiled file
-        $compiledFile = md5($file) . '.php';
-        $compiledFilePath = $this->mvc->config->storage['views'] . $compiledFile;
+        $compiledFile = 'cache/view/'.md5($originFile) . '.php';
+        // * use storage for save temp file 
+        Storage::make('private')->put($compiledFile, $content);
 
-
-        // create or update file if not exists or view edited
-        // Crea o aggiorna il file solo se non esiste o la view è stata modificata
-        if (!file_exists($compiledFilePath) || filemtime($compiledFilePath) < filemtime($file)) {
-            file_put_contents($compiledFilePath, $content);
-        }
 
         // Esecuzione sicura del file compilato
         try {
             ob_start();
-            include $compiledFilePath;
+            include Storage::make('private')->path($compiledFile);
             $output = ob_get_clean();
             return $output;
         } catch (Throwable $e) {
-            Log::exception($e);
-            Log::debug(['view_file' => $file]);
-
-            $errorFile = $e->getFile();
             $errorLine = $e->getLine();
-
             throw new RuntimeException(
-                "Error rendering view: {$file}\n" .
+                "Error rendering view: {$originFilePath}\n" .
                     "Message: {$e->getMessage()}\n" .
-                    "Occurred in: {$file} (line {$errorLine})",
+                    "Occurred in: (line {$errorLine})",
                 $e->getCode(),
                 $e
             );

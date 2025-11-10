@@ -4,6 +4,7 @@ use App\Core\Connection\SMTP;
 
 use App\Core\Facade\RouteHelper;
 use App\Core\Facade\Session;
+use App\Core\Helpers\Path;
 use App\Core\Services\CsrfService;
 
 // File: utils/helpers.php
@@ -121,6 +122,21 @@ if (!function_exists('baseRoot')) {
         return $_SERVER['DOCUMENT_ROOT'];
     }
 }
+
+if (!function_exists('storagePath')){
+    function storagePath(string $path){
+        
+        return Path::normalize(baseRoot().'/storage/'.$path);
+    }
+}
+
+if(!function_exists('is_octal')){
+    function is_octal(int $numebr){
+        return preg_match('/^0[0-7]+$/', (string) $numebr) === 1;
+    }
+}
+
+
 if (!function_exists('convertDotToSlash')) {
     function convertDotToSlash(string $dir)
     {

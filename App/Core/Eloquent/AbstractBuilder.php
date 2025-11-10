@@ -18,7 +18,7 @@ abstract class AbstractBuilder
 {
     use SqlClauses; use SqlOperation;  use Transaction;
     use Execute; use Attributes;
-    protected static ?QueryBuilder $_instance = null;
+
     protected ?string $table = null;
     protected string $modelClass = ''; // Nome del modello, utile per il debug e la gestione degli errori
     protected array $fillable = []; // Attributi che possono essere assegnati in massa

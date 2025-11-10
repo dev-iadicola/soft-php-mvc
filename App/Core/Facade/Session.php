@@ -3,21 +3,23 @@
  * Summary of namespace Session
  * Facade session, simply use for yout framewrok!
  */
-namespace App\Core\Facade; 
+namespace App\Core\Facade;
+
+use App\Core\Mvc;
 use App\Core\Services\SessionStorage;
 
 class Session {
 
     public static function setFlash(string $key, mixed $val): void{
-       mvc()->sessionStorage->setFlashSession($key,$val); 
+       Mvc::$mvc->sessionStorage->setFlashSession($key,$val); 
     }
 
     public static function getFlash(string $key): string{
-       return mvc()->sessionStorage->getFlashSession($key);
+       return Mvc::$mvc->sessionStorage->getFlashSession($key);
     }
 
     public static function get($key){
-        return mvc()->sessionStorage->get($key);
+        return Mvc::$mvc->sessionStorage->get($key);
     }
 
     /**
@@ -34,18 +36,18 @@ class Session {
      * @return array|bool|null
      */
     public static function getOrCreate(string $key, mixed $values): mixed{
-        return mvc()->sessionStorage->getOrCreate($key, $values);
+        return Mvc::$mvc->sessionStorage->getOrCreate($key, $values);
     }
     public static function has(string $key): bool{
-        return mvc()->sessionStorage->has($key);
+        return Mvc::$mvc->sessionStorage->has($key);
     }
 
     public static function create(array $array): SessionStorage{
-        return mvc()->sessionStorage->create($array);
+        return Mvc::$mvc->sessionStorage->create($array);
     }
 
     public static function set(string $key, mixed $value){
-        return mvc()->sessionStorage->set($key, $value);
+        return Mvc::$mvc->sessionStorage->set($key, $value);
     }
 
 

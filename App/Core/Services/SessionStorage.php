@@ -205,7 +205,8 @@ class SessionStorage
         }
     }
 
-    public function set(string $key , mixed $value){
+    public function set(string $key, mixed $value)
+    {
         $_SESSION[$key]  = $value;
     }
 
@@ -270,7 +271,7 @@ class SessionStorage
     public function getOrCreate(string $key, mixed $value): mixed
     {
         if (!$this->has($key)) {
-             $this->create([$key => $value]);
+            $this->create([$key => $value]);
         }
         return $this->get($key);
     }
@@ -324,11 +325,12 @@ class SessionStorage
 
     public  function destroy(): int
     {
-
-        $_SESSION = [];
-        session_unset();
-        session_destroy();
-        Log::info("Session Destroy");
+        if (PHP_SESSION_ACTIVE == session_status()) {
+            $_SESSION = [];
+            session_unset();
+            session_destroy();
+            Log::info("Session Destroy:, id: " . session_id());
+        }
         return session_status();
     }
 }
