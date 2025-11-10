@@ -30,7 +30,7 @@ class HomeManagerController extends AuthenticationController
     public function store(Request $request)
     {
         $data = $request->all();
-        $storage = new Storage();
+        $storage = new Storage('images');
 
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
             unset($data['img']);
@@ -73,7 +73,7 @@ class HomeManagerController extends AuthenticationController
         if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
             
             Validator::verifyImage($data['img']);
-            $stg = new Storage();
+            $stg = new Storage('images');
             $stg->deleteIfFileExist($article->img);
             $stg->disk('images')->put($data['img']);
             $data['img'] = $stg->getRelativePath();
@@ -91,21 +91,18 @@ class HomeManagerController extends AuthenticationController
     #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
     public function destroy(Request $reqq, $id)
     {
-        // trova e azione
-        $data =  $reqq->getPost();
+        // TODO: make validator 
     
+        $article  = Article::find($id);
+        $name = $article->title;
 
-        $project  = Article::find($id);
-
-
-        $elem = $project->first();
+        $elem = $article->first();
 
         if(isset($elem->img)){
-            $stg = new Storage();
+            $stg = new Storage('images');
             $stg->deleteIfFileExist($elem->img);
         }
-
-        $project->delete();
-        $this->redirectBack()->withSuccess('Articolo ELIMINATO');
+        $article->delete();
+        return response()->back()->withSuccess('Articolo $name eliminato.');
     }
 }

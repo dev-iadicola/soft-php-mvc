@@ -47,7 +47,7 @@ class ProjectManagerController extends AuthenticationController
             return response()->back()->withError($validator->errors());
          }
          // Salva il file e ottieni il path relativo
-         $storage = new Storage();
+         $storage = new Storage('images');
          $storage->disk('images')->put($file);
 
          // Sovrascrivi $data['img'] con il path relativo (da salvare nel DB)
@@ -70,7 +70,7 @@ class ProjectManagerController extends AuthenticationController
          $this->withWarning("Aggiornato, eccetto l'immagine");
       }
       if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-         $stg = new Storage();
+         $stg = new Storage('images');
          $stg->deleteIfFileExist($project->img);
          $stg->disk('images')->put($data['img']);
          $data['img'] = $stg->getRelativePath();
@@ -98,7 +98,7 @@ class ProjectManagerController extends AuthenticationController
          return response()->back()->withError('Progetto non trovato');
       }
       if (!isset($project->img) && !is_null($project->img)) {
-         $stg = new Storage();
+         $stg = new Storage('images');
          if ($stg->deleteIfFileExist($project->img)) {
             $project->delete();
             response()->back()->withSuccess('Progetto Elimianto.');

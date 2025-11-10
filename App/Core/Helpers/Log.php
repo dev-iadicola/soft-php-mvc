@@ -2,6 +2,7 @@
 
 namespace App\Core\Helpers;
 
+use App\Core\Storage;
 use Throwable;
 use App\Mail\BrevoMail;
 use App\Mail\BaseMail;
@@ -12,6 +13,8 @@ class Log
 {
     // base path robusto
     protected static string $logFile = '';
+    private Storage $storage;
+
 
     /** Inizializza il path del log una sola volta */
     protected static function init(): void
@@ -23,6 +26,7 @@ class Log
         // /App/Core/Helpers -> salgo di 3 livelli fino alla root del progetto
         $base = dirname(__DIR__, 3);
         $dir  = $base . '/storage/logs';
+        
 
         if (!is_dir($dir)) {
             // 0775 va bene su linux; su windows viene ignorato
@@ -117,7 +121,7 @@ class Log
             $message = $encoded;
         }
 
-        // Timestamp locale Roma; se preferisci, impostalo nel bootstrap una sola volta
+        // Timestamp  Roma  //Todo: verra' messo quello orginale 
         date_default_timezone_set('Europe/Rome');
         $date = Date::Rome('Y-m-d H:i:s');
 
