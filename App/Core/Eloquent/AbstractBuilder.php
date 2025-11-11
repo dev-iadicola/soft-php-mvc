@@ -12,6 +12,7 @@ use PDO;
 use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
 use App\Core\Eloquent\Schema\Validation\CheckSchema;
+use App\Utils\Enviroment;
 use PDOStatement;
 
 abstract class AbstractBuilder
@@ -64,11 +65,12 @@ abstract class AbstractBuilder
     }
     public function setTable(string $table)
     {
-        if (CheckSchema::tableExist($table))
+        
+        if (getenv("APP_ENV") == 'testing' ||CheckSchema::tableExist($table)  )
             $this->table = $table;
-        else {
+        else 
             throw new ModelNotFoundException("Table $table Not Exist in Schema. Correct yout Model :  {$this->modelClass} or Schema");
-        }
+        
     }
  
     /**

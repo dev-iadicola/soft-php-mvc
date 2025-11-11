@@ -108,7 +108,7 @@ The Soft ORM system is **inspired by last Framework tecnologies **, but **built 
 It follows a clear, fluent flow: every Model represents a table, and the `QueryBuilder` dynamically generates and executes SQL statements.
 
 ```text
-[Model::find(1)]
+[User::find(1)] -> Exstend Class Model
       │
       ▼
  ┌────────────────┐

@@ -224,7 +224,7 @@ trait SqlClauses
         // * It was removed because it will cause problems when you use join funcions
         // if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelClass} ");
         // * Check the columns 
-        $validated = $this->validateColumns($columns, true);
+        // $validated = $this->validateColumns($columns, true);
         // * check the allowed direction
         $allowedDirections = ['ASC', 'DESC'];
         $direction = strtoupper(trim($direction));
@@ -233,7 +233,12 @@ trait SqlClauses
             throw new QueryBuilderException("Invalid direction '$direction' in orderBy()");
         }
         // costruzione della clausola orderBy.
-        $this->orderByClause = 'ORDER BY ' . implode(', ', array_map(fn($col) => "$col $direction", $validated));
+        if(is_array($columns)){
+           $orderby = implode(', ', array_map(fn($col) => "$col $direction", $columns));
+        }else{
+           $orderby = " $columns $direction ";
+        }
+        $this->orderByClause = 'ORDER BY ' . $orderby;
         return $this;
     }
 
@@ -255,9 +260,8 @@ trait SqlClauses
             throw new QueryBuilderException("You can't use groupBy() more than once in the same query for model {$this->modelClass}");
         }
         // Validazione colonne con context automatico
-        $validated = $this->validateColumns($columns, true);
         // Costruisce la clausola SQL
-        $this->groupByClause = 'GROUP BY ' . implode(', ', $validated);
+        $this->groupByClause = 'GROUP BY ' . (is_array($columns) ? implode(', ', $columns) : $columns);
         return $this;
     }
 

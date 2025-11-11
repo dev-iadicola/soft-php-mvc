@@ -312,6 +312,7 @@ class QueryBuilder extends AbstractBuilder
      * @param array|string $columns  Colonne da validare
      * @param bool $allowMultiple    Permette più colonne (true per groupBy)
      * @return array                 Array di colonne validate
+     * @deprecated 
      * @throws QueryBuilderException Se una colonna non è ammessa
      */
     protected function validateColumns(array|string $columns, bool $allowMultiple = false): array

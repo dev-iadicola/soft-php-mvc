@@ -25,5 +25,8 @@
         "mvc": [
             "php App/Core/CLI/Kernel.php"
         ]
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^12.4"
     }
 }
