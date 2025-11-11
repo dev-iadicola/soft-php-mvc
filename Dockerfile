@@ -1,20 +1,15 @@
 # ==========================
-#  PHP 8.4 + Composer + SQLite (FULL)
+#  PHP 8.4 + Composer (NO SQLite)
 # ==========================
 FROM php:8.4-cli
 
-# Installa tutto il necessario
+# Installa le dipendenze necessarie
 RUN apt-get update && apt-get install -y \
     git \
     unzip \
     zip \
-    sqlite3 \
-    libsqlite3-0 \
-    libsqlite3-dev \
     libzip-dev \
-    && docker-php-ext-configure pdo_sqlite --with-pdo-sqlite=/usr \
-    && docker-php-ext-install pdo pdo_sqlite \
-    && docker-php-ext-enable pdo_sqlite \
+    && docker-php-ext-install pdo \
     && rm -rf /var/lib/apt/lists/*
 
 # Installa Composer
@@ -25,14 +20,11 @@ WORKDIR /var/www/html
 # Copia tutto il progetto
 COPY . .
 
-# Installa dipendenze PHP
+# Installa le dipendenze PHP
 RUN composer install --no-interaction --prefer-dist
 
-# Testa che SQLite funzioni davvero
-RUN php -r "new PDO('sqlite::memory:'); echo 'SQLite OK\n';"
-
-# Mostra moduli caricati (debug)
-RUN php -m | grep -E "pdo|sqlite" || true
+# Mostra i moduli caricati (debug)
+RUN php -m | grep -E "pdo" || true
 
 # Comando di default
 CMD ["vendor/bin/phpunit", "--testdox", "--colors=always"]
