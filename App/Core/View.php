@@ -124,7 +124,7 @@ class View
         extract($values);
         extract($variables);
         // per visualizzare i messaggi di errore e successo
-        $views = $this->mvc->config->folder->views;
+        $views = $this->mvc->config->resources['views'];
         // The full path and file with the content 
         // Easet Egg
         $quotes = [

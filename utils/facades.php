@@ -3,10 +3,8 @@
 use App\Core\Mvc;
 use App\Core\Facade\Auth;
 use App\Core\Facade\View;
-use App\Core\Http\Request;
 use App\Utils\Enviroment;
 use App\Core\Services\AuthService;
-use App\Core\Support\Collection\BuildAppFile;
 
 /**
  * facade for Auth

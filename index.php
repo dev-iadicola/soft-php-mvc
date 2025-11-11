@@ -10,21 +10,17 @@ use App\Core\Mvc;
 use App\Core\Config;
 
 /**
- * Caricamento configurazioni dell'applicazione
+ * Configuration of Enviroment file .env
  */
-Config::env(__DIR__ . '/.env'); // caricamento variabili d'ambiente del file .env
-
-// istanza per la configurazione
-/**
- * Configurazione dei file principali che si trovano all'interno del
- *  percorso "/config" ove all'interno sono presenti i file  per la connfigurazione, folder.php, routes.php, middleware.php, etc.
- * 
- */
-
-$config = Config::dir(__DIR__ . '/config'); //ritorna BuildAppFile
+Config::env(__DIR__ . '/.env'); 
 
 /**
- * Passiamo l'ogggetto con i valori delle cartelle
+ * Configuration of the main files located within the '/config' path. 
+ * where behind has configutaion file has routes.php, middleware.php, settings.php etc.
+ */
+$config = Config::dir(__DIR__ . '/config'); 
+
+/**
  * New instance of MVC, and Initialize all proividers in the run method
  */
 (new Mvc($config))->run();

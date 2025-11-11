@@ -1,10 +1,11 @@
 <?php
 
-use App\Core\Connection\SMTP;
-
-use App\Core\Facade\RouteHelper;
-use App\Core\Facade\Session;
 use App\Core\Helpers\Path;
+
+use App\Core\Facade\Session;
+use App\Core\Facade\Storage;
+use App\Core\Connection\SMTP;
+use App\Core\Facade\RouteHelper;
 use App\Core\Services\CsrfService;
 
 // File: utils/helpers.php
@@ -23,14 +24,16 @@ if (!function_exists(function: 'implodeMessage')) {
     }
 }
 
-if(! function_exists(function:'csrf_token')){
-    function csrf_token():null|string{
+if (! function_exists(function: 'csrf_token')) {
+    function csrf_token(): null|string
+    {
         return (new CsrfService())->getToken();
     }
 }
 
 if (!function_exists('route')) {
-    function route(string $name, array $params = []):string{
+    function route(string $name, array $params = []): string
+    {
         return RouteHelper::getByName($name, $params);
     }
 }
@@ -49,7 +52,8 @@ if (!function_exists(function: 'printLn')) {
 }
 
 if (!function_exists(function: 'printLn')) {
-    function settings(){
+    function settings()
+    {
         return mvc()->config->settings;
     }
 }
@@ -89,7 +93,7 @@ if (!function_exists(function: 'assets')) {
 if (!function_exists('validateImagePath')) {
     function validateImagePath(string $path, string $fallback)
     {
-        if (file_exists(mvc()->config->folder->root . $path))
+        if (file_exists(Storage::make('public')->path($path) ))
             return $path;
         else
             return $fallback;
@@ -123,26 +127,43 @@ if (!function_exists('baseRoot')) {
     }
 }
 
-if (!function_exists('storagePath')){
-    function storagePath(string $path){
-        
-        return Path::normalize(baseRoot().'/storage/'.$path);
+
+
+/**
+ * Global function by class Path
+ */
+
+if (!function_exists('basepath')) {
+    function basepath(string $string)
+    {
+        return Path::root($string);
+    }
+}
+if (!function_exists('storagePath')) {
+    function storagePath(string $path)
+    {
+
+        return Path::normalize(baseRoot() . '/storage/' . $path);
     }
 }
 
-if(!function_exists('is_octal')){
-    function is_octal(int $numebr){
+if (!function_exists('convertDotToSlash')) {
+    function convertDotToSlash(string $dir)
+    {
+        return Path::convertDotToSlash($dir);
+    }
+}
+
+
+
+if (!function_exists('is_octal')) {
+    function is_octal(int $numebr)
+    {
         return preg_match('/^0[0-7]+$/', (string) $numebr) === 1;
     }
 }
 
 
-if (!function_exists('convertDotToSlash')) {
-    function convertDotToSlash(string $dir)
-    {
-        return str_replace('.', '/', $dir);
-    }
-}
 
 if (!function_exists(function: 'smtp')) {
     function smtp(): SMTP
@@ -161,5 +182,3 @@ if (!function_exists(function: 'flashMessage')) {
         return Session::getFlash($key);
     }
 }
-
-

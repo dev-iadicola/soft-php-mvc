@@ -6,7 +6,7 @@ use App\Core\Config;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
 use App\Core\Exception\FileNotFoundException;
-use App\Core\Support\Collection\BuildAppFile;
+use App\Core\Support\Collection\ConfigCollection;
 
 class MakeMigrationCommand implements CommandInterface
 {
@@ -32,14 +32,9 @@ class MakeMigrationCommand implements CommandInterface
                 $fn(); // esegui ciascuna migrazione
             }
         }
-
-       
-
-
-
     }
 
-    private function config(): BuildAppFile
+    private function config(): ConfigCollection
     {
         Config::env(getcwd() . '/.env');
 

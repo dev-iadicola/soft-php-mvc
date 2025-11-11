@@ -4,12 +4,9 @@ namespace App\Core;
 
 use App\Core\Provider\DatabaseProvider;
 use App\Core\Provider\SmtpProvider;
-use PDOException;
 use \App\Core\View;
 use App\Mail\Mailer;
 use App\Core\Storage;
-use \App\Core\Database;
-use App\Core\Middleware;
 use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
@@ -19,6 +16,7 @@ use \App\Core\Exception\NotFoundException;
 use App\Core\Provider\NativeErrorProvider;
 use App\Core\Provider\WhoopsProvider;
 use App\Core\Services\CsrfService;
+use App\Core\Support\Collection\ConfigCollection;
 
 class Mvc
 {
@@ -47,8 +45,8 @@ class Mvc
     public Mailer $mailer;
     public SessionStorage $sessionStorage;
 
-    /** @var \App\Core\Support\Collection\BuildAppFile */
-    public array|object $config;
+    /** @var \App\Core\Support\Collection\ConfigCollection */
+    public ConfigCollection $config;
 
     /**
      *Constructor of the foundamental class

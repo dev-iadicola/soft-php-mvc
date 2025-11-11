@@ -7,7 +7,7 @@ use \App\Core\Http\Request;
 use \App\Core\Mvc;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Http\Helpers\RouteCollection;
-use App\Core\Support\Collection\BuildAppFile;
+use App\Core\Support\Collection\ConfigCollection;
 
 /**
  * Summary of Router
@@ -18,7 +18,7 @@ class Router
 
     public Request $request;
     public Mvc $mvc;
-    public BuildAppFile $config;
+    public ConfigCollection $config;
 
     #Nuove implementazioni
     private RouteRegister $registry;

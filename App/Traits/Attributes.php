@@ -36,10 +36,7 @@ trait Attributes
         if (property_exists($this, $key)) {
             return $this->$key;
         }
-        // check essite come attr
-        if (property_exists($this, $key)) {
-            return $this->$key;
-        }
+        
 
         return $this->attributes[$key] ?? null;
 
