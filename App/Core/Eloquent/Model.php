@@ -3,15 +3,16 @@
 namespace App\Core\Eloquent;
 
 
-use App\Traits\Attributes;
+use JsonSerializable;
+use RuntimeException;
+use App\Core\Database;
 use App\Traits\Getter;
 use App\Traits\Setter;
-use JsonSerializable;
-use App\Core\Database;
+use App\Traits\Attributes;
 use App\Core\Eloquent\QueryBuilder;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelStructureException;
-use RuntimeException;
+use App\Core\Eloquent\Schema\Validation\CheckSchema;
 
 /**
  * @method static QueryBuilder select(array|string $columns)
@@ -110,13 +111,22 @@ class Model implements JsonSerializable
             throw new QueryBuilderException($e->getMessage() . $origin);
         }
     }
-    protected function boot(): void
-    {
 
-        if (!$this->table) {
+    private function checkTable()
+    {
+        if (getenv("APP_ENV") == 'testing' ||CheckSchema::tableExist($this->table)  )
+            throw new ModelStructureException("Table {$this->table} Not Exist in Schema. Correct yout Model :  {$this->modelClass} or Schema");
+         if (!$this->table) {
             $calledClass = get_class($this); // Ottieni il nome completo del Model
             throw new ModelStructureException("create variable table in : {$calledClass}");
         }
+    }
+    
+    protected function boot(): void
+    {
+
+       
+        $this->checkTable();
 
         $this->queryBuilder = new QueryBuilder();
         $this->queryBuilder->setPDO(Database::getInstance()->getConnection());

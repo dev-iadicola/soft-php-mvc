@@ -65,12 +65,7 @@ abstract class AbstractBuilder
     }
     public function setTable(string $table)
     {
-        
-        if (getenv("APP_ENV") == 'testing' ||CheckSchema::tableExist($table)  )
             $this->table = $table;
-        else 
-            throw new ModelNotFoundException("Table $table Not Exist in Schema. Correct yout Model :  {$this->modelClass} or Schema");
-        
     }
  
     /**
