@@ -114,7 +114,7 @@ ActiveQuery
 │    ModelHydrator → returns model objects
 │
 ▼
-Result (User instance or collection)
+Result (User instance or re-call ActiveQuery)
 
 ```
 
