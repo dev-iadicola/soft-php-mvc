@@ -1,84 +1,83 @@
-# Model – ORM Layer Documentation
+# ORM Layer — Architecture & Usage Guide
 
-The **Model** represents the core abstraction layer between your PHP code and the database.  
-It’s built on top of a fully custom **QueryBuilder**, designed for expressive, fluent, and secure database interaction.
+This ORM is a lightweight, fully custom implementation inspired by modern frameworks,  
+but designed with **strict separation of concerns**, **type-safety**, and **zero magic**.
 
-Each model encapsulates a database table and provides a natural, object-oriented API for working with data.
+Unlike classic Active Record ORMs, this architecture introduces an intermediate layer called **ActiveQuery**,  
+which cleanly separates:
 
----
+- **query building**  
+- **query execution**  
+- **model hydration**
 
-##  Architecture Overview
-
-The Model–QueryBuilder system is based on three key design patterns:
-
-| Pattern | Purpose | Implementation |
-|----------|----------|----------------|
-| **Builder Pattern** | Builds complex SQL queries step by step | `QueryBuilder` |
-| **Active Record Pattern** | Each model instance represents a single table row and handles its own persistence | `Model` |
-| **Template Method Pattern** | Defines the execution flow while letting subclasses override specific steps | `AbstractBuilder` → `QueryBuilder` |
+This results in a predictable, testable, extensible ORM.
 
 ---
 
-## Model Structure
+# 🔷 Architecture Overview
 
-A typical model extends the base `Model` class and defines its table and fillable attributes:
+The ORM is composed of five core components:
+
+Model → OrmEngine → ActiveQuery → QueryBuilder → QueryExecutor → PDO
+│
+ModelHydrator
+
+### **Model**
+Represents a table and provides a static API (`User::make()->where()->first()`).
+
+### **OrmEngine**
+Bootstraps the ORM stack for a model (QueryBuilder, Executor, Hydrator).  
+Does NOT execute queries directly anymore.
+
+### **ActiveQuery**
+The core worker:
+- holds the QueryBuilder
+- executes SQL through QueryExecutor
+- hydrates results through ModelHydrator
+
+### **QueryBuilder**
+Fluent SQL builder (select, where, joins, limit, …).
+
+### **QueryExecutor**
+Runs prepared statements safely with PDO.
+
+### **ModelHydrator**
+Transforms raw DB rows into Model instances.
+
+---
+
+# 🔷 Example Model
 
 ```php
 class User extends Model
 {
-    protected ?string $table = 'users';
+    protected string $table = 'users';
     protected array $fillable = ['name', 'email', 'password'];
 }
-
-// Cretion
-User::create([
-    'title' => 'text',
-    'text' => 'ipsulorem....',
-]);
-// Selection
-$users = User::select(['id', 'name'])
+User::make()
+    ->create([
+        'name' => 'Luigi',
+        'email' => 'luigi@example.com'
+    ]);
+    // SELECT
+    $users = User::make()
+    ->select(['id', 'name'])
     ->where('active', 1)
     ->orderBy('created_at', 'DESC')
     ->limit(5)
     ->get();
-// First Record 
-$user = User::where('email', 'luigi@example.com')->first();
-
-// Update data 
-$user = User::find(1);
-$user->name = 'Luigi Iadicola';
-$user->update(['name' => $user->name]);
-
-// Destroy data 
-User::where('id', 3)->delete();
-```
-# Aggregation Functions
-
-## The QueryBuilder provides built-in SQL aggregate and utility functions:
-
-| Method                   | Description                 | Example                               |
-| ------------------------ | --------------------------- | ------------------------------------- |
-| `count($column, $alias)` | Counts rows                 | `User::count('id', 'total_users')`    |
-| `sum($column, $alias)`   | Returns the sum of a column | `Order::sum('amount', 'total_sales')` |
-| `avg($column, $alias)`   | Returns the average value   | `User::avg('age', 'avg_age')`         |
-| `max($column, $alias)`   | Returns the maximum         | `Order::max('amount', 'max_order')`   |
-| `min($column, $alias)`   | Returns the minimum         | `User::min('age', 'min_age')`         |
-| `countDistinct($column)` | Counts distinct values      | `User::countDistinct('email')`        |
-
-
-```php
-// INNER JOIN
-User::select(['users.id', 'users.name', 'roles.name AS role'])
-    ->join('roles', 'users.role_id', '=', 'roles.id')
-    ->where('roles.active', 1)
-    ->get();
-
-// LEFT JOIN RIGHT
-Post::leftJoin('comments', 'posts.id', '=', 'comments.post_id')
-    ->select(['posts.title', 'comments.text'])
-    ->get();
-// Additional Clauses
-    User::whereBetween('age', 18, 30)
+    // UPDATE
+    User::make()
+    ->where('id', 1)
+    ->update(['name' => 'Luigi Updated'])
+    ->execute();
+    // DELETE
+    User::make()
+    ->where('id', 3)
+    ->delete()
+    // ADDITIONAL CLAUSES 
+    User::make()
+    ->whereBetween('age', 18, 30)
     ->whereNotNull('email')
     ->groupBy('city')
     ->having('COUNT(id)', '>', 5)
@@ -87,65 +86,70 @@ Post::leftJoin('comments', 'posts.id', '=', 'comments.post_id')
     ->offset(20)
     ->get();
 ```
+___
 
-# QueryBuilder
+| Pattern                     | Role                                            |
+| --------------------------- | ----------------------------------------------- |
+| **ActiveQuery**             | Encapsulates QueryBuilder + Executor + Hydrator |
+| **Builder Pattern**         | Fluent SQL construction                         |
+| **Data Mapper (partial)**   | Hydration separate from Models                  |
+| **Active Record (partial)** | Model defines table + fillable                  |
+| **Dependency Injection**    | Engine injects Builder/Executor/Hydrator        |
+| **Separation of Concerns**  | Clean architectural layering                    |
 
-| Pattern | Description |
-|----------|-------------|
-| **Builder** | The `QueryBuilder` constructs SQL queries using a fluent interface. |
-| **Active Record** | Each Model manages its own table and CRUD operations. |
-| **Template Method** | `AbstractBuilder` defines the shared structure for all Builders. |
-| **Proxy / Delegation** | The `Model` delegates static method calls to the `QueryBuilder`. |
-| **Singleton (PDO)** | The `Database` class maintains a single active PDO connection. |
-| **Strategy** | (Planned) Future extension for supporting multiple SQL dialects. |
-| **Facade** | The `Auth` facade provides simplified access to services like `AuthService` and `SessionStorage`. |
+```TEXT
+User::make()->where('id', 1)->first()
+        │
+        ▼
+Model (boot + table + fillable)
+        │
+        ▼
+OrmEngine::Make()
+        │
+        ▼
+ActiveQuery
+│       │
+│    QueryBuilder → builds SQL
+│    QueryExecutor → runs PDO safely
+│    ModelHydrator → returns model objects
+│
+▼
+Result (User instance or collection)
 
----
-
-## ORM System (Model & QueryBuilder)
-
-The Soft ORM system is **inspired by last Framework tecnologies **, but **built entirely from scratch**.  
-It follows a clear, fluent flow: every Model represents a table, and the `QueryBuilder` dynamically generates and executes SQL statements.
-
-```text
-[User::find(1)] -> Exstend Class Model
-      │
-      ▼
- ┌────────────────┐
- │   Model.php    │ → Creates the instance and forwards static calls to the QueryBuilder
- └────────────────┘
-      │
-      ▼
- ┌──────────────────────┐
- │   QueryBuilder.php   │ → Builds the SQL query fluently
- │   (SELECT * FROM ...)│
- └──────────────────────┘
-      │
-      ▼
- ┌────────────────┐
- │   Database.php │ → Singleton PDO that executes the query
- └────────────────┘
-      │
-      ▼
-[ResultSet / Model Hydration]
 ```
-| Feature                         | Symfony *(Doctrine ORM)*                                | CodeIgniter *(Query Builder)*           | Laravel *(Eloquent ORM)*                         | Soft MVC *(Custom ORM + QueryBuilder)*                                             |
-| ------------------------------- | ------------------------------------------------------- | --------------------------------------- | ------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| **ORM Paradigm**                | Full Data Mapper with Entity Manager                    | None (only fluent Query Builder)        | Active Record + Fluent Builder                   | Active Record + Custom Fluent Query Builder                                        |
-| **Model Definition**            | *Entity* classes + annotations or YAML/XML mapping      | No entity classes, uses arrays/stdClass | `Model` classes with static methods              | `Model` classes with dynamic properties + `Getter`, `Relation` traits              |
-| **Query Construction**          | `QueryBuilder` based on DQL (Doctrine Query Language)   | `$this->db->select()->from()->where()`  | `User::where('name', 'Luigi')->first()`          | `User::where('name', 'Luigi')->orderBy('id')->get()` *(Eloquent-style)*            |
-| **Query Execution**             | DQL → SQL translation via `EntityManager`               | Direct execution on DB driver           | Lazy loading through PDO                         | Lazy execution via PDO + secure parameter binding                                  |
-| **Relations**                   | Managed via annotations (`@OneToMany`, etc.)            | Manual                                  | Defined in models (`hasMany`, `belongsTo`, etc.) | Supported via `Relation` trait (`hasOne`, `hasMany`, `belongsTo`, `belongsToMany`) |
-| **SQL Injection Safety**        | Automatic parameterized queries                         | Manual or auto escaping                 | Automatic parameter binding                      | Secure `bindValue` parameter binding in `QueryBuilder`                             |
-| **Schema Validation**           | Managed by Doctrine Migrations                          | Manual                                  | Integrated migrations                            | Planned: automatic schema validation via `CheckSchema` and reflection              |
-| **Query Caching**               | Yes, via `DoctrineCache`                                | No                                      | Optional (`remember()`)                          | Planned cache layer via `QueryCache`                                               |
-| **Error Handling**              | Structured exceptions (`ORMException`, `DBALException`) | Driver error codes                      | Laravel exceptions (`QueryException`)            | Custom exceptions (`ModelStructureException`, `QueryBuilderException`, etc.)       |
-| **Main Design Patterns**        | Data Mapper, Unit of Work, Repository                   | Builder Pattern                         | Active Record, Builder, Proxy                    | Active Record, Builder, Template Method, Proxy, Facade                             |
-| **Database Layer Architecture** | Total separation between entities and DB                | Procedural, no mapping                  | Integrated within the Model                      | Layered architecture separating `Model ↔ QueryBuilder ↔ PDO`                       |
-| **Primary Goal**                | Abstract and portable domain representation             | Simple and direct data access           | Expressive, intuitive syntax                     | Combine **clarity**, **manual control**, and **modern fluidity**                   |
+
+# Why This Architecture?
 
 
-# Eloquent-like syntax, clean structure, direct PDO control, and a fully handcrafted ORM — written from the ground up with precision and intent.
 
----
+- Cleaner: No magic static calls directly executed
+
+- Testable: Each component has a single responsibility
+
+- Predictable: QueryBuilder has no side effects
+
+- Extensible: Easy to add relations, caching, different SQL dialects
+
+- Compared to Doctrine:
+
+- Lighter
+
+- More direct control
+
+- No metadata overhead
+
+- Closer to raw SQL, but safer
+
+# Work in Progress (WIP)
+
+## This ORM is functional but still under development.
+
+### Pending features:
+- toInsert() / toUpdate() / toDelete() finalization
+- Unified insert/update/delete execution through ActiveQuery
+- Relations (hasOne / hasMany / belongsTo)
+- Schema validator improvements
+- Query caching
+- Batch operations
+
 
