@@ -23,7 +23,7 @@ namespace App\Traits;
  */
 trait Attributes
 {
-    protected array $attributes;
+    protected array $attributes = [];
         
     public function __get($key)
     {

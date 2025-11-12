@@ -108,7 +108,7 @@ if (!function_exists(function: 'css')) { //get css folder in assets folder
      */
     function css()
     {
-        return mvc()->config->folder->css;
+        return mvc()->config->resources['css'];
     }
 }
 

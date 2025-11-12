@@ -2,68 +2,73 @@
 
 namespace App\Core\Eloquent\Query;
 
-use App\Core\Eloquent\QueryBuilder;
 use PDO;
+use PDOException;
 use PDOStatement;
 use App\Core\Helpers\Log;
 use App\Core\Exception\QueryBuilderException;
-use PDOException;
 
-trait Execute
+class QueryExecutor
 {
+    public function __construct(private PDO $pdo)
+    {
 
+    }
+
+    public function prepare($query){
+        return $this->pdo->prepare($query);
+    }
 
     //───────────────────────────────────────────────────────────────
-    //* ESECUZIONE QUERY E FETCH/FETCHALL 
+    //* EXECUTION QUERY 
     //───────────────────────────────────────────────────────────────
     #region STATMENT - EXECUTION - FETCH
 
-    private function prepareAndExecute(?string $query = null): PDOStatement
+    public function prepareAndExecute(string $query, array $bindings): PDOStatement
     {
-        // ritorno la generazione della stringa query con i parametri da bindare
-        $sql = $query ?? $this->toSql();
-        
+ 
         try {
-            $stmt = $this->pdo->prepare($sql);
-            foreach ($this->bindings as $bind => $value) {
+            $stmt = $this->pdo->prepare($query);
+            foreach ($bindings as $bind => $value) {
                 $stmt->bindParam($bind, $value);
             }
             $stmt->execute();
-          
-            return  $stmt;
+            return $stmt;
         } catch (PDOException $e) {
-            Log::debug("Wrong query HERE -> $sql");
-            throw new QueryBuilderException($e);
+            Log::debug("Wrong query HERE -> $query");
+            throw new QueryBuilderException($e->getMessage(), (int)$e->getCode());
         }
-        
-
-        // return $stmt->fetch($fetchTyep);
     }
 
-    protected function fetch(int $fetchTyep = PDO::FETCH_ASSOC, ?string $query = null): array|object|bool
+    public function fetch(string $query, array $bindings,  int $fetchTyep = PDO::FETCH_ASSOC): array|object|bool
     {
-        $stmt = $this->prepareAndExecute($query);
+        $stmt = $this->prepareAndExecute(query: $query, bindings: $bindings );
         if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita
         }
         return $stmt->fetch($fetchTyep);
     }
 
-    protected function fetchAll(int $fetchType = PDO::FETCH_ASSOC, ?string $query = null): array|object|bool
+    public function fetchAll(string $query, array $bindings, int $fetchType = PDO::FETCH_ASSOC): array|object|bool
     {
-        $stmt = $this->prepareAndExecute($query);
+        $stmt = $this->prepareAndExecute($query, $bindings);
         if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita
         }
         return $stmt->fetchAll($fetchType);
     }
 
-    protected function fetchColumn(?string $query = null){
-        $stmt = $this->prepareAndExecute($query);
+    public function fetchColumn(?string $query, array $bindings): bool|int
+    {
+        $stmt = $this->prepareAndExecute($query, $bindings);
         if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita
         }
         return (int) $stmt->fetchColumn();
 
+    }
+
+    public function lastInsertId(): bool|string{
+        return $this->pdo->lastInsertId();
     }
 }
