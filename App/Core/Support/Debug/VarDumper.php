@@ -2,8 +2,9 @@
 
 namespace App\Core\Support\Debug;
 
-use App\Core\Design\Stilize;
 use ReflectionClass;
+use App\Core\Helpers\Path;
+use App\Core\Design\Stilize;
 
 class VarDumper
 {
@@ -33,17 +34,18 @@ class VarDumper
         $lineWhereDebug = 0;
         // origini da escludere.
         $excludedFiles = [
-            baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
-            baseRoot() . '/utils/helpers.php',
-            baseRoot() . '/utils/var_dumper.php',
-            baseRoot() . '/App/Core/Support/Debug/VarDumper.php',
+            Path::root( '/App/Core/Support/Debug/VarDumper.php'),
+           Path::root('/utils/helpers.php'),
+           Path::root('/utils/var_dumper.php'),
+           Path::root('/App/Core/Support/Debug/VarDumper.php'),
+           Path::root('App/Core/Support/Debug/VarDumper.php'),
         ];
         foreach ($traces as $trace) {
             // file che non deve controllare.
 
 
             // Salta i file esclusi dal trace
-            if (in_array(str_replace('\\', '/', $trace['file']), $excludedFiles, true)) {
+            if (in_array( needle: $trace['file'], haystack: $excludedFiles, strict: true)) {
                 continue;
             }
 
