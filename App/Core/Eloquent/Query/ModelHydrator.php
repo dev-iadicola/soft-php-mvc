@@ -35,14 +35,13 @@ class ModelHydrator
 
     /**
      * Summary of one
-     * @param array<string,mixed> $row (result of the query)
+     * @param array<string,mixed>|bool $row (result of the query)
      * @return Model|null return Model hydratate with new proprieties
      */
-    public function one(array $row): Model|null
-    {
-        if (empty($row)) {
+    public function one(array|bool $row = []): Model|null
+    {   if( $row === FALSE || empty($row))
             return null;
-        }
+        
         /**
          * Why we clone (or create a new instance)
          * Each database row must correspond to a unique Model object in memory.
