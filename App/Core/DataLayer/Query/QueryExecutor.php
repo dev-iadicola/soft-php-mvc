@@ -36,17 +36,23 @@ class QueryExecutor
             return $stmt;
         } catch (PDOException $e) {
             Log::debug("Wrong query HERE -> $query");
-            throw new QueryBuilderException($e->getMessage(), (int)$e->getCode());
+            throw new QueryBuilderException($e->getMessage(), code: (int)$e->getCode());
         }
     }
 
-    public function fetch(string $query, array $bindings,  int $fetchTyep = PDO::FETCH_ASSOC): array|object|bool
+    public function fetch(string $query, array $bindings,  int $fetchType = PDO::FETCH_ASSOC): array|object|bool
     {
-        $stmt = $this->prepareAndExecute(query: $query, bindings: $bindings );
+        try{
+            $stmt = $this->prepareAndExecute(query: $query, bindings: $bindings );
         if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita
         }
-        return $stmt->fetch($fetchTyep);
+        return $stmt->fetch($fetchType);
+        }catch(PDOException $e){
+            Log::debug("Wrong query HERE -> $query");
+            throw new QueryBuilderException($e->getMessage(), code: (int)$e->getCode());
+        }
+        
     }
 
     public function fetchAll(string $query, array $bindings, int $fetchType = PDO::FETCH_ASSOC): array|object|bool

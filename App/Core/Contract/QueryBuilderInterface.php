@@ -2,8 +2,6 @@
 
 namespace App\Core\Contract;
 
-use App\Core\Exception\QueryBuilderException;
-
 interface QueryBuilderInterface extends SqlExecutableInterface
 {
     // Core
@@ -16,8 +14,8 @@ interface QueryBuilderInterface extends SqlExecutableInterface
     public function where(string $column, mixed $operatorOrValue, mixed $value = null): static;
     public function whereNot(string $column, mixed $value): static;
     public function orWhere(string $column, mixed $operatorOrValue, mixed $value = null): static;
-    public function whereNull(string $column, mixed $value): static;
-    public function whereNotNull(string $column, mixed $value): static;
+    public function whereNull(string $column): static;
+    public function whereNotNull(string $column): static;
     public function whereIn(string $column, array $values): static;
     public function whereNotIn(string $column, array $values): static;
     public function whereBetween(string $column, string|int|float $min, string|int|float $max): static;
@@ -39,7 +37,10 @@ interface QueryBuilderInterface extends SqlExecutableInterface
     public function limit(int $limit): static;
     public function offset(int $offset): static;
 
+    // CRUD HELPERS
     public function insert(array $insert):static;
+    public function set(array $values):static;
+
 
 }
 interface SqlExecutableInterface
@@ -51,7 +52,7 @@ interface SqlExecutableInterface
     public function toRawSql(): string;
     public function getBindings(): array|string;
     public function fill(array $array):array;
-
+    public function reset():void;
     public function setFillable(array $values);
 }
 

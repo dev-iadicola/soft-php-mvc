@@ -53,7 +53,7 @@ class ModelHydrator
          * is an independent object.
          */
         $model = $this->model ? clone $this->model : new $this->name;
-        $model->setQueryBuilder($this->queryBuilder);
+       
         foreach ($row as $key => $value) {
             $model->setAttribute($key, $value);
         }

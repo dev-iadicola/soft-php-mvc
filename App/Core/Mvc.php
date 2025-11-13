@@ -11,6 +11,7 @@ use \App\Core\Http\Router;
 use \App\Core\Http\Request;
 use \App\Core\Http\Response;
 use App\Core\Connection\SMTP;
+use App\Core\DataLayer\Runtime\ORM;
 use App\Core\Services\SessionStorage;
 use \App\Core\Exception\NotFoundException;
 use App\Core\Provider\NativeErrorProvider;
@@ -95,6 +96,17 @@ class Mvc
         // * It creates a single PDO instance through the Database singleton and handles connection errors.  
         //   In case of failure, it redirects to the errore page (in production) or prints the exception (in debug mode).  
         $this->pdo = (new DatabaseProvider($this->response))->register();
+
+        /**
+         * ORM Runtime Registry
+         *
+         * Stores global runtime dependencies for the ORM:
+         * - PDO connection
+         * - SQL driver name (mysql / postgres)
+         *
+         * This class is the single source of truth for all ORM components.
+         */
+        ORM::init($this->pdo, $this->config->settings['db']['driver']);
 
         // * Initializes the SMTP Provider, which configures and manages the mail transport layer.  
         // * It creates a single mailer instance 

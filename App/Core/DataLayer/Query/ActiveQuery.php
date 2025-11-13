@@ -4,12 +4,10 @@ namespace App\Core\DataLayer\Query;
 
 use PDO;
 use App\Core\DataLayer\Model;
-use App\Core\DataLayer\OrmEngine;
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
-use App\Core\Exception\ModelNotFoundException;
-use App\Core\Exception\ModelStructureException;
 use PDOStatement;
+
 /**
  * Summary of ActiveQuery
  * Work of Unit: with QueryBuilder, Execute and Actions
@@ -40,13 +38,16 @@ class ActiveQuery
         }
         $stmt->execute();
         $data = $stmt->fetchAll($fetchType);
+        $this->builder->reset();
         return $this->hydrator->many($data);
     }
 
     public function exists(): bool
     {
-        $sql = "SELECT EXISTS(" . $this->builder->toSql() . ")";
-        return (bool) $this->executor->fetchColumn($sql, $this->builder->getBindings());
+        $sql = "SELECT EXISTS(" . str_replace(';', '', $this->builder->toSql()) . ")";
+        $binds = $this->builder->getBindings();
+        $this->builder->reset();
+        return (bool) $this->executor->fetchColumn($sql, $binds);
     }
 
     #region SELECT
@@ -110,14 +111,14 @@ class ActiveQuery
         $this->builder->orWhere($column, $conditionOrValue, $value);
         return $this;
     }
-    public function whereNull(string $columnName, mixed $value): static
+    public function whereNull(string $columnName): static
     {
-        $this->builder->whereNull($columnName, $value);
+        $this->builder->whereNull($columnName);
         return $this;
     }
-    public function whereNotNull(string $columnName, mixed $value): static
+    public function whereNotNull(string $columnName): static
     {
-        $this->builder->whereNotNull($columnName, $value);
+        $this->builder->whereNotNull($columnName);
         return $this;
     }
     public function whereIn(string $column, array $values): static
@@ -141,7 +142,7 @@ class ActiveQuery
     }
     public function whereNotBetween(string $column, string|int|float $min, string|int|float $max): static
     {
-        $this->whereNotBetween($column, $min, $max);
+        $this->builder->whereNotBetween($column, $min, $max);
         return $this;
     }
 
@@ -154,7 +155,7 @@ class ActiveQuery
      * @param array<string>|string $columns
      * @param string $direction
      * @throws \App\Core\Exception\QueryBuilderException
-     * @return QueryBuilder
+     * @return ActiveQuery
      */
     public function orderBy(array|string $columns, string $direction = 'ASC'): static
     {
@@ -173,7 +174,6 @@ class ActiveQuery
      *
      * @throws QueryBuilderException If the columns are invalid or if the method is called multiple times
      */
-
     public function groupBy(string|array $columns): static
     {
         $this->builder->groupBy($columns);
@@ -222,29 +222,42 @@ class ActiveQuery
     public function get(int $fetchType = PDO::FETCH_ASSOC): array
     {
         $rows = $this->executor->fetchAll($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
+        $this->builder->reset();
         return $this->hydrator->many($rows);
     }
     public function first(int $fetchType = PDO::FETCH_ASSOC)
     {
         $this->builder->limit(1);
-        $row = $this->executor->fetch(query: $this->builder->toSql(), bindings: $this->builder->getBindings());
+        $row = $this->executor->fetch(query: $this->builder->toSql(), bindings: $this->builder->getBindings(), fetchType: $fetchType);
+        $this->builder->reset();
         return $this->hydrator->one($row);
     }
 
     public function find(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC)
     {
         $this->builder->where($column, $id);
-        $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings());
+        $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
+        $this->builder->reset();
         return $this->hydrator->one($row);
     }
-    public function findOrFail(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC)
+    public function findOrFalse(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC): bool|Model
     {
         $this->builder->where($column, $id);
-        return $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType) ?? throw new ModelNotFoundException("Id {$id} Not Found in Model {$this->hydrator}");
+
+        $exist = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings());
+        $this->builder->reset();
+        if ($exist) {
+            return $this->hydrator->one($exist);
+        } else {
+            return false;
+        }
     }
+
+
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
     {
-        $rows = $this->executor->fetchAll($this->builder->tosql(), $this->builder->getBindings());
+        $rows = $this->executor->fetchAll($this->builder->tosql(), $this->builder->getBindings(), $fetchType);
+        $this->builder->reset();
         return $this->hydrator->many($rows);
     }
 
@@ -257,30 +270,36 @@ class ActiveQuery
     public function create(array $values): Model
     {
         $this->builder->insert($values);
-        $stmt = $this->executor->prepareAndExecute($this->builder->toInsert(), $this->builder->getBindings());
-        $stmt->execute();
+        $this->executor->prepareAndExecute($this->builder->toInsert(), $this->builder->getBindings());
         $id = $this->executor->lastInsertId();
 
         return $this->find($id);
     }
 
-    /** DELETE */
-    public function delete(): bool|PDOStatement
+    public function update(array $values): bool
     {
-        if (empty($this->table)) {
-            throw new \Exception("Empty name of table, set protected \$table in your {$this->hydrator}");
-        }
+        $this->builder->set($values);
 
-        if (empty($this->whereClause)) {
-            if (!isset($this->id)) {
-                throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
-            }
-        }
+        $result = $this->executor->prepareAndExecute(
+            $this->builder->toUpdate(),
+            $this->builder->getBindings()
+        );
 
-        return $this->executor->prepareAndExecute($this->builder->toDelete(), $this->builder->getBindings());
+        $this->builder->reset();
+
+        // prepareAndExecute restituisce PDOStatement
+        // consideriamo "true" se non ci sono eccezioni
+        return $result !== false;
     }
 
 
-
-
+    /** DELETE */
+    public function delete(): bool|PDOStatement
+    {
+        // * method ToDelete has in here reset method for reset the proprieties builder
+        // + the method ToDelete make check the table  and the where clausesis is isset, else is run exception 
+        $result = $this->executor->prepareAndExecute($this->builder->toDelete(), $this->builder->getBindings());
+        $this->builder->reset();
+        return $result;
+    }
 }
