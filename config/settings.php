@@ -77,7 +77,17 @@ return [
      * - window: 60 seconds
      */
     'request' => [
-        'max'    =>  env('MAX_REQUEST', 100),
-        'window' =>  env('WINDOW', 60),
+        'max'    => env('MAX_REQUEST', 100),
+        'window' => env('WINDOW', 60),
+    ],
+    /**
+     * Database driver.
+     * ! supperted drives for now: mysql, postgres
+     * Reads the DRIVER value from the .env file to decide which
+     * database adapter to load (MySQL, PostgreSQL, SQLite, etc.).
+     * 
+     */
+    'db' => [
+        'driver' => env('DB_DRIVER'),
     ],
 ];

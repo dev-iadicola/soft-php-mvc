@@ -3,16 +3,15 @@
 namespace App\Core\Eloquent;
 
 use PDO;
-use App\Core\Database;
 use App\Core\Eloquent\Query\ActiveQuery;
 use App\Core\Eloquent\Query\Transaction;
-use App\Core\Eloquent\Query\QueryBuilder;
 use App\Core\Eloquent\Query\ModelHydrator;
 use App\Core\Eloquent\Query\QueryExecutor;
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
-use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
+use App\Core\Mvc;
+use App\Utils\Enviroment;
 
 /**
  * Class OrmEngine
@@ -38,7 +37,8 @@ class OrmEngine
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $this->queryBuilder = new QueryBuilder();
+        $facotry = QueryBuilderFactory::create(Mvc::$mvc->config->settings['db']['driver']);
+        $this->queryBuilder = $facotry;
         $this->queryExecutor = new QueryExecutor($pdo);
         $this->modelHydrator = new ModelHydrator($this->queryBuilder);
     }

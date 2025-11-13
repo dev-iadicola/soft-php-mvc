@@ -14,8 +14,9 @@ class PortfolioController extends Controller {
   
         $projects = Project::orderBy('id', 'DESC')->get();
         $certificati = Certificate::orderBy('certified', 'DESC')->get();
-        $curriculum = Curriculum::orderBy(' id ','DESC')->first();
-        $this->render('portfolio',  compact('projects','certificati', 'curriculum'));
+        $curriculum = Curriculum::orderBy('id','DESC')->first();
+        return view('portfolio', compact('projects','certificati', 'curriculum'));
+      //  $this->render('portfolio',  compact('projects','certificati', 'curriculum'));
     }
 
 

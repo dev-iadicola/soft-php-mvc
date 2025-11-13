@@ -34,9 +34,6 @@ class Model implements JsonSerializable
     protected array $fillable;
     private OrmEngine $orm;
     private QueryBuilderInterface $queryBuilder;
-
-
-
     public function checkTable()
     {
         if (!(getenv("APP_ENV") == 'testing' ||CheckSchema::tableExist($this->table))  )

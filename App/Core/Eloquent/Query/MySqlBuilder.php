@@ -7,20 +7,17 @@ use App\Core\Eloquent\Query\AbstractBuilder;
 use App\Core\Exception\QueryBuilderException;
 
 
-class QueryBuilder extends AbstractBuilder
+class MySqlBuilder extends AbstractBuilder
 {
     private string $selectValues = '*'; // Campi da selezionare
     private bool $distinct = false;
     private string $joinClause = '';
-    private string $whereClause = ''; // Clausola WHERE
     private string $groupByClause = ''; // Clausola GROUP BY
     private string $havingClause = '';
     private string $orderByClause = ''; // Clausola ORDER BY
     private string $limitClause = ''; // Clausola Limit
     private string $offsetClause = '';
-    private string $setClause = '';
 
-    private string $insertClause = '';
 
     public function __construct()
     {
