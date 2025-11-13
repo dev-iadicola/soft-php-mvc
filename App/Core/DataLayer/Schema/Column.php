@@ -1,5 +1,5 @@
 <?php 
-namespace App\Core\Eloquent\Schema;
+namespace App\Core\DataLayer\Schema;
 
 class Column {
     

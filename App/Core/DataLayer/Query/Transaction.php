@@ -1,5 +1,5 @@
 <?php 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
  
 trait Transaction  {
     private int $transactionLevel = 0;

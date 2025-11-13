@@ -1,17 +1,11 @@
 <?php
 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
 
 
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
-use App\Traits\Attributes;
-use PDO;
-use App\Core\Exception\ModelNotFoundException;
 use App\Core\Exception\ModelStructureException;
-use App\Core\Eloquent\Schema\Validation\CheckSchema;
-use App\Utils\Enviroment;
-use PDOStatement;
 
 abstract class AbstractBuilder implements QueryBuilderInterface
 {

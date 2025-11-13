@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
 
 use App\Core\Contract\QueryBuilderInterface;
-use App\Core\Eloquent\Model;
+use App\Core\DataLayer\Model;
 use App\Core\Exception\ModelStructureException;
 use InvalidArgumentException;
 
@@ -26,7 +26,7 @@ class ModelHydrator
         $model = new $class();
 
         if (!$model instanceof Model) {
-            throw new ModelStructureException("The class '{$class}' must extend App\\Core\\Eloquent\\Model.");
+            throw new ModelStructureException("The class '{$class}' must extend App\\Core\\DataLayer\\Model.");
         }
         // * Assinged
         $this->name = $class;

@@ -1,10 +1,10 @@
 <?php 
-// namespace App\Core\Eloquent\Schema;
+// namespace App\Core\DataLayer\Schema;
 
 // use PDO;
 // use App\Core\Database; 
 // use App\Core\CLI\System\Out;
-// use App\Core\Eloquent\Model;
+// use App\Core\DataLayer\Model;
 
 // class SchemaBuilder  {
  

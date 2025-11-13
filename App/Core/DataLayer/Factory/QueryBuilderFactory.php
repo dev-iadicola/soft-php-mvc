@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Core\Eloquent;
+namespace App\Core\DataLayer\Factory;
 
-use App\Core\Eloquent\Query\MySqlBuilder;
-use App\Core\Eloquent\Query\PostgresQueryBuilder;
-use App\Core\Eloquent\Query\QueryBuilder;
+use App\Core\DataLayer\Query\MySqlBuilder;
+use App\Core\DataLayer\Query\PostgresQueryBuilder;
+use App\Core\DataLayer\Query\QueryBuilder;
 use InvalidArgumentException;
 
 class QueryBuilderFactory

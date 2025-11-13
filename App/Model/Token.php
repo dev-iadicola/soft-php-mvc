@@ -2,7 +2,7 @@
 namespace App\Model;
 
 use PDO;
-use App\Core\Eloquent\Model;
+use App\Core\DataLayer\Model;
 use DateTime;
 
  class Token extends Model{

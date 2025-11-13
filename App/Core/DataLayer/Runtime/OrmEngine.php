@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Core\Eloquent;
+namespace App\Core\DataLayer\Runtime;
 
 use PDO;
-use App\Core\Eloquent\Query\ActiveQuery;
-use App\Core\Eloquent\Query\Transaction;
-use App\Core\Eloquent\Query\ModelHydrator;
-use App\Core\Eloquent\Query\QueryExecutor;
+use App\Core\Mvc;
+use App\Core\DataLayer\Query\ActiveQuery;
+use App\Core\DataLayer\Query\Transaction;
+use App\Core\DataLayer\Query\ModelHydrator;
+use App\Core\DataLayer\Query\QueryExecutor;
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelStructureException;
-use App\Core\Mvc;
-use App\Utils\Enviroment;
+use App\Core\DataLayer\Factory\QueryBuilderFactory;
 
 /**
  * Class OrmEngine
  * ________________________________________
  *
- * @package App\Core\Eloquent
+ * @package App\Core\DataLayer
  */
 class OrmEngine
 {
@@ -37,8 +37,7 @@ class OrmEngine
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $facotry = QueryBuilderFactory::create(Mvc::$mvc->config->settings['db']['driver']);
-        $this->queryBuilder = $facotry;
+        $this->queryBuilder = QueryBuilderFactory::create(Mvc::$mvc->config->settings['db']['driver']);
         $this->queryExecutor = new QueryExecutor($pdo);
         $this->modelHydrator = new ModelHydrator($this->queryBuilder);
     }
@@ -252,7 +251,7 @@ class OrmEngine
 
         // Trova il primo frame che non appartiene al core del framework
         foreach ($trace as $frame) {
-            if (isset($frame['file']) && !str_contains($frame['file'], 'App/Core/Eloquent')) {
+            if (isset($frame['file']) && !str_contains($frame['file'], 'App/Core/DataLayer')) {
                 $caller = $frame;
                 break;
             }

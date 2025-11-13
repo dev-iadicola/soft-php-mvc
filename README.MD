@@ -9,7 +9,7 @@
 
 **Portfolio PHP MVC** è un mini-framework PHP progettato per offrire un ambiente di sviluppo leggero ma completo, integrando:
 
-- un ORM (Object Relational Mapper) simile a *Eloquent*;  
+ 
 - un motore di template PHP personalizzato;  
 - un sistema di routing flessibile e modulare;  
 - una gestione delle eccezioni estensibile tramite classi dedicate;  
@@ -309,7 +309,7 @@ _________
 
 ## Sistema ORM (Model & QueryBuilder)
 
-Il sistema ORM è ispirato a *Eloquent* di Laravel, ma costruito interamente da zero.  
+Il sistema ORM è ispirato a *DataLayer* di Laravel, ma costruito interamente da zero.  
 Segue un flusso chiaro e leggibile, dove ogni Model rappresenta una tabella e il `QueryBuilder` si occupa di generare e inviare le query SQL.
 
 ```text
@@ -350,11 +350,11 @@ Segue un flusso chiaro e leggibile, dove ogni Model rappresenta una tabella e il
 
 ```
 
-| Caratteristica                | Symfony *(Doctrine ORM)*                                | CodeIgniter *(Query Builder)*                 | Laravel *(Eloquent ORM)*                          | Soft MVC *(Custom ORM + QueryBuilder)*                                              |
+| Caratteristica                | Symfony *(Doctrine ORM)*                                | CodeIgniter *(Query Builder)*                 | Laravel *(DataLayer ORM)*                          | Soft MVC *(Custom ORM + QueryBuilder)*                                              |
 | ----------------------------- | ------------------------------------------------------- | --------------------------------------------- | ------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Paradigma ORM**             | Completo (Data Mapper) con Entity Manager               | Assente (solo Query Builder fluente)          | Active Record + Fluent Builder                    | Active Record + Custom Query Builder con interfaccia fluente                        |
 | **Definizione del modello**   | Classi *Entity* + annotazioni o YAML/XML mapping        | Nessuna entità, solo array o oggetti stdClass | Classi `Model` con proprietà e metodi statici     | Classi `Model` con proprietà dinamiche e trait `Getter`, `Relation`                 |
-| **Costruzione Query**         | `QueryBuilder` basato su DQL (Doctrine Query Language)  | `$this->db->select()->from()->where()`        | `User::where('name', 'Luigi')->first()`           | `User::where('name', 'Luigi')->orderBy('id')->get()` (stile Eloquent)               |
+| **Costruzione Query**         | `QueryBuilder` basato su DQL (Doctrine Query Language)  | `$this->db->select()->from()->where()`        | `User::where('name', 'Luigi')->first()`           | `User::where('name', 'Luigi')->orderBy('id')->get()` (stile DataLayer)               |
 | **Esecuzione delle query**    | Traduzione DQL → SQL con `EntityManager`                | Esecuzione diretta su driver DB               | Lazy loading tramite PDO + builder                | Lazy execution via PDO + sistema di binding sicuro                                  |
 | **Relazioni**                 | Gestite tramite annotazioni (`@OneToMany`, ecc.)        | Manuali                                       | Definite nei model (`hasMany`, `belongsTo`, ecc.) | Supportate via trait `Relation` (`hasOne`, `hasMany`, `belongsTo`, `belongsToMany`) |
 | **Sicurezza (SQL Injection)** | Query parametrizzate automatiche                        | Escaping manuale/automatica nel builder       | Param binding automatico                          | Param binding sicuro via `bindValue` nel `QueryBuilder`                             |
@@ -364,7 +364,7 @@ Segue un flusso chiaro e leggibile, dove ogni Model rappresenta una tabella e il
 | **Design Pattern principali** | Data Mapper, Unit of Work, Repository                   | Builder Pattern                               | Active Record, Builder, Proxy                     | Active Record, Builder, Template Method, Proxy, Facade                              |
 | **Architettura DB Layer**     | Separazione totale tra Entity e DB                      | Procedurale, senza mapping                    | Integrato nel Model                               | Architettura Layered con separazione `Model ↔ QueryBuilder ↔ PDO`                   |
 | **Obiettivo**                 | Rappresentare il dominio in modo astratto e portabile   | Offrire un accesso diretto e semplice ai dati | Fornire una sintassi espressiva e intuitiva       | Unire **chiarezza**, **controllo manuale** e **fluidità moderna**                   |
-> Sintassi Eloquent-like, struttura pulita, controllo diretto sul PDO, e ORM completamente scritto a mano.
+> Sintassi DataLayer-like, struttura pulita, controllo diretto sul PDO, e ORM completamente scritto a mano.
 ----
 <br><br><br>
 ___

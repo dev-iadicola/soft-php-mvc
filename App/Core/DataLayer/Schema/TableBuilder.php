@@ -1,13 +1,13 @@
 <?php
-// namespace App\Core\Eloquent\Schema;
+// namespace App\Core\DataLayer\Schema;
 
-// use App\Core\Eloquent\Schema\Validation\CheckSchema;
+// use App\Core\DataLayer\Schema\Validation\CheckSchema;
 // use App\Core\Migration;
 // use PDO;
 // use PDOException;
 // use App\Core\Helpers\Log;
 // use App\Core\CLI\System\Out;
-// use App\Core\Eloquent\Schema\Column;
+// use App\Core\DataLayer\Schema\Column;
 // use ReturnTypeWillChange;
 
 // class TableBuilder

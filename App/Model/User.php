@@ -3,7 +3,7 @@
 namespace App\Model;
 
 use App\Model\LogTrace;
-use App\Core\Eloquent\Model;
+use App\Core\DataLayer\Model;
 use App\Traits\Relation;
 
 class User extends Model   

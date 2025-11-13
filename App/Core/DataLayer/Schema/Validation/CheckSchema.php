@@ -1,5 +1,5 @@
 <?php 
-namespace App\Core\Eloquent\Schema\Validation; 
+namespace App\Core\DataLayer\Schema\Validation; 
 
 use App\Core\Migration;
 use PDO;

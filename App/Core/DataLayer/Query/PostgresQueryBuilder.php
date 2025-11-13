@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
 
-use App\Core\Contract\QueryBuilderInterface;
-use App\Core\Eloquent\Query\AbstractBuilder;
+
+use App\Core\DataLayer\Query\AbstractBuilder;
 use App\Core\Exception\QueryBuilderException;
 
 

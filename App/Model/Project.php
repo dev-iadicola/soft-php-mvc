@@ -2,7 +2,7 @@
 
 namespace App\Model;
 
-use App\Core\Eloquent\Model;
+use App\Core\DataLayer\Model;
 use App\Model\Partner;
 
 

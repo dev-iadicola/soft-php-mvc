@@ -2,8 +2,8 @@
 
 namespace App\Core;
 use App\Core\Contract\ModelSchemaInterface;
-use App\Core\Eloquent\Model;
-use App\Core\Eloquent\Schema\SchemaBuilder;
+use App\Core\DataLayer\Model;
+use App\Core\DataLayer\Schema\SchemaBuilder;
 
 class Migration extends Model implements ModelSchemaInterface
 {

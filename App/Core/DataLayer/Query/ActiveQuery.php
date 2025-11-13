@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
 
 use PDO;
-use App\Core\Eloquent\Model;
-use App\Core\Eloquent\OrmEngine;
+use App\Core\DataLayer\Model;
+use App\Core\DataLayer\OrmEngine;
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelNotFoundException;

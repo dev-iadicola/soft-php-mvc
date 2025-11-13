@@ -2,9 +2,9 @@
 namespace App\Core\Facade;
 
 use App\Core\Mvc;
-use App\Core\Eloquent\Model;
+use App\Core\DataLayer\Model;
 use App\Core\Services\AuthService;
-use App\Core\Eloquent\QueryBuilder;
+use App\Core\DataLayer\QueryBuilder;
 use App\Core\Services\SessionStorage;
 
 /**

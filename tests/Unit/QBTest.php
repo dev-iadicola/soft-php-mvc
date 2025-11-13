@@ -2,7 +2,7 @@
 
 use App\Core\CLI\System\Out;
 use PHPUnit\Framework\TestCase;
-use App\Core\Eloquent\QueryBuilder;
+use App\Core\DataLayer\QueryBuilder;
 
 class QBTest extends TestCase
 {

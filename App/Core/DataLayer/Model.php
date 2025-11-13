@@ -1,20 +1,20 @@
 <?php
 
-namespace App\Core\Eloquent;
+namespace App\Core\DataLayer;
 
 
 use Throwable;
 use JsonSerializable;
-use App\Core\Database;
 
+use App\Core\Database;
 use App\Traits\Attributes;
-use App\Core\Eloquent\OrmEngine;
-use App\Core\Eloquent\Query\ActiveQuery;
-use App\Core\Eloquent\Query\QueryBuilder;
+use App\Core\DataLayer\Query\ActiveQuery;
+use App\Core\DataLayer\Runtime\OrmEngine;
+use App\Core\DataLayer\Query\QueryBuilder;
 use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Exception\QueryBuilderException;
 use App\Core\Exception\ModelStructureException;
-use App\Core\Eloquent\Schema\Validation\CheckSchema;
+use App\Core\DataLayer\Schema\Validation\CheckSchema;
 
 /**
  * @method static QueryBuilder select(array|string $columns)
@@ -34,6 +34,8 @@ class Model implements JsonSerializable
     protected array $fillable;
     private OrmEngine $orm;
     private QueryBuilderInterface $queryBuilder;
+
+
     public function checkTable()
     {
         if (!(getenv("APP_ENV") == 'testing' ||CheckSchema::tableExist($this->table))  )
@@ -49,9 +51,9 @@ class Model implements JsonSerializable
     
         $model = new static();
 
-        $engigne = $model->startEngine();
-
-        return OrmEngine::Make( $engigne->queryBuilder, $engigne->queryExecutor, $engigne->modelHydrator);
+        $engine = $model->startEngine();
+       
+        return OrmEngine::Make( $engine->queryBuilder, $engine->queryExecutor, $engine->modelHydrator);
     }
     protected function startEngine(): OrmEngine
     {
@@ -118,10 +120,11 @@ class Model implements JsonSerializable
             return $this->$method(...$parameters);
         }
 
-        // Altrimenti, fallback al QueryBuilder
-        $builder = $this->queryBuilder ?? $this->boot();
-        if ($builder && method_exists($builder, $method)) {
-            return $builder->$method(...$parameters);
+
+         $instance = new static();
+        $activeQuery = $instance::Make();
+        if ($activeQuery && method_exists($activeQuery, $method)) {
+            return $activeQuery->$method(...$parameters);
         }
 
         throw new \BadMethodCallException("Metodo {$method} not foun in Model " . static::class);
@@ -141,15 +144,15 @@ class Model implements JsonSerializable
         }
 
         $instance = new static();
-        $orm = $instance::Make();
+        $activeQuery = $instance::Make();
       
-        if (method_exists($instance, $method)) {
-            return $instance->$method(...$parameters);
+        if (method_exists($activeQuery, $method)) {
+            return $activeQuery->$method(...$parameters);
         }
         
         try {
-            if ($orm && (method_exists($orm, $method) || method_exists($orm, '__call'))) {
-                return $orm->$method(...$parameters);
+            if ($activeQuery && (method_exists($activeQuery, $method))) {
+                return $activeQuery->$method(...$parameters);
             }
             
         } catch (QueryBuilderException $e) {
@@ -166,7 +169,7 @@ class Model implements JsonSerializable
         foreach ($trace as $frame) {
             if (
                 isset($frame['file']) &&
-                !str_contains($frame['file'], 'App/Core/Eloquent') &&
+                !str_contains($frame['file'], 'App/Core/DataLayer') &&
                 !str_contains($frame['file'], 'call_user_func_array')
             ) {
                 $caller = $frame;

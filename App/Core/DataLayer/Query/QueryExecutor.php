@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Core\Eloquent\Query;
+namespace App\Core\DataLayer\Query;
 
 use PDO;
 use PDOException;
