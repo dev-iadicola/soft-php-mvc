@@ -23,10 +23,10 @@ class ActiveQuery
     ) {
 
     }
-
+    #region FREE QUERY FUNCITON
     /**
      * Summary of query 
-     * Prepara la tua query. Questo metodo è molto utile se si tratta di una query complessa. 
+     * Prepare your query. This method is very useful when dealing with a complex query 
      * @param string $query 
      * @param array<string> $params parametri da serire per il bindValue
      * @param int $fetchType
@@ -167,12 +167,13 @@ class ActiveQuery
     #region GRPUP BY
     // * ___________________________________________________
     /**
-     * Raggruppa i risultati per una o più colonne.
-     * @param string|array<string> $columns  Una o più colonne per la clausola GROUP BY
+     * Groups the results by one or more columns.
+     * @param string|array<string> $columns  One or more columns for the GROUP BY clause
      * @return static
      *
-     * @throws QueryBuilderException Se le colonne non sono valide o se il metodo viene richiamato più volte
+     * @throws QueryBuilderException If the columns are invalid or if the method is called multiple times
      */
+
     public function groupBy(string|array $columns): static
     {
         $this->builder->groupBy($columns);
@@ -262,8 +263,8 @@ class ActiveQuery
 
         return $this->find($id);
     }
-    
-   /** DELETE */
+
+    /** DELETE */
     public function delete(): bool|PDOStatement
     {
         if (empty($this->table)) {
@@ -274,9 +275,9 @@ class ActiveQuery
             if (!isset($this->id)) {
                 throw new QueryBuilderException('No condition was selected in the delete action. For security reasons, it is not possible to delete all records in a table.');
             }
-        }        
+        }
 
-       return $this->executor->prepareAndExecute($this->builder->toDelete(), $this->builder->getBindings());
+        return $this->executor->prepareAndExecute($this->builder->toDelete(), $this->builder->getBindings());
     }
 
 
