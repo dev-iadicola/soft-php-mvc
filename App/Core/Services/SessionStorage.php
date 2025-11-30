@@ -193,17 +193,7 @@ class SessionStorage
      * Rimuove la flash session (messaggi di successo, warning ed errore nel Frontend) dopo un breve periodo di tempo. 
      * todo: da creare una classe apposita per gestione la sessione della flash session/message
      */
-    public function verifyTimeFlashSession(): void
-    {
-        if (!isset($_SESSION['FLASH_TIME'], $_SESSION['FLASH_TTL'])) {
-            return;
-        }
-
-        $elapsed = time() - $_SESSION['FLASH_TIME'];
-        if ($elapsed >= $_SESSION['FLASH_TTL']) {
-            $this->flashSessionDestroy();
-        }
-    }
+   
 
     public function set(string $key, mixed $value)
     {
@@ -295,11 +285,10 @@ class SessionStorage
     }
 
 
-    public function setFlashSession($key, $value, $ttl = 3)
+    public function setFlashSession($key, $value)
     {
-        $_SESSION['FLASH'][$key] = $value;
-        $_SESSION['FLASH_TIME'] = time();
-        $_SESSION['FLASH_TTL']  = $ttl; // default 3 secondi
+        $_SESSION[$key] = $value;
+      
     }
 
     /**
@@ -307,13 +296,10 @@ class SessionStorage
      */
     public function getFlashSession($key): mixed
     {
-        $flash = $_SESSION['FLASH'][$key] ?? null;
+        $flash = $_SESSION[$key] ?? null;
         Log::debug("Recupero flash session per chiave '{$key}': $flash ");
         if ($flash !== null) {
-            unset($_SESSION['FLASH'][$key]);
-            if (empty($_SESSION['FLASH'])) {
-                unset($_SESSION['FLASH'], $_SESSION['FLASH_TIME'], $_SESSION['FLASH_TTL']);
-            }
+            unset($_SESSION[$key]);
         }
         return $flash;
     }

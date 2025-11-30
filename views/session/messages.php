@@ -1,20 +1,22 @@
 <?php
-if ( !empty(flashMessage('error'))): ?>
+
+
+if (!is_null(session()->get('error'))): ?>
     <div class="alert alert-danger text-center mt-5 mx-5 fs-3">
-        <?= flashMessage('error') ?> 
+        {{flashMessage('error')}}
     </div>
 <?php endif; ?>
 
 <?php
-if ( !empty(flashMessage('success'))): ?>
+if (!is_null(session()->get('success'))): ?>
     <div class="alert alert-success text-center mt-5 mx-5 fs-3">
-        <?= flashMessage('success') ?>
+        {{ flashMessage('success') }}
     </div>
 <?php endif; ?>
 
 <?php
-if (!empty(flashMessage('warning'))): ?>
+if (!is_null(session()->get('warning'))): ?>
     <div class="alert alert-warning text-center mt-5 mx-5 fs-3">
-        <?= flashMessage('warning') ?>
+        {{ flashMessage('warning') }}
     </div>
 <?php endif; ?>

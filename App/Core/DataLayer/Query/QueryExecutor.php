@@ -26,7 +26,6 @@ class QueryExecutor
 
     public function prepareAndExecute(string $query, array $bindings): PDOStatement
     {
-        Log::debug("PREPARE AND EXECUTRE query: " . $query . " | bindings: " . json_encode($bindings) ."");
         try {
             $stmt = $this->pdo->prepare($query);
             foreach ($bindings as $bind => $value) {
@@ -35,7 +34,6 @@ class QueryExecutor
             $stmt->execute();
             return $stmt;
         } catch (PDOException $e) {
-            Log::debug("Wrong query HERE -> $query");
             throw new QueryBuilderException($e->getMessage(), code: (int)$e->getCode());
         }
     }
@@ -50,7 +48,6 @@ class QueryExecutor
         }
         return $stmt->fetch($fetchType);
         }catch(PDOException $e){
-            Log::debug("Wrong query HERE -> $query");
             throw new QueryBuilderException($e->getMessage(), code: (int)$e->getCode());
         }
         
