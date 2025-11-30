@@ -26,7 +26,7 @@ class HomeManagerController extends AuthenticationController
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
-    
+    #[RouteAttr('/article-store','POST','article.store')]
     public function store(Request $request)
     {
         $data = $request->all();
@@ -49,7 +49,7 @@ class HomeManagerController extends AuthenticationController
     }
 
 
-
+    #[RouteAttr('article-edit/{id}', 'GET', 'article.edit')]
     public function edit(Request $request, $id)
     {
        
@@ -61,6 +61,8 @@ class HomeManagerController extends AuthenticationController
 
         return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
     }
+
+    #[RouteAttr('article-update','patch','article.update')]
     public function update(Request $request, $id)
     {
         $data = $request->all();
@@ -88,8 +90,9 @@ class HomeManagerController extends AuthenticationController
         // feedback server
         redirect()->back('Articolo Aggiornato con successo!');
     }
+
     #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
-    public function destroy(Request $reqq, $id)
+        public function destroy(Request $reqq, $id)
     {
         // TODO: make validator 
     

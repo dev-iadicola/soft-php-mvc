@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Traits;
+namespace App\Core\Traits;
 
 /**
  * Summary of Attributes

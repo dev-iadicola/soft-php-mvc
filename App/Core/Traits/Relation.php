@@ -1,5 +1,5 @@
 <?php  
-namespace App\Traits;
+namespace App\Core\Traits;
 
 trait Relation {
 

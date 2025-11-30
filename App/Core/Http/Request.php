@@ -3,26 +3,22 @@
 namespace App\Core\Http;
 
 use App\Core\Helpers\Log;
-use App\Traits\Getter;
-use App\Traits\Setter;
+use App\Core\Traits\Attributes;
+
 
 class Request
 {
-    use Getter;
-    use Setter;
+    use Attributes;
     private string $path;
     private string $method;
     private array $post;
-
     private string $lastUri = '/';
-
-    private array $attributes;
 
     public function __construct()
     {
         $this->path = $this->uri();
         $this->method = $this->getRequestMethod();
-        $this->attributes = $this->getPost();
+         $this->attributes = $this->getPost();
     }
 
     public function getRequestInfo(): string

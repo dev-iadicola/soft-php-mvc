@@ -2,8 +2,7 @@
 
 namespace App\Core\Support\Collection;
 
-use App\Traits\Attributes;
-
+use App\Core\Traits\Attributes;
 
 /**
  * @property-read array controllers

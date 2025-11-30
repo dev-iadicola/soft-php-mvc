@@ -83,7 +83,7 @@ class RouteLoader
         foreach ($classControllers as $className => $stack) {
             $reflection = new ReflectionClass($className);
             // * creiamo diversi stack per popolarli all'interno di ClassController
-            $StackOfControllerAttr  = $this->GetAttributesOfController($reflection);
+            $StackOfControllerAttr = $this->GetAttributesOfController($reflection);
             $classControllers->setStack(className: $className, stack: $StackOfControllerAttr);
         }
         return $classControllers;
@@ -98,10 +98,21 @@ class RouteLoader
             $reflection = new ReflectionClass($className);
             // * Doesn't acceppt private and protected  methods | Non accetta metodi privati o protetti.
             foreach ($reflection->getMethods(ReflectionMethod::IS_PUBLIC) as $method) {
+
+                // Ignora costruttore e metodi ereditati da Controller base
+
                 $routeAttributes = $method->getAttributes(RouteAttr::class);
+                if ($method->isConstructor())
+                    continue;
+                if ($method->class !== $reflection->getName())
+                    continue;
+
+                // * if the public method don't have RouteAttr attribute, throw exception
 
                 if (empty($routeAttributes)) {
-                    continue;
+                    throw new \Exception(
+                        "The public method {$method->getName()} of class {$reflection->getName()} don't have a valid #[RouteAttr] attribute."
+                    );
                 }
 
                 foreach ($routeAttributes as $attr) {
@@ -131,7 +142,7 @@ class RouteLoader
                 }
             }
         }
-      
+
         return $routes;
     }
 
@@ -203,7 +214,7 @@ class RouteLoader
     //      *  @param \ReflectionClass $rc
     //      * @return array
     //      */
-    private  function GetAttributesOfController(ReflectionClass $rc): Stack
+    private function GetAttributesOfController(ReflectionClass $rc): Stack
     {
         // Una classe che ha la collection di Middleware e di Path
         $stack = new Stack();
@@ -224,7 +235,7 @@ class RouteLoader
                     $instance = $controllerAttribute->newInstance();
                     // Unisce i middleware e opath trovati
                     if (property_exists($instance, 'middlewareNames') && !empty($instance->middlewareNames)) {
-                        $stack->addMiddleware((array)$instance->middlewareNames);
+                        $stack->addMiddleware((array) $instance->middlewareNames);
                     }
 
                     if (property_exists($instance, 'basePath') && !empty($instance->basePath)) {
@@ -237,7 +248,7 @@ class RouteLoader
 
                     throw new LoaderAttributeException(
                         "Invalid attribute usage in {$className} file: $file " .
-                            "Expected constructor parameters for ControllerAttr are missing."
+                        "Expected constructor parameters for ControllerAttr are missing."
                     );
                 }
             }

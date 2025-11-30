@@ -5,7 +5,7 @@ namespace App\Core\DataLayer;
 
 use App\Core\Traits\StaticQueryMethods;
 use JsonSerializable;
-use App\Traits\Attributes;
+use App\Core\Traits\Attributes;
 
 
 /**

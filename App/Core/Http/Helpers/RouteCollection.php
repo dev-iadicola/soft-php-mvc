@@ -21,7 +21,17 @@ class RouteCollection implements \IteratorAggregate
         if(!empty($route->name)){
             $this->namedRoutes[$route->name] = $route;
         }
+
+       $this->verificationMethodAllowedOrFail($route);
         return $this;
+    }
+
+    private function verificationMethodAllowedOrFail(RouteDefinition $route){
+        if(!in_array(strtoupper($route->method), ['GET','POST','PUT','PATCH','DELETE'])){
+           throw new \InvalidArgumentException("
+            The HTTP method '{$route->method}' is not allowed, correct your controller {$route->controller} : {$route->action}.
+            Allowed methods are: GET, POST, PUT, PATCH, DELETE.");
+        }
     }
     // * Verify that a controller does not have the same route and method of other controller
     // Verifica che piu' controllers non abbia la stessa rotta e stesso metodo
