@@ -26,11 +26,11 @@ class QueryExecutor
 
     public function prepareAndExecute(string $query, array $bindings): PDOStatement
     {
- 
+        Log::debug("PREPARE AND EXECUTRE query: " . $query . " | bindings: " . json_encode($bindings) ."");
         try {
             $stmt = $this->pdo->prepare($query);
             foreach ($bindings as $bind => $value) {
-                $stmt->bindParam($bind, $value);
+                $stmt->bindValue($bind,$value);
             }
             $stmt->execute();
             return $stmt;
@@ -43,6 +43,7 @@ class QueryExecutor
     public function fetch(string $query, array $bindings,  int $fetchType = PDO::FETCH_ASSOC): array|object|bool
     {
         try{
+        
             $stmt = $this->prepareAndExecute(query: $query, bindings: $bindings );
         if (!$stmt instanceof PDOStatement) {
             return false; // errore o query non eseguita

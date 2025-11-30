@@ -14,23 +14,18 @@ use App\Mail\BrevoMail;
 class ContattiController extends Controller
 {
 
-    public function __construct(public Mvc $mvc)
-    {
-        parent::__construct($mvc);
-    }
-    #[RouteAttr('contatti')]
+ 
+    #[RouteAttr('contatti', 'get', 'contatti')]
     public function index()
     {
-
         return view('contatti');
     }
 
 
-    #[RouteAttr('contatti', 'POST')]
+    #[RouteAttr('contatti', 'POST', 'contatti')]
     public function sendForm(Request $request)
     {
         if ($this->checkThsiForm()) {
-            $this->withSuccess('Messaggio inviato con successo!');
             // Notifica per via mail
             $user = User::orderBy('id', 'desc')->first();
             $brevoMail = new BrevoMail();
@@ -47,15 +42,15 @@ class ContattiController extends Controller
             $to = $user->email;
 
             $body = 'notifica';
+
+            return response()->back()->withSuccess('Messaggio inviato con successo. Ti risponderò al più presto!');
         } else {
-            $this->withError('Controlla i campi inseriti');
+           return response()->back()->withError('Messsaggio non inviato. Correggi i campi.');
         }
 
-
-        return view('contatti');
     }
 
-    public function checkThsiForm()
+    private function checkThsiForm()
     {
         $contatti = new Contatti();
         $post = $this->mvc->request->all();

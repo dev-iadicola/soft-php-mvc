@@ -10,15 +10,18 @@ use App\Core\Services\SessionStorage;
 
 class Session {
 
+    public static function self(): SessionStorage{
+        return Mvc::$mvc->sessionStorage;
+    }
     public static function setFlash(string $key, mixed $val): void{
        Mvc::$mvc->sessionStorage->setFlashSession($key,$val); 
     }
 
-    public static function getFlash(string $key): string{
+    public static function getFlash(string $key): string|null{
        return Mvc::$mvc->sessionStorage->getFlashSession($key);
     }
 
-    public static function get($key){
+    public static function get(string $key){
         return Mvc::$mvc->sessionStorage->get($key);
     }
 

@@ -8,11 +8,52 @@ use App\Core\DataLayer\Factory\ActiveQueryFactory;
 
 trait StaticQueryMethods
 {
-    public static function Make(): ActiveQuery{
+    public static function Make(): ActiveQuery
+    {
         return ActiveQueryFactory::for(static::class);
     }
+    public function query(): ActiveQuery
+    {
+        return ActiveQueryFactory::for(static::class);
+    }
+    // public function __call($name, $arguments)
+    // {
+    //     $query = ActiveQueryFactory::for(static::class);
 
-    
+    //     if (is_callable([$query, $name])) {
+    //         return $query->$name(...$arguments);
+    //     }
+
+    //     return parent::__call($name, $arguments); // opzionale
+    // }
+
+
+    // public static function __callStatic($method, $args)
+    // {
+    //     if (method_exists(static::Make(), $method)) {
+    //         return static::Make()->$method(...$args);
+    //     }
+
+    //     throw new \BadMethodCallException("Static method {$method} does not exist.");
+    // }
+
+    // -----------------------------------------------------
+    // CREATION & UPDATING
+    // -----------------------------------------------------
+    public static function create(array $data): Model
+    {
+        return static::Make()->create($data);
+    }
+    public static function update(array $data): int
+    {
+        return static::Make()->update($data);
+    }
+    public static function delete(): bool
+    {
+        return static::Make()->delete();
+    }
+
+
     // -----------------------------------------------------
     // BASIC QUERY SHORTCUTS
     // -----------------------------------------------------
@@ -147,29 +188,29 @@ trait StaticQueryMethods
     // AGGREGATE FUNCTIONS
     // -----------------------------------------------------
 
-    public static function count(string $column = '*'): int
-    {
-        return static::Make()->count($column);
-    }
+    // public static function count(string $column = '*'): int
+    // {
+    //     return static::Make()->count($column);
+    // }
 
-    public static function max(string $column): int|float|null
-    {
-        return static::Make()->max($column);
-    }
+    // public static function max(string $column): int|float|null
+    // {
+    //     return static::Make()->max($column);
+    // }
 
-    public static function min(string $column): int|float|null
-    {
-        return static::Make()->min($column);
-    }
+    // public static function min(string $column): int|float|null
+    // {
+    //     return static::Make()->min($column);
+    // }
 
-    public static function sum(string $column): int|float|null
-    {
-        return static::Make()->sum($column);
-    }
+    // public static function sum(string $column): int|float|null
+    // {
+    //     return static::Make()->sum($column);
+    // }
 
-    public static function avg(string $column): int|float|null
-    {
-        return static::Make()->avg($column);
-    }
+    // public static function avg(string $column): int|float|null
+    // {
+    //     return static::Make()->avg($column);
+    // }
 
 }

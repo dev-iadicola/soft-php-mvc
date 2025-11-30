@@ -295,11 +295,11 @@ class SessionStorage
     }
 
 
-    public function setFlashSession($key, $value, $ttl = 1)
+    public function setFlashSession($key, $value, $ttl = 3)
     {
         $_SESSION['FLASH'][$key] = $value;
         $_SESSION['FLASH_TIME'] = time();
-        $_SESSION['FLASH_TTL']  = $ttl; // default 1 secondo
+        $_SESSION['FLASH_TTL']  = $ttl; // default 3 secondi
     }
 
     /**
@@ -308,6 +308,7 @@ class SessionStorage
     public function getFlashSession($key): mixed
     {
         $flash = $_SESSION['FLASH'][$key] ?? null;
+        Log::debug("Recupero flash session per chiave '{$key}': $flash ");
         if ($flash !== null) {
             unset($_SESSION['FLASH'][$key]);
             if (empty($_SESSION['FLASH'])) {

@@ -235,6 +235,7 @@ class ActiveQuery
 
     public function find(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC)
     {
+        $this->builder->reset();
         $this->builder->where($column, $id);
         $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
         $this->builder->reset();

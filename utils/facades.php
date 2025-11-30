@@ -2,9 +2,11 @@
 
 use App\Core\Mvc;
 use App\Core\Facade\Auth;
+use App\Core\Facade\Session;
 use App\Core\Facade\View;
 use App\Utils\Enviroment;
 use App\Core\Services\AuthService;
+use App\Core\Services\SessionStorage;
 
 /**
  * facade for Auth
@@ -65,5 +67,14 @@ if (! function_exists(function: 'env')) {
 if(!function_exists('request')){
     function request(){
         return mvc()->request;
+    }
+}
+
+
+// helpers to call facade sessions
+if (!function_exists('session')) {
+    function session(): SessionStorage
+    {
+        return Session::self();   
     }
 }

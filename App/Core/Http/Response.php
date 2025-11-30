@@ -70,27 +70,23 @@ class Response
      * 
      */
 
-    public function withSuccess(string|array $message): void
+    public function withSuccess(string $message): void
     {
-        if (is_array($message)) $message = implodeMessage($message);
         Session::setFlash('success', $message);
     }
 
     public function withWarning(string $message): void
     {
-        if (is_array($message)) $message = implodeMessage($message);
         Session::setFlash('warning', $message);
     }
 
-    public function withError(string|array $message): void
+    public function withError(string $message): void
     {
-        if (is_array($message)) $message = implodeMessage($message);
         Session::setFlash('error', $message);
     }
 
-    public function with(string $key, string|array $message)
+    public function with(string $key, string $message)
     {
-        if (is_array($message)) $message = implodeMessage($message);
         Session::setFlash($key, $message);
     }
     public function wantsJson(): bool

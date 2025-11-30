@@ -33,6 +33,16 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     protected string $whereClause = '';
     protected bool $timestamps = true;
 
+    public function timestampsExists(bool $bool): void
+    {
+        $this->timestamps = $bool;
+        if( $this->timestamps) {
+            $this->systemColumns[] = [];
+            $this->systemColumns[] = 'id';
+        }
+    }
+ 
+
     public function toUpdate(): string
     {
         if (empty($this->table)) {

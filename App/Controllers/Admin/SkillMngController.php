@@ -11,20 +11,20 @@ class SkillMngController extends AuthenticationController
 {
 
 
-
+  #[RouteAttr('/skill', 'get', 'admin.skill')]
   public function store(Request $request)
   {
-    Skill::create($request->all());
+    Skill::Make()->create($request->all());
     
     response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
-
+#[RouteAttr('skill-edit/{id}', 'get','admin.skill.edit')]
   public function edit(Request $request, $id)
   {
     $skill = Skill::find($id);
     return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
-
+#[RouteAttr('skill-update/{id}', 'patch','admin.skill.update')]
   public function update(Request $request, $id)
   {
     $data = $request->all();

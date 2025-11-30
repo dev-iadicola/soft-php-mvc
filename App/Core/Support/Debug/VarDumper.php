@@ -142,7 +142,7 @@ class VarDumper
      * @param mixed $var
      * @return never
      */
-    private function dd($var): void
+    private function dd(mixed $var = "DD"): void
     {
         if (strtolower(getenv('APP_DEBUG')) !== 'true') {
             return;

@@ -137,7 +137,6 @@ class Storage
     public function disk(string $diskName): self
     {
         if (!array_key_exists($diskName, $this->config)) {
-            dd($diskName);
             throw new StorageException("Disk '{$diskName}' not configured in config/storage");
         }
         $this->diskPath = $this->config[$diskName];

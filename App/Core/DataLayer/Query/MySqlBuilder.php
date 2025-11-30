@@ -4,7 +4,7 @@ namespace App\Core\DataLayer\Query;
 
 use App\Core\DataLayer\Query\AbstractBuilder;
 use App\Core\Exception\QueryBuilderException;
-
+use App\Core\Helpers\Log;
 
 class MySqlBuilder extends AbstractBuilder
 {
@@ -39,10 +39,21 @@ class MySqlBuilder extends AbstractBuilder
         return $sql;
     }
 
-  
-  
+
+
     #region INSERT
 
+    private function orderValues(array $values): array
+    {
+        $ordered = [];
+        foreach ($this->bindings as $key) {
+
+            if (array_key_exists($key, $values)) {
+                $ordered[$key] = $values[$key];
+            }
+        }
+        return $ordered;
+    }
     public function insert(array $values): static
     {
         $filteredValues = $this->fill($values);
@@ -60,10 +71,16 @@ class MySqlBuilder extends AbstractBuilder
 
         // preprare binding
         foreach ($filteredValues as $column => $val) {
+        
             // add safe column name
             $columns[] = $column;
-            $placeholders[] = $this->AddBind($val);
+            $placeholders[] = ':' . $column; 
+            $this->bindings[':' . $column] = $val;
+
         }
+       Log::debug('------ HERE Insert Bindings HERE-----: ' . json_encode($this->bindings));
+       Log::debug('------ HERE placeholder  HERE-----: ' . json_encode($placeholders));
+       
 
 
         // prepare columns and placeholder for Query
@@ -73,6 +90,7 @@ class MySqlBuilder extends AbstractBuilder
             ") VALUES (" .
             implode(', ', $placeholders) .
             ")";
+        Log::debug('------ HERE Insert Query HERE-----: ' . $this->insertClause);
         return $this;
     }
 

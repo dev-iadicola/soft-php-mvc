@@ -177,7 +177,7 @@ if (!function_exists(function: 'smtp')) {
  */
 
 if (!function_exists(function: 'flashMessage')) {
-    function flashMessage(string $key)
+    function flashMessage(string $key): string|null
     {
         return Session::getFlash($key);
     }

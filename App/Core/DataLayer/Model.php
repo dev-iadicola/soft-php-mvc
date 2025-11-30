@@ -9,21 +9,32 @@ use App\Core\Traits\Attributes;
 
 
 /**
- * @method static QueryBuilder select(array|string $columns)
- * @method static QueryBuilder where(string $columnName, string|int|float|bool|null $operatorOrValue, string|int|float|bool|null $value = null)
- * @method static QueryBuilder orderBy(array|string $columns, string $direction = 'ASC')
- * @method static QueryBuilder groupBy(string|array $columns)
- * @method static QueryBuilder get()
- * @method static QueryBuilder first()
- * @method static QueryBuilder find(int|string $id)
- * @method static QueryBuilder findOrFail(int|string $id)
- * @see QueryBuilder
+ * @method static App\Core\Eloquent\Query\ActiveQuery select(array|string $columns)
+ * @method static App\Core\Eloquent\Query\ActiveQuery create(array $data)
+ * @method static App\Core\Eloquent\Query\ActiveQuery update(array $data)
+ * @method static App\Core\Eloquent\Query\ActiveQuery where(string $columnName, string|int|float|bool|null $operatorOrValue, string|int|float|bool|null $value = null)
+ * @method static App\Core\Eloquent\Query\ActiveQuery orderBy(array|string $columns, string $direction = 'ASC')
+ * @method static App\Core\Eloquent\Query\ActiveQuery groupBy(string|array $columns)
+ * @method static App\Core\Eloquent\Query\ActiveQuery get()
+ * @method static App\Core\Eloquent\Query\ActiveQuery first()
+ * @method static App\Core\Eloquent\Query\ActiveQuery find(int|string $id)
+ * @method static App\Core\Eloquent\Query\ActiveQuery findOrFail(int|string $id)
+ * @see App\Core\Eloquent\Query\ActiveQuery
  */
 class Model implements JsonSerializable
 {
     use Attributes; use StaticQueryMethods;
     protected string $table;
     protected array $fillable;
+
+    protected bool $timestamps = true;
+
+    protected function setTimestamps(bool $bool): bool {
+       return $this->timestamps = $bool;
+    }
+    protected function setTable(string $table): string {
+       return $this->table = $table;
+    }
 
 
     public function jsonSerialize(): mixed
@@ -34,6 +45,8 @@ class Model implements JsonSerializable
     {
         $this->attributes[$key] = $value;
     }
+
+
 
     // /**
     //  | Handles static method calls on the Model and delegates them to the QueryBuilder.

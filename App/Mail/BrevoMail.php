@@ -43,8 +43,8 @@ class BrevoMail extends BaseMail
     
     }
 
-    public function send(): CreateSmtpEmail
+    public function send(?string $email = null): CreateSmtpEmail
     {
-        return $this->transactionalEmailsApi->sendTransacEmail($this->mail);
+        return $this->transactionalEmailsApi->sendTransacEmail($email ?? $this->mail);
     }
 }

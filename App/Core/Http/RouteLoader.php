@@ -111,7 +111,7 @@ class RouteLoader
 
                 if (empty($routeAttributes)) {
                     throw new \Exception(
-                        "The public method {$method->getName()} of class {$reflection->getName()} don't have a valid #[RouteAttr] attribute."
+                        "The public method {$method->getName()}() of class {$reflection->getName()} don't have a valid #[RouteAttr] attribute."
                     );
                 }
 

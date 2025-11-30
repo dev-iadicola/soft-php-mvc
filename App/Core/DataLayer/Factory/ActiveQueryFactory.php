@@ -27,6 +27,7 @@ class ActiveQueryFactory
         // metadata
         $table = $model->table ?? throw new ModelStructureException("Missing table in: $modelClass");
         $fillable = $model->fillable ?? [];
+        $timestampsExists = $model->timestamps;
 
 
         // Runtime (global)
@@ -43,6 +44,7 @@ class ActiveQueryFactory
         // config builder
         $builder->from($table);
         $builder->setFillable($fillable);
+        $builder->timestampsExists($timestampsExists);
        
 
         // Run ActiveQuery instance 
