@@ -14,6 +14,7 @@ use App\Core\Services\CsrfService;
 require_once 'response.php';
 require_once 'var_dumper.php';
 require_once "facades.php";
+require_once "types.php";
 
 
 
@@ -182,3 +183,6 @@ if (!function_exists(function: 'flashMessage')) {
         return Session::getFlash($key);
     }
 }
+
+
+

@@ -26,9 +26,10 @@
         <div class="bg-white rounded">
             <h3 class="text-center py-4 mb-5">PROJECTS</h3>
         </div>
+
         <div class="container my-5">
             <div class="row">
-                <?php foreach ($projects as $project) : ?>
+                <?php foreach ($projects as $project) { ?>
 
                     <div class="py-2 pl-4 col-12 col-md-4 col-sm-6 ">
                         <div class="card shadow border-primary">
@@ -42,6 +43,7 @@
                                 <!-- EFFETTO VISUALIZZA PROGETTO -->
                                 <div class="overlay-text">Apri</div>
 
+
                             </a>
 
 
@@ -49,7 +51,12 @@
 
 
                             <div class="cad-body d-flex flex-wrap justify-content-around gap-3 py-2 ">
-                                <?php if (!isset($project->link)): ?>
+
+<article class="p-2 mx-3 border border-white shadow rounded-lg bg-dark text-white">
+                                 {{{ truncate($project->overview)}}}
+                               </article>
+                            
+                                <?php if ( ! isset($project->link)) { ?>
                                     <a onmouseover="showArrow('<?= $project->link ?>')"
                                         onmouseleave="hideArrow('<?= $project->link ?>')"
                                         href="<?= $project->link ?>"
@@ -66,8 +73,8 @@
                                         </p>
 
                                     </a>
-                                <?php endif ?>
-                                <?php if (urlExist($project->website)): ?>
+                                <?php } ?>
+                                <?php if (urlExist($project->website)) { ?>
                                     <a onmouseover="showArrow('<?= $project->website ?>')"
                                         onmouseleave="hideArrow('<?= $project->website ?>')"
                                         href="<?= $project->website ?>"
@@ -82,13 +89,13 @@
                                             WebSite
                                         </p>
                                     </a>
-                                <?php endif ?>
+                                <?php } ?>
                             </div>
 
                         </div>
                     </div>
 
-                <?php endforeach; ?>
+                <?php } ?>
             </div>
         </div>
     </div>

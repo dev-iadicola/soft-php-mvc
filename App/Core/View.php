@@ -152,10 +152,10 @@ class View
         // Read the file content
         $content = file_get_contents($originFile);
         // compile blade-like syntax to php
-        // {{{ var }}} -> unescaped echo
+        // * {{{ var }}} -> unescaped echo
         $content = preg_replace('/\{\{\{\s*(.*?)\s*\}\}\}/s', '<?php echo $1; ?>', $content);
-        // {{ var }} -> escaped echo
-        $content = preg_replace('/\{\{\s*(.*?)\s*\}\}/s', '<?= htmlspecialchars($1, ENT_QUOTES, "UTF-8") ?>', $content);
+        // * {{ var }} -> escaped echo
+        $content = preg_replace('/\{\{\s*(.*?)\s*\}\}/s', '<?= htmlspecialchars($1 ?? "", ENT_QUOTES, "UTF-8") ?>', $content);
 
 
         // $previousLevel = error_reporting(E_ALL & ~E_NOTICE & ~E_WARNING);

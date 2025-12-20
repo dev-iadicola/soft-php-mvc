@@ -26,5 +26,8 @@
         "mvc": [
             "php App/Core/CLI/Kernel.php"
         ]
+    },
+    "require-dev": {
+        "laravel/pint": "^1.20"
     }
 }

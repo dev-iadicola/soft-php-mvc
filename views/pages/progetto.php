@@ -23,7 +23,7 @@
         overflow: hidden;
     }
 </style>
-<?php if($project): ?>
+<?php if ($project) { ?>
 <div class="card shadow-sm border-light rounded-lg bg-white overflow-hidden mb-4">
   <div class="row g-0 align-items-center">
     
@@ -41,12 +41,18 @@
       <h1 class="fw-bold text-dark mb-2"><?= $project->title ?></h1>
 
       <h5 class="fw-semibold mb-2">Descrizione</h5>
+
+<article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
+        
+          {{{$project->overview}}}
+        
+      </article>
       <article class="text-start text-secondary mb-4 lh-base text-block">
-        <?= $project->overview ?>
+        {{ $project->description }}
       </article>
 
       <div class="d-flex flex-wrap gap-3">
-        <?php if (!isset($project->link)): ?>
+        <?php if ( ! isset($project->link)) { ?>
           <a
           onmouseover="showArrow('<?= $project->link ?>')" onmouseleave="hideArrow('<?= $project->link ?>')" 
           href="<?= $project->link ?>"
@@ -55,21 +61,21 @@
              class="btn btn-dark text-white d-flex align-items-center gap-2 px-3">
             <i class="fa fa-github"></i> Code
           </a>
-        <?php endif; ?>
+        <?php } ?>
 
-        <?php if (urlExist($project->website)): ?>
+        <?php if (urlExist($project->website)) { ?>
           <a href="<?= $project->website ?>"
              target="_blank"
              rel="noopener noreferrer"
              class="btn btn-primary d-flex align-items-center gap-2 px-3">
             <i class="fa fa-eye"></i> Website
           </a>
-        <?php endif; ?>
+        <?php } ?>
       </div>
     </div>
   </div>
 </div>
-<?php endif; ?>
+<?php } ?>
 
 
 

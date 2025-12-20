@@ -15,15 +15,15 @@ class ProgettiController extends Controller {
   
     #[RouteAttr('progetti')]
     public function index() {
-     $projects = Project::findAll();
+     $projects = Project::all();
         
-        $this->render(view: 'progetti',  variables: compact('projects' ));
+      view('progetti', compact('projects'));
     }
 
-    #[RouteAttr('progetti/{id}')]
-    public function show(Request $request, int $id){
-         $project = Project::find($id);  // anziché usare findOrFail utilizzo l'eccezione all'interno della pagina pages.progetto 
-         $projects = Project::findAll();
+    #[RouteAttr('progetti/{title}')]
+    public function show(Request $request, int $id): void{
+         $project = Project::find($id);  
+         $projects = Project::all();
          view('progetto', compact('project', "projects"));
     }
 

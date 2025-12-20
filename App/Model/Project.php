@@ -3,13 +3,13 @@
 namespace App\Model;
 
 use App\Core\DataLayer\Model;
+use App\Core\Traits\Relation;
 use App\Model\Partner;
 
 
 class Project extends Model
 {
-
-
+ use Relation;
    /**
     * Summary of table
     * @var string $table 
