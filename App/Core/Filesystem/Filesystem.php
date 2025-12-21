@@ -61,11 +61,13 @@ class Filesystem
     /**
      * delete If Exist
      */
-    public function deleteIfExist(string $path): void
+    public function deleteIfExist(string $path): bool
     {
         if ($this->exists($path)) {
             $this->delete($path);
+            return true;
         }
+        return false;
     }
 
     /**

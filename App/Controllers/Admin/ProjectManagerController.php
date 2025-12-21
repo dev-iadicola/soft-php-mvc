@@ -75,8 +75,7 @@ class ProjectManagerController extends AdminController
 
         if (isset($validated['img'])) {
             // delete old path image
-            if (Storage::make('images')->exists($project->img) && !empty($project->img)) {
-                Storage::make('images')->delete($project->img);
+            if (Storage::make('images')->deleteIfExist($project->img) && !empty($project->img)) {
                 $message = "Percorso immagine {$project->img} eliminato";
             } else {
                 $message = "Il Progetto con il percorso per l'immagine {$project->img} non esiteva
