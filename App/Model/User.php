@@ -16,8 +16,10 @@ class User extends Model
         'indirizzo',
         'last_log',
         'log_id',
-        'created_at',
+        'crerated_at'
     ];
+
+
 
   
     public static function changePassword(string $password, string $email)

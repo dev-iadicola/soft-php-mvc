@@ -9,16 +9,16 @@ class QueryBuilderException extends Exception
         string $message = 'Exception in Query!',
         int $code = 500
     ) {
-        $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
-        $caller = $trace[1] ?? null;
+        // $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
+        // $caller = $trace[1] ?? null;
 
-        if ($caller && isset($caller['file'], $caller['line'])) {
-            // Cambia il file e la linea dell’eccezione
-            $this->file = $caller['file'];
-            $this->line = $caller['line'];
+        // if ($caller && isset($caller['file'], $caller['line'])) {
+        //     // Cambia il file e la linea dell’eccezione
+        //     $this->file = $caller['file'];
+        //     $this->line = $caller['line'];
 
-            $message .= " (originated in {$caller['file']} on line {$caller['line']})";
-        }
+        //     $message .= " (originated in {$caller['file']} on line {$caller['line']})";
+        // }
 
         parent::__construct($message, $code);
     }

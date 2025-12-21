@@ -12,6 +12,7 @@ class Enviroment
 {
     // Esempi di costanti leggibili
     public const DEBUG        = 'APP_DEBUG';
+    public const APP_DEBUG        = 'APP_DEBUG';
     public const ENVIRONMENT  = 'APP_ENV';
     public const CLOUD        = 'CLOUD';
     public const EMAIL        = 'APP_EMAIL';
@@ -47,10 +48,10 @@ class Enviroment
      */
     public static function isDebug(): bool
     {
-        return self::get(key: self::DEBUG, default: false);
+        return self::get(key: self::APP_DEBUG, default: false);
     }
     public static function isProd():bool{
-        return self::get(key: self::DEBUG, default: false);
+        return self::get(key: self::APP_DEBUG, default: false);
     }
 
     public static function isMaintenance(): bool

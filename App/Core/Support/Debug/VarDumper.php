@@ -1,63 +1,66 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Support\Debug;
 
-use ReflectionClass;
 use App\Core\Helpers\Path;
-use App\Core\Design\Stilize;
+use App\Utils\Enviroment;
+use ReflectionClass;
+use Symfony\Component\VarDumper\VarDumper as ComponentVarDumper;
 
 class VarDumper
 {
     /**
      * Summary of __callStatic
      * It allows we to have a facade
-     * @param mixed $method
-     * @param mixed $args
+     *
+     * @param  mixed  $method
+     * @param  mixed  $args
      */
     public static function __callStatic($method, $args)
     {
         $istance = new self();
+
         return $istance->$method(...$args);
     }
 
-
     /**
      * * serve SOLO per trovare metodo debug() o VarDumper::debug()
-     *
-     * @return void
      */
     private function debugTrace(): void
     {
         // Ottieni l'intero stack trace
         $traces = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 7);
-        $fileWhereDebug = "";
+        $fileWhereDebug = '';
         $lineWhereDebug = 0;
         // origini da escludere.
         $excludedFiles = [
-            Path::root( '/App/Core/Support/Debug/VarDumper.php'),
-           Path::root('/utils/helpers.php'),
-           Path::root('/utils/var_dumper.php'),
-           Path::root('/App/Core/Support/Debug/VarDumper.php'),
-           Path::root('App/Core/Support/Debug/VarDumper.php'),
+            Path::root('/App/Core/Support/Debug/VarDumper.php'),
+            Path::root('/utils/helpers.php'),
+            Path::root('/utils/var_dumper.php'),
+            Path::root('/App/Core/Support/Debug/VarDumper.php'),
+            Path::root('App/Core/Support/Debug/VarDumper.php'),
         ];
         foreach ($traces as $trace) {
             // file che non deve controllare.
 
-
             // Salta i file esclusi dal trace
-            if (in_array( needle: $trace['file'], haystack: $excludedFiles, strict: true)) {
+            if (in_array(needle: $trace['file'], haystack: $excludedFiles, strict: true)) {
                 continue;
             }
 
-            //carico linee files
+            // carico linee files
             $lines = @file($trace['file']);
-            if (!$lines) continue;
+            if ( ! $lines) {
+                continue;
+            }
 
             foreach ($lines as $num => $content) {
                 // trovato
-                //* rimuovi spazi e tab
+                // * rimuovi spazi e tab
                 $trimmed = trim($content);
-                //* Salta se è una riga vuota o commentata
+                // * Salta se è una riga vuota o commentata
                 if (
                     $trimmed === '' ||
                     str_starts_with($trimmed, '//') ||
@@ -67,12 +70,12 @@ class VarDumper
                 ) {
                     continue;
                 }
-                //* trova il metodo!
+                // * trova il metodo!
                 if (str_contains($content, 'debug(') || str_contains($content, 'VarDumper::debug(')) {
                     $fileWhereDebug = $trace['file'];
                     $lineWhereDebug = ($num + 1);
 
-                    // appena trova il file, esce da entrambi i cicli 
+                    // appena trova il file, esce da entrambi i cicli
                     break 2;
                 }
             }
@@ -80,14 +83,14 @@ class VarDumper
 
         // * Mostra a vidoe
 
-        echo "========================================= <br>";
+        echo '========================================= <br>';
 
-        echo "Debug delcared in: " . str_replace(baseRoot(), "", $fileWhereDebug) . " at line " . $lineWhereDebug . " <br>";
+        echo 'Debug delcared in: ' . str_replace(baseRoot(), '', $fileWhereDebug) . ' at line ' . $lineWhereDebug . ' <br>';
 
-        echo "========================================= <br>";
+        echo '========================================= <br>';
     }
 
-    private function softdb(...$vars)
+    private function softdb(...$vars): void
     {
         ob_start();
 
@@ -116,11 +119,10 @@ class VarDumper
         exit;
     }
 
-    private function logger(...$vars)
+    private function logger(...$vars): void
     {
 
         // ob_start();
-
 
         // echo '<pre style="background:#111;color:#0f0;padding:10px;border-radius:6px;font-size:13px;line-height:1.4; font-size:16px;">';
         // $this->debugTrace();
@@ -131,20 +133,13 @@ class VarDumper
         // echo $output;
     }
 
-
-
-
-
-
     /**
-     * Summary of dd
-     * Dump and Die
-     * @param mixed $var
      * @return never
      */
-    private function dd(mixed $var = "DD"): void
+    private function dd(mixed $var = 'DD'): void
     {
-        if (strtolower(getenv('APP_DEBUG')) !== 'true') {
+
+        if ( ! Enviroment::isDebug()) {
             return;
         }
         self::dump($var);
@@ -152,40 +147,41 @@ class VarDumper
     }
 
     /**
-     * Summary of dump
-     * Allows you to see the data you need, without interruption 
-     * @param mixed $var
-     * @return void
+     * Allows you to see the data you need, without interruption
+     *
+     * @param  mixed  $var
      */
-    private function dump($var): void
+    private function dump(...$vars): void
     {
-        if (strtolower(getenv('APP_DEBUG')) !== 'true') {
+        if ( ! Enviroment::isDebug()) {
             return;
         }
-        Stilize::get('vardump.css');
-        echo '<div class="vardump-container">';
-        $this->renderVar($var);
-        echo '</div>';
+        foreach ($vars as $var) {
+            ComponentVarDumper::dump($var);
+        }
     }
+
     /**
      * Summary of renderVar
      * The skeleton, but also the musculature of the dumper
-     * @param mixed $var
-     * @param mixed $indent
-     * @param mixed $countLoop
+     *
+     * @param  mixed  $var
+     * @param  mixed  $indent
+     * @param  mixed  $countLoop
      * @return void
      */
-    private function renderVar($var, $indent = 0, $countLoop = 0)
+    private function renderVar($var, $indent = 0, $countLoop = 0): void
     {
         $maxDepth = 13;
         $pad = str_repeat('&nbsp;', $indent); // HTML-friendly indent
         if ($countLoop > $maxDepth) {
             echo "<span class='vardump-limit'>[...]</span><br>";
+
             return;
         }
 
         if (is_array($var)) {
-            echo "<span class='vardump-type'>[array]</span>(" . count($var) . ") [<br>";
+            echo "<span class='vardump-type'>[array]</span>(" . count($var) . ') [<br>';
             foreach ($var as $key => $value) {
                 echo "{$pad}<span class='vardump-key'>[{$key}]</span> => ";
                 $this->renderVar($value, $indent + 1, $countLoop + 1);
@@ -209,22 +205,22 @@ class VarDumper
             //     $var = decoct($var);
             //     "<span class='vardump-number'>[octal]: {$var}</span><br>";
             // } else
-                echo "<span class='vardump-number'>[numeric]: {$var}</span><br>";
+            echo "<span class='vardump-number'>[numeric]: {$var}</span><br>";
         } elseif (is_bool($var)) {
-            echo "<span class='vardump-type'>[boolean]: " . ($var ? "true" : "false") . "</span><br>";
-        } elseif (is_null($var)) {
+            echo "<span class='vardump-type'>[boolean]: " . ($var ? 'true' : 'false') . '</span><br>';
+        } elseif (null === $var) {
             echo "<span class='vardump-type'>null</span><br>";
         } else {
             echo "<span class='vardump-type'>unknown type</span><br>";
         }
     }
 
-    private function getFileName($var)
+    private function getFileName($var): void
     {
         $reflector = new ReflectionClass(get_class($var));
         $fullPath = $reflector->getFileName();
         $baseroot = baseRoot();
-        $fileName = str_replace($baseroot, "", $fullPath);
-        echo "<span class='vardump-file'>defined in " . $fileName . "</span> <br>";
+        $fileName = str_replace($baseroot, '', $fullPath);
+        echo "<span class='vardump-file'>defined in " . $fileName . '</span> <br>';
     }
 }

@@ -25,15 +25,19 @@
 
             <div class="collapse" id="collapsePortfolio">
                 <div class="card card-body mt-2">
-                    <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.dashboard'), $page) ?>"
+                    <a class="dropdown-item  text-dark {{ isActivePage(route('admin.dashboard'), $page) }}"
                         href=" {{{ route('admin.home') }}}  ">Gestione Home Page</a>
-                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/contatti', $page) ?>"
+                    
+                        <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/contatti', $page) ?>"
                         href="/admin/contatti">Messaggi</a>
-                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/progetti', $page) ?>"
-                        href="/admin/progetti">Progetti</a>
-                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/corsi', $page) ?>"
+                   
+                       <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.project'), $page) ?>"
+                        href="{{route('admin.project')}}">Progetti</a>
+                    
+                        <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/corsi', $page) ?>"
                         href="/admin/corsi">Corsi Professionali</a>
-                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/cv', $page) ?>"
+                    
+                        <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/cv', $page) ?>"
                         href="/admin/cv">Curriculum</a>
                 </div>
             </div>

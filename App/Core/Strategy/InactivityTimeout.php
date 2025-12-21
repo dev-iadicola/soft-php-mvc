@@ -2,13 +2,16 @@
 namespace App\Core\Strategy;
 
 use App\Core\Contract\ITimeoutStrategy;
+use App\Utils\Enviroment;
 
 class InactivityTimeout implements ITimeoutStrategy {
     /**
      * Summary of __construct
      * @param int $seconds durata della sessione
      */  
-    public function __construct(private int $seconds = 600){}
+    public function __construct(private int $seconds = 600){
+        $this->seconds = Enviroment::get('SESSION_LIFETIME_AUTH');
+    }
     /**
      * Summary of IsExpired
      * @param array<string,int> $session contiene l'ultima attivtà svolta dall'utente con numero del tempo.

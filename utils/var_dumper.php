@@ -11,6 +11,16 @@ if (!function_exists('debug')) {
         VarDumper::debug(...$vars);
     }
 }
+/**
+ * soft debug, not exit().
+ */
+if (!function_exists('sdb')) {
+    function sdb(...$vars)
+    {
+        getSource();
+        VarDumper::softdb(...$vars);
+    }
+}
 if (!function_exists('dd')) {
     /**
      * Dump and Die: Print variables and end execution
@@ -33,13 +43,7 @@ if (!function_exists('dump')) {
     }
 }
 
-if (!function_exists('logger')) {
-    function softdb(...$vars)
-    {
-        getSource();
-        VarDumper::softdb(...$vars);
-    }
-}
+
 
 if (!function_exists('getSource')) {
     /**

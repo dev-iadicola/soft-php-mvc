@@ -9,7 +9,7 @@
         <div class="list-group-item list-group-item-action my-5 rounded-2 border border-primary" id="message-opened">
             <div class="d-flex flex-row mt-2">
                 <button class="btn btn-warning me-5" onclick="hideMessage()">Close X</button>
-                <form action="/admin/contatti-delete/<?= $contatto->id ?>" method="POST">
+                <form action="{{route('admin.contatti.delete', ['id'=>$contatti->id])}}" method="POST">
                    @delete
                     <button class="btn btn-danger" onclick="return confirm('Sicuro di voler eliminare il messaggio di <?= $contatto->nome .' '.$contatto->typologie ?>?')">Delete X</button>
                 </form>
@@ -31,7 +31,7 @@
                 <p class="mb-2 overflow-auto"><?= substr($contatto->messaggio, 0, 300) ?></p>
                 <small>Data: <?= date('d/m/Y - H:i:s', strtotime($contatto->created_at)) ?></small>
                 <p>
-                    <a href="/admin/contatti/<?= $contatto->id ?>" class="btn btn-primary">Apri</a>
+                    <a href="{{route('admin.contatti', ['id'=>$contatto->id])}}" class="btn btn-primary">Apri</a>
                 </p>
             </div>
         <?php endforeach ?>

@@ -1,11 +1,12 @@
 <?php
 
-use App\Core\Helpers\Path;
+declare(strict_types=1);
 
-use App\Core\Facade\Session;
-use App\Core\Facade\Storage;
 use App\Core\Connection\SMTP;
 use App\Core\Facade\RouteHelper;
+use App\Core\Facade\Session;
+use App\Core\Facade\Storage;
+use App\Core\Helpers\Path;
 use App\Core\Services\CsrfService;
 
 // File: utils/helpers.php
@@ -13,62 +14,63 @@ use App\Core\Services\CsrfService;
 
 require_once 'response.php';
 require_once 'var_dumper.php';
-require_once "facades.php";
-require_once "types.php";
+require_once 'facades.php';
+require_once 'types.php';
 
-
-
-if (!function_exists(function: 'implodeMessage')) {
+if ( ! function_exists(function: 'implodeMessage')) {
     function implodeMessage(array $messages)
     {
         return implode('<br><br> - ', $messages);
     }
 }
 
-if (! function_exists(function: 'csrf_token')) {
-    function csrf_token(): null|string
+if ( ! function_exists(function: 'csrf_token')) {
+    function csrf_token(): ?string
     {
         return (new CsrfService())->getToken();
     }
 }
 
-if (!function_exists('route')) {
+if ( ! function_exists('route')) {
     function route(string $name, array $params = []): string
     {
+        // debug($params);
         return RouteHelper::getByName($name, $params);
     }
 }
 // * Used for layout pages.
-if (!function_exists(function: 'isActivePage')) {
+if ( ! function_exists(function: 'isActivePage')) {
     function isActivePage(string $menuItem, string $currentPage)
     {
         return strtolower($menuItem) == strtolower($currentPage) ? 'active' : '';
     }
 }
-if (!function_exists(function: 'printLn')) {
-    function printLn(string $var)
+if ( ! function_exists(function: 'printLn')) {
+    function printLn(string $var): void
     {
-        passthru("php soft print $var");
+        passthru("php soft print {$var}");
     }
 }
 
-if (!function_exists(function: 'printLn')) {
+if ( ! function_exists(function: 'printLn')) {
     function settings()
     {
         return mvc()->config->settings;
     }
 }
 
-
-if (!function_exists('urlExist')) {
+if ( ! function_exists('urlExist')) {
     /**
      * Check if a URL exists by fetching its headers
-     * @param string $url
+     *
+     * @param  string  $url
      * @return bool
      */
     function urlExist($url)
     {
-        if (empty($url)) return false;
+        if (empty($url)) {
+            return false;
+        }
 
         $ch = curl_init($url);
         curl_setopt($ch, CURLOPT_NOBODY, true); // non scaricare il corpo
@@ -84,25 +86,24 @@ if (!function_exists('urlExist')) {
     }
 }
 
-
-if (!function_exists(function: 'assets')) {
+if ( ! function_exists(function: 'assets')) {
     function assets(string $file): string
     {
         return '/assets/' . $file;
     }
 }
-if (!function_exists('validateImagePath')) {
+if ( ! function_exists('validateImagePath')) {
     function validateImagePath(string $path, string $fallback)
     {
-        if (file_exists(Storage::make('public')->path($path) ))
+        if (file_exists(Storage::make('public')->path($path))) {
             return $path;
-        else
-            return $fallback;
+        }
+
+        return $fallback;
     }
 }
 
-
-if (!function_exists(function: 'css')) { //get css folder in assets folder
+if ( ! function_exists(function: 'css')) { // get css folder in assets folder
     /**
      * Summary of css
      * return the css path
@@ -113,13 +114,10 @@ if (!function_exists(function: 'css')) { //get css folder in assets folder
     }
 }
 
-
-
-
-if (!function_exists('baseRoot')) {
+if ( ! function_exists('baseRoot')) {
     /**
      * Summary of baseRoot
-     * 
+     *
      * @return string rotirna semrpe la rotta di documento.
      */
     function baseRoot(): string
@@ -128,19 +126,16 @@ if (!function_exists('baseRoot')) {
     }
 }
 
-
-
 /**
  * Global function by class Path
  */
-
-if (!function_exists('basepath')) {
+if ( ! function_exists('basepath')) {
     function basepath(string $string)
     {
         return Path::root($string);
     }
 }
-if (!function_exists('storagePath')) {
+if ( ! function_exists('storagePath')) {
     function storagePath(string $path)
     {
 
@@ -148,25 +143,21 @@ if (!function_exists('storagePath')) {
     }
 }
 
-if (!function_exists('convertDotToSlash')) {
+if ( ! function_exists('convertDotToSlash')) {
     function convertDotToSlash(string $dir)
     {
         return Path::convertDotToSlash($dir);
     }
 }
 
-
-
-if (!function_exists('is_octal')) {
+if ( ! function_exists('is_octal')) {
     function is_octal(int $numebr)
     {
         return preg_match('/^0[0-7]+$/', (string) $numebr) === 1;
     }
 }
 
-
-
-if (!function_exists(function: 'smtp')) {
+if ( ! function_exists(function: 'smtp')) {
     function smtp(): SMTP
     {
         return new SMTP();
@@ -176,13 +167,9 @@ if (!function_exists(function: 'smtp')) {
 /**
  * Funzioni per la gestione delle flash session (messaggi di UI)
  */
-
-if (!function_exists(function: 'flashMessage')) {
-    function flashMessage(string $key): string|null
+if ( ! function_exists(function: 'flashMessage')) {
+    function flashMessage(string $key): ?string
     {
         return Session::getFlash($key);
     }
 }
-
-
-

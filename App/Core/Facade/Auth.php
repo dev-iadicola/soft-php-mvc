@@ -1,6 +1,7 @@
 <?php 
 namespace App\Core\Facade;
 
+use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Mvc;
 use App\Core\DataLayer\Model;
 use App\Core\Services\AuthService;
@@ -36,10 +37,10 @@ class Auth {
    /**
     * Summary of user
     * 
-    * @return QueryBuilder|null ritrna l'istanza del queryBuilder quindi è possibile effetuare 
+    * @return QueryBuilderInterface|null ritrna l'istanza del queryBuilder quindi è possibile effetuare 
     * subito Auth::user()->id o altri campi. 
     */
-   public static function user(): QueryBuilder|null{
+   public static function user(): QueryBuilderInterface|null{
     return self::getInstance()->user();
    }
 

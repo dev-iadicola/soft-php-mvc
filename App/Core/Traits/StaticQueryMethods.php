@@ -52,6 +52,7 @@ trait StaticQueryMethods
     {
         return static::Make()->delete();
     }
+   
 
 
     // -----------------------------------------------------
@@ -187,6 +188,10 @@ trait StaticQueryMethods
     // -----------------------------------------------------
     // AGGREGATE FUNCTIONS
     // -----------------------------------------------------
+
+    public static function exists(): bool {
+        return static::Make()->exists();
+    }
 
     // public static function count(string $column = '*'): int
     // {

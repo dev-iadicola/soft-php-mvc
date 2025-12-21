@@ -69,7 +69,7 @@
                         <!-- Dettagli del Progetto -->
                         <div class="card-body d-flex flex-column">
                             <h5 class="card-title text-primary"><?= $p->title ?></h5>
-                            <p class="card-text text-muted">{{ $p->overview }}</p>
+                            <p class="card-text text-muted">{{{$p->overview }}}</p>
                             <a href="<?= $p->link ?>" target="_blank"
                                 class="btn btn-outline-primary mt-auto">Vedi Progetto <?= $p->website == 1 ? 'In Cloud' : 'Su GitHub' ?></a>
 
