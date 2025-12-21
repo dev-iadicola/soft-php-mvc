@@ -85,13 +85,34 @@ class Validator
         foreach ($this->rules as $field => $rules) {
             $value = $this->data[$field] ?? null;
 
-            // se non è un array, rendilo con | per dividerlo
             if ( ! is_array($rules)) {
                 $rules = explode('|', $rules);
             }
 
+            $hasNullable = in_array('nullable', $rules, true);
+            $hasRequired = in_array('required', $rules, true);
+
+            $isEmpty =
+                $value === null ||
+                (is_string($value) && trim($value) === '') ||
+                (is_array($value) && empty($value));
+
+            /**
+             * nullable + empty + NOT required → skip validation
+             */
+            if ($hasNullable && ! $hasRequired && $isEmpty) {
+                $this->validated[$field] = $value;
+
+                continue;
+            }
+
             foreach ($rules as $rule) {
-                // regole closure personalizzate
+
+                if ($rule === 'nullable') {
+                    continue;
+                }
+
+                // Closure rule
                 if ($rule instanceof Closure) {
                     $result = $rule($value, $this->data);
                     if ($result !== true) {
@@ -100,30 +121,28 @@ class Validator
 
                     continue;
                 }
-                // * Gestione parametri tipo min:8
+
                 [$ruleName, $param] = array_pad(explode(':', $rule, 2), 2, null);
-                // * Se l'utente si crea dei mini rules, può farlo liberamente basta che abbia implementato RuleInterface
-                /**
-                 * $validator = Validator::make($_POST, [
-                 *       'username' => [new MiniRuleCreatoDalDeveloper()],
-                 *          ]);
-                 */
+
+                // Custom RuleInterface
                 if ($rule instanceof Rules\RuleInterface) {
                     if ( ! $rule->passes($field, $value, $param)) {
                         $this->addError($field, $rule->message($field, $param));
                     }
+
+                    continue;
                 }
 
-                // * magic method for call the validator method by cases
                 $method = 'validate' . ucfirst($ruleName);
-                if (method_exists($this, $method)) {
-                    $this->$method($field, $value, $param);
-                } else {
+
+                if ( ! method_exists($this, $method)) {
                     throw new Exception("Validation rule '{$ruleName}' not implemented.");
                 }
+
+                $this->$method($field, $value, $param);
             }
         }
-        // populate array validated
+
         $this->buildValidated();
     }
 

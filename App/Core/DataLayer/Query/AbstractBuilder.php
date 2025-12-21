@@ -454,20 +454,25 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     #region RESET
     // * ___________________________________________________
 
+    /**
+     * Summary of reset
+     * @deprecated its not util
+     * @return void
+     */
     public function reset(): void
     {
-        $this->bindings = [];
-        $this->selectValues = '*';
-        $this->distinct = false;
-        $this->joinClause = '';
-        $this->groupByClause = '';
-        $this->havingClause = '';
-        $this->orderByClause = '';
-        $this->limitClause = '';
-        $this->offsetClause = '';
-        $this->insertClause = '';
-        $this->setClause = '';
-        $this->whereClause = '';
+        // $this->bindings = [];
+        // $this->selectValues = '*';
+        // $this->distinct = false;
+        // $this->joinClause = '';
+        // $this->groupByClause = '';
+        // $this->havingClause = '';
+        // $this->orderByClause = '';
+        // $this->limitClause = '';
+        // $this->offsetClause = '';
+        // $this->insertClause = '';
+        // $this->setClause = '';
+        // $this->whereClause = '';
     }
 
 

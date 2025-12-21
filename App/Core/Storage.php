@@ -217,7 +217,7 @@ class Storage
  
 
 
-    public function deleteIfFileExist($absolutePaht): bool
+    public function deleteIfExist($absolutePaht): bool
     {
 
         if ($this->fileExists($absolutePaht)) {

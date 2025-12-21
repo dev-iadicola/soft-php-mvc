@@ -5,11 +5,15 @@
         </small>
     </h2>
 
-    <?php if (isset($contatto)): ?>
+    <?php
+
+            use App\Core\Helpers\Types\StrHelper;
+
+ if (isset($contatto)): ?>
         <div class="list-group-item list-group-item-action my-5 rounded-2 border border-primary" id="message-opened">
             <div class="d-flex flex-row mt-2">
                 <button class="btn btn-warning me-5" onclick="hideMessage()">Close X</button>
-                <form action="{{route('admin.contatti.delete', ['id'=>$contatti->id])}}" method="POST">
+                <form action="{{route('admin.contatti.delete', ['id'=>$contatto->id])}}" method="POST">
                    @delete
                     <button class="btn btn-danger" onclick="return confirm('Sicuro di voler eliminare il messaggio di <?= $contatto->nome .' '.$contatto->typologie ?>?')">Delete X</button>
                 </form>
@@ -26,10 +30,10 @@
     <div class="list-group" style="max-height: 700px; overflow-y: auto;">
         <?php foreach ($contatti as $contatto): ?>
             <div class="list-group-item list-group-item-action my-2 py-4 rounded-2">
-                <h5 class="mb-1">Mittente: <?= $contatto->nome ?> - <?= $contatto->typologie ?></h5>
-                <h6 class="mb-1">Indirizzo email: <a href="mailto:<?= $contatto->email ?>"><?= $contatto->email ?></a></h6>
-                <p class="mb-2 overflow-auto"><?= substr($contatto->messaggio, 0, 300) ?></p>
-                <small>Data: <?= date('d/m/Y - H:i:s', strtotime($contatto->created_at)) ?></small>
+                <h5 class="mb-1">Mittente: {{$contatto->nome}} - {{$contatto->typologie}}</h5>
+                <h6 class="mb-1">Indirizzo email: <a href="mailto {{$contatto->email}}">{{ $contatto->email}}</a></h6>
+                <p class="mb-2 overflow-auto">{{StrHelper::truncate($contatto->messaggio, 0, 300)}}</p>
+                <small>Data: {{(new DateTime($contatto->created_at))->format('d/m/Y - H:i:s')}}</small>
                 <p>
                     <a href="{{route('admin.contatti', ['id'=>$contatto->id])}}" class="btn btn-primary">Apri</a>
                 </p>

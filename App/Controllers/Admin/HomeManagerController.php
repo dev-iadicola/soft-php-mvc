@@ -77,7 +77,7 @@ class HomeManagerController extends AdminController
             
             Validator::verifyImage($data['img']);
             $stg = new Storage('images');
-            $stg->deleteIfFileExist($article->img);
+            $stg->deleteIfExist($article->img);
             $stg->disk('images')->put($data['img']);
             $data['img'] = $stg->getRelativePath();
         } else {
@@ -104,7 +104,7 @@ class HomeManagerController extends AdminController
 
         if(isset($elem->img)){
             $stg = new Storage('images');
-            $stg->deleteIfFileExist($elem->img);
+            $stg->deleteIfExist($elem->img);
         }
         $article->delete();
         return response()->back()->withSuccess('Articolo $name eliminato.');

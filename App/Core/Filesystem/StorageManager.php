@@ -18,7 +18,7 @@ class StorageManager
     }
 
     // Get a disk by tits name and return Filesystem instance. 
-    public function disk(string $diskName)
+    public function disk(string $diskName): Filesystem
     {
         if (!isset( $this->disks[$diskName])) {
             throw new  StorageException("Error, disk name $diskName don't conmfigurate in file `filesystem.php` .");

@@ -13,7 +13,11 @@ use App\Core\Enum\HttpActionType;
             <h3 class="card-title mb-0">{{$project?->title ?? "Pubblica nuovo progetto"}} </h3>
         </div>
         <div class="card-body">
-            <form method="POST" onsubmit="verification(event)" action="{{ route('admin.project.upset', ['id' =>$project?->id ?? 0 ]) }}">
+            <form method="POST" 
+            onsubmit="verification(event)" 
+            action="{{ route('admin.project.upset', ['id' =>$project?->id ?? 0 ]) }}" 
+            enctype="multipart/form-data">
+
                 {{ HttpActionType::PATCH->value}}
                 {{ HttpActionType::POST->value}}
                 <div class="form-group">
@@ -44,9 +48,13 @@ use App\Core\Enum\HttpActionType;
 
                 <div class="form-group">
                     <label for="img">Inserisci Nuova Immagine</label>
-                    <input
-                        <?= isset($project?->img) ? 'required' : '' ?>
-                        type="file" accept="image/*" name="img" class="form-control" id="myfile">
+                    <input 
+    <?= isset($project) && isset($project->img) ? '' : 'required' ?>
+                    type="file" 
+                    accept="image/*" 
+                    name="img" 
+                    class="form-control" 
+                    id="myfile">
                     <div class="row mt-3">
                         <?php if ( isset($project) && !is_null($project?->img) && is_string($project->img) ) : ?>
                             <div class="col-md-6 text-center">

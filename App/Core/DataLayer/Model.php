@@ -8,6 +8,7 @@ use JsonSerializable;
 use App\Core\Traits\Attributes;
 use App\Core\Traits\StaticQueryMethods;
 use App\Core\DataLayer\Query\ActiveQuery;
+use PDO;
 
 /**
  * @method static App\Core\Eloquent\Query\ActiveQuery select(array|string $columns)
@@ -69,14 +70,14 @@ class Model  implements JsonSerializable
     public function save(){
         $this->query()->save($this);
     }
-      public static function findFirst(int|string $id): ?Model
-    {
-        return static::where(static::instance()->primaryKey, $id)->first();
-    }
-
-     public static function find(int|string $id)
+      public static function whereId(int|string $id)
     {
         return static::where(static::instance()->primaryKey, $id);
+    }
+
+     public static function find(int|string $id, bool $reset = false, $fetchType = PDO::FETCH_ASSOC)
+    {
+        return static::where(static::instance()->primaryKey, $id)->first(reset: $reset);
     }
 
     public function __toString(): string

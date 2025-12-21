@@ -259,24 +259,27 @@ class ActiveQuery
         return $this->hydrator->many($rows);
     }
 
-    public function first(int $fetchType = PDO::FETCH_ASSOC)
+    public function first(int $fetchType = PDO::FETCH_ASSOC, bool $reset = false): Model|null
     {
         $this->builder->limit(1);
         $row = $this->executor->fetch(query: $this->builder->toSql(), bindings: $this->builder->getBindings(), fetchType: $fetchType);
-        $this->builder->reset();
-
         return $this->hydrator->one($row);
     }
 
-    public function find(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC)
-    {
-        $this->builder->reset();
-        $this->builder->where($column, $id);
-        $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
-        $this->builder->reset();
+    // public function find(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC, bool $reset = false)
+    // {
+    //     $this->builder->reset();
+        
+    //     $this->builder->where($column, $id);
+    //     $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
 
-        return $this->hydrator->one($row);
-    }
+    //     return $this->hydrator->one($row);
+    //     if($reset){
+                
+    //     $this->builder->reset();
+
+    //     }
+    // }
 
     public function findOrFalse(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC): bool|Model
     {
@@ -314,7 +317,7 @@ class ActiveQuery
             $id = $this->executor->lastInsertId();
 
             return $this->find($id);
-        } catch ( ModelException $e) {
+        } catch (ModelException $e) {
             throw new ModelException($e . ' for Model ' . $this->hydrator->getModel());
         }
 
@@ -331,7 +334,7 @@ class ActiveQuery
     {
         try {
             $this->builder->set($values);
-            
+
             $result = $this->executor->prepareAndExecute(
                 $this->builder->toUpdate(),
                 $this->builder->getBindings()
@@ -350,16 +353,16 @@ class ActiveQuery
     {
 
         // verify the model exists for decided update or create
-        
-       if($this->exists()){
 
-                $this->where($model->primaryKey, $model->getAttribute($model->primaryKey));
+        if ($this->exists()) {
+
+            $this->where($model->primaryKey, $model->getAttribute($model->primaryKey));
 
             $this->update($model->getAttribute());
-        }else{
+        } else {
             $this->create($model->getAttribute());
         }
-        
+
     }
 
     /** DELETE */

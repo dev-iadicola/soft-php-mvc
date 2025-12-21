@@ -28,7 +28,7 @@ class ProjectManagerController extends AdminController
     public function edit(Request $request, int $id)
     {
 
-        $project = Project::findFirst($id);
+        $project = Project::find($id);
         $projects = Project::orderBy('id', 'DESC')->get();
 
         return view('admin.portfolio.project', compact('project', 'projects'));
@@ -38,44 +38,18 @@ class ProjectManagerController extends AdminController
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $project = Project::findFirst($id);
-
-        $rules = [
-            'title'       => ['required', 'string'],
-            'overview'    => ['required', 'string', 'max:499'],
-            'description' => ['required', 'string'],
-        ];
-
-        if ($request->hasFile('img')) {
-            $data['img'] = $request->file('img');
-            $rules['img'] = ['image'];
-        }
-
-        $validator = Validator::make($data, [
-            ...$rules,
-        ],
-            [
-                'title'       => 'Titolo Richiesto!',
-                'overview'    => 'Sottititolo richieste!',
-                'description' => 'Descrizione richiesta!',
-                'link'        => 'File non supportato per il file selezionato',
-                'img'         => 'Immagine non valida',
-            ]
-        );
+        $project = Project::find($id);
+        $validator = $this->validateRequest($request);
 
         if ($validator->fails()) {
-            return redirect()->back()->withError($validator->implodeError('<br> -'));
+            return redirect()->back()->withError($validator->implodeError());
         }
 
-        // get validated data
-
-        $validated = $validator->validated();
-
-        $message = "Progetto salvato con successo";
+        $message = 'Progetto salvato con successo';
 
         if (isset($validated['img'])) {
             // delete old path image
-            if (Storage::make('images')->deleteIfExist($project->img) && !empty($project->img)) {
+            if (Storage::make('public')->deleteIfExist($project->img) && ! empty($project->img)) {
                 $message = "Percorso immagine {$project->img} eliminato";
             } else {
                 $message = "Il Progetto con il percorso per l'immagine {$project->img} non esiteva
@@ -84,17 +58,15 @@ class ProjectManagerController extends AdminController
             }
 
             // add new path image
-            Storage::make('images')
-            ->put(
-                $validated['img'],
-                file_get_contents($request->file('img')['tmp_name'])
-             );
+            Storage::make('public')
+                ->put(
+                    path: $validator->validated()['img'],
+                    content: file_get_contents($request->file('img')['tmp_name'])
+                );
 
         }
-
-    
-        $project = Project::find($id)->update($validated);
-       
+        
+        $project = Project::find($id)->update($data);
 
         return response()->back()->withSuccess($message);
     }
@@ -114,28 +86,27 @@ class ProjectManagerController extends AdminController
     public function store(Request $request)
     {
 
-        $data = $request->all();
-
-        // Controlla se è stato caricato un file immagine
-        if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-
-            $file = $data['img'];
-            $validator = Validator::make($request->all(), ['img' => ['required', 'image']], ['img' => "Il file caricato non è un'immagine valida."]);
-            // Verifica che sia un'immagine valida
-            if ($validator->fails()) {
-                // Gestisci errore (es. ritorna con errore, throw, ecc)
-                return response()->back()->withError($validator->errors());
-            }
-            // Salva il file e ottieni il path relativo
-            $storage = new Storage('images');
-            $storage->disk('images')->put($file);
-
-            // Sovrascrivi $data['img'] con il path relativo (da salvare nel DB)
-            $data['img'] = $storage->getRelativePath();
+        // validate req
+        $valid = $this->validateRequest($request);
+        if ($valid->fails()) {
+            return redirect()->back()->withError($valid->implodeError());
         }
+        // insert image to storage
+        $file = $request->file('img');
 
+        $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
+        $path = 'projects/' . $filename;
+
+        Storage::make('public')->put(
+            $path,
+            file_get_contents($file['tmp_name'])
+        );
+
+        dd($valid->validated());
+        $data = $valid->validated();
+        $data['img'] = $path; 
         // Crea il progetto
-        Project::create($data);
+        Project::create(data: $data);
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
@@ -146,21 +117,52 @@ class ProjectManagerController extends AdminController
         // trova e azione
         $data = $reqq->all();
 
-        $project = Project::find($id);
-        if ( ! $project) {
+        $projectQ = Project::whereId($id);
+        if ( ! $projectQ->exists()) {
             return response()->back()->withError('Progetto non trovato');
         }
-        if ( ! isset($project->img) && null !== $project->img) {
-            $stg = new Storage('images');
-            if ($stg->deleteIfFileExist($project->img)) {
-                $project->delete();
-                response()->back()->withSuccess('Progetto Elimianto.');
-            } else {
+        // delete img if exist
+        $project = Project::find($id);
+        $storage = Storage::make('public');
+        if ($storage->exists($project->img));
+        $storage->delete($project->img);
 
-                response()->back()->withWarning('Non è stato possibile eliminare il progetto, perchè manca il percorso dell\'immagine.');
-            }
+        $projectQ->delete();
+
+        response()->back()->withSuccess('Progetto non eliminato correttamente.');
+    }
+
+    /**
+     * Summary of validateRequest
+     */
+    private function validateRequest(Request $request): Validator
+    {
+
+        $data = $request->all();
+        $rules = [
+            'title'       => ['required', 'string'],
+            'overview'    => ['required', 'string', 'max:499'],
+            'description' => ['required', 'string'],
+            'link'        => ['nullable'],
+            'img'         => ['nullable'],
+        ];
+
+        if ($request->hasFile('img')) {
+            $data['img'] = $request->file('img');
+            $rules['img'] = ['image'];
         }
 
-        response()->back()->withError('Progetto non eliminato correttamente.');
+        $validator = Validator::make($data, [
+            ...$rules,
+        ],
+            [
+                'title'       => 'Titolo Richiesto!',
+                'overview'    => 'Sottititolo richieste!',
+                'description' => 'Descrizione richiesta!',
+                'img'         => 'Immagine non valida',
+            ]
+        );
+
+        return $validator;
     }
 }

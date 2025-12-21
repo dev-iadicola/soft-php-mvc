@@ -30,9 +30,11 @@ class ContattiManagerController extends AdminController
   #[RouteAttr('/contatti-delete/{id}/','DELETE', 'admin.contatti.delete')]
   public function destroy(int $id)
   {
+    $contatto = Contatti::find($id);
+   $c = Contatti::where('id', $id)->delete();
     $info = "Nome: ".$contatto->nome . " Email:" .$contatto->email;
 
-    if($contatto->delete()){
+    if($c){
       return response()->back()->withSuccess("Messaggio eliminato: [$info]");
     }
     return response()->back()->withError("Impossibile eliminare il messaggio [$info]");

@@ -21,7 +21,8 @@
         "phpmailer/phpmailer": "^6.9",
         "filp/whoops": "^2.18",
         "sendinblue/api-v3-sdk": "^8.4",
-        "symfony/var-dumper": "^6.4"
+        "symfony/var-dumper": "^6.4",
+        "nesbot/carbon": "^3.11"
     },
     "scripts": {
         "mvc": [
