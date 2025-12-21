@@ -38,7 +38,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
         $this->timestamps = $bool;
         if( $this->timestamps) {
             $this->systemColumns[] = [];
-            $this->systemColumns[] = 'id';
+         
         }
     }
  
@@ -141,19 +141,12 @@ abstract class AbstractBuilder implements QueryBuilderInterface
 
     protected function AddBind(?string $val): mixed
     {
-        $val = $this->processingNull($val);
         $key = ":p_" . ++$this->paramCounter;
         $this->bindings[":p_" . $this->paramCounter] = $val;
         return $key;
     }
 
-    private function processingNull($value): mixed
-    {
-        if (is_null($value))
-            return " IS NULL ";
-        else
-            return $value;
-    }
+    
 
     // * ___________________________________________________
     #region GENERAL FUNCTION SQL
