@@ -1,12 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\DataLayer;
 
-
+use App\Core\Traits\Attributes;
 use App\Core\Traits\StaticQueryMethods;
 use JsonSerializable;
-use App\Core\Traits\Attributes;
-
 
 /**
  * @method static App\Core\Eloquent\Query\ActiveQuery select(array|string $columns)
@@ -19,34 +19,56 @@ use App\Core\Traits\Attributes;
  * @method static App\Core\Eloquent\Query\ActiveQuery first()
  * @method static App\Core\Eloquent\Query\ActiveQuery find(int|string $id)
  * @method static App\Core\Eloquent\Query\ActiveQuery findOrFail(int|string $id)
+ *
  * @see App\Core\Eloquent\Query\ActiveQuery
  */
 class Model implements JsonSerializable
 {
-    use Attributes; use StaticQueryMethods;
+    use Attributes;
+    use StaticQueryMethods;
+    
+
+    public $primaryKey = 'id';
     protected string $table;
     protected array $fillable;
 
     protected bool $timestamps = true;
 
-    protected function setTimestamps(bool $bool): bool {
-       return $this->timestamps = $bool;
-    }
-    protected function setTable(string $table): string {
-       return $this->table = $table;
-    }
-
-
     public function jsonSerialize(): mixed
     {
-        return $this->attributes; //TODO da implementare
+        return $this->attributes; // TODO da implementare
     }
-    public function setAttribute($key, $value): void
+
+    public function setAttribute(string $key, mixed $value): void
     {
         $this->attributes[$key] = $value;
     }
 
+    public function getAttribute(?string $key = null): mixed{
+        if(is_null($key))
+            return $this->attributes;
+        else
+            return $this->attributes[$key];
+    }
 
+    protected function setTimestamps(bool $bool): bool
+    {
+        return $this->timestamps = $bool;
+    }
+
+    protected function setTable(string $table): string
+    {
+        return $this->table = $table;
+    }
+
+    public function save(){
+        $this->query()->save($this);
+    }
+
+    public function __toString(): string
+    {
+        return self::class;
+    }
 
     // /**
     //  | Handles static method calls on the Model and delegates them to the QueryBuilder.
@@ -80,7 +102,7 @@ class Model implements JsonSerializable
     // public static function __callStatic($method, $parameters)
     // {
 
-    //     // If the static method is defined in the subclass (e.g. LogTrace::createLog)       
+    //     // If the static method is defined in the subclass (e.g. LogTrace::createLog)
     //     if (method_exists(static::class, $method)) {
     //         // Usa forward_static_call_array per chiamarlo in modo pulito e statico
     //         return forward_static_call_array([static::class, $method], $parameters);
@@ -94,14 +116,11 @@ class Model implements JsonSerializable
     //         }
     //     }
 
-
-      
     // }
-
 
     // private static function throwHere(Throwable $e): never
     // {
-    //     // Get complete  backtrace 
+    //     // Get complete  backtrace
     //     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
     //     // Trova il primo frame che NON è interno al core
     //     $caller = null;
