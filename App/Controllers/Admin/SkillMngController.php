@@ -2,12 +2,13 @@
 
 namespace App\Controllers\Admin;
 
+use App\Core\Controllers\AdminController;
 use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Model\Skill;
 use App\Core\Http\Request;
 
-class SkillMngController extends AuthenticationController
+class SkillMngController extends AdminController
 {
 
 

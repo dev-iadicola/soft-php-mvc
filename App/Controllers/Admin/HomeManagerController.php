@@ -2,16 +2,17 @@
 namespace App\Controllers\Admin;
 
 
-use App\Core\Controllers\AuthenticationController;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Model\Skill;
 use App\Core\Storage;
 use App\Model\Article;
 use App\Model\Profile;
 use App\Core\Validator;
 use App\Core\Http\Request;
+use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Controllers\AdminController;
+use App\Core\Controllers\AuthenticationController;
 
-class HomeManagerController extends AuthenticationController
+class HomeManagerController extends AdminController
 {
 
 

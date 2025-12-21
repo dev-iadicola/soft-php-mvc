@@ -2,12 +2,13 @@
 
 namespace App\Controllers\Admin;
 
-use App\Core\Controllers\AuthenticationController;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Model\Certificate;
+use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Controllers\AdminController;
+use App\Core\Controllers\AuthenticationController;
 
-class CorsiManagerController extends AuthenticationController
+class CorsiManagerController extends AdminController
 {
 
    #[RouteAttr('/corsi')]

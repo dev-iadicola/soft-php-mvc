@@ -2,6 +2,7 @@
 
 namespace   App\Controllers\Admin;
 
+use App\Core\Controllers\AdminController;
 use App\Model\Skill;
 use App\Model\Article;
 use App\Model\Profile;
@@ -9,7 +10,7 @@ use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 
-class ProfileMngController extends AuthenticationController 
+class ProfileMngController extends AdminController 
 {
 
   #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]

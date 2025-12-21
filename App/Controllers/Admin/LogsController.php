@@ -2,11 +2,12 @@
 
 namespace App\Controllers\Admin;
 
+use App\Core\Controllers\AdminController;
 use App\Core\Controllers\AuthenticationController;
 use App\Model\LogTrace;
 use App\Core\Http\Attributes\RouteAttr;
 
-class LogsController extends AuthenticationController
+class LogsController extends AdminController
 {
 
     #[RouteAttr(path: '/log', method: 'get', name: 'logs')]
@@ -16,7 +17,7 @@ class LogsController extends AuthenticationController
         FROM logs
         GROUP BY indirizzo, device;";
 
-        $logs = LogTrace::query($query);
+        $logs = LogTrace::make()->query($query);
 
         // Utilizza la funzione `view` per passare direttamente le variabili alla vista
         return view('admin.logs',compact('logs') );

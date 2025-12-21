@@ -2,6 +2,7 @@
 
 namespace App\Controllers\Admin;
 
+use App\Core\Controllers\AdminController;
 use App\Core\Storage;
 use App\Model\Project;
 use App\Core\Controllers\AuthenticationController;
@@ -9,10 +10,10 @@ use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Validation\Validator;
 
-class ProjectManagerController extends AuthenticationController
+class ProjectManagerController extends AdminController
 {
 
-   #[RouteAttr(path: 'project', method: 'get', name: 'project')]
+   #[RouteAttr(path: 'project', method: 'get', name: 'admin.project')]
    public function index()
    {
       $projects = Project::orderBy('id', 'DESC')->get();
@@ -20,8 +21,8 @@ class ProjectManagerController extends AuthenticationController
    }
 
 
-   #[RouteAttr(path: 'project/{id}', method: 'get', name: 'project')]
-   public function edit(Request $request, $id)
+   #[RouteAttr(path: 'project/{id}', method: 'get', name: 'admin.project')]
+   public function edit(Request $request, int $id)
    {
 
       $project = Project::find($id);
@@ -61,7 +62,7 @@ class ProjectManagerController extends AuthenticationController
 
 
    #[RouteAttr(path: 'project/{id}', method: 'POST', name: 'project')]
-   public function update(Request $request, $id)
+   public function update(Request $request, int $id)
    {
       $data = $request->all();
       $project = Project::find($id);
@@ -87,7 +88,7 @@ class ProjectManagerController extends AuthenticationController
    }
 
    #[RouteAttr(path: 'project-delete/{id}', method: 'DELETE', name: 'project')]
-   public function destroy(Request $reqq, $id)
+   public function destroy(Request $reqq, int $id)
    {
       // trova e azione
       $data =  $reqq->all();

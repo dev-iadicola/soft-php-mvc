@@ -2,11 +2,12 @@
 namespace App\Controllers\Admin;
 
 use App\Model\Contatti;
-use App\Core\Controllers\AuthenticationController;
 use App\Core\Facade\Auth;
 use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Controllers\AdminController;
+use App\Core\Controllers\AuthenticationController;
 
-class DashBoardController extends AuthenticationController{
+class DashBoardController extends AdminController{
 
     
     #[RouteAttr('/dashboard','GET', 'admin.dashboard')]

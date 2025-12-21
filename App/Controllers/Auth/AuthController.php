@@ -22,20 +22,21 @@ class AuthController extends Controller
         view('Auth.login');
     }
 
-    #[RouteAttr('login','POST')]
+    #[RouteAttr('login','POST', 'login')]
     public function login(Request $request)
     {
         // verifica esistenza user
         $user = User::where('email', $request->email)->first();
 
         if(empty($user)){
+            
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
         // conferma password
         $confirmPassword = password_verify($request->password, $user->password);
         if ($confirmPassword === false) {
-            return view('Auth.login', ['message' => 'Credenziali non valide!']);
+            return redirect()->back()->withError('Utente non presente.');
         }
         // Autenticazione e traccia del log
         Auth::login($user);

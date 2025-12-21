@@ -4,11 +4,12 @@ namespace App\Controllers\Admin;
 
 
 use App\Core\Config;
+use App\Core\Controllers\AdminController;
 use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 
-class MaintenanceController extends AuthenticationController
+class MaintenanceController extends AdminController
 {
 
 
