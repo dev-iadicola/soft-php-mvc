@@ -159,10 +159,7 @@ trait StaticQueryMethods
         return static::Make()->first();
     }
 
-    public static function find(int|string $id): ?Model
-    {
-        return static::where('id', $id)->first();
-    }
+  
 
     public static function findOrFail(int|string $id): Model
     {

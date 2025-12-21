@@ -18,6 +18,8 @@ class Project extends Model
     * 
     */
    protected string $table = 'projects';
+
+   protected bool $timestamps = false;
    protected array $fillable = [
       'technology_id',
       'partner_id',

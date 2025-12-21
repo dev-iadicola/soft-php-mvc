@@ -1,25 +1,37 @@
+<?php 
+
+use App\Core\Enum\HttpActionType;
+
+?>
 <div class="container admin-panel">
-    <h1 class="my-4 text-center">Gestione Progetti <?= isset($project->title) ? "- {$project->title}" : '' ?></h1>
+    <h1 class="my-4 text-center">Gestione Progetti {{$project?->title ?? 'Crea nuovo Progetto'}}></h1>
 
     <?php $title = isset($project->title) ? "Modifica $project->title" : "Aggiungi Nuovo Progetto da GitHub"  ?>
     <!-- Form per Aggiungere un Nuovo Progetto -->
     <div class="card mb-4 shadow-sm">
         <div class="card-header bg-primary text-white">
-            <h3 class="card-title mb-0"><?= $title ?></h3>
+            <h3 class="card-title mb-0">{{$project?->title ?? "Pubblica nuovo progetto"}} </h3>
         </div>
         <div class="card-body">
-            <form method="POST" onsubmit="verification(event)" action="<?= isset($project->id) ? "/admin/progetti-edit/{$project->id}" : "/admin/progetti" ?>" enctype="multipart/form-data">
+            <form method="POST" onsubmit="verification(event)" action="{{ route('admin.project.upset', ['id' =>$project?->id ?? 0 ]) }}">
+                {{ HttpActionType::PATCH->value}}
+                {{ HttpActionType::POST->value}}
                 <div class="form-group">
                     <label for="title">Titolo</label>
                     <input type="text" class="form-control" value="<?= $project->title ?? '' ?>" id="title" name="title" required>
                 </div>
                 <div class="form-group">
-                    <label for="overview">Descrizione</label>
-                    <textarea class="form-control editor" id="editor" name="overview" rows="3"><?= $project->overview ?? '' ?></textarea>
+                    <label for="overview">Overview - sottotitolo</label>
+                    <textarea class="form-control editor" id="editor" name="overview" rows="3">{{$project?->overview ?? ''}}</textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descrizione</label>
+                    <textarea class="form-control editor" id="editor" name="description" rows="3">{{$project?->description ?? ''}} </textarea>
                 </div>
                 <div class="form-group">
                     <label for="link">GitHub Repo</label>
-                    <input type="url" class="form-control" value="<?= $project->link ?? '' ?>" id="link" name="link" >
+                    <input type="url" class="form-control" value="{{$project->link ?? ''}}" id="link" name="link" >
                 </div>
 
                  <div class="form-group">
@@ -79,7 +91,7 @@
                                     @delete
                                     <button type="submit" onclick="return confirm('Sei sicuro di voler eliminare <?= $p->title ?>?')" class="btn btn-danger btn-sm">Elimina</button>
                                 </form>
-                                <a href="/admin/progetti-edit/<?= $p->id ?>" class="btn btn-warning btn-sm">Modifica</a>
+                                <a href="{{route('admin.project.edit', ['id'=>$p->id])}}"<?= $p->id ?>" class="btn btn-warning btn-sm">Modifica</a>
                             </div>
                         </div>
                     </div>

@@ -1,114 +1,167 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
-use App\Core\Storage;
-use App\Model\Project;
-use App\Core\Controllers\AuthenticationController;
-use App\Core\Http\Request;
+use App\Core\Facade\Storage;
 use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Request;
 use App\Core\Validation\Validator;
+use App\Model\Project;
 
 class ProjectManagerController extends AdminController
 {
+    #[RouteAttr(path: 'project', method: 'get', name: 'admin.projects')]
+    public function index()
+    {
+        $projects = Project::orderBy('id', 'DESC')->get();
 
-   #[RouteAttr(path: 'project', method: 'get', name: 'admin.project')]
-   public function index()
-   {
-      $projects = Project::orderBy('id', 'DESC')->get();
-      return view('admin.portfolio.project',  compact('projects'));
-   }
+        return view('admin.portfolio.project', [
+            'projects' => $projects,
+            'project'  => null,
+        ]);
+    }
 
+    #[RouteAttr(path: 'project-edit/{id}', method: 'get', name: 'admin.project.edit')]
+    public function edit(Request $request, int $id)
+    {
 
-   #[RouteAttr(path: 'project/{id}', method: 'get', name: 'admin.project')]
-   public function edit(Request $request, int $id)
-   {
+        $project = Project::findFirst($id);
+        $projects = Project::orderBy('id', 'DESC')->get();
 
-      $project = Project::find($id);
-      $projects = Project::orderBy('id', 'DESC')->get();
-      return view('admin.portfolio.project', compact('project', 'projects'));
-   }
+        return view('admin.portfolio.project', compact('project', 'projects'));
+    }
 
+    #[RouteAttr(path: 'project-update/{id}', method: 'POST', name: 'project.update')]
+    public function update(Request $request, int $id)
+    {
+        $data = $request->all();
+        $project = Project::findFirst($id);
 
-   #[RouteAttr(path: 'project', method: 'POST', name: 'project')]
-   public function store(Request $request)
-   {
+        $rules = [
+            'title'       => ['required', 'string'],
+            'overview'    => ['required', 'string', 'max:499'],
+            'description' => ['required', 'string'],
+        ];
 
-      $data = $request->all();
+        if ($request->hasFile('img')) {
+            $data['img'] = $request->file('img');
+            $rules['img'] = ['image'];
+        }
 
-      // Controlla se è stato caricato un file immagine
-      if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
+        $validator = Validator::make($data, [
+            ...$rules,
+        ],
+            [
+                'title'       => 'Titolo Richiesto!',
+                'overview'    => 'Sottititolo richieste!',
+                'description' => 'Descrizione richiesta!',
+                'link'        => 'File non supportato per il file selezionato',
+                'img'         => 'Immagine non valida',
+            ]
+        );
 
-         $file = $data['img'];
-         $validator = Validator::make($request->all(), ['img' => ['required', 'image']], ['img' => "Il file caricato non è un'immagine valida."]);
-         // Verifica che sia un'immagine valida
-         if ($validator->fails()) {
-            // Gestisci errore (es. ritorna con errore, throw, ecc)
-            return response()->back()->withError($validator->errors());
-         }
-         // Salva il file e ottieni il path relativo
-         $storage = new Storage('images');
-         $storage->disk('images')->put($file);
+        if ($validator->fails()) {
+            return redirect()->back()->withError($validator->implodeError('<br> -'));
+        }
 
-         // Sovrascrivi $data['img'] con il path relativo (da salvare nel DB)
-         $data['img'] = $storage->getRelativePath();
-      }
+        // get validated data
 
-      // Crea il progetto
-      Project::create($data);
-      return redirect()->back()->withSuccess("Progetto salvato con Successo!");
-   }
+        $validated = $validator->validated();
 
+        $message = "Progetto salvato con successo";
 
-   #[RouteAttr(path: 'project/{id}', method: 'POST', name: 'project')]
-   public function update(Request $request, int $id)
-   {
-      $data = $request->all();
-      $project = Project::find($id);
-      // Validazione Dati
-      if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
-         $this->withWarning("Aggiornato, eccetto l'immagine");
-      }
-      if ($data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
-         $stg = new Storage('images');
-         $stg->deleteIfFileExist($project->img);
-         $stg->disk('images')->put($data['img']);
-         $data['img'] = $stg->getRelativePath();
-         $this->withSuccess('Aggiornamento Eseguito');
-      } else {
-         unset($data['img']);
-      }
-      // Trova porgetto
-      $project = Project::find($id);
-      $project->update($data);
-      // feedback server
+        if (isset($validated['img'])) {
+            // delete old path image
+            if (Storage::make('images')->exists($project->img) && !empty($project->img)) {
+                Storage::make('images')->delete($project->img);
+                $message = "Percorso immagine {$project->img} eliminato";
+            } else {
+                $message = "Il Progetto con il percorso per l'immagine {$project->img} non esiteva
+                 nello storage ,
+             e' stato sostituito comunque con una immagie nuove ";
+            }
 
-     return response()->back()->withSuccess('Progetto aggiornato con successo!');
-   }
+            // add new path image
+            Storage::make('images')
+            ->put(
+                $validated['img'],
+                file_get_contents($request->file('img')['tmp_name'])
+             );
 
-   #[RouteAttr(path: 'project-delete/{id}', method: 'DELETE', name: 'project')]
-   public function destroy(Request $reqq, int $id)
-   {
-      // trova e azione
-      $data =  $reqq->all();
-      
+        }
 
-      $project  = Project::find($id);
-      if (!$project) {
-         return response()->back()->withError('Progetto non trovato');
-      }
-      if (!isset($project->img) && !is_null($project->img)) {
-         $stg = new Storage('images');
-         if ($stg->deleteIfFileExist($project->img)) {
-            $project->delete();
-            response()->back()->withSuccess('Progetto Elimianto.');
-         } else {
+    
+        $project = Project::find($id)->update($validated);
+       
 
-            response()->back()->withWarning('Non è stato possibile eliminare il progetto, perchè manca il percorso dell\'immagine.');
-         }
-      }
+        return response()->back()->withSuccess($message);
+    }
 
-      response()->back()->withError("Progetto non eliminato correttamente.");
-   }
+    #[RouteAttr('project-upsert/{id}', 'PATCH', 'admin.project.upset')]
+    public function upset(Request $request, int $id)
+    {
+        if ($id === 0) {
+            return $this->store($request);
+        }
+
+        return $this->update($request, $id);
+
+    }
+
+    #[RouteAttr(path: 'project-store', method: 'POST', name: 'admin.project.store')]
+    public function store(Request $request)
+    {
+
+        $data = $request->all();
+
+        // Controlla se è stato caricato un file immagine
+        if (isset($data['img']) && is_array($data['img']) && $data['img']['error'] !== UPLOAD_ERR_NO_FILE) {
+
+            $file = $data['img'];
+            $validator = Validator::make($request->all(), ['img' => ['required', 'image']], ['img' => "Il file caricato non è un'immagine valida."]);
+            // Verifica che sia un'immagine valida
+            if ($validator->fails()) {
+                // Gestisci errore (es. ritorna con errore, throw, ecc)
+                return response()->back()->withError($validator->errors());
+            }
+            // Salva il file e ottieni il path relativo
+            $storage = new Storage('images');
+            $storage->disk('images')->put($file);
+
+            // Sovrascrivi $data['img'] con il path relativo (da salvare nel DB)
+            $data['img'] = $storage->getRelativePath();
+        }
+
+        // Crea il progetto
+        Project::create($data);
+
+        return redirect()->back()->withSuccess('Progetto salvato con Successo!');
+    }
+
+    #[RouteAttr(path: 'project-delete/{id}', method: 'DELETE', name: 'project.delete')]
+    public function destroy(Request $reqq, int $id)
+    {
+        // trova e azione
+        $data = $reqq->all();
+
+        $project = Project::find($id);
+        if ( ! $project) {
+            return response()->back()->withError('Progetto non trovato');
+        }
+        if ( ! isset($project->img) && null !== $project->img) {
+            $stg = new Storage('images');
+            if ($stg->deleteIfFileExist($project->img)) {
+                $project->delete();
+                response()->back()->withSuccess('Progetto Elimianto.');
+            } else {
+
+                response()->back()->withWarning('Non è stato possibile eliminare il progetto, perchè manca il percorso dell\'immagine.');
+            }
+        }
+
+        response()->back()->withError('Progetto non eliminato correttamente.');
+    }
 }

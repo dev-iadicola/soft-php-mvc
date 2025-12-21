@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\DataLayer;
 
+use JsonSerializable;
 use App\Core\Traits\Attributes;
 use App\Core\Traits\StaticQueryMethods;
-use JsonSerializable;
+use App\Core\DataLayer\Query\ActiveQuery;
 
 /**
  * @method static App\Core\Eloquent\Query\ActiveQuery select(array|string $columns)
@@ -22,7 +23,7 @@ use JsonSerializable;
  *
  * @see App\Core\Eloquent\Query\ActiveQuery
  */
-class Model implements JsonSerializable
+class Model  implements JsonSerializable
 {
     use Attributes;
     use StaticQueryMethods;
@@ -33,6 +34,10 @@ class Model implements JsonSerializable
     protected array $fillable;
 
     protected bool $timestamps = true;
+
+    public static function instance(): Model{
+        return new static;
+    }
 
     public function jsonSerialize(): mixed
     {
@@ -63,6 +68,15 @@ class Model implements JsonSerializable
 
     public function save(){
         $this->query()->save($this);
+    }
+      public static function findFirst(int|string $id): ?Model
+    {
+        return static::where(static::instance()->primaryKey, $id)->first();
+    }
+
+     public static function find(int|string $id)
+    {
+        return static::where(static::instance()->primaryKey, $id);
     }
 
     public function __toString(): string

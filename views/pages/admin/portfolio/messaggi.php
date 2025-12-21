@@ -15,7 +15,7 @@
                 </form>
             </div>
             <div class="py-5">
-                <h5 class="mb-1">Mittente: <?= $contatto->nome ?> - <?= $contatto->typologie ?></h5>
+                <h5 class="mb-1">Mittente: {{$contatto->nome}} - {{$contatto->typologie}}</h5>
                 <h6 class="mb-1">Indirizzo email: <a href="mailto:<?= $contatto->email ?>"><?= $contatto->email ?></a></h6>
                 <p class="mb-2 overflow-auto"><?= $contatto->messaggio ?></p>
                 <small>Data: <?= date('d/m/Y - H:i:s', strtotime($contatto->created_at)) ?></small>

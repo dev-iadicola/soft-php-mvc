@@ -21,8 +21,10 @@ class RouteHelper
         $uri = $route->uri;
 
         foreach ($params as $key => $value) {
-            $uri = str_replace('{' . $key . '}', $value, $uri);
+            $uri = str_replace('{' . $key . '}', $value ?? '', $uri);
         }
+       // dd($uri);
+       // $route->setParam($params);
 
         return $uri;
     }

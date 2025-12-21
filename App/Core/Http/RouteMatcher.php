@@ -36,7 +36,7 @@ class RouteMatcher
 
 
                 // Converte i valori in tipi corretti (int, bool, ecc.)
-                $matches = Casting::formatArray($matches);
+               // $matches = Casting::formatArray($matches);
 
                 // Associa i parametri trovati ai loro nomi
                 $paramsAssoc = [];

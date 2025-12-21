@@ -19,9 +19,6 @@ class User extends Model
         'crerated_at'
     ];
 
-
-
-  
     public static function changePassword(string $password, string $email)
     {
         $user = User::where('email', $email)->first();

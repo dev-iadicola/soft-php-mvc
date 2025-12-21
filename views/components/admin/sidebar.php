@@ -31,8 +31,8 @@
                         <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/contatti', $page) ?>"
                         href="/admin/contatti">Messaggi</a>
                    
-                       <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.project'), $page) ?>"
-                        href="{{route('admin.project')}}">Progetti</a>
+                       <a class="dropdown-item  text-dark<?php echo isActivePage(route('admin.projects'), $page) ?>"
+                        href="{{route('admin.projects')}}">Progetti</a>
                     
                         <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/corsi', $page) ?>"
                         href="/admin/corsi">Corsi Professionali</a>

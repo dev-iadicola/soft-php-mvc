@@ -50,6 +50,7 @@ class Router
     {
 
         $routeCollection = $this->boot();
+        //dd($routeCollection);
         // ritorna la rotta da selezionare sendo la richiesta svolta.
         $route = $this->matcher->match( $this->request, $routeCollection);
         

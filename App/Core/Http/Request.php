@@ -1,24 +1,47 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Http;
 
-use App\Core\Helpers\Log;
 use App\Core\Traits\Attributes;
-
 
 class Request
 {
     use Attributes;
+
     private string $path;
+
     private string $method;
+
     private array $post;
+
+    private array $files;
+
     private string $lastUri = '/';
 
     public function __construct()
     {
         $this->path = $this->uri();
+        $this->post = $_POST ?? [];
+        $this->files = $_FILES ?? [];
         $this->method = $this->getRequestMethod();
-         $this->attributes = $this->getPost();
+        $this->attributes = $this->post;
+    }
+
+    public function files(): array
+    {
+        return $this->files;
+    }
+
+    public function file(string $key): ?array
+    {
+        return $this->files[$key] ?? null;
+    }
+
+    public function hasFile(string $key): bool
+    {
+        return isset($this->files[$key]) && $this->files[$key]['error'] === UPLOAD_ERR_OK;
     }
 
     public function getRequestInfo(): string
@@ -31,51 +54,49 @@ class Request
         $host = $this->getHost();
         $time = date('Y-m-d H:i:s');
 
-        $body = !empty($_POST) ? json_encode($_POST, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 'No body data';
+        $body = ! empty($_POST) ? json_encode($_POST, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) : 'No body data';
 
         return <<<INFO
     ========= HTTP REQUEST INFO =========
-      Time:        $time
-      IP Address:  $ip
-      Method:      $method
-      URI:         $uri
-      Referrer:    $referrer
-      Host:        $host
-      User-Agent:  $userAgent
+      Time:        {$time}
+      IP Address:  {$ip}
+      Method:      {$method}
+      URI:         {$uri}
+      Referrer:    {$referrer}
+      Host:        {$host}
+      User-Agent:  {$userAgent}
       Payload:
-    $body
+    {$body}
     =====================================
     INFO;
     }
 
-
     public function getIp()
     {
-        return  $server['REMOTE_ADDR'] ?? 'Unknown';
+        return $server['REMOTE_ADDR'] ?? 'Unknown';
     }
 
     public function getUserAgent()
     {
-        return  $server['HTTP_USER_AGENT'] ?? 'Unknown';
+        return $server['HTTP_USER_AGENT'] ?? 'Unknown';
     }
-
 
     public function getHost()
     {
-        return  $server['HTTP_HOST'] ?? 'localhost';
+        return $server['HTTP_HOST'] ?? 'localhost';
     }
-
 
     // Preleva la request URI
     /**
      * Summary of getRequestPath
+     *
      * @deprecated utilizza il metodo uri()
-     * @return string
      */
     public function getRequestPath(): string
     {
-        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
+
     // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
@@ -99,43 +120,31 @@ class Request
         return $method;
     }
 
-
     public function uri(): string
     {
-        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? $_SERVER['REQUEST_URI'];
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? $_SERVER['REQUEST_URI'];
     }
+
     public function getURI(): string
     {
-        return  parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
+        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
     }
-
-
 
     public function all(): array
     {
         return $this->attributes;
     }
 
-
-    public function getLastUri(): string|null
+    public function getLastUri(): ?string
     {
         // Assicurati che HTTP_REFERER sia impostato
         if (isset($_SERVER['HTTP_REFERER'])) {
             return strtolower($_SERVER['HTTP_REFERER']);
         }
+
         return '/';
     }
 
     // Cattura richiesta post
-    private function getPost($index = null): array|string|int|float
-    {
-        $postData = $_POST ?? [];
-        $fileData = $_FILES ?? [];
 
-        $combinedData = array_merge($postData, $fileData);
-        if (!is_null($index) && !empty($combinedData[$index])) {
-            return $combinedData[$index];
-        }
-        return $combinedData;
-    }
 }
