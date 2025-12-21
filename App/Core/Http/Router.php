@@ -39,7 +39,7 @@ class Router
 
     /**
      * Summary of boot
-     * @return void
+     * @return RouteCollection|null
      */
     public function boot(): RouteCollection
     {
