@@ -22,7 +22,7 @@ class MySqlBuilder extends AbstractBuilder
      */
     public function toUpdate(): string
     {
-        return "UPDATE {$this->table} SET {$this->setClause} WHERE {$this->whereClause}";
+        return "UPDATE {$this->table} SET {$this->setClause} {$this->whereClause}";
     }
 
     public function toInsert(): string
