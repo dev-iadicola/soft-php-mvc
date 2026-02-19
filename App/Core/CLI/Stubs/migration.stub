@@ -7,3 +7,4 @@ return Migration::table('{{TABLE}}')
     // add columns here
     ->timestamps()
     ->onDrop('{{TABLE}}');
+
