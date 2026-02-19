@@ -33,7 +33,7 @@
                     <div class="py-2 col-12 col-md-4 col-sm-6">
                         <div class="card shadow border-primary h-100">
 
-                            <a href="/progetti/<?php echo $project->id ?>" class="image-wrapper">
+                            <a href="/progetti/<?php echo urlencode($project->title) ?>" class="image-wrapper">
                                 <img class="card-img-top object-fit-contain border rounded"
 
                                     src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
