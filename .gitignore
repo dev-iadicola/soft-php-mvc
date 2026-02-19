@@ -12,3 +12,5 @@ TASK.MD
 db/*
 .phpunit.result.*
 pint.json
+/.idea
+/.idea/*
