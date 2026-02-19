@@ -10,14 +10,10 @@ use App\Core\Validator;
 use App\Core\Storage;
 
 /**
- *  sommario di Controller
- * 
- * Tramite questa classe diamo la  base per 
- * i controllers che estenderanno questa classe
- * 
- * 
+ * Base abstract controller providing core functionalities for
+ * rendering views, handling redirects, and setting session messages.
+ * Includes several deprecated methods with alternative recommendations.
  */
-
 #[ControllerAttr(['web'])]
 abstract class BaseController
 {
@@ -30,7 +26,7 @@ abstract class BaseController
  
 
     /**
-     * @deprecated use @global view('namedire.namefile') function. 
+     * @deprecated use a global view('namedire.namefile') function.
      * 
      * @var $view inserire il file con estensione php per
      * visualizzare la pagina
@@ -60,8 +56,8 @@ abstract class BaseController
     }
 
     /**
-     * @deprecated  use @global response
-     * how: response()->redirect()->setSatus($num);
+     * @deprecated use global response
+     * how: response()->redirect()->setStaus($num);
      * Summary of statusCode413
      * @return void
      */
@@ -99,14 +95,14 @@ abstract class BaseController
      * @param mixed $message
      * @return BaseController
      */
-    public function withWarning($message)
+    public function withWarning($message):void
     {
         Session::setFlash('warning', $message);
     }
 
     /**
      * Summary of setLayout
-     * Use this for set layout page.
+     * Use this for the set layout page.
      * @param string $layout
      * @return void
      */
