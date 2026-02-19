@@ -1,48 +1,60 @@
 <?php
+
 namespace App\Core\CLI\Commands;
 
-
-use App\Core\Config;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
-use App\Core\Exception\FileNotFoundException;
-use App\Core\Support\Collection\ConfigCollection;
 
 class MakeMigrationCommand implements CommandInterface
 {
-
-
-
-    public function exe(array $command)
+    public function exe(array $command): void
     {
+        $name = $command[2] ?? null;
 
-        Out::info("We are in " . __CLASS__);
-
-        $this->config(); // config to get propriety of file env
-
-        $pathMigration = getcwd() . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration' . DIRECTORY_SEPARATOR . 'schema-config.php';
-        if (!file_exists($pathMigration)) {
-            throw new FileNotFoundException($pathMigration);
+        if (!$name) {
+            $name = readline('Migration name (e.g. create_users_table): ');
+            $name = trim($name);
         }
 
-        $schemaFns = include $pathMigration;
-
-        foreach ($schemaFns as $fn) {
-            if (is_callable($fn)) {
-                $fn(); // esegui ciascuna migrazione
-            }
+        if (!$name) {
+            Out::error('You must specify a migration name.');
+            return;
         }
+
+        $table = $this->guessTableName($name);
+        $timestamp = date('Y_m_d_His');
+        $fileName = "{$timestamp}_{$name}.php";
+
+        $migrationDir = getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'migration';
+
+        if (!is_dir($migrationDir)) {
+            mkdir($migrationDir, 0755, true);
+        }
+
+        $stubPath = __DIR__ . '/../Stubs/migration.stub';
+        $stub = file_get_contents($stubPath);
+        $content = str_replace('{{TABLE}}', $table, $stub);
+
+        $filePath = $migrationDir . DIRECTORY_SEPARATOR . $fileName;
+        file_put_contents($filePath, $content);
+
+        Out::ln("Created migration: $fileName");
     }
 
-    private function config(): ConfigCollection
+    private function guessTableName(string $name): string
     {
-        Config::env(getcwd() . '/.env');
+        $name = strtolower($name);
 
-        $config = Config::dir(getcwd() . '/config');
+        // create_users_table → users
+        if (preg_match('/^create_(.+)_table$/', $name, $matches)) {
+            return $matches[1];
+        }
 
-        return $config;
+        // create_users → users
+        if (preg_match('/^create_(.+)$/', $name, $matches)) {
+            return $matches[1];
+        }
 
+        return $name;
     }
-
-
 }

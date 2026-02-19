@@ -1,0 +1,9 @@
+<?php
+
+use App\Core\DataLayer\Migration\Migration;
+
+return Migration::table('{{TABLE}}')
+    ->id()
+    // add columns here
+    ->timestamps()
+    ->onDrop('{{TABLE}}');

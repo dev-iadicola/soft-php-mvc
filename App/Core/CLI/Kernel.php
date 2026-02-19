@@ -7,6 +7,9 @@ use App\Core\CLI\Commands\ServeCommand;
 use App\Core\CLI\Commands\MakeModelCommand;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeControllerCommand;
+use App\Core\CLI\Commands\MigrateCommand;
+use App\Core\CLI\Commands\MigrateRollbackCommand;
+use App\Core\CLI\Commands\MigrateStatusCommand;
 use App\Core\CLI\Commands\Clear\ClearCacheCommand;
 use App\Core\CLI\Commands\MakeMiddlewareCommand;
 use App\Core\CLI\Commands\StorageCommand;
@@ -32,14 +35,16 @@ class Kernel
             'make:model' => MakeModelCommand::class,
             'make:controller' => MakeControllerCommand::class,
             'make:mw' => MakeMiddlewareCommand::class,
-            'migrate' => MakeMigrationCommand::class,
+            'make:migration' => MakeMigrationCommand::class,
+            'migrate' => MigrateCommand::class,
+            'migrate:rollback' => MigrateRollbackCommand::class,
+            'migrate:status' => MigrateStatusCommand::class,
             'serve' => ServeCommand::class,
             'print' => Out::class,
             'storage' => StorageCommand::class,
 
-            // Clear commands 
+            // Clear commands
             'clear:cache' => ClearCacheCommand::class,
-
         ];
     }
 
