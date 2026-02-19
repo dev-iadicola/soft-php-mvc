@@ -1,4 +1,4 @@
-<section class="container">
+<section>
 
 @include('pages.progetti')
 <hr>

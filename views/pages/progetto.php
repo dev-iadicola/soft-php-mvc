@@ -10,7 +10,6 @@
             margin 0.3s ease;
         width: auto;
         margin-right: 8px;
-        /* o quello che preferisci */
     }
     .text-block *{
         color: black;
@@ -26,12 +25,12 @@
 <?php if ($project) { ?>
 <div class="card shadow-sm border-light rounded-lg bg-white overflow-hidden mb-4">
   <div class="row g-0 align-items-center">
-    
+
     <!-- Immagine -->
     <div class="col-md-4">
-      <img 
-        src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>" 
-        class="img-fluid rounded-start object-fit-contain p-3" 
+      <img
+        src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+        class="img-fluid rounded-start object-fit-contain p-3"
         alt="<?= $project->title ?>"
       />
     </div>
@@ -42,19 +41,17 @@
 
       <h5 class="fw-semibold mb-2">Descrizione</h5>
 
-<article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
-        
-          {{{$project->overview}}}
-        
+      <article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
+          {{ $project->overview }}
       </article>
       <article class="text-start text-secondary mb-4 lh-base text-block">
-        {{ $project->description }}
+        {{{ $project->description }}}
       </article>
 
       <div class="d-flex flex-wrap gap-3">
-        <?php if ( ! isset($project->link)) { ?>
+        <?php if (!empty($project->link)) { ?>
           <a
-          onmouseover="showArrow('<?= $project->link ?>')" onmouseleave="hideArrow('<?= $project->link ?>')" 
+          onmouseover="showArrow('detail-arrow-code')" onmouseleave="hideArrow('detail-arrow-code')"
           href="<?= $project->link ?>"
              target="_blank"
              rel="noopener noreferrer"

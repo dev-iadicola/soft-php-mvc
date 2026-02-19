@@ -2,21 +2,18 @@
 .img-thumbnail {
     height: 300px;
     border: 1px solid #000;
-
 }
 
 .fix-object {
     object-fit: cover;
     height: 200px;
-    /* Altezza fissa per l'immagine */
 }
-
 
 .card-img-top {
-    max-height: 200px;
-    /* Altezza massima per l'immagine */
+    height: 200px;
+    object-fit: cover;
 }
 
-.foo{
+.foo {
     margin-bottom: 200px;
 }
