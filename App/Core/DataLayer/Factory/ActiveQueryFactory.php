@@ -21,7 +21,7 @@ use App\Core\Exception\ModelStructureException;
  */
 class ActiveQueryFactory
 {
-    public static function for(string $modelClass){
+    public static function for(string $modelClass): ActiveQuery{
         $model = new $modelClass;
 
         // metadata
