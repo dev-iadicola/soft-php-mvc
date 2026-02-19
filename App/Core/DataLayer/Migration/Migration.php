@@ -16,6 +16,8 @@ class Migration
     private ?string $lastColumn = null;
     private ?int $lastConstraintIndex = null;
     private ?array $pendingForeign = null;
+    private array $rawUpSql = [];
+    private array $rawDownSql = [];
 
     private function __construct(string $tableName)
     {
@@ -25,6 +27,20 @@ class Migration
     public static function table(string $name): self
     {
         return new self($name);
+    }
+
+    /**
+     * Create a raw SQL migration (useful for ALTER TABLE, data fixes, etc.)
+     *
+     * @param string|array $upSql
+     * @param string|array|null $downSql
+     */
+    public static function rawSql(string|array $upSql, string|array|null $downSql = null): self
+    {
+        $self = new self('__raw__');
+        $self->rawUpSql = is_array($upSql) ? $upSql : [$upSql];
+        $self->rawDownSql = $downSql === null ? [] : (is_array($downSql) ? $downSql : [$downSql]);
+        return $self;
     }
 
     // ──────────────────────────────────────
@@ -359,16 +375,28 @@ class Migration
     public function executeUp(): void
     {
         $pdo = $this->getPdo();
+        if (!empty($this->rawUpSql)) {
+            foreach ($this->rawUpSql as $sql) {
+                $pdo->exec($sql);
+            }
+            return;
+        }
         $sql = $this->toCreateSql();
         $pdo->exec($sql);
     }
 
     public function executeDown(): void
     {
+        $pdo = $this->getPdo();
+        if (!empty($this->rawDownSql)) {
+            foreach ($this->rawDownSql as $sql) {
+                $pdo->exec($sql);
+            }
+            return;
+        }
         if (!$this->dropTable) {
             return;
         }
-        $pdo = $this->getPdo();
         $sql = $this->toDropSql();
         $pdo->exec($sql);
     }

@@ -18,6 +18,7 @@ class ProjectManagerController extends AdminController
     {
         $projects = Project::query()->orderBy('id', 'DESC')->get();
 
+
         return view('admin.portfolio.project', [
             'projects' => $projects,
             'project'  => null,
@@ -51,19 +52,24 @@ class ProjectManagerController extends AdminController
             $file = $request->file('img');
             $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
             $path = 'images/' . $filename;
+            $storage = Storage::make('public');
 
             // delete old image if present
             if (!empty($project->img)) {
-                Storage::make('public')->deleteIfExist($project->img);
+                $oldPath = ltrim((string)$project->img, '/');
+                if (str_starts_with($oldPath, 'storage/')) {
+                    $oldPath = substr($oldPath, strlen('storage/'));
+                }
+                $storage->deleteIfExist($oldPath);
             }
 
-            Storage::make('public')->put(
+            $storage->put(
                 $path,
                 file_get_contents($file['tmp_name']),
                 ['visibility' => 'public']
             );
 
-            $data['img'] = $path;
+            $data['img'] = $storage->getPath($path);
         }
 
         Project::query()->where('id', $id)->update($data);
@@ -72,9 +78,9 @@ class ProjectManagerController extends AdminController
     }
 
     #[RouteAttr('project-upsert/{id}', 'PATCH', 'admin.project.upset')]
-    public function upset(Request $request, ?int $id = null)
+    public function upset(Request $request, ?int $id = 0)
     {
-        if ($id === null) {
+        if ($id == 0) {
             return $this->store($request);
         }
 
@@ -85,7 +91,6 @@ class ProjectManagerController extends AdminController
     #[RouteAttr(path: 'project-store', method: 'POST', name: 'admin.project.store')]
     public function store(Request $request)
     {
-
         // validate req
         $valid = $this->validateRequest($request);
         if ($valid->fails()) {
@@ -97,14 +102,16 @@ class ProjectManagerController extends AdminController
         $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
         $path = 'images/' . $filename;
 
-        Storage::make('public')->put(
+        $storage = Storage::make('public');
+        $storage->put(
             $path,
             file_get_contents($file['tmp_name']),
             ['visibility' => 'public']
         );
 
+
         $data = $valid->validated();
-        $data['img'] = $path; 
+        $data['img'] = $storage->getPath($path);
         // Crea il progetto
         Project::query()->create($data);
 
@@ -124,8 +131,13 @@ class ProjectManagerController extends AdminController
         // delete img if exist
         $project = Project::query()->find($id);
         $storage = Storage::make('public');
-        if ($storage->exists($project->img));
-        $storage->delete($project->img);
+        $imgPath = ltrim((string)$project->img, '/');
+        if (str_starts_with($imgPath, 'storage/')) {
+            $imgPath = substr($imgPath, strlen('storage/'));
+        }
+        if ($storage->exists($imgPath)) {
+            $storage->delete($imgPath);
+        }
 
         Project::query()->where('id', $id)->delete();
 

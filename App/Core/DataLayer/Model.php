@@ -4,21 +4,15 @@ declare(strict_types=1);
 
 namespace App\Core\DataLayer;
 
+use App\Core\DataLayer\Factory\ActiveQueryFactory;
 use JsonSerializable;
 use App\Core\Traits\Attributes;
-use App\Core\Traits\StaticQueryMethods;
 use App\Core\DataLayer\Query\ActiveQuery;
 
-/**
- * @method static ActiveQuery query()
- *
- * @see ActiveQuery
- */
+
 class Model  implements JsonSerializable
 {
     use Attributes;
-    use StaticQueryMethods;
-    
 
     public $primaryKey = 'id';
     protected string $table;
@@ -63,6 +57,11 @@ class Model  implements JsonSerializable
     public function __toString(): string
     {
         return self::class;
+    }
+
+    public static function query(): ActiveQuery
+    {
+        return ActiveQueryFactory::for(static::class);
     }
 
     // /**

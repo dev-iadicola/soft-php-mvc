@@ -29,6 +29,8 @@ class StorageManager
 
         $drive = DriveFactory::create($driveName, $diskConfig);
 
-        return new Filesystem($drive);
+        $visibility = $diskConfig['visibility'] ?? null;
+        $publicBase = $this->config['public_base'] ?? '/storage';
+        return new Filesystem($drive, $visibility, $publicBase);
     }
 }

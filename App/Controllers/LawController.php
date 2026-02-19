@@ -15,5 +15,10 @@ class LawController extends Controller {
         $laws = Law::query()->all();
         return view('laws.law',compact('laws'));
     }
-
+    #[RouteAttr('/laws')]
+    public function index()
+    {
+        $laws = Law::query()->all();
+        return view('laws.law',compact('laws'));
+    }
 }

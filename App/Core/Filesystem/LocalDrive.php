@@ -4,7 +4,7 @@ namespace   App\Core\Filesystem;
 
 use App\Core\Contract\DriveInterface;
 use App\Core\Helpers\Path;
-use InvalidArgumentException;
+use App\Core\Exception\StorageException;
 
 /**
  * Implementation of the DriveInterface for the local filesystem. 
@@ -37,15 +37,15 @@ class LocalDrive implements DriveInterface
         $diskVisibility = $diskOptions['visibility'] ?? 'private';
         if (!is_dir($dir)) {
             // * Validate string permission
-            if (!isset( $permissionDirArray[$diskVisibility])) {
-                throw new InvalidArgumentException("Invalid mode visibility in your disk: $diskVisibility for directory $dir. You can choose 'public' or 'private'.");
+            if (!isset($permissionDirArray[$diskVisibility])) {
+                throw new StorageException("Invalid mode visibility in your disk: $diskVisibility for directory $dir. You can choose 'public' or 'private'.");
             }
             // * Create direcotry with permission
             mkdir($dir, $this->permissionMap['dir'][$diskVisibility], true);
         } else {
             // Ensure directory visibility matches the requested setting
             if (!isset($permissionDirArray[$diskVisibility])) {
-                throw new InvalidArgumentException("Invalid mode visibility in your disk: $diskVisibility for directory $dir. You can choose 'public' or 'private'.");
+                throw new StorageException("Invalid mode visibility in your disk: $diskVisibility for directory $dir. You can choose 'public' or 'private'.");
             }
             @chmod($dir, $permissionDirArray[$diskVisibility]);
         }
@@ -60,7 +60,7 @@ class LocalDrive implements DriveInterface
     {
         $full = $this->getFullPath($path);
         if (!file_exists($full)) {
-            throw new InvalidArgumentException("File $full don't exist in storage dir.");
+            throw new StorageException("File $full don't exist in storage dir.");
         }
         return file_get_contents($full);
     }
