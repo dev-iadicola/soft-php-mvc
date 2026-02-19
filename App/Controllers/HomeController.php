@@ -17,11 +17,11 @@ class HomeController extends Controller {
     #[RouteAttr(path:'/')]
     public function index() {
         // recupero dati dal database
-        $certificati = Certificate::orderBy('certified', 'DESC')->get();
-        $projects = Project::orderBy(' id', 'DESC')->get();
-        $articles = Article::orderBy('created_at', 'DESC')->get();
-        $profiles = Profile::where('selected',TRUE)->orderBy('id', 'DESC')->get();
-        $skills = Skill::orderBy('id', 'DESC')->get();
+        $certificati = Certificate::query()->orderBy('certified', 'DESC')->get();
+        $projects = Project::query()->orderBy(' id', 'DESC')->get();
+        $articles = Article::query()->orderBy('created_at', 'DESC')->get();
+        $profiles = Profile::query()->where('selected',TRUE)->orderBy('id', 'DESC')->get();
+        $skills = Skill::query()->orderBy('id', 'DESC')->get();
 
 
         view('home',compact('articles',

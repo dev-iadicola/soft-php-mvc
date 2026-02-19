@@ -12,7 +12,7 @@ class LawController extends Controller {
 
     #[RouteAttr('/cookie')]
     public function home(){
-        $laws = Law::findAll();
+        $laws = Law::query()->all();
         return view('laws.law',compact('laws'));
     }
 

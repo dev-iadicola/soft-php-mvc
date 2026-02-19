@@ -23,7 +23,7 @@ class LogTrace extends Model
             'device'    => $_SERVER['HTTP_USER_AGENT'],
         ];
 
-        $log = LogTrace::create($default);
+        $log = LogTrace::query()->create($default);
 
         return $log;
 

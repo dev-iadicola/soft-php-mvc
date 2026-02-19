@@ -15,15 +15,15 @@ class ProgettiController extends Controller {
   
     #[RouteAttr('progetti')]
     public function index() {
-     $projects = Project::all();
-        
+     $projects = Project::query()->all();
+
       view('progetti', compact('projects'));
     }
 
     #[RouteAttr('progetti/{title}')]
     public function show(Request $request, int $id): void{
-         $project = Project::find($id);  
-         $projects = Project::all();
+         $project = Project::query()->find($id);
+         $projects = Project::query()->all();
          view('progetto', compact('project', "projects"));
     }
 

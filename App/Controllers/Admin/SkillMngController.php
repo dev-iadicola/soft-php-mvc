@@ -15,14 +15,14 @@ class SkillMngController extends AdminController
   #[RouteAttr('/skill', 'get', 'admin.skill')]
   public function store(Request $request)
   {
-    Skill::Make()->create($request->all());
+    Skill::query()->create($request->all());
     
     response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 #[RouteAttr('skill-edit/{id}', 'get','admin.skill.edit')]
   public function edit(Request $request, $id)
   {
-    $skill = Skill::find($id);
+    $skill = Skill::query()->find($id);
     return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
 #[RouteAttr('skill-update/{id}', 'patch','admin.skill.update')]
@@ -30,8 +30,7 @@ class SkillMngController extends AdminController
   {
     $data = $request->all();
 
-    $project = Skill::find($id);
-    $project->update($data);
+    Skill::query()->where('id', $id)->update($data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
   }
@@ -40,9 +39,7 @@ class SkillMngController extends AdminController
   public function destroy(Request $reqq, $id)
   {
 
-    $project  = Skill::find($id);
-
-    $project->delete();
+    Skill::query()->where('id', $id)->delete();
 
     return response()->back()->withSuccess('Skills Eliminata con Successo!');
   }

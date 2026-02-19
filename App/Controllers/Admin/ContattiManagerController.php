@@ -15,23 +15,23 @@ class ContattiManagerController extends AdminController
   #[RouteAttr('/contatti')]
   public function index()
   {
-    $contatti = Contatti::orderBy('created_at', 'DESC')->get();
+    $contatti = Contatti::query()->orderBy('created_at', 'DESC')->get();
     return view('admin.portfolio.messaggi', compact('contatti'));
   }
 
   #[RouteAttr('contatti/{id}','GET', 'admin.contatti')]
   public function get(Request $request, int $id)
   {
-    $contatti = Contatti::orderBy('created_at', 'DESC')->get();
-    $contatto = Contatti::find($id);
+    $contatti = Contatti::query()->orderBy('created_at', 'DESC')->get();
+    $contatto = Contatti::query()->find($id);
     return view('admin.portfolio.messaggi', compact('contatti', 'contatto'));
   }
 
   #[RouteAttr('/contatti-delete/{id}/','DELETE', 'admin.contatti.delete')]
   public function destroy(int $id)
   {
-    $contatto = Contatti::find($id);
-   $c = Contatti::where('id', $id)->delete();
+    $contatto = Contatti::query()->find($id);
+   $c = Contatti::query()->where('id', $id)->delete();
     $info = "Nome: ".$contatto->nome . " Email:" .$contatto->email;
 
     if($c){

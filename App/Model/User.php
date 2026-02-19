@@ -21,13 +21,13 @@ class User extends Model
 
     public static function changePassword(string $password, string $email)
     {
-        $user = User::where('email', $email)->first();
-       
+        $user = User::query()->where('email', $email)->first();
+
         if (empty($user)) {
             return false;
         }
         $password = password_hash($password, PASSWORD_BCRYPT);
-        $user::update(['password' => $password]);
+        User::query()->where('email', $email)->update(['password' => $password]);
         return $user;
     }
 

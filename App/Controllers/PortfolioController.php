@@ -12,9 +12,9 @@ class PortfolioController extends Controller {
     #[RouteAttr('portfolio')]
     public function index() {
   
-        $projects = Project::orderBy('id', 'DESC')->get();
-        $certificati = Certificate::orderBy('certified', 'DESC')->get();
-        $curriculum = Curriculum::orderBy('id','DESC')->first();
+        $projects = Project::query()->orderBy('id', 'DESC')->get();
+        $certificati = Certificate::query()->orderBy('certified', 'DESC')->get();
+        $curriculum = Curriculum::query()->orderBy('id','DESC')->first();
         return view('portfolio', compact('projects','certificati', 'curriculum'));
       //  $this->render('portfolio',  compact('projects','certificati', 'curriculum'));
     }

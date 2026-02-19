@@ -26,7 +26,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // verifica esistenza user
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()->where('email', $request->email)->first();
 
         if(empty($user)){
             
@@ -53,7 +53,7 @@ class AuthController extends Controller
     #[RouteAttr('sign-up')]
     public function signUp()
     {
-        $user = User::findAll();
+        $user = User::query()->all();
         if (count($user) == 0) {
             return view('Auth.sign-up');
         } 

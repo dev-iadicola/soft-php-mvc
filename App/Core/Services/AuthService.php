@@ -124,7 +124,7 @@ class AuthService
 
     protected function verifyTokenInDatabase($token)
     {
-        $user = User::where('token', $token)->first();
+        $user = User::query()->where('token', $token)->first();
         return (empty($user)) ? false : true;
     }
 

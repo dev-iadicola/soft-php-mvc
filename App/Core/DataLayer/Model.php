@@ -8,21 +8,11 @@ use JsonSerializable;
 use App\Core\Traits\Attributes;
 use App\Core\Traits\StaticQueryMethods;
 use App\Core\DataLayer\Query\ActiveQuery;
-use PDO;
 
 /**
- * @method static App\Core\Eloquent\Query\ActiveQuery select(array|string $columns)
- * @method static App\Core\Eloquent\Query\ActiveQuery create(array $data)
- * @method static App\Core\Eloquent\Query\ActiveQuery update(array $data)
- * @method static App\Core\Eloquent\Query\ActiveQuery where(string $columnName, string|int|float|bool|null $operatorOrValue, string|int|float|bool|null $value = null)
- * @method static App\Core\Eloquent\Query\ActiveQuery orderBy(array|string $columns, string $direction = 'ASC')
- * @method static App\Core\Eloquent\Query\ActiveQuery groupBy(string|array $columns)
- * @method static App\Core\Eloquent\Query\ActiveQuery get()
- * @method static App\Core\Eloquent\Query\ActiveQuery first()
- * @method static App\Core\Eloquent\Query\ActiveQuery find(int|string $id)
- * @method static App\Core\Eloquent\Query\ActiveQuery findOrFail(int|string $id)
+ * @method static ActiveQuery query()
  *
- * @see App\Core\Eloquent\Query\ActiveQuery
+ * @see ActiveQuery
  */
 class Model  implements JsonSerializable
 {
@@ -70,16 +60,6 @@ class Model  implements JsonSerializable
     public function save(){
         $this->query()->save($this);
     }
-      public static function whereId(int|string $id)
-    {
-        return static::where(static::instance()->primaryKey, $id);
-    }
-
-     public static function find(int|string $id, bool $reset = false, $fetchType = PDO::FETCH_ASSOC)
-    {
-        return static::where(static::instance()->primaryKey, $id)->first(reset: $reset);
-    }
-
     public function __toString(): string
     {
         return self::class;

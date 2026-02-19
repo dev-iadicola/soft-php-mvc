@@ -18,7 +18,7 @@ class CertificatiController extends Controller
     public function index()
     {
 
-        $certificati = Certificate::findAll();
+        $certificati = Certificate::query()->all();
 
         return view(page: 'corsi', variables: compact('certificati'));
     }

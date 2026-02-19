@@ -27,7 +27,7 @@ class ContattiController extends Controller
     {
         if ($this->checkThsiForm()) {
             // Notifica per via mail
-            $user = User::orderBy('id', 'desc')->first();
+            $user = User::query()->orderBy('id', 'desc')->first();
             $brevoMail = new BrevoMail();
             $page = 'notifica';
 
@@ -55,7 +55,7 @@ class ContattiController extends Controller
         $contatti = new Contatti();
         $post = $this->mvc->request->all();
         if ($contatti->checkForm($post)) {
-            Contatti::create($post);
+            Contatti::query()->create($post);
             return true;
         }
         return false;

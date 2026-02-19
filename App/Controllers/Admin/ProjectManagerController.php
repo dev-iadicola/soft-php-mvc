@@ -16,7 +16,7 @@ class ProjectManagerController extends AdminController
     #[RouteAttr(path: 'project', method: 'get', name: 'admin.projects')]
     public function index()
     {
-        $projects = Project::orderBy('id', 'DESC')->get();
+        $projects = Project::query()->orderBy('id', 'DESC')->get();
 
         return view('admin.portfolio.project', [
             'projects' => $projects,
@@ -28,8 +28,8 @@ class ProjectManagerController extends AdminController
     public function edit(Request $request, int $id)
     {
 
-        $project = Project::find($id);
-        $projects = Project::orderBy('id', 'DESC')->get();
+        $project = Project::query()->find($id);
+        $projects = Project::query()->orderBy('id', 'DESC')->get();
 
         return view('admin.portfolio.project', compact('project', 'projects'));
     }
@@ -38,7 +38,7 @@ class ProjectManagerController extends AdminController
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $project = Project::find($id);
+        $project = Project::query()->find($id);
         $validator = $this->validateRequest($request);
 
         if ($validator->fails()) {
@@ -66,7 +66,7 @@ class ProjectManagerController extends AdminController
 
         }
         
-        $project = Project::find($id)->update($data);
+        Project::query()->where('id', $id)->update($data);
 
         return response()->back()->withSuccess($message);
     }
@@ -106,7 +106,7 @@ class ProjectManagerController extends AdminController
         $data = $valid->validated();
         $data['img'] = $path; 
         // Crea il progetto
-        Project::create(data: $data);
+        Project::query()->create(data: $data);
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
@@ -117,17 +117,17 @@ class ProjectManagerController extends AdminController
         // trova e azione
         $data = $reqq->all();
 
-        $projectQ = Project::whereId($id);
+        $projectQ = Project::query()->where('id', $id);
         if ( ! $projectQ->exists()) {
             return response()->back()->withError('Progetto non trovato');
         }
         // delete img if exist
-        $project = Project::find($id);
+        $project = Project::query()->find($id);
         $storage = Storage::make('public');
         if ($storage->exists($project->img));
         $storage->delete($project->img);
 
-        $projectQ->delete();
+        Project::query()->where('id', $id)->delete();
 
         response()->back()->withSuccess('Progetto non eliminato correttamente.');
     }

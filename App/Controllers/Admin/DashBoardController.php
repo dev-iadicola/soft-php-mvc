@@ -13,7 +13,7 @@ class DashBoardController extends AdminController{
     #[RouteAttr('/dashboard','GET', 'admin.dashboard')]
     public function index(){
        
-        $messages = Contatti::orderBy('id', 'DESC')->get();
+        $messages = Contatti::query()->orderBy('id', 'DESC')->get();
        
        return view('admin.dashboard', compact('messages'));
     }

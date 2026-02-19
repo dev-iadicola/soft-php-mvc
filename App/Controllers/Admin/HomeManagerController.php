@@ -20,9 +20,9 @@ class HomeManagerController extends AdminController
     public function index()
     {
         // visualizza per la gestione della home
-        $articles = Article::orderBy('created_at', 'DESC')->get();
-        $skills = Skill::orderBy(' id', 'DESC')->get();
-        $profiles = Profile::orderBy('id', 'DESC')->get();
+        $articles = Article::query()->orderBy('created_at', 'DESC')->get();
+        $skills = Skill::query()->orderBy(' id', 'DESC')->get();
+        $profiles = Profile::query()->orderBy('id', 'DESC')->get();
 
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
@@ -42,7 +42,7 @@ class HomeManagerController extends AdminController
             $data['img'] = $storage->getRelativePath();
         }
 
-        Article::create($data);
+        Article::query()->create($data);
 
         return response()->back()->withSuccess('Articolo Inserito con successo nella Home Page!');
 
@@ -54,10 +54,10 @@ class HomeManagerController extends AdminController
     public function edit(Request $request, $id)
     {
        
-        $article = Article::find($id);
-        $articles = Article::orderBy('created_at', 'DESC')->get();
-        $skills = Skill::orderBy('id', 'DESC')->get();
-        $profiles = Profile::orderBy('id', 'DESC')->get();
+        $article = Article::query()->find($id);
+        $articles = Article::query()->orderBy('created_at', 'DESC')->get();
+        $skills = Skill::query()->orderBy('id', 'DESC')->get();
+        $profiles = Profile::query()->orderBy('id', 'DESC')->get();
 
 
         return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
@@ -67,7 +67,7 @@ class HomeManagerController extends AdminController
     public function update(Request $request, $id)
     {
         $data = $request->all();
-        $article = Article::find($id);
+        $article = Article::query()->find($id);
         if(isset($data['img'])){
             // Validazione Dati
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -85,8 +85,7 @@ class HomeManagerController extends AdminController
         }
         }
         // Trova porgetto
-        $project = Article::find($id);
-        $project->update($data);
+        Article::query()->where('id', $id)->update($data);
 
         // feedback server
         redirect()->back('Articolo Aggiornato con successo!');
@@ -97,16 +96,14 @@ class HomeManagerController extends AdminController
     {
         // TODO: make validator 
     
-        $article  = Article::find($id);
+        $article  = Article::query()->find($id);
         $name = $article->title;
 
-        $elem = $article->first();
-
-        if(isset($elem->img)){
+        if(isset($article->img)){
             $stg = new Storage('images');
-            $stg->deleteIfExist($elem->img);
+            $stg->deleteIfExist($article->img);
         }
-        $article->delete();
+        Article::query()->where('id', $id)->delete();
         return response()->back()->withSuccess('Articolo $name eliminato.');
     }
 }

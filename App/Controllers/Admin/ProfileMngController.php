@@ -16,17 +16,17 @@ class ProfileMngController extends AdminController
   #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]
   public function store(Request $request)
   {   
-    Profile::create($request->all());
+    Profile::query()->create($request->all());
     return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   #[RouteAttr(path: 'profile/{id}', method: 'get', name: 'profile.edit')]
   public function edit(Request $request, $id)
   {
-    $profile = Profile::find($id);
-    $skills = Skill::orderBy('id', 'DESC')->get();
-    $articles = Article::orderBy('created_at', 'DESC')->get();
-    $profiles = Profile::orderBy('id', 'DESC')->get();
+    $profile = Profile::query()->find($id);
+    $skills = Skill::query()->orderBy('id', 'DESC')->get();
+    $articles = Article::query()->orderBy('created_at', 'DESC')->get();
+    $profiles = Profile::query()->orderBy('id', 'DESC')->get();
     return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
   }
 
@@ -37,8 +37,8 @@ class ProfileMngController extends AdminController
 
     $data['selected'] = isset($data['selected']) ? 1 : 0;
 
-    $project = Profile::find($id);
-    $project->update($data);
+    $project = Profile::query()->find($id);
+    Profile::query()->where('id', $id)->update($data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
     
@@ -49,8 +49,7 @@ class ProfileMngController extends AdminController
     // trova e azione
     $data =  $reqq->all();
 
-    $project  = Profile::find($id);
-    $project->delete();
+    Profile::query()->where('id', $id)->delete();
     return  response()->back()->withSuccess('Skills ELIMINATE');
 
  }

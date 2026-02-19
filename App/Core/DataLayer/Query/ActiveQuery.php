@@ -53,6 +53,26 @@ class ActiveQuery
         return (bool) $this->executor->fetchColumn($sql, $binds);
     }
 
+    public function find(int|string $id): ?Model
+    {
+        $pk = $this->hydrator->getModel()->primaryKey;
+        return $this->where($pk, $id)->first();
+    }
+
+    public function all(): array
+    {
+        return $this->get();
+    }
+
+    public function findOrFail(int|string $id): Model
+    {
+        $result = $this->find($id);
+        if (!$result) {
+            throw new ModelException("Model not found for ID: {$id}");
+        }
+        return $result;
+    }
+
     // region SELECT
     /**
      * Summary of select

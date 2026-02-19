@@ -14,7 +14,7 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('/corsi')]
    public function index()
    {
-      $corsi = Certificate::orderBy('certified', 'DESC')->get();
+      $corsi = Certificate::query()->orderBy('certified', 'DESC')->get();
 
       return view('/admin/portfolio/corsi',  compact('corsi'));
    }
@@ -22,9 +22,9 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('corsi-edit/{id}', 'GET')]
    public function edit(Request $request, int  $id)
    {
-      $corsi = Certificate::orderBy('id', 'DESC')->get();
+      $corsi = Certificate::query()->orderBy('id', 'DESC')->get();
 
-      $element = Certificate::find($id);
+      $element = Certificate::query()->find($id);
 
 
       if (empty($corsi) || empty($element)) {
@@ -38,7 +38,7 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('/corsi', 'POST')]
    public function store(Request $request)
    {
-      Certificate::create($request->all());
+      Certificate::query()->create($request->all());
       return  redirect()->back()->withSuccess('Certificate creato con successo!');
    }
 
@@ -48,7 +48,7 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('corsi-edit/{id}', 'PATCH')]
    public function update(Request $request, $id)
    {
-      Certificate::where('id', $id)->update($request->all());
+      Certificate::query()->where('id', $id)->update($request->all());
       $this->withSuccess('Corso Aggiornato con successo!');
       return response()->back();
    }
@@ -60,8 +60,7 @@ class CorsiManagerController extends AdminController
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return $this->statusCode413();
       }
-      $corso = Certificate::where('id', $id);
-      $corso->delete();
+      Certificate::query()->where('id', $id)->delete();
       $this->withSuccess('Corso ELIMINATO');
       return response()->back();
    }

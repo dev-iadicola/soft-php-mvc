@@ -31,7 +31,7 @@ use DateTime;
         
         parent::save($dataForToken);
 
-        return token::where('token', $token)->first();
+        return Token::query()->where('token', $token)->first();
      }
 
      /**
@@ -44,7 +44,7 @@ use DateTime;
       */
      public static function isBad($token){
 
-        $tokenModel = Token::where('token',$token)->first();
+        $tokenModel = Token::query()->where('token',$token)->first();
 
         if($tokenModel->used){
             return true;

@@ -39,7 +39,7 @@ class TokenController extends Controller
 
 
         // * email adress verificatrioin
-        $user = User::where('email', $request->email)->first();
+        $user = User::query()->where('email', $request->email)->first();
         if (empty($user)) {
             return response()->back()->withError("Whoops,something went worng!");
         }
@@ -94,7 +94,7 @@ class TokenController extends Controller
         }
 
         //Validazione del token
-        $token =  Token::where('token', $request->token)->first();
+        $token =  Token::query()->where('token', $request->token)->first();
         if (empty($token) || is_null($token)) {
             // TODO: create a sistem to block 
             Log::Alert("Accesso sospetto: token mancante per la richiesta " . $request->uri() . "\n" . $request->getRequestInfo());

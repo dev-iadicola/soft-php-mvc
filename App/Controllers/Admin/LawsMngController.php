@@ -12,23 +12,23 @@ class LawsMngController extends AdminController{
     #[RouteAttr('/laws')]  
     public function index(){
 
-        $laws=  Law::orderBy('id', 'DESC')->get();
+        $laws=  Law::query()->orderBy('id', 'DESC')->get();
          return view('admin.laws.index',compact('laws'));
         }
        
        
         #[RouteAttr('/laws', 'POST')]  
         public function store(Request $request){        
-         Law::create( $request->all());
+         Law::query()->create( $request->all());
         
          $this->withSuccess('New Law has be created');
          return response()->back();
         }
         #[RouteAttr(path: 'laws/{id}', method: 'get', name: 'laws.edit')]
         public function edit(Request $req, $id){
-         $law = Law::find($id);
-        
-         $laws = Law::findAll();
+         $law = Law::query()->find($id);
+
+         $laws = Law::query()->all();
         
          return view( 'admin.laws.index' , compact('laws','law')  );
         
@@ -36,9 +36,7 @@ class LawsMngController extends AdminController{
 
         #[RouteAttr(path: 'laws/{id}', method: 'patch', name: 'laws.update')]
         public function update(Request $request, $id){
-          $law = Law::find($id);
-
-          $law->update($request->all());
+          Law::query()->where('id', $id)->update($request->all());
           
           $this->withSuccess('Law is Updated');
           return response()->back();
@@ -48,7 +46,7 @@ class LawsMngController extends AdminController{
         public function destroy(Request $req, $id){
           $data =  $req->all();
        
-          $law = Law::find(id: $id)->delete();
+          $law = Law::query()->where('id', $id)->delete();
 
           if($law ===  true){
            return  response()->back()->withSuccess("Law DELETE");
