@@ -23,10 +23,14 @@ class Filesystem
      * The underlyng storage driver
      */
     protected DriveInterface $drive;
+    protected ?string $visibility;
+    protected string $publicBase;
 
-    public function __construct(DriveInterface $drive)
+    public function __construct(DriveInterface $drive, ?string $visibility = null, ?string $publicBase = null)
     {
         $this->drive = $drive;
+        $this->visibility = $visibility;
+        $this->publicBase = $publicBase ?? '/storage';
     }
 
     /**
@@ -110,5 +114,18 @@ class Filesystem
     public function path(string $path): string
     {
         return $this->drive->path($path);
+    }
+
+    /**
+     * Build a DB-safe path for a stored file.
+     * For public disks, returns a URL-friendly path (e.g. "/storage/..").
+     */
+    public function getPath(string $path): string
+    {
+        $path = ltrim($path, '/');
+        if ($this->visibility === 'public') {
+            return rtrim($this->publicBase, '/') . '/' . $path;
+        }
+        return $path;
     }
 }
