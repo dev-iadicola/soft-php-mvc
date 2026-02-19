@@ -9,7 +9,7 @@ if (!function_exists(function: 'redirect')) {
     }
 }
 
-if (!function_exists(function: 'response')) {
+if (!function_exists(function: 'response')){
     function response(): Response{
         return mvc()->response;
     }

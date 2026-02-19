@@ -47,34 +47,34 @@ class ProjectManagerController extends AdminController
 
         $message = 'Progetto salvato con successo';
 
-        if (isset($validated['img'])) {
-            // delete old path image
-            if (Storage::make('public')->deleteIfExist($project->img) && ! empty($project->img)) {
-                $message = "Percorso immagine {$project->img} eliminato";
-            } else {
-                $message = "Il Progetto con il percorso per l'immagine {$project->img} non esiteva
-                 nello storage ,
-             e' stato sostituito comunque con una immagie nuove ";
+        if ($request->hasFile('img')) {
+            $file = $request->file('img');
+            $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
+            $path = 'images/' . $filename;
+
+            // delete old image if present
+            if (!empty($project->img)) {
+                Storage::make('public')->deleteIfExist($project->img);
             }
 
-            // add new path image
-            Storage::make('public')
-                ->put(
-                    path: $validator->validated()['img'],
-                    content: file_get_contents($request->file('img')['tmp_name'])
-                );
+            Storage::make('public')->put(
+                $path,
+                file_get_contents($file['tmp_name']),
+                ['visibility' => 'public']
+            );
 
+            $data['img'] = $path;
         }
-        
+
         Project::query()->where('id', $id)->update($data);
 
         return response()->back()->withSuccess($message);
     }
 
     #[RouteAttr('project-upsert/{id}', 'PATCH', 'admin.project.upset')]
-    public function upset(Request $request, int $id)
+    public function upset(Request $request, ?int $id = null)
     {
-        if ($id === 0) {
+        if ($id === null) {
             return $this->store($request);
         }
 
@@ -95,18 +95,18 @@ class ProjectManagerController extends AdminController
         $file = $request->file('img');
 
         $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-        $path = 'projects/' . $filename;
+        $path = 'images/' . $filename;
 
         Storage::make('public')->put(
             $path,
-            file_get_contents($file['tmp_name'])
+            file_get_contents($file['tmp_name']),
+            ['visibility' => 'public']
         );
 
-        dd($valid->validated());
         $data = $valid->validated();
         $data['img'] = $path; 
         // Crea il progetto
-        Project::query()->create(data: $data);
+        Project::query()->create($data);
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }

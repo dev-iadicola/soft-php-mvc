@@ -26,12 +26,12 @@ use App\Core\Enum\HttpActionType;
                 </div>
                 <div class="form-group">
                     <label for="overview">Overview - sottotitolo</label>
-                    <textarea class="form-control editor" id="editor" name="overview" rows="3">{{$project?->overview ?? ''}}</textarea>
+                    <textarea class="form-control editor"  id="overview" name="overview" rows="3">{{$project?->overview ?? ''}}</textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Descrizione</label>
-                    <textarea class="form-control editor" id="editor" name="description" rows="3">{{$project?->description ?? ''}} </textarea>
+                    <textarea class="form-control editor" id="description" name="description" rows="3">{{$project?->description ?? ''}} </textarea>
                 </div>
                 <div class="form-group">
                     <label for="link">GitHub Repo</label>
@@ -127,6 +127,13 @@ use App\Core\Enum\HttpActionType;
         }
     }
 
+    document.addEventListener('DOMContentLoaded', () => {
+        const fileInput = document.getElementById('myfile');
+        if (fileInput) {
+            fileInput.addEventListener('change', anteprimaFile);
+        }
+    });
+
 
     const verification = (event) => {
         event.preventDefault();
@@ -138,6 +145,10 @@ use App\Core\Enum\HttpActionType;
             alert('I link devono esser diversi tra loro.'); 
             return false;
         }else{
+            if (typeof window.syncEditors === 'function') {
+                window.syncEditors(form);
+            }
+            // Use form.submit() to avoid re-triggering the onsubmit handler
             form.submit();
             return true;
         }

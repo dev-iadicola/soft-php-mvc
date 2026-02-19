@@ -2,19 +2,17 @@
 
 use App\Core\CLI\System\Out;
 use PHPUnit\Framework\TestCase;
-use App\Core\DataLayer\QueryBuilder;
+use App\Core\DataLayer\Query\MySqlBuilder;
 
 class QBTest extends TestCase
 {
-    private QueryBuilder $qb;
+    private MySqlBuilder $qb;
 
     protected function setUp(): void
     {
         // QueryBuilder “vuoto”, nessuna connessione
-        $this->qb = new QueryBuilder();
-        $pdoMock = $this->createMock(PDO::class);
-        $this->qb->setPDO($pdoMock);
-        $this->qb->setTable('users');
+        $this->qb = new MySqlBuilder();
+        $this->qb->from('users');
         $this->qb->setFillable(['id', 'name', 'active', 'p.created_at']);
     }
 

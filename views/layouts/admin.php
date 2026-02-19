@@ -14,15 +14,14 @@
     <!-- Font Awesome Icon CDN -->
     <link rel="stylesheet" href="<?= assets('vendor/fontawesome/css/font-awesome.min.css') ?>">
 
-    <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css') ?>">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.snow.css">
 
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= assets('admin.css') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
 
 
-    <!-- Editor di test -->
-        <link rel="stylesheet" href="<?= assets('vendor/ckeditor/css/ckeditor.css')?>">
+    <!-- Editor styles -->
     <!-- CDN favicon bootstrap --> 
         <link rel="stylesheet" href="<?= assets('/vendor/cdn/favicon.min.css')?>">
 
@@ -76,46 +75,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
-    <!-- editor di test -->
-
-
-
-
-    <script src="<?= assets('vendor/ckeditor/js/cdn.js')?>" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js" defer></script>
     <script src="<?= assets('vendor/ckeditor/js/execute.js')?>" defer></script>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-  // Gestisco evento apertura collapse
-  $('#collapseSkill').on('shown.bs.collapse', function () {
-    document.querySelectorAll('.editor').forEach(el => {
-      if (!el.classList.contains('ck-editor__editable')) { 
-        // Evita di reinizializzare se già inizializzato
-        ClassicEditor.create(el, {
-          toolbar: [
-            'undo', 'redo', '|', 'bold', 'italic', '|',
-            'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
-          ]
-        }).catch(console.error);
-      }
-    });
-  });
-
-  // Se il collapse è già aperto al caricamento, inizializzo subito
-  if ($('#collapseSkill').hasClass('show')) {
-    document.querySelectorAll('.editor').forEach(el => {
-      ClassicEditor.create(el, {
-        toolbar: [
-          'undo', 'redo', '|', 'bold', 'italic', '|',
-          'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor'
-        ]
-      }).catch(console.error);
-    });
-  }
-});
-
-   
-    </script>
+    <!-- Editor init moved to assets/vendor/ckeditor/js/execute.js -->
 
     <!-- A friendly reminder to run on a server, remove this during the integration. -->
     <script>

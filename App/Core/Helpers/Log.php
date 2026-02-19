@@ -29,8 +29,10 @@ class Log
         
 
         if (!is_dir($dir)) {
-            // 0775 va bene su linux; su windows viene ignorato
-            @mkdir($dir, 0775, true);
+            // 0777 per permettere gestione log anche fuori dal web server user
+            @mkdir($dir, 0777, true);
+        } else {
+            @chmod($dir, 0777);
         }
 
         self::$logFile = $dir . '/app.log';
@@ -133,6 +135,9 @@ class Log
             if ($ok === false) {
                 // Fallback sul log di PHP
                 error_log("LOG WRITE FAIL: " . $line);
+            } else {
+                // Permessi permissivi per permettere cancellazione/rotazione
+                @chmod(self::$logFile, 0666);
             }
         } catch (Throwable $e) {
             // Ultimo fallback

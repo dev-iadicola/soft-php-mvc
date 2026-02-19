@@ -42,6 +42,12 @@ class LocalDrive implements DriveInterface
             }
             // * Create direcotry with permission
             mkdir($dir, $this->permissionMap['dir'][$diskVisibility], true);
+        } else {
+            // Ensure directory visibility matches the requested setting
+            if (!isset($permissionDirArray[$diskVisibility])) {
+                throw new InvalidArgumentException("Invalid mode visibility in your disk: $diskVisibility for directory $dir. You can choose 'public' or 'private'.");
+            }
+            @chmod($dir, $permissionDirArray[$diskVisibility]);
         }
         file_put_contents($full, $content);
 
