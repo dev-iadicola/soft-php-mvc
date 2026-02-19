@@ -335,6 +335,7 @@ class ActiveQuery
             $this->builder->insert($values);
             $this->executor->prepareAndExecute($this->builder->toInsert(), $this->builder->getBindings());
             $id = $this->executor->lastInsertId();
+            $this->builder->reset();
 
             return $this->find($id);
         } catch (ModelException $e) {
