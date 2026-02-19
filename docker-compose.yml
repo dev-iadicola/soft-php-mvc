@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: soft-php-mvc
+    ports:
+      - "8080:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - APP_ENV=local
+      - APP_DEBUG=true
+      - DB_HOST=db
+      - DB_USER=root
+      - DB_PSW=${DB_PSW:-secret}
+      - DB_NAME=${DB_NAME:-soft_mvc}
+      - DB_DRIVER=${DB_DRIVER:-mysql}
+
+  db:
+    image: mysql:8.0
+    container_name: soft-php-mvc-db
+    restart: unless-stopped
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PSW:-secret}
+      MYSQL_DATABASE: ${DB_NAME:-soft_mvc}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: soft-php-mvc-pma
+    restart: unless-stopped
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: ${DB_PSW:-secret}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  db_data:
