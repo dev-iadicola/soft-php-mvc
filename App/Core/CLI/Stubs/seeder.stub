@@ -1,0 +1,8 @@
+<?php
+
+use App\Core\DataLayer\Seeder\Seeder;
+
+return Seeder::table('{{TABLE}}')
+    ->row([
+        // 'column' => 'value',
+    ]);

@@ -12,6 +12,10 @@ use App\Core\CLI\Commands\MigrateRollbackCommand;
 use App\Core\CLI\Commands\MigrateStatusCommand;
 use App\Core\CLI\Commands\Clear\ClearCacheCommand;
 use App\Core\CLI\Commands\MakeMiddlewareCommand;
+use App\Core\CLI\Commands\MakeSeederCommand;
+use App\Core\CLI\Commands\SeedCommand;
+use App\Core\CLI\Commands\SeedRollbackCommand;
+use App\Core\CLI\Commands\SeedStatusCommand;
 use App\Core\CLI\Commands\StorageCommand;
 
 class Kernel
@@ -39,6 +43,10 @@ class Kernel
             'migrate' => MigrateCommand::class,
             'migrate:rollback' => MigrateRollbackCommand::class,
             'migrate:status' => MigrateStatusCommand::class,
+            'make:seeder' => MakeSeederCommand::class,
+            'seed' => SeedCommand::class,
+            'seed:rollback' => SeedRollbackCommand::class,
+            'seed:status' => SeedStatusCommand::class,
             'serve' => ServeCommand::class,
             'print' => Out::class,
             'storage' => StorageCommand::class,
