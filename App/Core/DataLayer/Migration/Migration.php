@@ -14,6 +14,8 @@ class Migration
     private array $constraints = [];
     private ?string $dropTable = null;
     private ?string $lastColumn = null;
+    private ?int $lastConstraintIndex = null;
+    private ?array $pendingForeign = null;
 
     private function __construct(string $tableName)
     {
@@ -185,9 +187,12 @@ class Migration
     }
 
     // ──────────────────────────────────────
-    //  Constraints
+    //  Constraints — Foreign Keys
     // ──────────────────────────────────────
 
+    /**
+     * Shorthand: ->foreignKey('col', 'ref_table', 'ref_col', 'CASCADE', 'CASCADE')
+     */
     public function foreignKey(string $column, string $refTable, string $refCol = 'id', string $onDelete = '', string $onUpdate = ''): self
     {
         $sql = "FOREIGN KEY (`$column`) REFERENCES `$refTable`(`$refCol`)";
@@ -198,13 +203,102 @@ class Migration
             $sql .= " ON UPDATE $onUpdate";
         }
         $this->constraints[] = $sql;
+        $this->lastConstraintIndex = array_key_last($this->constraints);
         return $this;
     }
+
+    /**
+     * Fluent FK: ->foreign('user_id')->references('users', 'id')->onDelete('CASCADE')
+     */
+    public function foreign(string $column): self
+    {
+        $this->flushPendingForeign();
+        $this->pendingForeign = ['column' => $column];
+        return $this;
+    }
+
+    public function references(string $table, string $column = 'id'): self
+    {
+        if ($this->pendingForeign) {
+            $this->pendingForeign['refTable'] = $table;
+            $this->pendingForeign['refCol'] = $column;
+            $this->flushPendingForeign();
+        }
+        return $this;
+    }
+
+    public function onDelete(string $action): self
+    {
+        if ($this->lastConstraintIndex !== null && isset($this->constraints[$this->lastConstraintIndex])) {
+            $this->constraints[$this->lastConstraintIndex] .= " ON DELETE $action";
+        }
+        return $this;
+    }
+
+    public function onUpdate(string $action): self
+    {
+        if ($this->lastConstraintIndex !== null && isset($this->constraints[$this->lastConstraintIndex])) {
+            $this->constraints[$this->lastConstraintIndex] .= " ON UPDATE $action";
+        }
+        return $this;
+    }
+
+    // ──────────────────────────────────────
+    //  Constraints — Indexes
+    // ──────────────────────────────────────
+
+    /**
+     * ->index('email')
+     * ->index(['first_name', 'last_name'])
+     * ->index('email', 'idx_users_email')
+     */
+    public function index(string|array $columns, ?string $name = null): self
+    {
+        $cols = is_array($columns) ? $columns : [$columns];
+        $colsSql = '`' . implode('`, `', $cols) . '`';
+        $nameSql = $name ? " `$name`" : '';
+        $this->constraints[] = "INDEX{$nameSql} ($colsSql)";
+        $this->lastConstraintIndex = array_key_last($this->constraints);
+        return $this;
+    }
+
+    /**
+     * ->uniqueIndex('email')
+     * ->uniqueIndex(['ip', 'user_agent'], 'unique_ip_ua')
+     */
+    public function uniqueIndex(string|array $columns, ?string $name = null): self
+    {
+        $cols = is_array($columns) ? $columns : [$columns];
+        $colsSql = '`' . implode('`, `', $cols) . '`';
+        $nameSql = $name ? " `$name`" : '';
+        $this->constraints[] = "UNIQUE INDEX{$nameSql} ($colsSql)";
+        $this->lastConstraintIndex = array_key_last($this->constraints);
+        return $this;
+    }
+
+    /**
+     * ->fullText('overview')
+     * ->fullText(['title', 'overview'], 'ft_articles')
+     */
+    public function fullText(string|array $columns, ?string $name = null): self
+    {
+        $cols = is_array($columns) ? $columns : [$columns];
+        $colsSql = '`' . implode('`, `', $cols) . '`';
+        $nameSql = $name ? " `$name`" : '';
+        $this->constraints[] = "FULLTEXT INDEX{$nameSql} ($colsSql)";
+        $this->lastConstraintIndex = array_key_last($this->constraints);
+        return $this;
+    }
+
+    // ──────────────────────────────────────
+    //  Constraints — Composite keys
+    // ──────────────────────────────────────
 
     public function uniqueComposite(array $columns): self
     {
         $cols = implode('`, `', $columns);
         $this->constraints[] = "UNIQUE KEY (`$cols`)";
+        $this->lastConstraintIndex = array_key_last($this->constraints);
         return $this;
     }
 
@@ -212,8 +306,13 @@ class Migration
     {
         $cols = implode('`, `', $columns);
         $this->constraints[] = "PRIMARY KEY (`$cols`)";
+        $this->lastConstraintIndex = array_key_last($this->constraints);
         return $this;
     }
+
+    // ──────────────────────────────────────
+    //  Raw SQL
+    // ──────────────────────────────────────
 
     public function raw(string $sql): self
     {
@@ -238,6 +337,7 @@ class Migration
 
     public function toCreateSql(): string
     {
+        $this->flushPendingForeign();
         $parts = array_values($this->columns);
         $parts = array_merge($parts, $this->constraints);
 
@@ -286,6 +386,19 @@ class Migration
     {
         if ($this->lastColumn && isset($this->columns[$this->lastColumn])) {
             $this->columns[$this->lastColumn] .= ' ' . $modifier;
+        }
+    }
+
+    private function flushPendingForeign(): void
+    {
+        if ($this->pendingForeign && isset($this->pendingForeign['refTable'])) {
+            $col = $this->pendingForeign['column'];
+            $refTable = $this->pendingForeign['refTable'];
+            $refCol = $this->pendingForeign['refCol'] ?? 'id';
+            $sql = "FOREIGN KEY (`$col`) REFERENCES `$refTable`(`$refCol`)";
+            $this->constraints[] = $sql;
+            $this->lastConstraintIndex = array_key_last($this->constraints);
+            $this->pendingForeign = null;
         }
     }
 
