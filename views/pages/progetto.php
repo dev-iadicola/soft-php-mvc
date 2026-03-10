@@ -141,7 +141,7 @@
     </article>
 
     <nav class="project-detail__links">
-        <?php if (!empty($project->link)) { ?>
+        <?php if (! empty($project->link)) { ?>
             <a href="<?= $project->link ?>"
                target="_blank"
                rel="noopener noreferrer"
