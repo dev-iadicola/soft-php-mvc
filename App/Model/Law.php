@@ -9,7 +9,8 @@ class Law extends Model
 {
 
     protected string $table = 'laws';
-
-    protected array $fillable = ['id', 'title', 'testo'];
+    protected int|string|null $id = null;
+    protected ?string $title = null;
+    protected ?string $testo = null;
 
 }

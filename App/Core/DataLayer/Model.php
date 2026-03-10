@@ -5,40 +5,91 @@ declare(strict_types=1);
 namespace App\Core\DataLayer;
 
 use App\Core\DataLayer\Factory\ActiveQueryFactory;
+use App\Core\Helpers\Str;
 use JsonSerializable;
 use App\Core\Traits\Attributes;
 use App\Core\DataLayer\Query\ActiveQuery;
+use DateTimeInterface;
+use ReflectionClass;
+use ReflectionProperty;
 
 
 class Model  implements JsonSerializable
 {
     use Attributes;
 
-    public $primaryKey = 'id';
-    protected string $table;
-    protected array $fillable;
+    // These framework-level properties must never be treated as database columns.
+    private const INTERNAL_PROPERTIES = [
+        'primaryKey',
+        'table',
+        'timestamps',
+        'attributes',
+        'original',
+        'dirty',
+    ];
 
+    private static array $declaredPropertiesCache = [];
+
+    public string $primaryKey = 'id';
+    protected string $table = '';
     protected bool $timestamps = true;
+    protected array $original = [];
+    protected array $dirty = [];
 
-    public static function instance(): Model{
+    public static function instance(): static{
         return new static;
+    }
+
+    public function getTable(): string
+    {
+        if ($this->table !== '') {
+            return $this->table;
+        }
+
+        // Auto-resolve: App\Model\Article → "articles", App\Model\Technology → "technologies"
+        $class = (new ReflectionClass(static::class))->getShortName();
+        return $this->table = Str::plural(Str::lower($class));
+    }
+
+    public function getKeyId(): string
+    {
+        return $this->primaryKey;
     }
 
     public function jsonSerialize(): mixed
     {
-        return $this->attributes; // TODO da implementare
+        return $this->getAttribute();
     }
 
     public function setAttribute(string $key, mixed $value): void
     {
-        $this->attributes[$key] = $value;
+        // Hydration first tries declared typed properties, then falls back to dynamic attributes.
+        $property = $this->resolvePropertyName($key);
+
+        if ($property !== null) {
+            $castedValue = $this->castAttribute($property, $value);
+            $this->$property = $castedValue;
+            $this->markDirty($property, $castedValue);
+            return;
+        }
+
+        $castedValue = $this->castDynamicAttribute($key, $value);
+        $this->attributes[$key] = $castedValue;
+        $this->markDirty($key, $castedValue);
     }
 
     public function getAttribute(?string $key = null): mixed{
-        if(is_null($key))
-            return $this->attributes;
-        else
-            return $this->attributes[$key];
+        if (is_null($key)) {
+            return $this->toArray();
+        }
+
+        $property = $this->resolvePropertyName($key);
+
+        if ($property !== null) {
+            return $this->$property;
+        }
+
+        return $this->attributes[$key] ?? null;
     }
 
     protected function setTimestamps(bool $bool): bool
@@ -54,6 +105,94 @@ class Model  implements JsonSerializable
     public function save(){
         $this->query()->save($this);
     }
+
+    public function toArray(): array
+    {
+        $data = [];
+
+        foreach ($this->getDeclaredDataProperties() as $property) {
+            $name = $property->getName();
+            // Models can expose a different database column name than the PHP property name.
+            $data[$this->getColumnName($name)] = $this->$name;
+        }
+
+        return array_merge($data, $this->attributes);
+    }
+
+    public function getPersistableColumns(): array
+    {
+        return $this->columns();
+    }
+
+    public function columns(): array
+    {
+        // The query builder uses this list to filter INSERT and UPDATE payloads.
+        return array_map(
+            fn (ReflectionProperty $property): string => $this->getColumnName($property->getName()),
+            $this->getDeclaredDataProperties()
+        );
+    }
+
+    public function isDirty(?string $key = null): bool
+    {
+        if ($key === null) {
+            return $this->dirty !== [];
+        }
+
+        $resolvedKey = $this->resolvePropertyName($key) ?? $key;
+
+        return array_key_exists($resolvedKey, $this->dirty);
+    }
+
+    public function getDirtyAttributes(): array
+    {
+        $dirty = [];
+
+        foreach ($this->dirty as $key => $value) {
+            $dirty[$this->getOutputColumnName($key)] = $value;
+        }
+
+        return $dirty;
+    }
+
+    public function syncOriginal(): static
+    {
+        $this->original = [];
+
+        foreach ($this->getDeclaredDataProperties() as $property) {
+            $name = $property->getName();
+            $this->original[$name] = $this->$name;
+        }
+
+        foreach ($this->attributes as $key => $value) {
+            $this->original[$key] = $value;
+        }
+
+        $this->dirty = [];
+
+        return $this;
+    }
+
+    public function exists(): bool
+    {
+        $primaryKey = $this->resolvePropertyName($this->primaryKey) ?? $this->primaryKey;
+
+        return $this->getStoredValue($primaryKey) !== null;
+    }
+
+    public function getAttributesForInsert(): array
+    {
+        return $this->getDirtyAttributes();
+    }
+
+    public function getAttributesForUpdate(): array
+    {
+        $dirty = $this->getDirtyAttributes();
+        unset($dirty[$this->primaryKey]);
+
+        return $dirty;
+    }
+
     public function __toString(): string
     {
         return self::class;
@@ -64,78 +203,120 @@ class Model  implements JsonSerializable
         return ActiveQueryFactory::for(static::class);
     }
 
-    // /**
-    //  | Handles static method calls on the Model and delegates them to the QueryBuilder.
-    //  | and forwards them to the corresponding methods in {@see QueryBuilder}.
-    //  __________________________________________________________________________
-    //  * @param string $method     The name of the called static method.
-    //  * @param array  $parameters The parameters passed to the method.
-    //  * @see App\Core\Eloquent\Query\ActiveQuery
-    //  * @throws \App\Core\Exception\QueryBuilderException
-    //  * @return mixed The result of the executed QueryBuilder method.
-    //  */
-    // public function __call($method, $parameters)
-    // {
-    //     // Se il metodo è definito nel Model (non statico)
-    //     if (method_exists($this, $method)) {
-    //         return $this->$method(...$parameters);
-    //     } else if (isset($this->fillable[$method])) {
-    //         return $this->fillable[$method];
-    //     } else if (method_exists(ActiveQuery::class, $method)) {
-    //         return ActiveQueryFactory::for(static::class)->$method;
-    //     }
+    /**
+     * @return array<ReflectionProperty>
+     */
+    private function getDeclaredDataProperties(): array
+    {
+        // Cache reflection results per model class to avoid recomputing schema metadata.
+        return self::$declaredPropertiesCache[static::class] ??= array_values(array_filter(
+            (new ReflectionClass(static::class))->getProperties(),
+            fn (ReflectionProperty $property): bool => ! $property->isStatic()
+                && ! in_array($property->getName(), self::INTERNAL_PROPERTIES, true)
+                && $property->getDeclaringClass()->getName() !== self::class
+        ));
+    }
 
-    //     throw new \BadMethodCallException("Metodo {$method} not foun in Model " . static::class);
-    // }
+    private function isDeclaredModelProperty(string $key): bool
+    {
+        return $this->resolvePropertyName($key) !== null;
+    }
 
-    // public function setQueryBuilder(ActiveQuery $qb)
-    // {
-    //     $this->queryBuilder = $qb;
-    // }
+    protected function columnMap(): array
+    {
+        // Override in child models when a PHP property cannot match the DB column name.
+        return [];
+    }
 
-    // public static function __callStatic($method, $parameters)
-    // {
+    protected function casts(): array
+    {
+        return [];
+    }
 
-    //     // If the static method is defined in the subclass (e.g. LogTrace::createLog)
-    //     if (method_exists(static::class, $method)) {
-    //         // Usa forward_static_call_array per chiamarlo in modo pulito e statico
-    //         return forward_static_call_array([static::class, $method], $parameters);
-    //     } else if (method_exists(ActiveQuery::class, $method)) {
-    //         try {
-    //             return ActiveQueryFactory::for(static::class)->{$method};
+    private function getColumnName(string $property): string
+    {
+        return $this->columnMap()[$property] ?? $property;
+    }
 
-    //         }catch(QueryBuilderException $e){
-    //                 $model = new static;
-    //                 $model->throwHere($e);
-    //         }
-    //     }
+    private function getOutputColumnName(string $key): string
+    {
+        return $this->isDataPropertyName($key) ? $this->getColumnName($key) : $key;
+    }
 
-    // }
+    private function resolvePropertyName(string $key): ?string
+    {
+        // Accept both the PHP property name and the mapped database column name.
+        if (property_exists($this, $key) && $this->isDataPropertyName($key)) {
+            return $key;
+        }
 
-    // private static function throwHere(Throwable $e): never
-    // {
-    //     // Get complete  backtrace
-    //     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS);
-    //     // Trova il primo frame che NON è interno al core
-    //     $caller = null;
-    //     foreach ($trace as $frame) {
-    //         if (
-    //             isset($frame['file']) &&
-    //             !str_contains($frame['file'], 'App/Core/DataLayer') &&
-    //             !str_contains($frame['file'], 'call_user_func_array')
-    //         ) {
-    //             $caller = $frame;
-    //             break;
-    //         }
-    //     }
+        $property = array_search($key, $this->columnMap(), true);
+        if (is_string($property) && $this->isDataPropertyName($property)) {
+            return $property;
+        }
 
-    //     // Prepara il testo d’origine solo se i dati sono disponibili
-    //     $origin = '';
-    //     if ($caller && isset($caller['file'], $caller['line'])) {
-    //         $origin = " (from {$caller['file']} line {$caller['line']})";
-    //     }
+        return null;
+    }
 
-    //     // Ri-lancia l’eccezione con contesto
-    //     throw new QueryBuilderException($e->getMessage() . $origin);
-    // }
+    private function isDataPropertyName(string $key): bool
+    {
+        foreach ($this->getDeclaredDataProperties() as $property) {
+            if ($property->getName() === $key) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private function markDirty(string $key, mixed $value): void
+    {
+        $original = $this->original[$key] ?? null;
+
+        if (array_key_exists($key, $this->original) && $original === $value) {
+            unset($this->dirty[$key]);
+            return;
+        }
+
+        $this->dirty[$key] = $value;
+    }
+
+    private function getStoredValue(string $key): mixed
+    {
+        if ($this->isDataPropertyName($key)) {
+            return $this->$key;
+        }
+
+        return $this->attributes[$key] ?? null;
+    }
+
+    private function castDynamicAttribute(string $key, mixed $value): mixed
+    {
+        $property = array_search($key, $this->columnMap(), true);
+        if (is_string($property)) {
+            return $this->castAttribute($property, $value);
+        }
+
+        return $value;
+    }
+
+    private function castAttribute(string $property, mixed $value): mixed
+    {
+        $cast = $this->casts()[$property] ?? $this->casts()[$this->getColumnName($property)] ?? null;
+
+        if ($cast === null || $value === null) {
+            return $value;
+        }
+
+        return match ($cast) {
+            'bool', 'boolean' => (bool) $value,
+            'int', 'integer' => (int) $value,
+            'float', 'double' => (float) $value,
+            'string' => (string) $value,
+            'array', 'json' => is_string($value) ? json_decode($value, true) ?? [] : (array) $value,
+            'date' => $value instanceof DateTimeInterface ? $value->format('Y-m-d') : (string) $value,
+            'datetime' => $value instanceof DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value,
+            default => $value,
+        };
+    }
 }

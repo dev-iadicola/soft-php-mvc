@@ -8,14 +8,13 @@ use App\Core\DataLayer\Model;
 
 class Contatti extends Model
 {
-    public function __construct()
-    {
-        $this->setTimestamps(false);
-        $this->setTable('contatti');
-    }
     protected string $table = 'contatti';
-
-    protected  array $fillable = ['nome', 'email', 'messaggio', 'created_at','typologie'];
+    protected bool $timestamps = false;
+    protected ?string $nome = null;
+    protected ?string $email = null;
+    protected ?string $messaggio = null;
+    protected ?string $created_at = null;
+    protected ?string $typologie = null;
 
 
     public function checkForm($post)

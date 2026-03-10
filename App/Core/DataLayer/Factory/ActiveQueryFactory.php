@@ -24,10 +24,10 @@ class ActiveQueryFactory
     public static function for(string $modelClass): ActiveQuery{
         $model = new $modelClass;
 
-        // metadata
-        $table = $model->table ?? throw new ModelStructureException("Missing table in: $modelClass");
-        $fillable = $model->fillable ?? [];
-        $timestampsExists = $model->timestamps;
+        // Read ORM metadata directly from the model's declared structure.
+        $table = $model->getTable() ?: throw new ModelStructureException("Missing table in: $modelClass");
+        $allowedColumns = $model->columns();
+        $timestampsExists = $model->timestamps ?? true;
 
 
         // Runtime (global)
@@ -41,9 +41,9 @@ class ActiveQueryFactory
         $hydrator->setModelClass($modelClass);
         
 
-        // config builder
+        // Configure the builder so mass assignment follows the typed model properties.
         $builder->from($table);
-        $builder->setFillable($fillable);
+        $builder->setAllowedColumns($allowedColumns);
         $builder->timestampsExists($timestampsExists);
        
 

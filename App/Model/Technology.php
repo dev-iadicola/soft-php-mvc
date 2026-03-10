@@ -5,9 +5,6 @@ use App\Core\DataLayer\Model;
 
 class Technology extends Model{
     protected string $table = 'technologies';
-
-    protected array $fillable = [
-        'id',
-        'name',
-    ];
+    protected int|string|null $id = null;
+    protected ?string $name = null;
 }

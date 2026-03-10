@@ -9,7 +9,8 @@ class Skill extends Model
 {
 
     protected string $table = 'skills';
-
-    protected array $fillable = ['id', 'title', 'description'];
+    protected int|string|null $id = null;
+    protected ?string $title = null;
+    protected ?string $description = null;
 
 }

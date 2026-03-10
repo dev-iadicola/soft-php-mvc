@@ -15,21 +15,25 @@ use DateTime;
      * permettendoci di rispamiare tempo
      * 
      */
-     protected string $table = 'tokens'; 
+     protected string $table = 'tokens';
+     public string $primaryKey = 'token';
 
-     protected array $fillable = [
-        'email',
-        'token',
-        'used',
-        'created_at',
-        'expiry_date',
-     ];
+     protected ?string $email = null;
+     protected ?string $token = null;
+     protected ?bool $used = null;
+     protected ?string $created_at = null;
+     protected ?string $expiry_date = null;
+
+     protected function casts(): array
+     {
+        return ['used' => 'bool'];
+     }
 
      public static function generateToken(string $email){
         $token = bin2hex(random_bytes(100));
         $dataForToken = ['email' => $email, 'token' => $token];
-        
-        parent::save($dataForToken);
+
+        Token::query()->create($dataForToken);
 
         return Token::query()->where('token', $token)->first();
      }

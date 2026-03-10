@@ -8,7 +8,8 @@ use App\Core\Exception\QueryBuilderException;
 
 abstract class AbstractBuilder implements QueryBuilderInterface
 {
-    protected array $fillable = []; // Attributi che possono essere assegnati in massa
+    // Only declared model columns should survive mass-assignment filtering.
+    protected array $allowedColumns = [];
     // Binding params
     protected array $bindings = [];
 
@@ -36,9 +37,12 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     public function timestampsExists(bool $bool): void
     {
         $this->timestamps = $bool;
-        if( $this->timestamps) {
-            $this->systemColumns[] = [];
-         
+        if (!$this->timestamps) {
+            // When timestamps are disabled, remove created_at/updated_at from system columns.
+            $this->systemColumns = array_values(array_diff(
+                $this->systemColumns,
+                ['created_at', 'updated_at']
+            ));
         }
     }
  
@@ -73,22 +77,24 @@ abstract class AbstractBuilder implements QueryBuilderInterface
      */
     protected function attributeExist(string $name): bool
     {
-        return in_array($name, $this->fillable);
+        return in_array($name, $this->allowedColumns, true);
     }
 
-    public function getFillable(): array
+    public function getAllowedColumns(): array
     {
-        return $this->fillable;
+        return $this->allowedColumns;
     }
 
     public function fill(array $values): array
     {
-        $fillable = $this->fillable;
+        if ($this->allowedColumns === []) {
+            return $values;
+        }
 
-        // Filter the values to keep only those defined in $fillable
-        return $filteredValues = array_filter(
+        // Drop keys that are not part of the model schema exposed to the query builder.
+        return array_filter(
             $values,
-            fn($key) => in_array($key, $fillable),
+            fn($key) => in_array($key, $this->allowedColumns, true),
             ARRAY_FILTER_USE_KEY
         );
     }
@@ -106,14 +112,20 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     }
 
     /**
-     * Summary of setFillable
-     * Utilizzata solo quando viene instanziato il queryBuilder nella classe Model, precisamente nel metodo boot(). 
-     * @param array $fillable
+     * Summary of setAllowedColumns
+     * Utilizzata quando il query builder riceve lo schema persistibile dal model.
+     * @param array $allowedColumns
      * @return void
      */
+    public function setAllowedColumns(array $allowedColumns): void
+    {
+        // Preserve the order from the model so generated INSERT statements stay predictable.
+        $this->allowedColumns = $allowedColumns;
+    }
+
     public function setFillable(array $fillable): void
     {
-        $this->fillable = $fillable;
+        $this->setAllowedColumns($fillable);
     }
 
     public function setBinding(string $key, $value): string

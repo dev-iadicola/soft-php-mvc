@@ -57,6 +57,9 @@ class ModelHydrator
         foreach ($row as $key => $value) {
             $model->setAttribute($key, $value);
         }
+
+        $model->syncOriginal();
+
         return $model;
     }
 

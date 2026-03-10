@@ -1,155 +1,114 @@
-# ORM Layer — Architecture & Usage Guide
+# ORM Layer
 
-This ORM is a lightweight, fully custom implementation inspired by modern frameworks,  
-but designed with **strict separation of concerns**, **type-safety**, and **zero magic**.
+This ORM uses typed model properties as the canonical schema for persistence.
+The framework no longer relies on `fillable`.
 
-Unlike classic Active Record ORMs, this architecture introduces an intermediate layer called **ActiveQuery**,  
-which cleanly separates:
+## Architecture
 
-- **query building**  
-- **query execution**  
-- **model hydration**
+The runtime is split into focused components:
 
-This results in a predictable, testable, extensible ORM.
+- `Model`: table metadata, typed properties, casting, dirty tracking
+- `ActiveQuery`: fluent query API plus create/update/save coordination
+- `QueryBuilder`: SQL generation and binding management
+- `QueryExecutor`: prepared statement execution through PDO
+- `ModelHydrator`: row-to-model hydration
 
----
+## Typed Models
 
-# 🔷 Architecture Overview
-
-The ORM is composed of five core components:
-
-Model → OrmEngine → ActiveQuery → QueryBuilder → QueryExecutor → PDO
-│
-ModelHydrator
-
-### **Model**
-Represents a table and provides a static API (`User::make()->where()->first()`).
-
-### **OrmEngine**
-Bootstraps the ORM stack for a model (QueryBuilder, Executor, Hydrator).  
-Does NOT execute queries directly anymore.
-
-### **ActiveQuery**
-The core worker:
-- holds the QueryBuilder
-- executes SQL through QueryExecutor
-- hydrates results through ModelHydrator
-
-### **QueryBuilder**
-Fluent SQL builder (select, where, joins, limit, …).
-
-### **QueryExecutor**
-Runs prepared statements safely with PDO.
-
-### **ModelHydrator**
-Transforms raw DB rows into Model instances.
-
----
-
-# 🔷 Example Model
+Each model declares its persisted columns as typed properties.
+Framework properties such as `$table`, `$primaryKey`, `$timestamps`, `$attributes`, `$original`, and `$dirty` are excluded automatically.
 
 ```php
-class User extends Model
+<?php
+
+namespace App\Model;
+
+use App\Core\DataLayer\Model;
+
+class Article extends Model
 {
-    protected string $table = 'users';
-    protected array $fillable = ['name', 'email', 'password'];
+    protected string $table = 'articles';
+    protected int|string|null $id = null;
+    protected ?string $title = null;
+    protected ?string $subtitle = null;
+    protected ?string $created_at = null;
 }
-User::make()
-    ->create([
-        'name' => 'Luigi',
-        'email' => 'luigi@example.com'
-    ]);
-    // SELECT
-    $users = User::make()
-    ->select(['id', 'name'])
-    ->where('active', 1)
-    ->orderBy('created_at', 'DESC')
-    ->limit(5)
-    ->get();
-    // UPDATE
-    User::make()
-    ->where('id', 1)
-    ->update(['name' => 'Luigi Updated'])
-    ->execute();
-    // DELETE
-    User::make()
-    ->where('id', 3)
-    ->delete()
-    // ADDITIONAL CLAUSES 
-    User::make()
-    ->whereBetween('age', 18, 30)
-    ->whereNotNull('email')
-    ->groupBy('city')
-    ->having('COUNT(id)', '>', 5)
-    ->orderBy('created_at', 'DESC')
-    ->limit(10)
-    ->offset(20)
-    ->get();
-```
-___
-
-| Pattern                     | Role                                            |
-| --------------------------- | ----------------------------------------------- |
-| **ActiveQuery**             | Encapsulates QueryBuilder + Executor + Hydrator |
-| **Builder Pattern**         | Fluent SQL construction                         |
-| **Data Mapper (partial)**   | Hydration separate from Models                  |
-| **Active Record (partial)** | Model defines table + fillable                  |
-| **Dependency Injection**    | Engine injects Builder/Executor/Hydrator        |
-| **Separation of Concerns**  | Clean architectural layering                    |
-
-```TEXT
-User::make()->where('id', 1)->first()
-        │
-        ▼
-Model (boot + table + fillable)
-        │
-        ▼
-OrmEngine::Make()
-        │
-        ▼
-ActiveQuery
-│       │
-│    QueryBuilder → builds SQL
-│    QueryExecutor → runs PDO safely
-│    ModelHydrator → returns model objects
-│
-▼
-Result (User instance or re-call ActiveQuery)
-
 ```
 
-# Why This Architecture?
+`columns(): array` is the canonical API for discovered DB columns.
+`getPersistableColumns()` remains as a compatibility alias.
 
+## Column Mapping
 
+When a PHP property cannot safely match the DB column name, override `columnMap()`.
 
-- Cleaner: No magic static calls directly executed
+```php
+protected function columnMap(): array
+{
+    return ['migrationTable' => 'migration_table'];
+}
+```
 
-- Testable: Each component has a single responsibility
+Hydration and serialization accept both the PHP property name and the mapped DB column name.
 
-- Predictable: QueryBuilder has no side effects
+## Casting
 
-- Extensible: Easy to add relations, caching, different SQL dialects
+Models may define casts for typed assignment and hydration.
 
-- Compared to Doctrine:
+```php
+protected function casts(): array
+{
+    return [
+        'selected' => 'bool',
+        'download' => 'int',
+        'meta' => 'json',
+    ];
+}
+```
 
-- Lighter
+Supported casts:
 
-- More direct control
+- `bool` / `boolean`
+- `int` / `integer`
+- `float` / `double`
+- `string`
+- `array` / `json`
+- `date`
+- `datetime`
 
-- No metadata overhead
+## Persistence Semantics
 
-- Closer to raw SQL, but safer
+`save()` now uses dirty tracking:
 
-# Work in Progress (WIP)
+- new models insert only changed attributes
+- existing models update only dirty attributes
+- unchanged persisted models do not issue an update
 
-## This ORM is functional but still under development.
+Hydrated models call `syncOriginal()` automatically, so a freshly loaded model starts clean.
 
-### Pending features:
-- toInsert() / toUpdate() / toDelete() finalization
-- Unified insert/update/delete execution through ActiveQuery
-- Relations (hasOne / hasMany / belongsTo)
-- Schema validator improvements
-- Query caching
-- Batch operations
+Useful APIs:
 
+- `isDirty(?string $key = null): bool`
+- `getDirtyAttributes(): array`
+- `getAttributesForInsert(): array`
+- `getAttributesForUpdate(): array`
+- `syncOriginal(): static`
 
+## Query Usage
+
+```php
+$articles = Article::query()
+    ->where('title', '!=', '')
+    ->orderBy('created_at', 'DESC')
+    ->get();
+
+$article = new Article();
+$article->setAttribute('title', 'Typed ORM');
+$article->save();
+```
+
+## Notes
+
+- Unknown columns still fall back to the dynamic `$attributes` bag.
+- Nullable properties should be declared nullable in PHP when the DB column allows `NULL`.
+- If the database provides defaults, avoid touching the property unless you want to override that default during insert.

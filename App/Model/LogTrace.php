@@ -11,8 +11,10 @@ class LogTrace extends Model
     protected string $table = 'logs';
 
     protected bool $timestamps = false;
-
-    protected array $fillable = ['user_id', 'last_log', 'indirizzo', 'device'];
+    protected int|string|null $user_id = null;
+    protected ?string $last_log = null;
+    protected ?string $indirizzo = null;
+    protected ?string $device = null;
 
     public static function ceateLog(int $id)
     {

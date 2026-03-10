@@ -10,16 +10,13 @@ class Article extends Model
 {
 
     protected string $table = 'articles';
-
-    protected array $fillable = [
-        'id',
-        'title',
-        'subtitle',
-        'overview',
-        'img',
-        'link',
-        'created_at'
-    ];
+    protected int|string|null $id = null;
+    protected ?string $title = null;
+    protected ?string $subtitle = null;
+    protected ?string $overview = null;
+    protected ?string $img = null;
+    protected ?string $link = null;
+    protected ?string $created_at = null;
 
    
 }

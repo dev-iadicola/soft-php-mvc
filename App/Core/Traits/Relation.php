@@ -16,8 +16,8 @@ trait Relation {
     }
 
     public function belongsTo($model, $foreignKey = null, $localKey = null) {
-        $localKey = $localKey ?: $this->getKeyId();
-        return $model::query()->where($foreignKey, $localKey)->first();
+        $foreignKey = $foreignKey ?: $this->getKeyId();
+        return $model::query()->where($localKey ?: 'id', $this->{$foreignKey})->first();
     }
     public function belongsToMany($related, $table, $foreignKey, $relatedKey) {
         return $related::query()->join($table, $table . '.' . $foreignKey, '=', $this->getTable() . '.' . $relatedKey)

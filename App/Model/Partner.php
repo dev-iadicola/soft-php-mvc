@@ -7,10 +7,7 @@ class Partner extends Model
 {
 
     protected string $table = 'partners';
-
-    protected array $fillable = [
-        'id',
-        'name',
-        'website'
-    ];
+    protected int|string|null $id = null;
+    protected ?string $name = null;
+    protected ?string $website = null;
 }

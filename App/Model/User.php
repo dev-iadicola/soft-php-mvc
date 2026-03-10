@@ -4,20 +4,18 @@ namespace App\Model;
 
 use App\Model\LogTrace;
 use App\Core\DataLayer\Model;
-use App\Traits\Relation;
 
 class User extends Model   
 {
     protected string $table = 'users';
-    protected array $fillable = [
-        'email',
-        'password',
-        'token',
-        'indirizzo',
-        'last_log',
-        'log_id',
-        'crerated_at'
-    ];
+    protected int|string|null $id = null;
+    protected ?string $email = null;
+    protected ?string $password = null;
+    protected ?string $token = null;
+    protected ?string $indirizzo = null;
+    protected ?string $last_log = null;
+    protected int|string|null $log_id = null;
+    protected ?string $created_at = null;
 
     public static function changePassword(string $password, string $email)
     {

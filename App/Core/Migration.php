@@ -9,12 +9,10 @@ class Migration extends Model implements ModelSchemaInterface
 {
   
     protected string $table = 'migrations';
-    protected array $fillable = [
-        'table',
-        'json_sql',
-        'created',
-        'updated',
-    ];
+    protected ?string $migration_table = null;
+    protected ?string $json_sql = null;
+    protected ?string $created = null;
+    protected ?string $updated = null;
 
     public static function schema(SchemaBuilder $schema)
     {
@@ -23,6 +21,11 @@ class Migration extends Model implements ModelSchemaInterface
             ->json('json_sql')
             ->timestamps()
             ->build();
+    }
+
+    protected function columnMap(): array
+    {
+        return ['migration_table' => 'table'];
     }
 
     public static function setMigration(string $table, array $columns)

@@ -27,21 +27,12 @@ trait Attributes
         
     public function __get($key)
     {
-        // Se esiste nell'array $attributes
-        if (array_key_exists($key, $this->attributes)) {
-            return $this->attributes[$key];
+        // Declared typed properties take priority over the dynamic $attributes bag.
+        if (method_exists($this, 'getAttribute')) {
+            return $this->getAttribute($key);
         }
-
-        // chekc se essiste come prorp
-        if (property_exists($this, $key)) {
-            return $this->$key;
-        }
-        
 
         return $this->attributes[$key] ?? null;
-
-        // $class = static::class;
-        // throw new \Exception("Undefined property: {$class}::\${$key}");
     }
 
     public function __set($key, mixed $val)
@@ -51,12 +42,11 @@ trait Attributes
             return $this->$key($val);
         }
 
-        // Proprietà dichiarata nella classe
-        if (property_exists($this, $key)) {
-            $this->$key = $val;
+        if (method_exists($this, 'setAttribute')) {
+            $this->setAttribute($key, $val);
             return;
         }
-        // ! NOT CHANGE IT WORK
+
         $this->attributes[$key] = $val;
     }
 }

@@ -334,10 +334,16 @@ class ActiveQuery
         try {
             $this->builder->insert($values);
             $this->executor->prepareAndExecute($this->builder->toInsert(), $this->builder->getBindings());
+            $primaryKey = $this->hydrator->getModel()->primaryKey;
             $id = $this->executor->lastInsertId();
+            $lookupId = ($id !== false && $id !== '0' && $id !== 0) ? $id : ($values[$primaryKey] ?? null);
             $this->builder->reset();
 
-            return $this->find($id);
+            if ($lookupId === null) {
+                throw new ModelException("Unable to resolve primary key after create for model {$this->hydrator->getModel()}");
+            }
+
+            return $this->find($lookupId);
         } catch (ModelException $e) {
             throw new ModelException($e . ' for Model ' . $this->hydrator->getModel());
         }
@@ -372,18 +378,32 @@ class ActiveQuery
 
     public function save(Model $model): void
     {
+        if ($model->exists()) {
+            $dirty = $model->getAttributesForUpdate();
 
-        // verify the model exists for decided update or create
-
-        if ($this->exists()) {
+            if ($dirty === []) {
+                return;
+            }
 
             $this->where($model->primaryKey, $model->getAttribute($model->primaryKey));
-
-            $this->update($model->getAttribute());
-        } else {
-            $this->create($model->getAttribute());
+            $this->update($dirty);
+            $model->syncOriginal();
+            return;
         }
 
+        $payload = $model->getAttributesForInsert();
+
+        if ($payload === []) {
+            return;
+        }
+
+        $created = $this->create($payload);
+
+        foreach ($created->toArray() as $key => $value) {
+            $model->setAttribute($key, $value);
+        }
+
+        $model->syncOriginal();
     }
 
     /** DELETE */

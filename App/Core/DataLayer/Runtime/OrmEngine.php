@@ -90,7 +90,7 @@ class OrmEngine
     }
     public function setFillable(array $fillable): void
     {
-        $this->queryBuilder->setFillable($fillable);
+        $this->queryBuilder->setAllowedColumns($fillable);
     }
 
 

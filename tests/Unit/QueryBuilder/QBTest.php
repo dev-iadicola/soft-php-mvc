@@ -12,7 +12,7 @@ class QBTest extends TestCase
         // QueryBuilder “vuoto”, nessuna connessione
         $this->qb = new MySqlBuilder();
         $this->qb->from('users');
-        $this->qb->setFillable(['id', 'name', 'active', 'p.created_at']);
+        $this->qb->setAllowedColumns(['id', 'name', 'active', 'p.created_at']);
     }
 
     public function testSimpleSelect()

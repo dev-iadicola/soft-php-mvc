@@ -53,7 +53,7 @@ interface SqlExecutableInterface
     public function getBindings(): array|string;
     public function fill(array $array):array;
     public function reset():void;
-    public function setFillable(array $values);
+    public function setAllowedColumns(array $values): void;
+    public function setFillable(array $values): void;
 }
-
 
