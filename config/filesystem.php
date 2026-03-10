@@ -1,5 +1,6 @@
 <?php
 return [
+    'public_base' => '/storage/app/public',
     'disks' => [
         'public' => [
             'drive'      => 'local',

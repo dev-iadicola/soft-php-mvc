@@ -95,7 +95,7 @@ if ( ! function_exists(function: 'assets')) {
 if ( ! function_exists('validateImagePath')) {
     function validateImagePath(string $path, string $fallback)
     {
-        if (file_exists(Storage::make('public')->path($path))) {
+        if (file_exists(baseRoot() . $path)) {
             return $path;
         }
 
