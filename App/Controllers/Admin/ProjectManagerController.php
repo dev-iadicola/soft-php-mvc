@@ -48,6 +48,9 @@ class ProjectManagerController extends AdminController
 
         $message = 'Progetto salvato con successo';
 
+        // remove img from data if no new file uploaded, keep existing
+        unset($data['img']);
+
         if ($request->hasFile('img')) {
             $file = $request->file('img');
             $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
@@ -96,6 +99,11 @@ class ProjectManagerController extends AdminController
         if ($valid->fails()) {
             return redirect()->back()->withError($valid->implodeError());
         }
+
+        if (!$request->hasFile('img')) {
+            return redirect()->back()->withError('Immagine obbligatoria per un nuovo progetto.');
+        }
+
         // insert image to storage
         $file = $request->file('img');
 
