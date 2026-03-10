@@ -93,13 +93,13 @@ if ( ! function_exists(function: 'assets')) {
     }
 }
 if ( ! function_exists('validateImagePath')) {
-    function validateImagePath(string $path, string $fallback)
+    function validateImagePath(?string $path, string $fallback)
     {
-        if (file_exists(baseRoot() . $path)) {
+        if ($path && file_exists(baseRoot() . $path)) {
             return $path;
         }
 
-        return $fallback;
+        return 'https://picsum.photos/seed/' . abs(crc32($path ?? uniqid())) . '/600/400';
     }
 }
 
