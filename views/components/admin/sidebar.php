@@ -72,6 +72,12 @@
             </div>
         </div>
     </li>
+    <li class="nav-item my-2">
+        <a href="/admin/terminal" class="nav-link text-white <?php echo isActivePage('/admin/terminal', $page) ?>">
+            <i class="fa fa-terminal me-2"></i>
+            Terminal
+        </a>
+    </li>
     <li class="nav-item my-5">
         <form action="POST" method="{{route('logout')}}" class="text-white text-decoration-none no-underline" aria-current="page">
             <svg class="bi me-2" width="16" height="16">

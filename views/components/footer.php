@@ -1,41 +1,93 @@
-<footer class=" text-light py-1 mt-5">
-  <div class="container mt-4">
-    <!-- Navbar -->
-    <ul class="nav justify-content-center mb-2 gap-3">
-      <li class="nav-item">
-        <a href="/" class="nav-link text-white lead">Home</a>
-      </li>
-      <li class="nav-item">
-        <a href="/contatti" class="nav-link  text-white lead  ">Contact</a>
-      </li>
-      <li class="nav-item">
-        <a href="/certificati" class="nav-link  text-white lead">Professional Courses</a>
-      </li>
-      <li class="nav-item">
-        <a href="/laws" class="nav-link  text-white lead">Cookie Policy & Terms</a>
-      </li>
-      <li class="nav text-white">
-        <a href="/portfolio" class="nav-link  text-white lead">About</a>
-      </li>
-    </ul>
+<style>
+    .site-footer {
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border);
+        padding: 2rem 0 1.5rem;
+        margin-top: 3rem;
+    }
 
-    <!-- Social -->
-    <ul class="nav justify-content-center mb-4">
-      <li class="nav-item mx-2">
-        <a href="https://www.linkedin.com/in/luigi-iadicola/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
-          <i class="fa fa-linkedin me-2"></i>
-          <span class="d-none d-md-inline">LinkedIn</span>
-        </a>
-      </li>
-      <li class="nav-item mx-2">
-        <a href="https://github.com/dev-iadicola/" target="_blank" class="btn btn-outline-light rounded-pill d-flex align-items-center">
-          <i class="fa fa-github me-2"></i>
-          <span class="d-none d-md-inline">GitHub</span>
-        </a>
-      </li>
-    </ul>
+    .site-footer__nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.3rem 1rem;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.2rem;
+    }
 
-    <!-- Copyright -->
-    <p class="text-center text-secondary mb-0">© 2022 - {{ date('Y') }} LS Iadicola, Software Developer</p>
-  </div>
+    .site-footer__nav a {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: color 0.2s;
+    }
+
+    .site-footer__nav a:hover {
+        color: var(--accent-green);
+    }
+
+    .site-footer__social {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+        list-style: none;
+        padding: 0;
+        margin: 0 0 1.2rem;
+    }
+
+    .site-footer__social a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.8rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        text-decoration: none;
+        transition: all 0.2s;
+    }
+
+    .site-footer__social a:hover {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+    .site-footer__copy {
+        font-family: var(--font-mono);
+        font-size: 0.7rem;
+        color: var(--text-muted);
+        text-align: center;
+        margin: 0;
+    }
+</style>
+
+<footer class="site-footer">
+    <div class="container">
+        <ul class="site-footer__nav">
+            <li><a href="/">~/home</a></li>
+            <li><a href="/contatti">~/contatti</a></li>
+            <li><a href="/certificati">~/certificati</a></li>
+            <li><a href="/laws">~/cookie-policy</a></li>
+            <li><a href="/portfolio">~/portfolio</a></li>
+        </ul>
+
+        <ul class="site-footer__social">
+            <li>
+                <a href="https://www.linkedin.com/in/luigi-iadicola/" target="_blank" rel="noopener noreferrer">
+                    <i class="fa fa-linkedin" aria-hidden="true"></i> linkedin
+                </a>
+            </li>
+            <li>
+                <a href="https://github.com/dev-iadicola/" target="_blank" rel="noopener noreferrer">
+                    <i class="fa fa-github" aria-hidden="true"></i> github
+                </a>
+            </li>
+        </ul>
+
+        <p class="site-footer__copy">&copy; 2022-{{ date('Y') }} luigi.iadicola // software developer</p>
+    </div>
 </footer>

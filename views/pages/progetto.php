@@ -1,100 +1,171 @@
 <style>
-    .arrow-icon {
-        display: inline-block;
-        opacity: 1;
-        transform: translateX(0);
-        transition:
-            opacity 0.3s ease,
-            transform 0.3s ease,
-            width 0.3s ease,
-            margin 0.3s ease;
-        width: auto;
-        margin-right: 8px;
-    }
-    .text-block *{
-        color: black;
-    }
-    .arrow-icon.hidden-arrow {
-        opacity: 0;
-        transform: translateX(-10px);
-        width: 0;
-        margin-right: 0;
+    .proj-detail {
+        max-width: 900px;
+        margin: 0 auto;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         overflow: hidden;
+        margin-bottom: 2rem;
+    }
+
+    .proj-detail__bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .proj-detail__body {
+        padding: 1.5rem;
+    }
+
+    .proj-detail__title {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 1.2rem;
+    }
+
+    .proj-detail__title span {
+        color: var(--accent-green);
+    }
+
+    .proj-detail__image {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .proj-detail__image img {
+        max-width: 100%;
+        max-height: 320px;
+        object-fit: contain;
+    }
+
+    .proj-detail__label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-purple);
+        margin-bottom: 0.4rem;
+    }
+
+    .proj-detail__overview {
+        background: var(--bg-card);
+        border-left: 3px solid var(--accent-green);
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        color: var(--text-secondary);
+    }
+
+    .proj-detail__overview * {
+        color: var(--text-secondary);
+    }
+
+    .proj-detail__description {
+        font-size: 0.85rem;
+        line-height: 1.8;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
+        text-align: left;
+    }
+
+    .proj-detail__description * {
+        color: var(--text-secondary);
+    }
+
+    .proj-detail__links {
+        display: flex;
+        gap: 0.8rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .proj-detail__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-secondary);
+        transition: all 0.2s;
+    }
+
+    .proj-detail__link:hover {
+        border-color: var(--accent-green);
+        color: var(--accent-green);
+    }
+
+    .proj-detail__link--primary {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+    .proj-detail__link--primary:hover {
+        background: var(--accent-blue);
+        color: var(--bg-primary);
     }
 </style>
+
 <?php if ($project) { ?>
-<div class="card shadow-sm border-light rounded-lg bg-white overflow-hidden mb-4">
-  <div class="row g-0 align-items-center">
-
-    <!-- Immagine -->
-    <div class="col-md-4">
-      <img
-        src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-        class="img-fluid rounded-start object-fit-contain p-3"
-        alt="<?= $project->title ?>"
-      />
+<section class="proj-detail">
+    <div class="proj-detail__bar">
+        <i class="fa fa-folder-open-o"></i> <?= $project->title ?> — dettaglio
     </div>
+    <div class="proj-detail__body">
+        <h1 class="proj-detail__title"><span>&gt;</span> <?= $project->title ?></h1>
 
-    <!-- Contenuto -->
-    <div class="col-md-8 p-4">
-      <h1 class="fw-bold text-dark mb-2"><?= $project->title ?></h1>
+        <figure class="proj-detail__image">
+            <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+                 alt="<?= $project->title ?>" />
+        </figure>
 
-      <h5 class="fw-semibold mb-2">Descrizione</h5>
+        <div class="proj-detail__label">// sommario</div>
+        <div class="proj-detail__overview">
+            {{{ $project->overview }}}
+        </div>
 
-      <article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
-          {{ $project->overview }}
-      </article>
-      <article class="text-start text-secondary mb-4 lh-base text-block">
-        {{{ $project->description }}}
-      </article>
+        <div class="proj-detail__label">// descrizione</div>
+        <article class="proj-detail__description">
+            {{{ $project->description }}}
+        </article>
 
-      <div class="d-flex flex-wrap gap-3">
-        <?php if (!empty($project->link)) { ?>
-          <a
-          onmouseover="showArrow('detail-arrow-code')" onmouseleave="hideArrow('detail-arrow-code')"
-          href="<?= $project->link ?>"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="btn btn-dark text-white d-flex align-items-center gap-2 px-3">
-            <i class="fa fa-github"></i> Code
-          </a>
-        <?php } ?>
+        <nav class="proj-detail__links">
+            <?php if (! empty($project->link)) { ?>
+                <a href="<?= $project->link ?>"
+                   target="_blank" rel="noopener noreferrer"
+                   class="proj-detail__link">
+                    <i class="fa fa-github"></i> source
+                </a>
+            <?php } ?>
 
-        <?php if (urlExist($project->website)) { ?>
-          <a href="<?= $project->website ?>"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="btn btn-primary d-flex align-items-center gap-2 px-3">
-            <i class="fa fa-eye"></i> Website
-          </a>
-        <?php } ?>
-      </div>
+            <?php if (urlExist($project->website)) { ?>
+                <a href="<?= $project->website ?>"
+                   target="_blank" rel="noopener noreferrer"
+                   class="proj-detail__link proj-detail__link--primary">
+                    <i class="fa fa-external-link"></i> live
+                </a>
+            <?php } ?>
+        </nav>
     </div>
-  </div>
-</div>
+</section>
 <?php } ?>
 
-
-
 @include('pages.progetti')
-
-
-
-
-
-
-<script>
-    function showArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.remove('hidden-arrow');
-        }
-    }
-
-    function hideArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.add('hidden-arrow');
-        }
-    }
-</script>

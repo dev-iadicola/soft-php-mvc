@@ -2,7 +2,7 @@
 /** @deprecated use filesystem */
 return [
         'path' => baseRoot() . '/storage/',
-        'images' => baseRoot() . '/storage/app/public/images/',
+        'images' => baseRoot() . '/storage/images/',
         'mails' => baseRoot() . '/storage/mails/',
         'logs' => baseRoot() . '/storage/logs/',
         'cache' => baseRoot() . '/storage/cache/',

@@ -82,12 +82,11 @@ return [
     ],
     /**
      * Database driver.
-     * ! supperted drives for now: mysql, postgres
      * Reads the DRIVER value from the .env file to decide which
      * database adapter to load (MySQL, PostgreSQL, SQLite, etc.).
      * 
      */
     'db' => [
-        'driver' => env('DB_DRIVER'),
+        'driver' => env('DB_DRIVER','mysql'),
     ],
 ];

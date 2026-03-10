@@ -48,9 +48,8 @@ use App\Core\Enum\HttpActionType;
 
                 <div class="form-group">
                     <label for="img">Inserisci Nuova Immagine</label>
-                    <input 
-    <?= isset($project) && isset($project->img) ? '' : 'required' ?>
-                    type="file" 
+                    <input
+                    type="file"
                     accept="image/*" 
                     name="img" 
                     class="form-control" 

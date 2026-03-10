@@ -146,7 +146,7 @@ class View
         
         $originFilePath = $originFile;
         if (!file_exists($originFile)) {
-            $debugNameFile = str_replace(baseRoot(), '', $file);
+            $debugNameFile = str_replace(baseRoot(), '', $originFile);
             throw new RuntimeException("View file $debugNameFile not found... $message ");
         }
         // Read the file content

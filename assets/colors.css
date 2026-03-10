@@ -1,15 +1,13 @@
-.dodgerblu{
-    color: #1e90ff
+.dodgerblu {
+    color: var(--accent-blue);
 }
 
 .hover-text-white:hover {
-  color: white !important;
-  transition: color 1.2s ease;
+    color: var(--text-primary) !important;
+    transition: color 0.3s ease;
 }
 
 .hover-text-dark:hover {
-    color: black !important;
-    transition: color 1.2s ease;
-  }
-
-
+    color: var(--bg-primary) !important;
+    transition: color 0.3s ease;
+}

@@ -1,109 +1,309 @@
 <style>
-    .arrow-icon {
-        display: inline-block;
-        opacity: 1;
-        transform: translateX(0);
-        transition:
-            opacity 0.3s ease,
-            transform 0.3s ease,
-            width 0.3s ease,
-            margin 0.3s ease;
-        width: auto;
-        margin-right: 8px;
+    .projects-section {
+        margin-bottom: 2rem;
     }
 
-    .arrow-icon.hidden-arrow {
-        opacity: 0;
-        transform: translateX(-10px);
-        width: 0;
-        margin-right: 0;
+    .projects-section__header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid var(--border);
+    }
+
+    .projects-section__tag {
+        color: var(--accent-orange);
+        font-size: 0.75rem;
+    }
+
+    .projects-section__title {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .projects-section__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.2rem;
+    }
+
+    .proj-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
+    }
+
+    .proj-card:hover {
+        border-color: var(--accent-blue);
+        box-shadow: 0 4px 24px rgba(88, 166, 255, 0.08), 0 0 0 1px rgba(88, 166, 255, 0.1);
+        transform: translateY(-3px);
+    }
+
+    /* Tab bar */
+    .proj-card__tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.8rem;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text-muted);
+    }
+
+    .proj-card__tab-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .proj-card__tab-dot--red { background: #f85149; }
+    .proj-card__tab-dot--yellow { background: #d29922; }
+    .proj-card__tab-dot--green { background: #3fb950; }
+
+    .proj-card__tab-name {
+        margin-left: 0.3rem;
+        color: var(--text-secondary);
+    }
+
+    /* Image */
+    .proj-card__img-link {
+        display: block;
+        position: relative;
+        overflow: hidden;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+    }
+
+    .proj-card__img-link img {
+        display: block;
+        width: 100%;
+        height: 200px;
+        object-fit: contain;
+        padding: 0.75rem;
+        transition: transform 0.3s ease, filter 0.3s ease;
+    }
+
+    .proj-card__img-link:hover img {
+        transform: scale(1.05);
+        filter: brightness(0.8);
+    }
+
+    .proj-card__overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(13, 17, 23, 0.75);
+        color: var(--accent-green);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        opacity: 0;
+        transition: opacity 0.25s;
+    }
+
+    .proj-card__img-link:hover .proj-card__overlay {
+        opacity: 1;
+    }
+
+    /* Body */
+    .proj-card__body {
+        padding: 1rem 1.2rem 1.2rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+
+    .proj-card__title {
+        font-family: var(--font-display);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin: 0 0 0.4rem;
+    }
+
+    /* Tech badge */
+    .proj-card__tech {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+        background: rgba(188, 140, 255, 0.1);
+        color: var(--accent-purple);
+        border: 1px solid rgba(188, 140, 255, 0.2);
+        width: fit-content;
+        margin-bottom: 0.6rem;
+    }
+
+    .proj-card__overview,
+    .proj-card__overview * {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        flex: 1;
+        margin-bottom: 0.8rem;
+    }
+
+    /* Status line */
+    .proj-card__status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        margin-bottom: 0.8rem;
+    }
+
+    .proj-card__status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        box-shadow: 0 0 6px var(--glow-green);
+    }
+
+    .proj-card__status-text {
+        color: var(--accent-green);
+        font-weight: 600;
+    }
+
+    /* Actions */
+    .proj-card__actions {
+        display: flex;
+        gap: 0.6rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .proj-card__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.8rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-secondary);
+        background: transparent;
+        transition: all 0.2s;
+    }
+
+    .proj-card__btn:hover {
+        border-color: var(--accent-green);
+        color: var(--accent-green);
+        box-shadow: 0 0 8px var(--glow-green);
+    }
+
+    .proj-card__btn--primary {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
+    }
+
+    .proj-card__btn--primary:hover {
+        background: var(--accent-blue);
+        color: var(--bg-primary);
+        box-shadow: 0 0 10px var(--glow-blue);
+    }
+
+    .proj-card__btn--detail {
+        margin-left: auto;
+        border-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    .proj-card__btn--detail:hover {
+        background: var(--accent-orange);
+        color: var(--bg-primary);
+        border-color: var(--accent-orange);
+        box-shadow: 0 0 10px rgba(210, 153, 34, 0.2);
     }
 </style>
 
-    <div class="fade-in-section mt-5">
-        <div class="bg-white rounded">
-            <h3 class="text-center py-4 mb-5">PROJECTS</h3>
-        </div>
-
-        <div class="my-5">
-            <div class="row">
-                <?php foreach ($projects as $project) { ?>
-
-                    <div class="py-2 col-12 col-md-4 col-sm-6">
-                        <div class="card shadow border-primary h-100">
-
-                            <a href="/progetti/<?php echo urlencode($project->title) ?>" class="image-wrapper">
-                                <img class="card-img-top object-fit-contain border rounded"
-
-                                    src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-                                    alt="<?= strtoupper($project->title) ?>" />
-
-                                <!-- EFFETTO VISUALIZZA PROGETTO -->
-                                <div class="overlay-text">Apri</div>
-                            </a>
-
-                            <div class="card-body d-flex flex-column">
-                                <h5 class="card-title text-2xl font-weight-bold text-dark"><?= strtoupper($project->title) ?></h5>
-
-                                <p class="p-2 mx-3 border border-white shadow rounded-lg bg-dark text-white flex-grow-1">
-                                    {{ $project->overview }}
-                                </p>
-
-                                <div class="d-flex flex-wrap justify-content-around gap-3 py-2">
-                                    <?php if (!is_null($project->link)) { ?>
-                                        <a onmouseover="showArrow('arrow-<?= $project->id ?>-code')"
-                                            onmouseleave="hideArrow('arrow-<?= $project->id ?>-code')"
-                                            href="<?= $project->link ?>"
-                                            target="_blank" rel="noopener noreferrer"
-                                            class="btn bg-dark btn-sm d-flex align-items-center gap-2 p-0 px-3 text-dark hover-text-white">
-
-                                            <i class="fa fa-arrow-right arrow-icon hidden-arrow" id="arrow-<?= $project->id ?>-code" aria-hidden="true"></i>
-
-                                            <p class="border rounded px-2 text-white mt-3">
-                                                <i class="fa fa-github fa-x2" aria-hidden="true"></i>
-                                                Code
-                                            </p>
-                                        </a>
-                                    <?php } ?>
-                                    <?php if (!is_null($project->website)) { ?>
-                                        <a onmouseover="showArrow('arrow-<?= $project->id ?>-web')"
-                                            onmouseleave="hideArrow('arrow-<?= $project->id ?>-web')"
-                                            href="<?= $project->website ?>"
-                                            target="_blank" rel="noopener noreferrer"
-                                            class="btn btn-primary btn-sm d-flex align-items-center gap-2 p-0 px-3 text-primary hover-text-white">
-                                            <i class="fa fa-arrow-right arrow-icon hidden-arrow" id="arrow-<?= $project->id ?>-web" aria-hidden="true"></i>
-
-                                            <p class="border rounded px-2 text-white mt-3">
-                                                <i class="fa fa-eye" aria-hidden="true"></i>
-                                                WebSite
-                                            </p>
-                                        </a>
-                                    <?php } ?>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                <?php } ?>
-            </div>
-        </div>
+<section class="projects-section fade-in-section">
+    <div class="projects-section__header">
+        <span class="projects-section__tag">// projects</span>
+        <h3 class="projects-section__title">Progetti</h3>
     </div>
 
+    <div class="projects-section__grid">
+        <?php foreach ($projects as $project) { ?>
+            <article class="proj-card">
+                <div class="proj-card__tab">
+                    <span class="proj-card__tab-dot proj-card__tab-dot--red"></span>
+                    <span class="proj-card__tab-dot proj-card__tab-dot--yellow"></span>
+                    <span class="proj-card__tab-dot proj-card__tab-dot--green"></span>
+                    <span class="proj-card__tab-name"><?= $project->title ?></span>
+                </div>
 
-<script>
-    function showArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.remove('hidden-arrow');
-        }
-    }
+                <a href="/progetti/<?= urlencode($project->title) ?>" class="proj-card__img-link">
+                    <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+                         alt="<?= $project->title ?>" />
+                    <span class="proj-card__overlay">$ open --project</span>
+                </a>
 
-    function hideArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.add('hidden-arrow');
-        }
-    }
-</script>
+                <div class="proj-card__body">
+                    <h4 class="proj-card__title"><?= $project->title ?></h4>
+
+                    <?php if ($project->technology): ?>
+                        <span class="proj-card__tech">
+                            <i class="fa fa-code" aria-hidden="true"></i>
+                            <?= $project->technology->name ?? 'N/A' ?>
+                        </span>
+                    <?php endif; ?>
+
+                    <div class="proj-card__overview">{{{ $project->overview }}}</div>
+
+                    <div class="proj-card__status">
+                        <?php if (!is_null($project->website)): ?>
+                            <span class="proj-card__status-dot"></span>
+                            <span class="proj-card__status-text">online</span>
+                        <?php else: ?>
+                            <span class="proj-card__status-dot" style="background:var(--text-muted);box-shadow:none;"></span>
+                            <span>offline</span>
+                        <?php endif; ?>
+                    </div>
+
+                    <div class="proj-card__actions">
+                        <?php if (!is_null($project->link)) { ?>
+                            <a href="<?= $project->link ?>"
+                               target="_blank" rel="noopener noreferrer"
+                               class="proj-card__btn">
+                                <i class="fa fa-github" aria-hidden="true"></i> code
+                            </a>
+                        <?php } ?>
+                        <?php if (!is_null($project->website)) { ?>
+                            <a href="<?= $project->website ?>"
+                               target="_blank" rel="noopener noreferrer"
+                               class="proj-card__btn proj-card__btn--primary">
+                                <i class="fa fa-external-link" aria-hidden="true"></i> live
+                            </a>
+                        <?php } ?>
+                        <a href="/progetti/<?= urlencode($project->title) ?>"
+                           class="proj-card__btn proj-card__btn--detail">
+                            dettagli <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </a>
+                    </div>
+                </div>
+            </article>
+        <?php } ?>
+    </div>
+</section>
