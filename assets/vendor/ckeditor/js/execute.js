@@ -2,6 +2,8 @@ const syncEditors = (form) => {
     if (!form) {
         return;
     }
+
+    // sync
     form.querySelectorAll('textarea.editor').forEach((ta) => {
         const editor = ta.nextElementSibling;
         if (editor && editor.classList.contains('quill-editor')) {
