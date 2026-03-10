@@ -24,3 +24,4 @@ pint.json
 /.claude/*
 **/MEMORY.md
 /.codex-work/
+refactoring.md
