@@ -66,7 +66,7 @@
                 <div class="card card-body mt-2">
                     <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/settings', $page) ?>" href="/admin/settings">Impostazioni</a>
                     <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/password', $page) ?>" href="/admin/password">Cambia Password</a>
-                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/edit', $page) ?>" href="/admin/edit">Edit Profile</a>
+                    <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/edit-profile', $page) ?>" href="/admin/edit-profile">Edit Profile</a>
                     <a class="dropdown-item  text-dark<?php echo isActivePage('/admin/logs', $page) ?>" href="/admin/logs">Logs</a>
                 </div>
             </div>

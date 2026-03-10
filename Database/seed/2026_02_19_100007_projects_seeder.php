@@ -74,4 +74,44 @@ return Seeder::table('projects')
         'link' => 'https://github.com/dev-iadicola/appointment-scheduling---React',
         'img' => '/storage/images/Screenshot 2025-12-07 142523.png',
         'website' => 'https://dev-iadicola.github.io/appointment-scheduling---React/',
+    ])
+    ->row([
+        'title' => 'Multi-Marketplace Management System',
+        'overview' => 'Sistema di gestione multi-marketplace con integrazione eBay, Amazon SP-API e altri canali per sincronizzazione prodotti, stock, prezzi e ordini.',
+        'description' => "<h2><strong>Multi-Marketplace Management System</strong></h2><p>Sistema ERP per la gestione multi-canale di marketplace come <strong>eBay</strong>, <strong>Amazon</strong> e altri. Sviluppato con <strong>Laravel</strong>, <strong>React/TypeScript</strong> e <strong>Filament</strong>.</p><p>Il sistema gestisce la sincronizzazione di prodotti, livelli di stock, prezzi specifici per canale e ordini, con gestione errori, stato sync e job schedulati. Architettura modulare e scalabile.</p><h2><strong>Funzionalità</strong></h2><ul><li>Integrazione con API ufficiali eBay e Amazon SP-API</li><li>Sincronizzazione prodotti, stock, prezzi e ordini</li><li>Dashboard analitica e reportistica</li><li>Gestione errori e job schedulati</li></ul>",
+        'link' => null,
+        'img' => null,
+        'website' => null,
+    ])
+    ->row([
+        'title' => 'MDC Project - Schindler',
+        'overview' => 'Server di calcolo e reportistica per Schindler, a supporto dell\'installazione di ascensori terrestri e navali tramite modelli fisici ingegneristici.',
+        'description' => "<h2><strong>MDC Project — Schindler</strong></h2><p>Contributo al progetto MDC per <strong>Schindler</strong>, focalizzato su sistemi di ascensori per installazioni terrestri e navali.</p><p>Sviluppo di funzionalità backend custom a supporto di <strong>calcoli ingegneristici basati su modelli fisici</strong>. Generazione di report tecnici e output di calcolo utilizzati per valutare la fattibilità e i requisiti di installazione.</p><h2><strong>Tecnologie</strong></h2><ul><li>PHP (vanilla e Laravel)</li><li>Docker, Portainer, Nginx Proxy Manager</li></ul>",
+        'link' => null,
+        'img' => null,
+        'website' => null,
+    ])
+    ->row([
+        'title' => 'Healthcare Management System - Emodial',
+        'overview' => 'Sistema gestionale sanitario per Emodai, con supporto a workflow operativi e gestione dati sensibili in ambiente regolamentato.',
+        'description' => "<h2><strong>Healthcare Management System — Emodial</strong></h2><p>Sistema di gestione sanitaria sviluppato per <strong>Emodai</strong> presso Green Tech Solution S.R.L.</p><p>Il sistema supporta le operazioni quotidiane e la gestione dei dati in un ambiente regolamentato, con attenzione alla sicurezza dei dati sensibili e alla conformità normativa.</p><h2><strong>Tecnologie</strong></h2><ul><li>Spring Boot</li><li>Python (data processing)</li></ul>",
+        'link' => null,
+        'img' => null,
+        'website' => null,
+    ])
+    ->row([
+        'title' => 'Tourism Management & Data Analysis',
+        'overview' => 'Sistemi gestionali per il settore turistico con dashboard, moduli analitici e strumenti di analisi trend e dati.',
+        'description' => "<h2><strong>Tourism Management & Data Analysis</strong></h2><p>Sviluppo di sistemi gestionali per il <strong>settore turistico</strong> con focus su analisi dati e business intelligence.</p><p>Il progetto include dashboard interattive, moduli analitici e strumenti per l'analisi dei trend, progettati per fornire insight data-driven e supportare le decisioni aziendali.</p><h2><strong>Tecnologie</strong></h2><ul><li>Laravel, React/TypeScript, Filament</li><li>Dashboard e reportistica</li></ul>",
+        'link' => null,
+        'img' => null,
+        'website' => null,
+    ])
+    ->row([
+        'title' => 'Finance & Credit Management Systems',
+        'overview' => 'Sistemi di gestione finanziaria e creditizia sviluppati per Sagres S.p.A., con funzionalità custom per processi aziendali interni.',
+        'description' => "<h2><strong>Finance & Credit Management Systems</strong></h2><p>Sviluppo su sistemi di gestione finanziaria esistenti per <strong>Sagres S.p.A.</strong>, con focus su <strong>credit management</strong> e workflow finanziari.</p><p>Implementazione di funzionalità custom complesse basate su requisiti di business specifici, mirate a migliorare i processi aziendali interni e l'efficienza operativa.</p><h2><strong>Tecnologie</strong></h2><ul><li>PHP (vanilla e Laravel)</li><li>Vue.js, Delphi</li><li>Docker, Portainer</li></ul>",
+        'link' => null,
+        'img' => null,
+        'website' => null,
     ]);
