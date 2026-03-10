@@ -15,3 +15,12 @@ pint.json
 /.idea
 /.idea/*
 /.phpunit.cache/test-results
+/todo.md
+/task/
+/task/*
+/.task/
+/.task/*
+/.claude/
+/.claude/*
+**/MEMORY.md
+/.codex-work/
