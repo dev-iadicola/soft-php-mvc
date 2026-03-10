@@ -1,97 +1,167 @@
 <style>
-    .arrow-icon {
-        display: inline-block;
-        opacity: 1;
-        transform: translateX(0);
-        transition:
-            opacity 0.3s ease,
-            transform 0.3s ease,
-            width 0.3s ease,
-            margin 0.3s ease;
-        width: auto;
-        margin-right: 8px;
+    .project-detail {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
     }
-    .text-block *{
-        color: black;
+
+    .project-detail__header {
+        border-bottom: 2px solid #222;
+        padding-bottom: 0.75rem;
+        margin-bottom: 1.5rem;
     }
-    .arrow-icon.hidden-arrow {
-        opacity: 0;
-        transform: translateX(-10px);
-        width: 0;
-        margin-right: 0;
-        overflow: hidden;
+
+    .project-detail__title {
+        font-family: var(--font-playfair);
+        font-size: 2rem;
+        font-weight: 700;
+        color: #111;
+        margin: 0;
+        letter-spacing: -0.02em;
+    }
+
+    .project-detail__image {
+        border: 1px solid #ddd;
+        background: #fafafa;
+        padding: 1rem;
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .project-detail__image img {
+        max-width: 100%;
+        max-height: 320px;
+        object-fit: contain;
+    }
+
+    .project-detail__section-title {
+        font-family: var(--font-space-grotesk);
+        font-size: 0.85rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #555;
+        margin-bottom: 0.5rem;
+        border-bottom: 1px solid #e0e0e0;
+        padding-bottom: 0.25rem;
+    }
+
+    .project-detail__overview {
+        background: #f5f5f0;
+        border-left: 3px solid #333;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: #333;
+    }
+
+    .project-detail__overview * {
+        color: #333;
+    }
+
+    .project-detail__description {
+        font-size: 0.95rem;
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 2rem;
+        text-align: left;
+    }
+
+    .project-detail__description * {
+        color: #444;
+    }
+
+    .project-detail__links {
+        display: flex;
+        gap: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .project-detail__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        text-decoration: none;
+        border: 1px solid #333;
+        color: #333;
+        background: transparent;
+        transition: background 0.2s, color 0.2s;
+        letter-spacing: 0.03em;
+    }
+
+    .project-detail__link:hover {
+        background: #333;
+        color: #fff;
+    }
+
+    .project-detail__link--primary {
+        border-color: #1a56db;
+        color: #1a56db;
+    }
+
+    .project-detail__link--primary:hover {
+        background: #1a56db;
+        color: #fff;
+    }
+
+    .project-detail__separator {
+        border: none;
+        border-top: 1px solid #ccc;
+        margin: 3rem 0 2rem;
     }
 </style>
-<?php if ($project) { ?>
-<div class="card shadow-sm border-light rounded-lg bg-white overflow-hidden mb-4">
-  <div class="row g-0 align-items-center">
 
-    <!-- Immagine -->
-    <div class="col-md-4">
-      <img
-        src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-        class="img-fluid rounded-start object-fit-contain p-3"
-        alt="<?= $project->title ?>"
-      />
+<?php if ($project) { ?>
+<section class="project-detail">
+
+    <header class="project-detail__header">
+        <h1 class="project-detail__title"><?= $project->title ?></h1>
+    </header>
+
+    <figure class="project-detail__image">
+        <img
+            src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+            alt="<?= $project->title ?>"
+        />
+    </figure>
+
+    <div class="project-detail__section-title">Sommario</div>
+    <div class="project-detail__overview">
+        {{{ $project->overview }}}
     </div>
 
-    <!-- Contenuto -->
-    <div class="col-md-8 p-4">
-      <h1 class="fw-bold text-dark mb-2"><?= $project->title ?></h1>
-
-      <h5 class="fw-semibold mb-2">Descrizione</h5>
-
-      <article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
-          {{{ $project->overview }}}
-      </article>
-      <article class="text-start text-secondary mb-4 lh-base text-block">
+    <div class="project-detail__section-title">Descrizione</div>
+    <article class="project-detail__description">
         {{{ $project->description }}}
-      </article>
+    </article>
 
-      <div class="d-flex flex-wrap gap-3">
+    <nav class="project-detail__links">
         <?php if (!empty($project->link)) { ?>
-          <a
-          onmouseover="showArrow('detail-arrow-code')" onmouseleave="hideArrow('detail-arrow-code')"
-          href="<?= $project->link ?>"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="btn btn-dark text-white d-flex align-items-center gap-2 px-3">
-            <i class="fa fa-github"></i> Code
-          </a>
+            <a href="<?= $project->link ?>"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="project-detail__link">
+                <i class="fa fa-github"></i> Codice sorgente
+            </a>
         <?php } ?>
 
         <?php if (urlExist($project->website)) { ?>
-          <a href="<?= $project->website ?>"
-             target="_blank"
-             rel="noopener noreferrer"
-             class="btn btn-primary d-flex align-items-center gap-2 px-3">
-            <i class="fa fa-eye"></i> Website
-          </a>
+            <a href="<?= $project->website ?>"
+               target="_blank"
+               rel="noopener noreferrer"
+               class="project-detail__link project-detail__link--primary">
+                <i class="fa fa-external-link"></i> Sito web
+            </a>
         <?php } ?>
-      </div>
-    </div>
-  </div>
-</div>
+    </nav>
+
+    <hr class="project-detail__separator" />
+</section>
 <?php } ?>
 
-
-
 @include('pages.progetti')
-
-
-
-<script>
-    function showArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.remove('hidden-arrow');
-        }
-    }
-
-    function hideArrow(id) {
-        const arrow = document.getElementById(id);
-        if (arrow) {
-            arrow.classList.add('hidden-arrow');
-        }
-    }
-</script>
