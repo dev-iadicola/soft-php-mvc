@@ -32,6 +32,9 @@ body {
     font-style: normal;
     color: var(--color-text);
     background-color: azure;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
 }
 
 footer {
@@ -105,29 +108,6 @@ h1 {
     padding: 0;
 }
 
-.alert {
-    border: solid 1px gray;
-    border-radius: 10px;
-    padding: 10px 15px;
-    text-align: start;
-    margin: 10px;
-
-}
-
-.bg-success {
-    background-color: rgba(51, 160, 51, 0.786);
-    color: white;
-}
-
-body {
-    color: var(--color-text);
-    display: flex;
-    flex-direction: column;
-    text-align: center;
-}
-
-
-
 
 
 /* NAVBAR */
@@ -151,13 +131,13 @@ header {
 #menu.chiuso {
     z-index: 99;
     transform: translateX(100vw);
-    transition: all .5 ease-in-out;
+    transition: all .5s ease-in-out;
 }
 
 #menu.aperto {
     z-index: 10;
     transform: translateX(0vw);
-    transition: all .5 ease-in-out;
+    transition: all .5s ease-in-out;
     background-color: #cce4f7;
 }
 
@@ -308,18 +288,15 @@ ___________*/
     color: #6c757d;
 }
 
-/* OLD */
 .img-lenguage {
     background: linear-gradient(to right, rgba(213, 200, 200, 0.077), rgba(174, 169, 169, 0.104));
 }
-
-
-
 
 .img-lenguage img {
     width: 200px;
     height: 200px;
 }
+
 img:hover{
     cursor: pointer;
 }
@@ -336,29 +313,26 @@ img:hover{
     scrollbar-color: #757575 #f1f1f100;
 }
 
-
-
-/*      EFFECTS - combinato con js    */
-
+/* EFFECTS - combinato con js */
 .fade-in-section {
     opacity: 0;
     transform: translateX(-70%);
     transition: opacity 1.5s ease-in-out, transform 1s ease-in-out;
-   
 }
-/**/
 
 .fade-in-section.is-visible {
     opacity: 1;
     transform: translateX(0);
 }
+
 p {
-    color: var(--color-text)
+    color: var(--color-text);
 }
 
 article p {
     color: white;
 }
+
 p a{
    text-decoration: underline 3px dodgerblue;
    font-weight: 600;
@@ -424,47 +398,17 @@ ____________________________*/
         color: #155724;
     }
 
-    .text-center {
-        text-align: center;
-    }
-
-    .mt-5 {
-        margin-top: 3rem;
-    }
-
-    .mx-5 {
-        margin-left: 3rem;
-        margin-right: 3rem;
-    }
-
-    .fs-3 {
-        font-size: 1.75rem; /* Font-size per fs-3 (adatta a Bootstrap) */
-    }
-
-
-    /* BODY */
-     /* Definizione dell'animazione del gradiente */
-    
-    
-    /* Applicazione dell'animazione al background per schermi più grandi */
-    .animated-gradient {
+.animated-gradient {
     background-color: #c3cee6;
-    }
+}
 
-    /*SMARTPHONE */
-    
-    /* Disabilita l'animazione su schermi piccoli (smartphone) */
-    @media (max-width: 768px) {
-       
+@media (max-width: 768px) {
         #menu a{
             color: black;
         }
     }
 
-
- /**--------------
-    **    EFFETTI 
- **---------------**/
+/* EFFETTI */
 .on-hover {
     transition: transform 0.5s ease, box-shadow 0.5s ease;
     cursor: pointer;

@@ -11,9 +11,8 @@
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
 
 
-    <!-- ✅ Bootstrap 5 CSS -->
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SgOJa3DmI69IUzQ2PVdRZhwQ+dy64/BUtbMJw1MZ8t5HZApcHrRKUc4W0kG879m7" crossorigin="anonymous">
-
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
@@ -23,15 +22,13 @@
     <link rel="stylesheet" href="/assets/cards.css" />
     <link rel="stylesheet" href="/assets/effect.css" />
     <link rel="stylesheet" href="/assets/colors.css" />
-    <!-- CDN favicon -->
-
     <script src="/assets/lib.js" defer></script>
 </head>
 
 <body class="animated-gradient">
     <main style="min-height: 100vh;">
         <header>
-            <div id="menu-icon" class="">
+            <div id="menu-icon">
                 <span id="barra-1"></span>
                 <span id="barra-2"></span>
                 <span id="barra-3"></span>
@@ -62,11 +59,8 @@
     @include('components.footer')
     @include('components.popup-cookie')
 
-    <!-- Bootstrap + jQuery + Popper -->
+    <!-- jQuery + Bootstrap JS -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" integrity="sha384-cVKIPhGWiC2Al4u+LWgxfKTRIcfu0JTxR+EQDz/bgldoEyl4H0zUF0QKbrJ0EcQF" crossorigin="anonymous"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-k6d4wzSIapyDyv1kpU366/PK5hCdSbCRGRCMv+eplOQJWyd1fbcAu9OCUj5zNLiq"
         crossorigin="anonymous"></script>
