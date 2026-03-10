@@ -12,6 +12,7 @@ class TerminalController extends AdminController
         'seed',
         'migrate',
         'migrate:status',
+        'storage',
         'clear:cache',
     ];
 

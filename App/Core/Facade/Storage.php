@@ -31,7 +31,7 @@ class Storage
         $visibility = $disk['visibility'] ?? null;
 
         if ($visibility === 'public' || $diskName === 'public') {
-            $publicBase = Mvc::$mvc->config->filesystem['public_base'] ?? '/storage/app/public';
+            $publicBase = Mvc::$mvc->config->filesystem['public_base'] ?? '/storage';
             return rtrim($publicBase, '/') . '/' . $path;
         }
 
