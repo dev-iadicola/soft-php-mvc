@@ -47,7 +47,7 @@
                                 <h5 class="card-title text-2xl font-weight-bold text-dark"><?= strtoupper($project->title) ?></h5>
 
                                 <p class="p-2 mx-3 border border-white shadow rounded-lg bg-dark text-white flex-grow-1">
-                                    {{ $project->overview }}
+                                    {{{$project->overview }}}
                                 </p>
 
                                 <div class="d-flex flex-wrap justify-content-around gap-3 py-2">
