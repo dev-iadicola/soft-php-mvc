@@ -203,11 +203,13 @@ class StrTest extends TestCase
 
     public function testPlural(): void
     {
+        $this->assertSame('analyses', Str::plural('analysis'));
         $this->assertSame('articles', Str::plural('article'));
         $this->assertSame('technologies', Str::plural('technology'));
         $this->assertSame('buses', Str::plural('bus'));
         $this->assertSame('foxes', Str::plural('fox'));
         $this->assertSame('children', Str::plural('child'));
+        $this->assertSame('knives', Str::plural('knife'));
         $this->assertSame('sheep', Str::plural('sheep'));
         $this->assertSame('loaves', Str::plural('loaf'));
         $this->assertSame('', Str::plural(''));
@@ -215,10 +217,12 @@ class StrTest extends TestCase
 
     public function testSingular(): void
     {
+        $this->assertSame('analysis', Str::singular('analyses'));
         $this->assertSame('article', Str::singular('articles'));
         $this->assertSame('technology', Str::singular('technologies'));
         $this->assertSame('bus', Str::singular('buses'));
         $this->assertSame('child', Str::singular('children'));
+        $this->assertSame('knife', Str::singular('knives'));
         $this->assertSame('sheep', Str::singular('sheep'));
         $this->assertSame('loaf', Str::singular('loaves'));
         $this->assertSame('', Str::singular(''));
