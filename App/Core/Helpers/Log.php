@@ -2,6 +2,7 @@
 
 namespace App\Core\Helpers;
 
+use App\Core\Filesystem\Dir\StorageDir;
 use App\Core\Storage;
 use Throwable;
 use App\Mail\BrevoMail;
@@ -23,9 +24,7 @@ class Log
             return;
         }
 
-        // /App/Core/Helpers -> salgo di 3 livelli fino alla root del progetto
-        $base = dirname(__DIR__, 3);
-        $dir  = $base . '/storage/logs';
+        $dir = StorageDir::instance()->logs();
         
 
         if (!is_dir($dir)) {

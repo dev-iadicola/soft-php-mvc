@@ -5,4 +5,4 @@ require_once __DIR__ . '/vendor/autoload.php';
 Use App\Core\CLI\Kernel;
 
 $kernel = new Kernel();
-$kernel->handler($argv);
+$kernel->handle($argv);

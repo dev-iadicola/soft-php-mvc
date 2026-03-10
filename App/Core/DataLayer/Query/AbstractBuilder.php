@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\DataLayer\Query;
 
 
@@ -45,7 +47,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
             ));
         }
     }
- 
+
 
     public function toUpdate(): string
     {
@@ -63,16 +65,16 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     }
 
     //───────────────────────────────────────────────────────────────
-    //* SETTAGGIO DI BASE 
+    // SETTERS AND GETTERS
     //───────────────────────────────────────────────────────────────
     #region SETTERS AND GETTERS
     /**
      * Summary of attributeExist
      * @param string $name
      * @return bool
-     * Permette di verificare se un attributo esiste nell'array $attribute, molto utile per evitare errori 
+     * Permette di verificare se un attributo esiste nell'array $attribute, molto utile per evitare errori
      * quando si accede a proprietà dinamiche.
-     * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi 
+     * Questa funzione è utilizzata nei metodi __get e __set per garantire che gli attributi siano validi prima di accedervi
      * o modificarli.
      */
     protected function attributeExist(string $name): bool
@@ -134,7 +136,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     }
 
     // * ___________________________________________________
-    #region GETTER 
+    #region GETTER
     // * ___________________________________________________
 
     public function getNameTable(): string|null
@@ -144,21 +146,21 @@ abstract class AbstractBuilder implements QueryBuilderInterface
 
 
     // * ___________________________________________________
-    #region BINDING     
+    #region BINDING
     // * ___________________________________________________
     public function getBindings(?string $key = null): array|string
     {
         return is_null($key) ? $this->bindings : $this->bindings[$key];
     }
 
-    protected function AddBind(?string $val): mixed
+    protected function addBind(mixed $val): mixed
     {
         $key = ":p_" . ++$this->paramCounter;
         $this->bindings[":p_" . $this->paramCounter] = $val;
         return $key;
     }
 
-    
+
 
     // * ___________________________________________________
     #region GENERAL FUNCTION SQL
@@ -169,8 +171,8 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     // * ___________________________________________________
 
     /**
-     * @param array<string>|string $value Elenco dei campi da selezionare.
-     * @return static Ritorna l’istanza corrente per permettere chiamate fluide.
+     * @param array<string>|string $value Columns to select.
+     * @return static Fluent interface.
      */
     public function select(array|string $value): static
     {
@@ -194,7 +196,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     }
 
     // * ___________________________________________________
-    #region JOIN 
+    #region JOIN
     // * ___________________________________________________
 
     public function join(string $table, string $firstColumn, string $operator, string $secondColumn): static
@@ -219,7 +221,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
 
     /**
      * Summary of getPrefix
-     * add in the string 'WHERE' if the clauses where is emppty or 'AND' if the clause have string. 
+     * add in the string 'WHERE' if the clauses where is emppty or 'AND' if the clause have string.
      * @return string
      */
     protected function getPrefix(): string
@@ -229,17 +231,17 @@ abstract class AbstractBuilder implements QueryBuilderInterface
 
     /**
      * Summary of where
-     * @param string $columnName 
+     * @param string $columnName
      * @param mixed $conditionOrValueSQL operator or value if the operator is not specified
      * @param  mixed $value value of parameter for make operation
-     *  
+     *
      */
     public function where(string $columnName, mixed $conditionOrValue, mixed $value = null): static
     {
         if ($value === null) {
-            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->AddBind($conditionOrValue)} ";
+            $this->whereClause .= "{$this->getPrefix()} $columnName = {$this->addBind($conditionOrValue)} ";
         } else {
-            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->AddBind($value)} ";
+            $this->whereClause .= "{$this->getPrefix()} $columnName $conditionOrValue {$this->addBind($value)} ";
         }
         return $this;
     }
@@ -247,7 +249,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     public function whereNot(string $columnName, mixed $value): static
     {
 
-        $this->whereClause .= " {$this->getPrefix()} $columnName <> {$this->AddBind($value)} ";
+        $this->whereClause .= " {$this->getPrefix()} $columnName <> {$this->addBind($value)} ";
         return $this;
     }
     public function orWhere(string $column, mixed $conditionOrValue, mixed $value = null): static
@@ -274,28 +276,28 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     #region IN
     public function whereIn(string $column, array $values): static
     {
-        if (empty($values)) {
-            throw new QueryBuilderException("Array empty in whereIn() method for column $column ");
-        }
-        $placeholder = [];
-        foreach ($values as $value) {
-            $placeholder[] = $this->AddBind($value); // reutnr key p_$count
-        }
-        $inCluase = implode(', ', $placeholder);
-        $this->whereClause .= " $column {$this->getPrefix()} IN($inCluase)";
-        return $this;
+        return $this->buildWhereIn($column, $values, 'IN');
     }
+
     public function whereNotIn(string $column, array $values): static
     {
+        return $this->buildWhereIn($column, $values, 'NOT IN');
+    }
+
+    private function buildWhereIn(string $column, array $values, string $operator): static
+    {
         if (empty($values)) {
-            throw new QueryBuilderException("Array empty in whereIn() method for column $column ");
+            throw new QueryBuilderException("Array empty in {$operator} clause for column {$column}");
         }
-        $placeholder = [];
+
+        $placeholders = [];
         foreach ($values as $value) {
-            $placeholder[] = $this->AddBind($value); // reutnr key p_$count
+            $placeholders[] = $this->addBind($value);
         }
-        $inCluase = implode(', ', $placeholder);
-        $this->whereClause .= " $column {$this->getPrefix()} NOT IN($inCluase)";
+
+        $inClause = implode(', ', $placeholders);
+        $this->whereClause .= " {$this->getPrefix()} {$column} {$operator}({$inClause})";
+
         return $this;
     }
 
@@ -309,20 +311,20 @@ abstract class AbstractBuilder implements QueryBuilderInterface
      * @param array<string>|string $columns
      * @param string $direction
      * @throws \App\Core\Exception\QueryBuilderException
-     * 
+     *
      */
     public function orderBy(array|string $columns, string $direction = 'ASC'): static
     {
         // * It was removed because it will cause problems when you use join funcions
         // if (!empty($this->orderByClause)) throw new QueryBuilderException("You can't use OrderBy() more than once in the same query for model {$this->modelClass} ");
-        // * Check the columns 
+        // * Check the columns
         // * check the allowed direction
         $allowedDirections = ['ASC', 'DESC'];
         $direction = strtoupper(trim($direction));
         if (!in_array($direction, $allowedDirections, true)) {
             throw new QueryBuilderException("Invalid direction '$direction' in orderBy()");
         }
-        // costruzione della clausola orderBy.
+        // Build the ORDER BY clause.
         if (is_array($columns)) {
             $orderby = implode(', ', array_map(fn($col) => "$col $direction", $columns));
         } else {
@@ -334,15 +336,15 @@ abstract class AbstractBuilder implements QueryBuilderInterface
  #region grp by
 
     /**
-     * 
-     * @param string|array<string> $columns  
+     *
+     * @param string|array<string> $columns
      * @return static
      *
-     * 
+     *
      */
     public function groupBy(string|array $columns): static
     {
-        // Explude multiple useages
+        // Prevent multiple calls
         if (!empty($this->groupByClause)) {
             throw new QueryBuilderException("You can't use groupBy() more than once in the same query");
         }
@@ -350,11 +352,11 @@ abstract class AbstractBuilder implements QueryBuilderInterface
         return $this;
     }
     // * ___________________________________________________
-    #region HAVING 
+    #region HAVING
     // * ___________________________________________________
     public function having(string $column, string $operator, mixed $value): static
     {
-        $this->havingClause .= " HAVING {$column} {$operator} {$this->AddBind($value)} ";
+        $this->havingClause .= " HAVING {$column} {$operator} {$this->addBind($value)} ";
         return $this;
     }
     #region LIMIT and OFFSET
@@ -388,7 +390,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
         }
         $assignments = [];
         foreach ($filtered as $column => $value) {
-            $paramKey = $this->AddBind($value); // :p_1, :p_2, ecc.
+            $paramKey = $this->addBind($value); // :p_1, :p_2, ecc.
             $assignments[] = "{$column} = {$paramKey}";
         }
 
@@ -403,12 +405,12 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     // * ___________________________________________________
     public function whereBetween(string $column, string|int|float $min, string|int|float $max): static
     {
-        $this->whereClause .= " {$this->getPrefix()} {$column} BETWEEN {$this->AddBind($min)} AND {$this->AddBind($max)} ";
+        $this->whereClause .= " {$this->getPrefix()} {$column} BETWEEN {$this->addBind($min)} AND {$this->addBind($max)} ";
         return $this;
     }
     public function whereNotBetween(string $column, string|int|float $min, string|int|float $max): static
     {
-        $this->whereClause .= " {$this->getPrefix()} {$column} NOT BETWEEN {$this->AddBind($min)} AND {$this->AddBind($max)} ";
+        $this->whereClause .= " {$this->getPrefix()} {$column} NOT BETWEEN {$this->addBind($min)} AND {$this->addBind($max)} ";
         return $this;
     }
 
@@ -446,7 +448,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
         return $this->setClause . ';';
     }
 
-    public function toDelete(): string 
+    public function toDelete(): string
     {
         if (empty($this->table)) {
             throw new QueryBuilderException("DELETE error: no table defined.");

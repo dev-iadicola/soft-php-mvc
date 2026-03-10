@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\DataLayer\Runtime;
 
 use PDO;
@@ -18,16 +20,19 @@ class ORM
 
     private static string $driver;
 
-    public static function init(Pdo $pdo, string $drive){
+    public static function init(PDO $pdo, string $driver): void
+    {
         self::$pdo = $pdo;
-        self::$driver = $drive;
+        self::$driver = $driver;
     }
 
-    public static function getPDO(): PDO{
+    public static function getPDO(): PDO
+    {
         return self::$pdo;
     }
 
-    public static function getDrive():string{
+    public static function getDriver(): string
+    {
         return self::$driver;
     }
 

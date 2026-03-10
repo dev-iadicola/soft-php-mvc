@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\CLI\Commands;
 
+use App\Core\CLI\Stubs\StubGenerator;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
 
@@ -25,18 +28,11 @@ class MakeMigrationCommand implements CommandInterface
         $timestamp = date('Y_m_d_His');
         $fileName = "{$timestamp}_{$name}.php";
 
-        $migrationDir = getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'migration';
+        $filePath = getcwd() . '/Database/migration/' . $fileName;
 
-        if (!is_dir($migrationDir)) {
-            mkdir($migrationDir, 0755, true);
-        }
-
-        $stubPath = __DIR__ . '/../Stubs/migration.stub';
-        $stub = file_get_contents($stubPath);
-        $content = str_replace('{{TABLE}}', $table, $stub);
-
-        $filePath = $migrationDir . DIRECTORY_SEPARATOR . $fileName;
-        file_put_contents($filePath, $content);
+        StubGenerator::make('migration')
+            ->replace(['{{TABLE}}' => $table])
+            ->saveTo($filePath);
 
         Out::ln("Created migration: $fileName");
     }

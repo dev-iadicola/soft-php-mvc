@@ -93,8 +93,8 @@ class ActiveQuery
         return $this;
     }
 
-    // region FORM
-    public function form(string $table): static
+    // region FROM
+    public function from(string $table): static
     {
         $this->builder->from($table);
 
@@ -286,21 +286,6 @@ class ActiveQuery
         return $this->hydrator->one($row);
     }
 
-    // public function find(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC, bool $reset = false)
-    // {
-    //     $this->builder->reset();
-        
-    //     $this->builder->where($column, $id);
-    //     $row = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
-
-    //     return $this->hydrator->one($row);
-    //     if($reset){
-                
-    //     $this->builder->reset();
-
-    //     }
-    // }
-
     public function findOrFalse(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC): bool|Model
     {
         $this->builder->where($column, $id);
@@ -317,7 +302,7 @@ class ActiveQuery
 
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
     {
-        $rows = $this->executor->fetchAll($this->builder->tosql(), $this->builder->getBindings(), $fetchType);
+        $rows = $this->executor->fetchAll($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
         $this->builder->reset();
 
         return $this->hydrator->many($rows);
@@ -345,7 +330,7 @@ class ActiveQuery
 
             return $this->find($lookupId);
         } catch (ModelException $e) {
-            throw new ModelException($e . ' for Model ' . $this->hydrator->getModel());
+            throw new ModelException($e->getMessage() . ' for Model ' . $this->hydrator->getModel(), 0, $e);
         }
 
     }
@@ -353,7 +338,7 @@ class ActiveQuery
     /**
      * Update data in database
      *
-     * @param array<$colum => $value> $values
+     * @param array<string, mixed> $values
      *
      * @throws ModelException
      */
@@ -371,7 +356,7 @@ class ActiveQuery
 
             return $result !== false;
         } catch (ModelException $e) {
-            throw new ModelException($e . ' for Model ' . $this->hydrator->getModel());
+            throw new ModelException($e->getMessage() . ' for Model ' . $this->hydrator->getModel(), 0, $e);
         }
 
     }

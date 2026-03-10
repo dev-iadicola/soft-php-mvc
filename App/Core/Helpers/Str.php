@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Helpers;
 
+use App\Core\Filesystem\Dir\HelperLangDir;
+
 /**
  * Immutable string utility class.
  *
@@ -18,6 +20,19 @@ final class Str
 {
     /** Prevent instantiation. */
     private function __construct() {}
+
+    private static ?array $uncountable = null;
+    private static ?array $irregulars = null;
+
+    private static function uncountable(): array
+    {
+        return self::$uncountable ??= require HelperLangDir::instance()->file('uncountable.php');
+    }
+
+    private static function irregulars(): array
+    {
+        return self::$irregulars ??= require HelperLangDir::instance()->file('irregulars.php');
+    }
 
     // ------------------------------------------------------------------
     //  Case conversion
@@ -388,41 +403,17 @@ final class Str
 
         $lower = self::lower($value);
 
-        // Uncountable words.
-        $uncountable = [
-            'audio', 'bison', 'cattle', 'chassis', 'compensation', 'coreopsis',
-            'data', 'deer', 'education', 'emoji', 'equipment', 'evidence',
-            'feedback', 'firmware', 'fish', 'furniture', 'gold', 'hardware',
-            'information', 'jedi', 'knowledge', 'legislation', 'livestock',
-            'mathematics', 'metadata', 'moose', 'music', 'news', 'nutrition',
-            'offspring', 'plankton', 'pokemon', 'police', 'rain', 'rice',
-            'series', 'sheep', 'software', 'species', 'swine', 'traffic',
-            'wheat',
-        ];
-
-        if (in_array($lower, $uncountable, true)) {
+        if (in_array($lower, self::uncountable(), true)) {
             return $value;
         }
 
-        // Irregular words.
-        $irregulars = [
-            'child'  => 'children',
-            'goose'  => 'geese',
-            'man'    => 'men',
-            'woman'  => 'women',
-            'tooth'  => 'teeth',
-            'foot'   => 'feet',
-            'mouse'  => 'mice',
-            'person' => 'people',
-            'ox'     => 'oxen',
-        ];
-
+        $irregulars = self::irregulars();
         if (isset($irregulars[$lower])) {
             return $irregulars[$lower];
         }
 
         // Regular rules (order matters).
-        if (str_ends_with($lower, 'y') && ! in_array($lower[-2] ?? '', ['a', 'e', 'i', 'o', 'u'])) {
+        if (str_ends_with($lower, 'y') && self::length($lower) > 1 && ! in_array($lower[-2], ['a', 'e', 'i', 'o', 'u'])) {
             return substr($value, 0, -1) . 'ies';
         }
 
@@ -456,37 +447,13 @@ final class Str
 
         $lower = self::lower($value);
 
-        // Uncountable words.
-        $uncountable = [
-            'audio', 'bison', 'cattle', 'chassis', 'compensation', 'coreopsis',
-            'data', 'deer', 'education', 'emoji', 'equipment', 'evidence',
-            'feedback', 'firmware', 'fish', 'furniture', 'gold', 'hardware',
-            'information', 'jedi', 'knowledge', 'legislation', 'livestock',
-            'mathematics', 'metadata', 'moose', 'music', 'news', 'nutrition',
-            'offspring', 'plankton', 'pokemon', 'police', 'rain', 'rice',
-            'series', 'sheep', 'software', 'species', 'swine', 'traffic',
-            'wheat',
-        ];
-
-        if (in_array($lower, $uncountable, true)) {
+        if (in_array($lower, self::uncountable(), true)) {
             return $value;
         }
 
-        // Irregular words (reversed).
-        $irregulars = [
-            'children' => 'child',
-            'geese'    => 'goose',
-            'men'      => 'man',
-            'women'    => 'woman',
-            'teeth'    => 'tooth',
-            'feet'     => 'foot',
-            'mice'     => 'mouse',
-            'people'   => 'person',
-            'oxen'     => 'ox',
-        ];
-
-        if (isset($irregulars[$lower])) {
-            return $irregulars[$lower];
+        $irregularsSingular = array_flip(self::irregulars());
+        if (isset($irregularsSingular[$lower])) {
+            return $irregularsSingular[$lower];
         }
 
         // Regular rules (order matters).

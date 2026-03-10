@@ -20,10 +20,12 @@ class TestCommand implements CommandInterface
 
         if (!file_exists($phpunit)) {
             Out::error("PHPUnit not found at {$phpunit}. Run: composer require --dev phpunit/phpunit");
+            return;
         }
 
         if (!file_exists($root . '/' . $this->config)) {
             Out::error("PHPUnit config not found: {$this->config}");
+            return;
         }
 
         $args = $this->parseArgs(array_slice($command, 2));
@@ -108,7 +110,7 @@ class TestCommand implements CommandInterface
         $parts = [$this->phpBin, $phpunit];
 
         // Test path or default
-        $parts[] = $args['path'] ?? 'tests/';
+        $parts[] = escapeshellarg($args['path'] ?? 'tests/');
 
         // Testdox (verbose) is default, --compact disables it
         if (!$args['compact']) {
@@ -141,7 +143,7 @@ class TestCommand implements CommandInterface
         $parts[] = '--colors=always';
 
         foreach ($args['extra'] as $extra) {
-            $parts[] = $extra;
+            $parts[] = escapeshellarg($extra);
         }
 
         return implode(' ', $parts);

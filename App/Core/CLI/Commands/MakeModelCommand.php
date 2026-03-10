@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\CLI\Commands;
 
+use App\Core\CLI\Stubs\StubGenerator;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
 use App\Core\Helpers\Str;
@@ -20,7 +21,7 @@ class MakeModelCommand implements CommandInterface
         }
 
         $options = $this->parseOptions(array_slice($command, 3));
-        $className = $this->normalizeClassName($name);
+        $className = Str::studly($name);
         $table = $options['table'] ?? Str::plural(Str::lower($className));
 
         $this->createModel($className, $table);
@@ -44,33 +45,16 @@ class MakeModelCommand implements CommandInterface
 
     private function createModel(string $className, string $table): void
     {
-        $modelDir = getcwd() . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Model';
-        $filePath = $modelDir . DIRECTORY_SEPARATOR . $className . '.php';
+        $filePath = getcwd() . '/App/Model/' . $className . '.php';
 
-        if (!is_dir($modelDir)) {
-            mkdir($modelDir, 0755, true);
-        }
+        $saved = StubGenerator::make('model')
+            ->replace(['{{CLASS}}' => $className, '{{TABLE}}' => $table])
+            ->saveTo($filePath);
 
-        if (file_exists($filePath)) {
+        if (!$saved) {
             Out::warn("Model already exists: App/Model/{$className}.php");
             return;
         }
-
-        $stubPath = __DIR__ . '/../Stubs/model.stub';
-        $stub = file_get_contents($stubPath);
-
-        if ($stub === false) {
-            Out::error('Model stub not found.');
-            return;
-        }
-
-        $content = str_replace(
-            ['{{CLASS}}', '{{TABLE}}'],
-            [$className, $table],
-            $stub
-        );
-
-        file_put_contents($filePath, $content);
 
         Out::success("Model created: App/Model/{$className}.php");
     }
@@ -102,11 +86,4 @@ class MakeModelCommand implements CommandInterface
         return $options;
     }
 
-    private function normalizeClassName(string $name): string
-    {
-        $segments = preg_split('/[^A-Za-z0-9]+/', $name) ?: [];
-        $segments = array_filter($segments, static fn (string $segment): bool => $segment !== '');
-
-        return implode('', array_map(static fn (string $segment): string => ucfirst($segment), $segments));
-    }
 }

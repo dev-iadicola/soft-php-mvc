@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\CLI;
 
 use App\Core\CLI\System\Out;
@@ -34,7 +36,7 @@ class Kernel
      * Qui registri i comandi disponibili per il CLI.
      * Ogni comando è associato a una classe che implementa l'interfaccia CommandInterface.
      */
-    protected function registerCommands()
+    protected function registerCommands(): void
     {
         $this->commands = [
             'make:model' => MakeModelCommand::class,
@@ -60,18 +62,17 @@ class Kernel
         ];
     }
 
-    public function handler($argv)
+    public function handle(array $argv): void
     {
-
         $commandClass = $this->validateCommand($argv);
 
-        $istance = new $commandClass();
+        $instance = new $commandClass();
 
-        $istance->exe($argv);
+        $instance->exe($argv);
     }
 
 
-    private function validateCommand($argv)
+    private function validateCommand(array $argv): string
     {
         $command = $argv[1] ?? null;
         if (!$command) {
@@ -90,12 +91,14 @@ class Kernel
        
         // NOTE: qui avviene la verifica se il comando esiste nella lista dei comandi registrati
         if (!isset($this->commands[$command])) {
-            Out::error(" the command '$command' not exist.");
+            Out::error("The command '{$command}' does not exist.");
+            exit(1);
         }
         $commandClass = $this->commands[$command];
 
         if (!class_exists($commandClass)) {
-            Out::error("Command class $commandClass don't exist.");
+            Out::error("Command class {$commandClass} does not exist.");
+            exit(1);
         }
 
         return $commandClass;

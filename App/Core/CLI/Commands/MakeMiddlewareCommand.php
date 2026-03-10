@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\CLI\Commands;
 
 use App\Core\CLI\Commands\Validation\ValidateClassName;
@@ -11,7 +13,7 @@ class MakeMiddlewareCommand implements CommandInterface
 
     public function exe(array $params)
     {
-        // helper: ricorda, l'array $params[2] contiene la stringa per creare il middleware. 
+        // helper: ricorda, l'array $params[2] contiene la stringa per creare il middleware.
         // Altrimenti la crea tramite readline
         while (!isset($params[2])) {
             Out::info("Welcome to terminale, you choose to create a middleware!");
@@ -29,7 +31,7 @@ class MakeMiddlewareCommand implements CommandInterface
                     try {
                         ValidateClassName::Validate($name, 'Middleware');
                         $params[2] = $name;
-                        Out::ok("✅ Class name '$name' accepted!");
+                        Out::ok("Class name '$name' accepted!");
                         break 2;
                         // esce sia dallo switch che dal while
                     } catch (\InvalidArgumentException $e) {
@@ -38,7 +40,7 @@ class MakeMiddlewareCommand implements CommandInterface
                     }
             }
         }
-        // end while 
+        // end while
 
         $this->createMiddleware($params[2]);
     }
@@ -52,12 +54,14 @@ class MakeMiddlewareCommand implements CommandInterface
 
         // Se già esiste, avvisa ma non interrompere
         if (file_exists($path)) {
-            Out::warn("⚠️  Middleware '{$name}' already exists at {$path}");
+            Out::warn("Middleware '{$name}' already exists at {$path}");
             return;
         }
 
         $template = <<<PHP
 <?php
+
+declare(strict_types=1);
 
 namespace App\\Middleware;
 
@@ -76,7 +80,7 @@ PHP;
         // Withe file in App
         file_put_contents($path, $template);
 
-        
+
 
         Out::ln("──────────────────────────────────────────────");
         Out::info("Generated class:\n");
@@ -93,7 +97,7 @@ PHP;
         }
 
         Out::ln("──────────────────────────────────────────────");
-        // ✅ Mostra risultato formattato nel terminale
+        // Mostra risultato formattato nel terminale
         Out::ok("Middleware '{$name}' created successfully!");
         Out::ln("Path: {$path}");
         Out::ln("Config your Middleware in config/middleware.php");

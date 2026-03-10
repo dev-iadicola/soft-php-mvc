@@ -20,9 +20,9 @@ class VarDumper
      */
     public static function __callStatic($method, $args)
     {
-        $istance = new self();
+        $instance = new self();
 
-        return $istance->$method(...$args);
+        return $instance->$method(...$args);
     }
 
     /**

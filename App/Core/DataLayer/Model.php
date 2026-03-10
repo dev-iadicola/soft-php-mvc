@@ -19,6 +19,9 @@ class Model  implements JsonSerializable
     use Attributes;
 
     // These framework-level properties must never be treated as database columns.
+    public const DATE_FORMAT = 'Y-m-d';
+    public const DATETIME_FORMAT = 'Y-m-d H:i:s';
+
     private const INTERNAL_PROPERTIES = [
         'primaryKey',
         'table',
@@ -102,8 +105,9 @@ class Model  implements JsonSerializable
         return $this->table = $table;
     }
 
-    public function save(){
-        $this->query()->save($this);
+    public function save(): void
+    {
+         $this->query()->save($this);
     }
 
     public function toArray(): array
@@ -314,8 +318,8 @@ class Model  implements JsonSerializable
             'float', 'double' => (float) $value,
             'string' => (string) $value,
             'array', 'json' => is_string($value) ? json_decode($value, true) ?? [] : (array) $value,
-            'date' => $value instanceof DateTimeInterface ? $value->format('Y-m-d') : (string) $value,
-            'datetime' => $value instanceof DateTimeInterface ? $value->format('Y-m-d H:i:s') : (string) $value,
+            'date' => $value instanceof DateTimeInterface ? $value->format(self::DATE_FORMAT) : (string) $value,
+            'datetime' => $value instanceof DateTimeInterface ? $value->format(self::DATETIME_FORMAT) : (string) $value,
             default => $value,
         };
     }

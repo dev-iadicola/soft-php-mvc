@@ -2,6 +2,7 @@
 
 namespace App\Core\Provider;
 
+use App\Core\Filesystem\Dir\ViewDir;
 use Throwable;
 use Whoops\Run;
 use App\Core\Helpers\Log;
@@ -51,9 +52,8 @@ class WhoopsProvider
             // set HTTP code 
             http_response_code(500);
 
-            // Include un file PHP che contiene la pagina di errore generica (es. “Ops! Qualcosa è andato storto”).
-            // __DIR__ rappresenta la directory attuale del file corrente.
-            include __DIR__ . '/../../../views/pages/errors/ops.php';
+            // Include the generic production error page.
+            include ViewDir::instance()->file('pages/errors/ops.php');
 
             // Restituisce la costante Handler::QUIT per indicare a Whoops di interrompere la catena di handler.
             // Questo evita che altri gestori vengano eseguiti dopo.

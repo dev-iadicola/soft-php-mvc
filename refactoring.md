@@ -161,3 +161,17 @@ File coinvolti: `AbstractBuilder`, `Kernel`, `Attributes`, `ActiveQueryFactory`.
 | IMPORTANTE | 8 | Duplicazioni e inconsistenze da risolvere |
 | MIGLIORAMENTO | 4 | Refactoring architetturale |
 | MINORE | 5 | Cleanup e best practices |
+
+---
+
+## 6. NUOVO - Centralizzazione Directory e Path
+
+### 6.1 Uso sparso di `__DIR__`
+**File coinvolti:** `Str.php`, `StubGenerator.php`, `WhoopsProvider.php`, `Log.php`
+
+I path assoluti erano costruiti in modo distribuito tramite `__DIR__`, `dirname(__DIR__, N)` e concatenazioni manuali. Questo rende il codice piu fragile ai refactor di struttura e disperde la conoscenza dell'albero del progetto in classi non infrastrutturali.
+
+**Direzione consigliata**
+- Introdurre una piccola gerarchia di classi directory/path centralizzate come strato infrastrutturale unico.
+- Far dipendere helper, provider e generatori da queste classi invece che da percorsi relativi hardcoded.
+- Estendere gradualmente il pattern anche agli altri accessi filesystem applicativi.

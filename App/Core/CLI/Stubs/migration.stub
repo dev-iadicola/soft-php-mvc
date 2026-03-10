@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Core\DataLayer\Migration\Migration;
 
 return Migration::table('{{TABLE}}')
@@ -7,4 +9,3 @@ return Migration::table('{{TABLE}}')
     // add columns here
     ->timestamps()
     ->onDrop('{{TABLE}}');
-

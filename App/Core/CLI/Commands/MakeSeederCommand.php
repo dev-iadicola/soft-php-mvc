@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\CLI\Commands;
 
+use App\Core\CLI\Stubs\StubGenerator;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
 
@@ -22,14 +25,11 @@ class MakeSeederCommand implements CommandInterface
         $timestamp = date('Y_m_d_His');
         $fileName  = "{$timestamp}_{$name}.php";
 
-        $seederDir = getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'seed';
-        if (!is_dir($seederDir)) {
-            mkdir($seederDir, 0755, true);
-        }
+        $filePath = getcwd() . '/Database/seed/' . $fileName;
 
-        $stub    = file_get_contents(__DIR__ . '/../Stubs/seeder.stub');
-        $content = str_replace('{{TABLE}}', $table, $stub);
-        file_put_contents($seederDir . DIRECTORY_SEPARATOR . $fileName, $content);
+        StubGenerator::make('seeder')
+            ->replace(['{{TABLE}}' => $table])
+            ->saveTo($filePath);
 
         Out::ln("Created seeder: $fileName");
     }

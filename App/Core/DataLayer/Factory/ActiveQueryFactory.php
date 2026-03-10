@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\DataLayer\Factory;
 
 use App\Core\DataLayer\Query\ActiveQuery;
@@ -32,7 +34,7 @@ class ActiveQueryFactory
 
         // Runtime (global)
         $pdo = ORM::getPDO();
-        $driver = ORM::getDrive();
+        $driver = ORM::getDriver();
 
         // Build components
         $builder =  QueryBuilderFactory::create($driver);

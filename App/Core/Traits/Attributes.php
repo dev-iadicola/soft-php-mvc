@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Core\Traits;
 
 /**
@@ -25,7 +27,7 @@ trait Attributes
 {
     protected array $attributes = [];
         
-    public function __get($key)
+    public function __get(string $key): mixed
     {
         // Declared typed properties take priority over the dynamic $attributes bag.
         if (method_exists($this, 'getAttribute')) {
@@ -35,13 +37,8 @@ trait Attributes
         return $this->attributes[$key] ?? null;
     }
 
-    public function __set($key, mixed $val)
+    public function __set(string $key, mixed $val): void
     {
-        // Setter personalizzato
-        if (method_exists($this, $key)) {
-            return $this->$key($val);
-        }
-
         if (method_exists($this, 'setAttribute')) {
             $this->setAttribute($key, $val);
             return;
