@@ -20,6 +20,8 @@ class ProgettiController extends Controller
     #[RouteAttr('progetti/{slug}')]
     public function show(Request $request, string $slug): void
     {
+        $slug = urldecode($slug);
+
         $project = is_numeric($slug)
             ? Project::query()->find((int) $slug)
             : Project::query()->where('title', $slug)->first();

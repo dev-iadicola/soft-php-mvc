@@ -42,7 +42,7 @@
       <h5 class="fw-semibold mb-2">Descrizione</h5>
 
       <article class="p-2 border border-white shadow rounded-lg bg-dark text-white">
-          {{ $project->overview }}
+          {{{ $project->overview }}}
       </article>
       <article class="text-start text-secondary mb-4 lh-base text-block">
         {{{ $project->description }}}
@@ -77,9 +77,6 @@
 
 
 @include('pages.progetti')
-
-
-
 
 
 
