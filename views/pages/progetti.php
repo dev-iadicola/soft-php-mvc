@@ -1,198 +1,309 @@
 <style>
-    .projects-grid {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 2rem 1.5rem;
+    .projects-section {
+        margin-bottom: 2rem;
     }
 
-    .projects-grid__heading {
-        font-family: var(--font-playfair);
-        font-size: 1.75rem;
-        font-weight: 700;
-        color: #111;
-        text-align: center;
-        letter-spacing: -0.02em;
-        margin-bottom: 0.5rem;
+    .projects-section__header {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid var(--border);
     }
 
-    .projects-grid__rule {
-        width: 60px;
-        border: none;
-        border-top: 2px solid #222;
-        margin: 0 auto 2.5rem;
+    .projects-section__tag {
+        color: var(--accent-orange);
+        font-size: 0.75rem;
     }
 
-    .projects-grid__list {
+    .projects-section__title {
+        font-size: 1.2rem;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .projects-section__grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 1.2rem;
     }
 
-    .project-card {
-        border: 1px solid #ddd;
-        background: #fff;
+    .proj-card {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
         display: flex;
         flex-direction: column;
-        transition: box-shadow 0.2s;
+        transition: border-color 0.3s, box-shadow 0.3s, transform 0.3s;
     }
 
-    .project-card:hover {
-        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    .proj-card:hover {
+        border-color: var(--accent-blue);
+        box-shadow: 0 4px 24px rgba(88, 166, 255, 0.08), 0 0 0 1px rgba(88, 166, 255, 0.1);
+        transform: translateY(-3px);
     }
 
-    .project-card__image-link {
+    /* Tab bar */
+    .proj-card__tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.45rem 0.8rem;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text-muted);
+    }
+
+    .proj-card__tab-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        display: inline-block;
+    }
+
+    .proj-card__tab-dot--red { background: #f85149; }
+    .proj-card__tab-dot--yellow { background: #d29922; }
+    .proj-card__tab-dot--green { background: #3fb950; }
+
+    .proj-card__tab-name {
+        margin-left: 0.3rem;
+        color: var(--text-secondary);
+    }
+
+    /* Image */
+    .proj-card__img-link {
         display: block;
         position: relative;
         overflow: hidden;
-        border-bottom: 1px solid #eee;
-        background: #fafafa;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
     }
 
-    .project-card__image-link img {
+    .proj-card__img-link img {
         display: block;
         width: 100%;
         height: 200px;
         object-fit: contain;
         padding: 0.75rem;
-        transition: transform 0.3s ease;
+        transition: transform 0.3s ease, filter 0.3s ease;
     }
 
-    .project-card__image-link:hover img {
-        transform: scale(1.03);
+    .proj-card__img-link:hover img {
+        transform: scale(1.05);
+        filter: brightness(0.8);
     }
 
-    .project-card__overlay {
+    .proj-card__overlay {
         position: absolute;
         inset: 0;
         display: flex;
         align-items: center;
         justify-content: center;
-        background: rgba(0, 0, 0, 0.4);
-        color: #fff;
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
+        background: rgba(13, 17, 23, 0.75);
+        color: var(--accent-green);
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 600;
         letter-spacing: 0.1em;
         opacity: 0;
         transition: opacity 0.25s;
     }
 
-    .project-card__image-link:hover .project-card__overlay {
+    .proj-card__img-link:hover .proj-card__overlay {
         opacity: 1;
     }
 
-    .project-card__body {
-        padding: 1.25rem;
+    /* Body */
+    .proj-card__body {
+        padding: 1rem 1.2rem 1.2rem;
         display: flex;
         flex-direction: column;
         flex: 1;
     }
 
-    .project-card__title {
-        font-family: var(--font-space-grotesk);
+    .proj-card__title {
+        font-family: var(--font-display);
         font-size: 1rem;
         font-weight: 700;
-        color: #111;
-        margin: 0 0 0.75rem;
-        letter-spacing: 0.02em;
+        color: var(--text-primary);
+        margin: 0 0 0.4rem;
     }
 
-    .project-card__overview {
-        font-size: 0.85rem;
-        line-height: 1.6;
-        color: #555;
-        flex: 1;
-        margin-bottom: 1rem;
-        border-left: 2px solid #ddd;
-        padding-left: 0.75rem;
-    }
-
-    .project-card__overview * {
-        color: #555;
-    }
-
-    .project-card__actions {
-        display: flex;
-        gap: 0.75rem;
-        border-top: 1px solid #eee;
-        padding-top: 0.75rem;
-    }
-
-    .project-card__btn {
+    /* Tech badge */
+    .proj-card__tech {
         display: inline-flex;
         align-items: center;
-        gap: 0.4rem;
-        padding: 0.35rem 0.85rem;
+        gap: 0.3rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+        background: rgba(188, 140, 255, 0.1);
+        color: var(--accent-purple);
+        border: 1px solid rgba(188, 140, 255, 0.2);
+        width: fit-content;
+        margin-bottom: 0.6rem;
+    }
+
+    .proj-card__overview,
+    .proj-card__overview * {
         font-size: 0.8rem;
+        color: var(--text-secondary);
+        line-height: 1.6;
+        flex: 1;
+        margin-bottom: 0.8rem;
+    }
+
+    /* Status line */
+    .proj-card__status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        color: var(--text-muted);
+        margin-bottom: 0.8rem;
+    }
+
+    .proj-card__status-dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: var(--accent-green);
+        box-shadow: 0 0 6px var(--glow-green);
+    }
+
+    .proj-card__status-text {
+        color: var(--accent-green);
+        font-weight: 600;
+    }
+
+    /* Actions */
+    .proj-card__actions {
+        display: flex;
+        gap: 0.6rem;
+        padding-top: 0.8rem;
+        border-top: 1px solid var(--border);
+    }
+
+    .proj-card__btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 0.8rem;
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
         font-weight: 600;
         text-decoration: none;
-        border: 1px solid #333;
-        color: #333;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-secondary);
         background: transparent;
-        transition: background 0.2s, color 0.2s;
-        letter-spacing: 0.02em;
+        transition: all 0.2s;
     }
 
-    .project-card__btn:hover {
-        background: #333;
-        color: #fff;
+    .proj-card__btn:hover {
+        border-color: var(--accent-green);
+        color: var(--accent-green);
+        box-shadow: 0 0 8px var(--glow-green);
     }
 
-    .project-card__btn--primary {
-        border-color: #1a56db;
-        color: #1a56db;
+    .proj-card__btn--primary {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
     }
 
-    .project-card__btn--primary:hover {
-        background: #1a56db;
-        color: #fff;
+    .proj-card__btn--primary:hover {
+        background: var(--accent-blue);
+        color: var(--bg-primary);
+        box-shadow: 0 0 10px var(--glow-blue);
+    }
+
+    .proj-card__btn--detail {
+        margin-left: auto;
+        border-color: var(--accent-orange);
+        color: var(--accent-orange);
+    }
+
+    .proj-card__btn--detail:hover {
+        background: var(--accent-orange);
+        color: var(--bg-primary);
+        border-color: var(--accent-orange);
+        box-shadow: 0 0 10px rgba(210, 153, 34, 0.2);
     }
 </style>
 
-<section class="projects-grid fade-in-section">
+<section class="projects-section fade-in-section">
+    <div class="projects-section__header">
+        <span class="projects-section__tag">// projects</span>
+        <h3 class="projects-section__title">Progetti</h3>
+    </div>
 
-    <h3 class="projects-grid__heading">Progetti</h3>
-    <hr class="projects-grid__rule" />
-
-    <div class="projects-grid__list">
+    <div class="projects-section__grid">
         <?php foreach ($projects as $project) { ?>
+            <article class="proj-card">
+                <div class="proj-card__tab">
+                    <span class="proj-card__tab-dot proj-card__tab-dot--red"></span>
+                    <span class="proj-card__tab-dot proj-card__tab-dot--yellow"></span>
+                    <span class="proj-card__tab-dot proj-card__tab-dot--green"></span>
+                    <span class="proj-card__tab-name"><?= $project->title ?></span>
+                </div>
 
-            <article class="project-card">
-
-                <a href="/progetti/<?= urlencode($project->title) ?>" class="project-card__image-link">
+                <a href="/progetti/<?= urlencode($project->title) ?>" class="proj-card__img-link">
                     <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
                          alt="<?= $project->title ?>" />
-                    <span class="project-card__overlay">Apri progetto</span>
+                    <span class="proj-card__overlay">$ open --project</span>
                 </a>
 
-                <div class="project-card__body">
-                    <h4 class="project-card__title"><?= $project->title ?></h4>
+                <div class="proj-card__body">
+                    <h4 class="proj-card__title"><?= $project->title ?></h4>
 
-                    <div class="project-card__overview">
-                        {{{ $project->overview }}}
+                    <?php if ($project->technology): ?>
+                        <span class="proj-card__tech">
+                            <i class="fa fa-code" aria-hidden="true"></i>
+                            <?= $project->technology->name ?? 'N/A' ?>
+                        </span>
+                    <?php endif; ?>
+
+                    <div class="proj-card__overview">{{{ $project->overview }}}</div>
+
+                    <div class="proj-card__status">
+                        <?php if (!is_null($project->website)): ?>
+                            <span class="proj-card__status-dot"></span>
+                            <span class="proj-card__status-text">online</span>
+                        <?php else: ?>
+                            <span class="proj-card__status-dot" style="background:var(--text-muted);box-shadow:none;"></span>
+                            <span>offline</span>
+                        <?php endif; ?>
                     </div>
 
-                    <div class="project-card__actions">
+                    <div class="proj-card__actions">
                         <?php if (!is_null($project->link)) { ?>
                             <a href="<?= $project->link ?>"
                                target="_blank" rel="noopener noreferrer"
-                               class="project-card__btn">
-                                <i class="fa fa-github" aria-hidden="true"></i> Code
+                               class="proj-card__btn">
+                                <i class="fa fa-github" aria-hidden="true"></i> code
                             </a>
                         <?php } ?>
                         <?php if (!is_null($project->website)) { ?>
                             <a href="<?= $project->website ?>"
                                target="_blank" rel="noopener noreferrer"
-                               class="project-card__btn project-card__btn--primary">
-                                <i class="fa fa-external-link" aria-hidden="true"></i> Sito
+                               class="proj-card__btn proj-card__btn--primary">
+                                <i class="fa fa-external-link" aria-hidden="true"></i> live
                             </a>
                         <?php } ?>
+                        <a href="/progetti/<?= urlencode($project->title) ?>"
+                           class="proj-card__btn proj-card__btn--detail">
+                            dettagli <i class="fa fa-angle-right" aria-hidden="true"></i>
+                        </a>
                     </div>
                 </div>
-
             </article>
-
         <?php } ?>
     </div>
-
 </section>

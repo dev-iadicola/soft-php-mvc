@@ -1,81 +1,99 @@
 <style>
-    .cookie-consent-popup {
+    .cookie-popup {
         position: fixed;
         bottom: 0;
         left: 0;
         right: 0;
-        background-color: #f9f9f9;
-        color: #333;
-        padding: 20px;
-        border-top: 1px solid #ddd;
+        background: var(--bg-secondary);
+        border-top: 1px solid var(--border);
+        padding: 1rem 1.5rem;
         display: none;
         z-index: 1000;
         text-align: center;
-        box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.1);
     }
 
-    .cookie-consent-content {
-        max-width: 90%;
+    .cookie-popup__inner {
+        max-width: 700px;
         margin: 0 auto;
     }
 
-    .cookie-buttons {
-        margin-top: 10px;
+    .cookie-popup__title {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: var(--accent-orange);
+        margin-bottom: 0.3rem;
     }
 
-    .cookie-button {
-        background-color: #007bff;
-        color: white;
-        border: none;
-        padding: 10px 20px;
-        margin: 5px;
+    .cookie-popup__text {
+        font-size: 0.8rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+    }
+
+    .cookie-popup__text a {
+        color: var(--accent-blue);
+    }
+
+    .cookie-popup__buttons {
+        display: flex;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+
+    .cookie-popup__btn {
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
+        font-weight: 600;
+        padding: 0.4rem 1rem;
+        border-radius: var(--radius);
         cursor: pointer;
-        border-radius: 5px;
+        transition: all 0.2s;
     }
 
-    .cookie-button:hover {
-        background-color: #0056b3;
+    .cookie-popup__btn--accept {
+        background: var(--accent-green);
+        color: var(--bg-primary);
+        border: none;
     }
 
-    .cookie-consent-content a {
-        color: #007bff;
-        text-decoration: none;
+    .cookie-popup__btn--accept:hover {
+        box-shadow: 0 0 12px var(--glow-green);
     }
 
-    .cookie-consent-content a:hover {
-        text-decoration: underline;
+    .cookie-popup__btn--reject {
+        background: transparent;
+        color: var(--text-secondary);
+        border: 1px solid var(--border);
     }
 
-    .cookie-consent-popup p {
-        color: black;
+    .cookie-popup__btn--reject:hover {
+        border-color: var(--accent-red);
+        color: var(--accent-red);
     }
 
     @media (max-width: 600px) {
-        .cookie-consent-popup {
-            padding: 15px;
-        }
-
-        .cookie-buttons {
-            display: flex;
+        .cookie-popup__buttons {
             flex-direction: column;
-            align-items: center;
         }
 
-        .cookie-button {
+        .cookie-popup__btn {
             width: 100%;
-            padding: 12px;
-            margin: 5px 0;
+            padding: 0.6rem;
         }
     }
 </style>
 
-<div id="cookie-consent-popup" class="cookie-consent-popup">
-    <div class="cookie-consent-content">
-        <h2>Cookie Policy</h2>
-        <p>We use various technologies to enhance your experience on our website. For detailed information on how we handle data and privacy, please refer to our <a href="/laws" target="_blank">Cookie Policy</a>.</p>
-        <div class="cookie-buttons">
-            <button id="accept-cookies" class="cookie-button">Accept All Cookies</button>
-            <button id="reject-cookies" class="cookie-button">Reject Cookies</button>
+<div id="cookie-consent-popup" class="cookie-popup">
+    <div class="cookie-popup__inner">
+        <div class="cookie-popup__title">// cookie-policy</div>
+        <p class="cookie-popup__text">
+            Utilizziamo cookie per migliorare la tua esperienza.
+            Consulta la nostra <a href="/laws" target="_blank">Cookie Policy</a>.
+        </p>
+        <div class="cookie-popup__buttons">
+            <button id="accept-cookies" class="cookie-popup__btn cookie-popup__btn--accept">accept()</button>
+            <button id="reject-cookies" class="cookie-popup__btn cookie-popup__btn--reject">reject()</button>
         </div>
     </div>
 </div>
@@ -99,22 +117,22 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const consentPopup = document.getElementById('cookie-consent-popup');
-        const acceptCookiesButton = document.getElementById('accept-cookies');
-        const rejectCookiesButton = document.getElementById('reject-cookies');
+        const popup = document.getElementById('cookie-consent-popup');
+        const accept = document.getElementById('accept-cookies');
+        const reject = document.getElementById('reject-cookies');
 
         if (!getCookie('cookie-consent')) {
-            consentPopup.style.display = 'block';
+            popup.style.display = 'block';
         }
 
-        acceptCookiesButton.addEventListener('click', () => {
+        accept.addEventListener('click', () => {
             setCookie('cookie-consent', 'accepted', 365);
-            consentPopup.style.display = 'none';
+            popup.style.display = 'none';
         });
 
-        rejectCookiesButton.addEventListener('click', () => {
+        reject.addEventListener('click', () => {
             setCookie('cookie-consent', 'rejected', 365);
-            consentPopup.style.display = 'none';
+            popup.style.display = 'none';
         });
     });
 </script>

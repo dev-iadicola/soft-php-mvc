@@ -1,90 +1,42 @@
 <style>
-    body{
-        background-color: var(--color-design) !important;
-    }
-    .error-container {
-        background: #1e1e1e;
-        border: 2px solid #ffffffff;
-        border-left: 6px solid #e74c3c;
-        border-radius: 10px;
-        padding: 40px 60px;
-        text-align: center;
-        box-shadow: 0 0 20px rgba(231, 76, 60, 0.2);
-        max-width: 600px;
-        width: 90%;
-    }
-
-    section {
+    .error-section {
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
-        /* altezza schermo */
-       
-       
+        min-height: 70vh;
     }
 
-    .error-container h2 {
-        font-size: 5rem;
-        color: #ffffffff;
+    .error-box {
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--accent-red);
+        border-radius: var(--radius);
+        padding: 2.5rem 3rem;
+        text-align: center;
+        max-width: 500px;
+        width: 90%;
+    }
+
+    .error-box__code {
+        font-family: var(--font-mono);
+        font-size: 4rem;
+        font-weight: 700;
+        color: var(--accent-red);
+        margin: 0 0 0.5rem;
+        text-shadow: 0 0 20px rgba(248, 81, 73, 0.3);
+    }
+
+    .error-box__msg {
+        font-family: var(--font-mono);
+        font-size: 0.9rem;
+        color: var(--text-secondary);
         margin: 0;
-        text-shadow: 0 0 10px rgba(22, 18, 18, 0.5);
-    }
-
-    .error-container h3 {
-        font-size: 1.5rem;
-        color: #f39c12;
-        margin-top: 15px;
-        word-wrap: break-word;
-    }
-
-    /* Effetto animazione leggera */
-    .error-container {
-        animation: pop 0.3s ease-in-out;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-
-    }
-
-    .error-container:hover {
-        transform: scale(1.02);
-        box-shadow: 0 0 25px rgba(231, 76, 60, 0.3);
-    }
-
-    @keyframes pop {
-        0% {
-            transform: scale(0.9);
-            opacity: 0;
-        }
-
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
-    }
-
-    /* Modalità chiara automatica */
-    @media (prefers-color-scheme: light) {
-        body {
-            background: #f5f5f5;
-            color: #2c3e50;
-        }
-
-        .error-container {
-            background: #ffffff;
-            border-color: #e74c3c;
-            box-shadow: 0 0 15px rgba(231, 76, 60, 0.1);
-        }
-
-        .error-container h3 {
-            color: #555;
-        }
     }
 </style>
-<section>
 
-    <div class="container error-container">
-        <h2><?= $code ?></h2>
-        <h3><?= $errorMsg ?></h3>
+<section class="error-section">
+    <div class="error-box">
+        <h2 class="error-box__code"><?= $code ?></h2>
+        <p class="error-box__msg">// <?= $errorMsg ?></p>
     </div>
-
 </section>

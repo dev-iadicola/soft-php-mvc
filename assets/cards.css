@@ -1,7 +1,7 @@
 /* CARDS */
 .img-thumbnail {
     height: 300px;
-    border: 1px solid #000;
+    border: 1px solid var(--border);
 }
 
 .fix-object {
@@ -12,8 +12,4 @@
 .card-img-top {
     height: 200px;
     object-fit: cover;
-}
-
-.foo {
-    margin-bottom: 200px;
 }

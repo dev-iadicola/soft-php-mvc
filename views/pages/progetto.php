@@ -1,166 +1,170 @@
 <style>
-    .project-detail {
+    .proj-detail {
         max-width: 900px;
         margin: 0 auto;
-        padding: 2rem 1.5rem;
+        background: var(--bg-secondary);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+        margin-bottom: 2rem;
     }
 
-    .project-detail__header {
-        border-bottom: 2px solid #222;
-        padding-bottom: 0.75rem;
-        margin-bottom: 1.5rem;
+    .proj-detail__bar {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 1rem;
+        background: var(--bg-card);
+        border-bottom: 1px solid var(--border);
+        font-size: 0.75rem;
+        color: var(--text-muted);
     }
 
-    .project-detail__title {
-        font-family: var(--font-playfair);
-        font-size: 2rem;
+    .proj-detail__body {
+        padding: 1.5rem;
+    }
+
+    .proj-detail__title {
+        font-family: var(--font-display);
+        font-size: 1.8rem;
         font-weight: 700;
-        color: #111;
-        margin: 0;
-        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin: 0 0 1.2rem;
     }
 
-    .project-detail__image {
-        border: 1px solid #ddd;
-        background: #fafafa;
+    .proj-detail__title span {
+        color: var(--accent-green);
+    }
+
+    .proj-detail__image {
+        background: var(--bg-card);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
         padding: 1rem;
         margin-bottom: 1.5rem;
         text-align: center;
     }
 
-    .project-detail__image img {
+    .proj-detail__image img {
         max-width: 100%;
         max-height: 320px;
         object-fit: contain;
     }
 
-    .project-detail__section-title {
-        font-family: var(--font-space-grotesk);
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: #555;
-        margin-bottom: 0.5rem;
-        border-bottom: 1px solid #e0e0e0;
-        padding-bottom: 0.25rem;
+    .proj-detail__label {
+        font-family: var(--font-mono);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--accent-purple);
+        margin-bottom: 0.4rem;
     }
 
-    .project-detail__overview {
-        background: #f5f5f0;
-        border-left: 3px solid #333;
-        padding: 1rem 1.25rem;
+    .proj-detail__overview {
+        background: var(--bg-card);
+        border-left: 3px solid var(--accent-green);
+        padding: 1rem;
         margin-bottom: 1.5rem;
-        font-size: 0.95rem;
+        border-radius: 0 var(--radius) var(--radius) 0;
+        font-size: 0.85rem;
         line-height: 1.7;
-        color: #333;
+        color: var(--text-secondary);
     }
 
-    .project-detail__overview * {
-        color: #333;
+    .proj-detail__overview * {
+        color: var(--text-secondary);
     }
 
-    .project-detail__description {
-        font-size: 0.95rem;
+    .proj-detail__description {
+        font-size: 0.85rem;
         line-height: 1.8;
-        color: #444;
-        margin-bottom: 2rem;
+        color: var(--text-secondary);
+        margin-bottom: 1.5rem;
         text-align: left;
     }
 
-    .project-detail__description * {
-        color: #444;
+    .proj-detail__description * {
+        color: var(--text-secondary);
     }
 
-    .project-detail__links {
+    .proj-detail__links {
         display: flex;
-        gap: 1rem;
+        gap: 0.8rem;
         padding-top: 1rem;
-        border-top: 1px solid #e0e0e0;
+        border-top: 1px solid var(--border);
     }
 
-    .project-detail__link {
+    .proj-detail__link {
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1.25rem;
-        font-size: 0.85rem;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        font-family: var(--font-mono);
+        font-size: 0.8rem;
         font-weight: 600;
         text-decoration: none;
-        border: 1px solid #333;
-        color: #333;
-        background: transparent;
-        transition: background 0.2s, color 0.2s;
-        letter-spacing: 0.03em;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        color: var(--text-secondary);
+        transition: all 0.2s;
     }
 
-    .project-detail__link:hover {
-        background: #333;
-        color: #fff;
+    .proj-detail__link:hover {
+        border-color: var(--accent-green);
+        color: var(--accent-green);
     }
 
-    .project-detail__link--primary {
-        border-color: #1a56db;
-        color: #1a56db;
+    .proj-detail__link--primary {
+        border-color: var(--accent-blue);
+        color: var(--accent-blue);
     }
 
-    .project-detail__link--primary:hover {
-        background: #1a56db;
-        color: #fff;
-    }
-
-    .project-detail__separator {
-        border: none;
-        border-top: 1px solid #ccc;
-        margin: 3rem 0 2rem;
+    .proj-detail__link--primary:hover {
+        background: var(--accent-blue);
+        color: var(--bg-primary);
     }
 </style>
 
 <?php if ($project) { ?>
-<section class="project-detail">
-
-    <header class="project-detail__header">
-        <h1 class="project-detail__title"><?= $project->title ?></h1>
-    </header>
-
-    <figure class="project-detail__image">
-        <img
-            src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
-            alt="<?= $project->title ?>"
-        />
-    </figure>
-
-    <div class="project-detail__section-title">Sommario</div>
-    <div class="project-detail__overview">
-        {{{ $project->overview }}}
+<section class="proj-detail">
+    <div class="proj-detail__bar">
+        <i class="fa fa-folder-open-o"></i> <?= $project->title ?> — dettaglio
     </div>
+    <div class="proj-detail__body">
+        <h1 class="proj-detail__title"><span>&gt;</span> <?= $project->title ?></h1>
 
-    <div class="project-detail__section-title">Descrizione</div>
-    <article class="project-detail__description">
-        {{{ $project->description }}}
-    </article>
+        <figure class="proj-detail__image">
+            <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
+                 alt="<?= $project->title ?>" />
+        </figure>
 
-    <nav class="project-detail__links">
-        <?php if (! empty($project->link)) { ?>
-            <a href="<?= $project->link ?>"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="project-detail__link">
-                <i class="fa fa-github"></i> Codice sorgente
-            </a>
-        <?php } ?>
+        <div class="proj-detail__label">// sommario</div>
+        <div class="proj-detail__overview">
+            {{{ $project->overview }}}
+        </div>
 
-        <?php if (urlExist($project->website)) { ?>
-            <a href="<?= $project->website ?>"
-               target="_blank"
-               rel="noopener noreferrer"
-               class="project-detail__link project-detail__link--primary">
-                <i class="fa fa-external-link"></i> Sito web
-            </a>
-        <?php } ?>
-    </nav>
+        <div class="proj-detail__label">// descrizione</div>
+        <article class="proj-detail__description">
+            {{{ $project->description }}}
+        </article>
 
-    <hr class="project-detail__separator" />
+        <nav class="proj-detail__links">
+            <?php if (! empty($project->link)) { ?>
+                <a href="<?= $project->link ?>"
+                   target="_blank" rel="noopener noreferrer"
+                   class="proj-detail__link">
+                    <i class="fa fa-github"></i> source
+                </a>
+            <?php } ?>
+
+            <?php if (urlExist($project->website)) { ?>
+                <a href="<?= $project->website ?>"
+                   target="_blank" rel="noopener noreferrer"
+                   class="proj-detail__link proj-detail__link--primary">
+                    <i class="fa fa-external-link"></i> live
+                </a>
+            <?php } ?>
+        </nav>
+    </div>
 </section>
 <?php } ?>
 
