@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Model;
+
+use App\Core\DataLayer\Model;
+
+class {{CLASS}} extends Model
+{
+    protected string $table = '{{TABLE}}';
+    protected int|string|null $id = null;
+}

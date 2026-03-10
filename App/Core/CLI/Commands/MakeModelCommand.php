@@ -1,37 +1,112 @@
 <?php
+
+declare(strict_types=1);
+
 namespace App\Core\CLI\Commands;
 
-use App\Core\Mvc;
-use App\Core\Config;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
+use App\Core\Helpers\Str;
 
 class MakeModelCommand implements CommandInterface
 {
     public function exe(array $command): void
     {
-        $modelName = $command[2] ?? null;
-        if (!$modelName || $modelName = "")
-            Out::error("You must specify a name for the template");
-        $mvc = $this->mvc();
-        // $path = __DIR__ . '/../../../App/Models/' . $modelName . '.php';
-        // if (file_exists($path)) 
-        //     Out::warn("The Model already exists.");
+        $name = $command[2] ?? null;
 
-        // $template = "<?php\n\nnamespace App\Models;\n\nclass $modelName\n{\n    // Model $modelName\n}\n";
-        // file_put_contents($path, $template);
+        if (!$name || str_starts_with($name, '--')) {
+            Out::error('You must specify a model name. Example: php soft make:model Post');
+            return;
+        }
 
-        Out::success("Modello " . $modelName . " creato con successo in App/Models/$modelName.php\n");
+        $options = $this->parseOptions(array_slice($command, 3));
+        $className = $this->normalizeClassName($name);
+        $table = $options['table'] ?? Str::plural(Str::lower($className));
 
+        $this->createModel($className, $table);
+
+        if ($options['migration']) {
+            (new MakeMigrationCommand())->exe([
+                $command[0] ?? 'php',
+                'make:migration',
+                'create_' . $table . '_table',
+            ]);
+        }
+
+        if ($options['resource']) {
+            (new MakeControllerCommand())->exe([
+                $command[0] ?? 'php',
+                'make:controller',
+                $className . 'Controller',
+            ]);
+        }
     }
 
-    
-    private function mvc(): Mvc
+    private function createModel(string $className, string $table): void
     {
-        echo getcwd() . '/.env';
-        Config::env(getcwd() . '/.env');
-        $config = Config::dir(getcwd() . '/config');
-        setMvc($config);
-        return mvc();
+        $modelDir = getcwd() . DIRECTORY_SEPARATOR . 'App' . DIRECTORY_SEPARATOR . 'Model';
+        $filePath = $modelDir . DIRECTORY_SEPARATOR . $className . '.php';
+
+        if (!is_dir($modelDir)) {
+            mkdir($modelDir, 0755, true);
+        }
+
+        if (file_exists($filePath)) {
+            Out::warn("Model already exists: App/Model/{$className}.php");
+            return;
+        }
+
+        $stubPath = __DIR__ . '/../Stubs/model.stub';
+        $stub = file_get_contents($stubPath);
+
+        if ($stub === false) {
+            Out::error('Model stub not found.');
+            return;
+        }
+
+        $content = str_replace(
+            ['{{CLASS}}', '{{TABLE}}'],
+            [$className, $table],
+            $stub
+        );
+
+        file_put_contents($filePath, $content);
+
+        Out::success("Model created: App/Model/{$className}.php");
+    }
+
+    private function parseOptions(array $args): array
+    {
+        $options = [
+            'migration' => false,
+            'resource' => false,
+            'table' => null,
+        ];
+
+        foreach ($args as $arg) {
+            if ($arg === '--migration') {
+                $options['migration'] = true;
+                continue;
+            }
+
+            if ($arg === '--resource') {
+                $options['resource'] = true;
+                continue;
+            }
+
+            if (str_starts_with($arg, '--table=')) {
+                $options['table'] = trim(substr($arg, 8));
+            }
+        }
+
+        return $options;
+    }
+
+    private function normalizeClassName(string $name): string
+    {
+        $segments = preg_split('/[^A-Za-z0-9]+/', $name) ?: [];
+        $segments = array_filter($segments, static fn (string $segment): bool => $segment !== '');
+
+        return implode('', array_map(static fn (string $segment): string => ucfirst($segment), $segments));
     }
 }

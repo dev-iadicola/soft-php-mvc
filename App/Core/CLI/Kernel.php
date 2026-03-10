@@ -17,6 +17,7 @@ use App\Core\CLI\Commands\SeedCommand;
 use App\Core\CLI\Commands\SeedRollbackCommand;
 use App\Core\CLI\Commands\SeedStatusCommand;
 use App\Core\CLI\Commands\StorageCommand;
+use App\Core\CLI\Commands\TestCommand;
 
 class Kernel
 {
@@ -51,6 +52,9 @@ class Kernel
             'print' => Out::class,
             'storage' => StorageCommand::class,
 
+            // Testing
+            'test' => TestCommand::class,
+
             // Clear commands
             'clear:cache' => ClearCacheCommand::class,
         ];
@@ -78,6 +82,7 @@ class Kernel
             Out::ln("  make:table        Create a new table");
             Out::ln("  migrate           Run DB migrations");
             Out::ln("  serve             Start dev server");
+            Out::ln("  test              Run PHPUnit tests");
             Out::ln("\nUsage: php soft <command> [options]");
             Out::ln("Example: php soft make:controller UserController");
             exit();
