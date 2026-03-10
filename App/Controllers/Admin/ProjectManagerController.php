@@ -57,8 +57,8 @@ class ProjectManagerController extends AdminController
             // delete old image if present
             if (!empty($project->img)) {
                 $oldPath = ltrim((string)$project->img, '/');
-                if (str_starts_with($oldPath, 'storage/')) {
-                    $oldPath = substr($oldPath, strlen('storage/'));
+                if (str_starts_with($oldPath, 'storage/app/public/')) {
+                    $oldPath = substr($oldPath, strlen('storage/app/public/'));
                 }
                 $storage->deleteIfExist($oldPath);
             }
@@ -132,8 +132,8 @@ class ProjectManagerController extends AdminController
         $project = Project::query()->find($id);
         $storage = Storage::make('public');
         $imgPath = ltrim((string)$project->img, '/');
-        if (str_starts_with($imgPath, 'storage/')) {
-            $imgPath = substr($imgPath, strlen('storage/'));
+        if (str_starts_with($imgPath, 'storage/app/public/')) {
+            $imgPath = substr($imgPath, strlen('storage/app/public/'));
         }
         if ($storage->exists($imgPath)) {
             $storage->delete($imgPath);
