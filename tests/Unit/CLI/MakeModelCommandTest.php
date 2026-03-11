@@ -37,7 +37,7 @@ class MakeModelCommandTest extends TestCase
 
         $this->assertStringContainsString("class BlogPost extends Model", $content);
         $this->assertStringContainsString("protected string \$table = 'blogposts';", $content);
-        $this->assertStringContainsString('protected int|string|null $id = null;', $content);
+        $this->assertStringContainsString('protected ?int $id = null;', $content);
     }
 
     public function testMakeModelSupportsMigrationResourceAndCustomTable(): void

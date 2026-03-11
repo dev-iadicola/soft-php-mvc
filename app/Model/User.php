@@ -12,8 +12,8 @@ class User extends Model
     protected string $table = 'users';
     protected ?int $id = null;
     protected ?int $log_id = null;
-    protected ?string $password = null;
-    protected ?string $email = null;
+    protected string $password;
+    protected string $email;
     protected ?string $token = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;

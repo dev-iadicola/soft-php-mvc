@@ -11,8 +11,8 @@ class Skill extends Model
 {
 
     protected string $table = 'skills';
-    protected int|string|null $id = null;
-    protected ?string $title = null;
+    protected ?int $id = null;
+    protected string $title;
     protected ?string $description = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;

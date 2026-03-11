@@ -11,12 +11,12 @@ use App\Core\DataLayer\Model;
 class Certificate extends Model
 {
     protected string $table = 'corsi';
-    protected int|string|null $id = null;
-    protected ?string $title = null;
+    protected ?int $id = null;
+    protected string $title;
     protected ?string $overview = null;
-    protected ?string $certified = null;
-    protected ?string $link = null;
-    protected ?string $ente = null;
+    protected string $certified;
+    protected string $link;
+    protected string $ente;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 

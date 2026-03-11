@@ -21,10 +21,10 @@ class Project extends Model
     */
    protected string $table = 'projects';
 
-   protected int|string|null $id = null;
+   protected ?int $id = null;
    protected ?int $technology_id = null;
    protected ?int $partner_id = null;
-   protected ?string $title = null;
+   protected string $title;
    protected ?string $overview = null;
    protected ?string $description = null;
    protected ?string $link = null;

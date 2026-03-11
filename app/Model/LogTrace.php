@@ -10,13 +10,18 @@ class LogTrace extends Model
 {
     protected string $table = 'logs';
 
-    protected int|string|null $id = null;
-    protected ?int $user_id = null;
+    protected ?int $id = null;
+    protected int $user_id;
     protected ?string $last_log = null;
-    protected ?string $indirizzo = null;
-    protected ?string $device = null;
+    protected string $indirizzo;
+    protected string $device;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+
+    protected function casts(): array
+    {
+        return ['user_id' => 'int'];
+    }
 
     /**
      * @deprecated Use \App\Services\LogService::create() instead.

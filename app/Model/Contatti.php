@@ -11,7 +11,7 @@ use App\Core\DataLayer\Model;
 class Contatti extends Model
 {
     protected string $table = 'contatti';
-    protected int|string|null $id = null;
+    protected ?int $id = null;
     protected ?string $nome = null;
     protected ?string $email = null;
     protected ?string $messaggio = null;

@@ -10,8 +10,8 @@ class Partner extends Model
 {
 
     protected string $table = 'partners';
-    protected int|string|null $id = null;
-    protected ?string $name = null;
+    protected ?int $id = null;
+    protected string $name;
     protected ?string $website = null;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;

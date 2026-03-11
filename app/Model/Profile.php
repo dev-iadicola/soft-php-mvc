@@ -10,8 +10,8 @@ use App\Core\DataLayer\Model;
 class Profile extends Model
 {
     protected string $table = 'profile';
-    protected int|string|null $id = null;
-    protected ?string $name = null;
+    protected ?int $id = null;
+    protected string $name;
     protected ?string $tagline = null;
     protected ?string $welcome_message = null;
     protected bool $selected = true;

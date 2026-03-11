@@ -78,8 +78,10 @@ class Model  implements JsonSerializable
      */
     public function __isset(string $name): bool
     {
-        if ($this->resolvePropertyName($name) !== null) {
-            return true;
+        $property = $this->resolvePropertyName($name);
+
+        if ($property !== null) {
+            return $this->isInitialized($property);
         }
 
         return array_key_exists($name, $this->attributes);
@@ -92,6 +94,14 @@ class Model  implements JsonSerializable
 
         if ($property !== null) {
             $castedValue = $this->castAttribute($property, $value);
+
+            // Guard against null assignment to non-nullable typed properties.
+            // This can happen when the DB returns NULL for a NOT NULL column
+            // (e.g. column omitted in INSERT, or left join producing nulls).
+            if ($castedValue === null && !$this->isPropertyNullable($property)) {
+                return;
+            }
+
             $this->$property = $castedValue;
             $this->markDirty($property, $castedValue);
             return;
@@ -102,7 +112,8 @@ class Model  implements JsonSerializable
         $this->markDirty($key, $castedValue);
     }
 
-    public function getAttribute(?string $key = null): mixed{
+    public function getAttribute(?string $key = null): mixed
+    {
         if (is_null($key)) {
             return $this->toArray();
         }
@@ -110,7 +121,7 @@ class Model  implements JsonSerializable
         $property = $this->resolvePropertyName($key);
 
         if ($property !== null) {
-            return $this->$property;
+            return $this->readProperty($property);
         }
 
         return $this->attributes[$key] ?? null;
@@ -138,7 +149,11 @@ class Model  implements JsonSerializable
 
         foreach ($this->getDeclaredDataProperties() as $property) {
             $name = $property->getName();
-            // Models can expose a different database column name than the PHP property name.
+
+            if (!$property->isInitialized($this)) {
+                continue;
+            }
+
             $data[$this->getColumnName($name)] = $this->$name;
         }
 
@@ -187,6 +202,11 @@ class Model  implements JsonSerializable
 
         foreach ($this->getDeclaredDataProperties() as $property) {
             $name = $property->getName();
+
+            if (!$property->isInitialized($this)) {
+                continue;
+            }
+
             $this->original[$name] = $this->$name;
         }
 
@@ -294,6 +314,34 @@ class Model  implements JsonSerializable
         return false;
     }
 
+    private function isPropertyNullable(string $property): bool
+    {
+        foreach ($this->getDeclaredDataProperties() as $prop) {
+            if ($prop->getName() === $property) {
+                $type = $prop->getType();
+                return $type === null || $type->allowsNull();
+            }
+        }
+
+        return true;
+    }
+
+    private function isInitialized(string $property): bool
+    {
+        foreach ($this->getDeclaredDataProperties() as $prop) {
+            if ($prop->getName() === $property) {
+                return $prop->isInitialized($this);
+            }
+        }
+
+        return false;
+    }
+
+    private function readProperty(string $property): mixed
+    {
+        return $this->isInitialized($property) ? $this->$property : null;
+    }
+
     private function markDirty(string $key, mixed $value): void
     {
         $original = $this->original[$key] ?? null;
@@ -309,7 +357,7 @@ class Model  implements JsonSerializable
     private function getStoredValue(string $key): mixed
     {
         if ($this->isDataPropertyName($key)) {
-            return $this->$key;
+            return $this->readProperty($key);
         }
 
         return $this->attributes[$key] ?? null;
