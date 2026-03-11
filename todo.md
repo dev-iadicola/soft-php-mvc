@@ -271,7 +271,7 @@ Portare il progetto da MVC custom funzionante a mini-framework coerente, con:
 
 #### Fase 4: Rafforzare HTTP e Routing
 
-- [ ] Rimuovere o isolare i percorsi di routing deprecati in `Router`
+- [x] Rimuovere o isolare i percorsi di routing deprecati in `Router`
 - [x] Aggiungere test per caricamento rotte, ereditarieta, stack middleware e matching
 - [x] Introdurre cache delle rotte per produzione
 - [ ] Migliorare il reporting degli errori quando gli attributi sono malformati

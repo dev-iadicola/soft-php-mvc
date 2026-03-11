@@ -10,6 +10,7 @@ use App\Core\Contract\MiddlewareInterface;
 class RouteAttr
 {
     /**
+     * @deprecated Use #[Get], #[Post], #[Put], #[Patch] or #[Delete] instead.
      * Summary of __construct
      * @param string            $path esempio: "user/{id}"
      * @param string            $method  GET|POST|PUT|PATCH|DELETE ...   

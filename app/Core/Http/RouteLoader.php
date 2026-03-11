@@ -165,65 +165,8 @@ class RouteLoader
         $chain = array_reverse($chain);
 
         foreach ($chain as $classRef) {
-            // --- Legacy: #[ControllerAttr] ---
-            foreach ($classRef->getAttributes(ControllerAttr::class) as $controllerAttribute) {
-                try {
-                    $instance = $controllerAttribute->newInstance();
-
-                    if (property_exists($instance, 'middlewareNames') && !empty($instance->middlewareNames)) {
-                        $stack->addMiddleware((array) $instance->middlewareNames);
-                    }
-
-                    if (property_exists($instance, 'basePath') && !empty($instance->basePath)) {
-                        $stack->addPath($instance->basePath);
-                    }
-                } catch (LoaderAttributeException $e) {
-                    throw new LoaderAttributeException(
-                        "Invalid #[ControllerAttr] in {$classRef->getName()} ({$classRef->getFileName()}): "
-                        . "expected constructor parameters are missing or malformed. "
-                        . "Check: #[ControllerAttr(middlewareNames, basePath, routeName)]"
-                    );
-                }
-            }
-
-            // --- Spatie-style: #[Prefix] ---
-            foreach ($classRef->getAttributes(Prefix::class) as $attr) {
-                try {
-                    $instance = $attr->newInstance();
-                    $stack->addPath($instance->prefix);
-                } catch (\Throwable $e) {
-                    throw new LoaderAttributeException(
-                        "Invalid #[Prefix] in {$classRef->getName()} ({$classRef->getFileName()}): "
-                        . "expected a string path. Example: #[Prefix('/admin')]"
-                    );
-                }
-            }
-
-            // --- Spatie-style: #[Middleware] ---
-            foreach ($classRef->getAttributes(MiddlewareAttr::class) as $attr) {
-                try {
-                    $instance = $attr->newInstance();
-                    $stack->addMiddleware($instance->middleware);
-                } catch (\Throwable $e) {
-                    throw new LoaderAttributeException(
-                        "Invalid #[Middleware] in {$classRef->getName()} ({$classRef->getFileName()}): "
-                        . "expected an array of middleware names. Example: #[Middleware(['auth'])]"
-                    );
-                }
-            }
-
-            // --- Spatie-style: #[NamePrefix] ---
-            foreach ($classRef->getAttributes(NamePrefix::class) as $attr) {
-                try {
-                    $instance = $attr->newInstance();
-                    $stack->setNamePrefix($instance->namePrefix);
-                } catch (\Throwable $e) {
-                    throw new LoaderAttributeException(
-                        "Invalid #[NamePrefix] in {$classRef->getName()} ({$classRef->getFileName()}): "
-                        . "expected a string prefix. Example: #[NamePrefix('admin.')]"
-                    );
-                }
-            }
+            $this->applyLegacyControllerAttributes($classRef, $stack);
+            $this->applyModernControllerAttributes($classRef, $stack);
         }
 
         $stack->clean();
@@ -301,9 +244,19 @@ class RouteLoader
      */
     private function collectRouteAttributes(ReflectionMethod $method): array
     {
+        return array_merge(
+            $this->collectLegacyRouteAttributes($method),
+            $this->collectModernRouteAttributes($method)
+        );
+    }
+
+    /**
+     * @return array<RouteAttr>
+     */
+    private function collectLegacyRouteAttributes(ReflectionMethod $method): array
+    {
         $instances = [];
 
-        // Legacy: #[RouteAttr]
         foreach ($method->getAttributes(RouteAttr::class) as $attr) {
             try {
                 $instances[] = $attr->newInstance();
@@ -316,7 +269,16 @@ class RouteLoader
             }
         }
 
-        // Spatie-style: #[Get], #[Post], #[Put], #[Patch], #[Delete] (tutti estendono RouteAttribute)
+        return $instances;
+    }
+
+    /**
+     * @return array<RouteAttribute>
+     */
+    private function collectModernRouteAttributes(ReflectionMethod $method): array
+    {
+        $instances = [];
+
         foreach ($method->getAttributes(RouteAttribute::class, \ReflectionAttribute::IS_INSTANCEOF) as $attr) {
             try {
                 $instances[] = $attr->newInstance();
@@ -331,5 +293,67 @@ class RouteLoader
         }
 
         return $instances;
+    }
+
+    private function applyLegacyControllerAttributes(ReflectionClass $classRef, Stack $stack): void
+    {
+        foreach ($classRef->getAttributes(ControllerAttr::class) as $controllerAttribute) {
+            try {
+                $instance = $controllerAttribute->newInstance();
+
+                if (property_exists($instance, 'middlewareNames') && !empty($instance->middlewareNames)) {
+                    $stack->addMiddleware((array) $instance->middlewareNames);
+                }
+
+                if (property_exists($instance, 'basePath') && !empty($instance->basePath)) {
+                    $stack->addPath($instance->basePath);
+                }
+            } catch (LoaderAttributeException $e) {
+                throw new LoaderAttributeException(
+                    "Invalid #[ControllerAttr] in {$classRef->getName()} ({$classRef->getFileName()}): "
+                    . "expected constructor parameters are missing or malformed. "
+                    . "Check: #[ControllerAttr(middlewareNames, basePath, routeName)]"
+                );
+            }
+        }
+    }
+
+    private function applyModernControllerAttributes(ReflectionClass $classRef, Stack $stack): void
+    {
+        foreach ($classRef->getAttributes(Prefix::class) as $attr) {
+            try {
+                $instance = $attr->newInstance();
+                $stack->addPath($instance->prefix);
+            } catch (\Throwable $e) {
+                throw new LoaderAttributeException(
+                    "Invalid #[Prefix] in {$classRef->getName()} ({$classRef->getFileName()}): "
+                    . "expected a string path. Example: #[Prefix('/admin')]"
+                );
+            }
+        }
+
+        foreach ($classRef->getAttributes(MiddlewareAttr::class) as $attr) {
+            try {
+                $instance = $attr->newInstance();
+                $stack->addMiddleware($instance->middleware);
+            } catch (\Throwable $e) {
+                throw new LoaderAttributeException(
+                    "Invalid #[Middleware] in {$classRef->getName()} ({$classRef->getFileName()}): "
+                    . "expected an array of middleware names. Example: #[Middleware(['auth'])]"
+                );
+            }
+        }
+
+        foreach ($classRef->getAttributes(NamePrefix::class) as $attr) {
+            try {
+                $instance = $attr->newInstance();
+                $stack->setNamePrefix($instance->namePrefix);
+            } catch (\Throwable $e) {
+                throw new LoaderAttributeException(
+                    "Invalid #[NamePrefix] in {$classRef->getName()} ({$classRef->getFileName()}): "
+                    . "expected a string prefix. Example: #[NamePrefix('admin.')]"
+                );
+            }
+        }
     }
 }
