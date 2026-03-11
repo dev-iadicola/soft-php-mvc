@@ -5,15 +5,14 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 
-use App\Model\Skill;
 use App\Core\Storage;
-use App\Model\Article;
-use App\Model\Profile;
 use App\Core\Validator;
 use App\Core\Http\Request;
+use App\Services\ArticleService;
+use App\Services\SkillService;
+use App\Services\ProfileService;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Controllers\AdminController;
-use App\Core\Controllers\AuthenticationController;
 
 class HomeManagerController extends AdminController
 {
@@ -23,9 +22,9 @@ class HomeManagerController extends AdminController
     public function index()
     {
         // visualizza per la gestione della home
-        $articles = Article::query()->orderBy('created_at', 'DESC')->get();
-        $skills = Skill::query()->orderBy(' id', 'DESC')->get();
-        $profiles = Profile::query()->orderBy('id', 'DESC')->get();
+        $articles = ArticleService::getAll();
+        $skills = SkillService::getAll();
+        $profiles = ProfileService::getAll();
 
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
@@ -45,11 +44,9 @@ class HomeManagerController extends AdminController
             $data['img'] = $storage->getRelativePath();
         }
 
-        Article::query()->create($data);
+        ArticleService::create($data);
 
         return response()->back()->withSuccess('Articolo Inserito con successo nella Home Page!');
-
-        // inserisci un nuovo elemento
     }
 
 
@@ -57,10 +54,10 @@ class HomeManagerController extends AdminController
     public function edit(Request $request, string $id)
     {
 
-        $article = Article::query()->find($id);
-        $articles = Article::query()->orderBy('created_at', 'DESC')->get();
-        $skills = Skill::query()->orderBy('id', 'DESC')->get();
-        $profiles = Profile::query()->orderBy('id', 'DESC')->get();
+        $article = ArticleService::findOrFail((int) $id);
+        $articles = ArticleService::getAll();
+        $skills = SkillService::getAll();
+        $profiles = ProfileService::getAll();
 
 
         return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
@@ -70,7 +67,7 @@ class HomeManagerController extends AdminController
     public function update(Request $request, string $id): void
     {
         $data = $request->all();
-        $article = Article::query()->find($id);
+        $article = ArticleService::findOrFail((int) $id);
         if(isset($data['img'])){
             // Validazione Dati
         if ($data['img']['error'] === UPLOAD_ERR_NO_FILE) {
@@ -88,7 +85,7 @@ class HomeManagerController extends AdminController
         }
         }
         // Trova porgetto
-        Article::query()->where('id', $id)->update($data);
+        ArticleService::update((int) $id, $data);
 
         // feedback server
         redirect()->back('Articolo Aggiornato con successo!');
@@ -97,16 +94,16 @@ class HomeManagerController extends AdminController
     #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
         public function destroy(Request $reqq, string $id)
     {
-        // TODO: make validator 
-    
-        $article  = Article::query()->find($id);
+        // TODO: make validator
+
+        $article = ArticleService::findOrFail((int) $id);
         $name = $article->title;
 
         if(isset($article->img)){
             $stg = new Storage('images');
             $stg->deleteIfExist($article->img);
         }
-        Article::query()->where('id', $id)->delete();
+        ArticleService::delete((int) $id);
         return response()->back()->withSuccess('Articolo $name eliminato.');
     }
 }

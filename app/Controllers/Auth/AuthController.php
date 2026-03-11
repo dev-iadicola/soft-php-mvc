@@ -6,13 +6,13 @@ namespace App\Controllers\Auth;
 
 
 use App\Model\User;
-use App\Model\LogTrace;
 use App\Core\Facade\Auth;
 use App\Core\Http\Request;
 
 use App\Core\Validation\Validator;
 use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\RouteAttr;
+use App\Services\LogService;
 
 class AuthController extends Controller
 {
@@ -42,7 +42,7 @@ class AuthController extends Controller
         }
         // Autenticazione e traccia del log
         Auth::login($user);
-        LogTrace::ceateLog($user->id);
+        LogService::create($user->id, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '');
         return redirect('admin/dashboard');
     }
 

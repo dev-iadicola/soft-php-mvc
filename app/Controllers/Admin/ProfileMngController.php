@@ -5,30 +5,29 @@ declare(strict_types=1);
 namespace   App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
-use App\Model\Skill;
-use App\Model\Article;
-use App\Model\Profile;
-use App\Core\Controllers\AuthenticationController;
+use App\Services\ArticleService;
+use App\Services\SkillService;
+use App\Services\ProfileService;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
 
-class ProfileMngController extends AdminController 
+class ProfileMngController extends AdminController
 {
 
   #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]
   public function store(Request $request)
-  {   
-    Profile::query()->create($request->all());
+  {
+    ProfileService::create($request->all());
     return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 
   #[RouteAttr(path: 'profile/{id}', method: 'get', name: 'profile.edit')]
   public function edit(Request $request, string $id)
   {
-    $profile = Profile::query()->find($id);
-    $skills = Skill::query()->orderBy('id', 'DESC')->get();
-    $articles = Article::query()->orderBy('created_at', 'DESC')->get();
-    $profiles = Profile::query()->orderBy('id', 'DESC')->get();
+    $profile = ProfileService::findOrFail((int) $id);
+    $skills = SkillService::getAll();
+    $articles = ArticleService::getAll();
+    $profiles = ProfileService::getAll();
     return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
   }
 
@@ -39,19 +38,16 @@ class ProfileMngController extends AdminController
 
     $data['selected'] = isset($data['selected']) ? 1 : 0;
 
-    $project = Profile::query()->find($id);
-    Profile::query()->where('id', $id)->update($data);
+    ProfileService::update((int) $id, $data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
-    
+
   }
 
   #[RouteAttr(path: '/profile-delete/{id}', method: 'DELETE', name: 'profile.delete')]
   public function destroy(Request $reqq, int $id){
-    // trova e azione
-    $data =  $reqq->all();
 
-    Profile::query()->where('id', $id)->delete();
+    ProfileService::delete($id);
     return  response()->back()->withSuccess('Skills ELIMINATE');
 
  }

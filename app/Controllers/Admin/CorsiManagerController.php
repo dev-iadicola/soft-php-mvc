@@ -5,10 +5,9 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Http\Request;
-use App\Model\Certificate;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Controllers\AdminController;
-use App\Core\Controllers\AuthenticationController;
+use App\Services\CertificateService;
 
 class CorsiManagerController extends AdminController
 {
@@ -16,7 +15,7 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('/corsi')]
    public function index()
    {
-      $corsi = Certificate::query()->orderBy('certified', 'DESC')->get();
+      $corsi = CertificateService::getAll();
 
       return view('/admin/portfolio/corsi',  compact('corsi'));
    }
@@ -24,15 +23,9 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('corsi-edit/{id}', 'GET')]
    public function edit(Request $request, int  $id)
    {
-      $corsi = Certificate::query()->orderBy('id', 'DESC')->get();
+      $corsi = CertificateService::getAll('id');
 
-      $element = Certificate::query()->find($id);
-
-
-      if (empty($corsi) || empty($element)) {
-         $this->withError('Non è presente ciò che cercate!');
-         return response()->back();
-      }
+      $element = CertificateService::findOrFail($id);
 
       return view('/admin/portfolio/corsi', compact('corsi', 'element'));
    }
@@ -40,17 +33,14 @@ class CorsiManagerController extends AdminController
    #[RouteAttr('/corsi', 'POST')]
    public function store(Request $request)
    {
-      Certificate::query()->create($request->all());
+      CertificateService::create($request->all());
       return  redirect()->back()->withSuccess('Certificate creato con successo!');
    }
-
-
-
 
    #[RouteAttr('corsi-edit/{id}', 'PATCH')]
    public function update(Request $request, string $id)
    {
-      Certificate::query()->where('id', $id)->update($request->all());
+      CertificateService::update((int) $id, $request->all());
       $this->withSuccess('Corso Aggiornato con successo!');
       return response()->back();
    }
@@ -62,7 +52,7 @@ class CorsiManagerController extends AdminController
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return $this->statusCode413();
       }
-      Certificate::query()->where('id', $id)->delete();
+      CertificateService::delete((int) $id);
       $this->withSuccess('Corso ELIMINATO');
       return response()->back();
    }

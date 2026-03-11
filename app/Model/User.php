@@ -19,6 +19,9 @@ class User extends Model
     protected int|string|null $log_id = null;
     protected ?string $created_at = null;
 
+    /**
+     * @deprecated Use \App\Services\PasswordService::changeByEmail() instead.
+     */
     public static function changePassword(string $password, string $email): static|false
     {
         $user = User::query()->where('email', $email)->first();

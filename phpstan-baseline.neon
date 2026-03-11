@@ -1,14 +1,14 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$email\.$#'
-			identifier: property.notFound
+			message: '#^Access to protected property App\\Model\\Contatti\:\:\$email\.$#'
+			identifier: property.protected
 			count: 1
 			path: app/Controllers/Admin/ContattiManagerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$nome\.$#'
-			identifier: property.notFound
+			message: '#^Access to protected property App\\Model\\Contatti\:\:\$nome\.$#'
+			identifier: property.protected
 			count: 1
 			path: app/Controllers/Admin/ContattiManagerController.php
 
@@ -43,14 +43,14 @@ parameters:
 			path: app/Controllers/Admin/CorsiManagerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$img\.$#'
-			identifier: property.notFound
-			count: 1
+			message: '#^Access to protected property App\\Model\\Article\:\:\$img\.$#'
+			identifier: property.protected
+			count: 2
 			path: app/Controllers/Admin/HomeManagerController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$title\.$#'
-			identifier: property.notFound
+			message: '#^Access to protected property App\\Model\\Article\:\:\$title\.$#'
+			identifier: property.protected
 			count: 1
 			path: app/Controllers/Admin/HomeManagerController.php
 
@@ -79,18 +79,6 @@ parameters:
 			path: app/Controllers/Admin/LawsMngController.php
 
 		-
-			message: '#^Strict comparison using \=\=\= between PDOStatement\|false and null will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Controllers/Admin/LawsMngController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$folder\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Admin/MaintenanceController.php
-
-		-
 			message: '#^Result of method App\\Core\\Controllers\\BaseController\:\:render\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -109,15 +97,15 @@ parameters:
 			path: app/Controllers/Admin/ProfileMngController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$img\.$#'
-			identifier: property.notFound
-			count: 1
+			message: '#^Access to protected property App\\Model\\Project\:\:\$img\.$#'
+			identifier: property.protected
+			count: 2
 			path: app/Controllers/Admin/ProjectManagerController.php
 
 		-
 			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
 			identifier: method.void
-			count: 4
+			count: 3
 			path: app/Controllers/Admin/ProjectManagerController.php
 
 		-
@@ -159,7 +147,7 @@ parameters:
 		-
 			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
 			identifier: method.void
-			count: 5
+			count: 3
 			path: app/Controllers/Admin/UserAccountController.php
 
 		-
@@ -178,18 +166,6 @@ parameters:
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$password\.$#'
 			identifier: property.notFound
 			count: 1
-			path: app/Controllers/Auth/AuthController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Auth/AuthController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$password\.$#'
-			identifier: property.notFound
-			count: 2
 			path: app/Controllers/Auth/AuthController.php
 
 		-
@@ -213,35 +189,11 @@ parameters:
 		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$email\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$email\.$#'
-			identifier: property.notFound
 			count: 3
 			path: app/Controllers/Auth/TokenController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$token\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Access to protected property App\\Model\\User\:\:\$email\.$#'
-			identifier: property.protected
-			count: 2
-			path: app/Controllers/Auth/TokenController.php
-
-		-
 			message: '#^Call to function is_null\(\) with App\\Core\\DataLayer\\Model will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Call to function is_null\(\) with false will always evaluate to false\.$#'
 			identifier: function.impossibleType
 			count: 1
 			path: app/Controllers/Auth/TokenController.php
@@ -301,15 +253,9 @@ parameters:
 			path: app/Controllers/Auth/TokenController.php
 
 		-
-			message: '#^Result of \|\| is always true\.$#'
-			identifier: booleanOr.alwaysTrue
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$email\.$#'
 			identifier: property.notFound
-			count: 2
+			count: 1
 			path: app/Controllers/ContattiController.php
 
 		-
@@ -424,24 +370,6 @@ parameters:
 			path: app/Core/Controllers/BaseController.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Controllers/ComingSoonController.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(App\\Core\\DataLayer\\Model\) and ''getAttribute'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Core/DataLayer/Model.php
-
-		-
-			message: '#^Call to function method_exists\(\) with \$this\(App\\Core\\DataLayer\\Model\) and ''setAttribute'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Core/DataLayer/Model.php
-
-		-
 			message: '#^Method App\\Core\\DataLayer\\Model\:\:isDeclaredModelProperty\(\) is unused\.$#'
 			identifier: method.unused
 			count: 1
@@ -544,12 +472,6 @@ parameters:
 			path: app/Core/DataLayer/Runtime/OrmEngine.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/DataLayer/Runtime/OrmEngine.php
-
-		-
 			message: '#^Call to an undefined method App\\Core\\DataLayer\\Runtime\\OrmEngine\:\:get\(\)\.$#'
 			identifier: method.notFound
 			count: 1
@@ -622,6 +544,12 @@ parameters:
 			path: app/Core/Facade/Auth.php
 
 		-
+			message: '#^Parameter \#1 \$model of method App\\Core\\Services\\AuthService\:\:login\(\) expects App\\Model\\User, App\\Core\\DataLayer\\Model given\.$#'
+			identifier: argument.type
+			count: 1
+			path: app/Core/Facade/Auth.php
+
+		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
@@ -632,12 +560,6 @@ parameters:
 			identifier: parameter.notFound
 			count: 1
 			path: app/Core/Facade/Session.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$filesystem\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Facade/Storage.php
 
 		-
 			message: '#^Static property App\\Core\\Facade\\View\:\:\$view is unused\.$#'
@@ -688,18 +610,6 @@ parameters:
 			path: app/Core/Http/Request.php
 
 		-
-			message: '#^Property App\\Core\\Http\\Request\:\:\$method is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Http/Request.php
-
-		-
-			message: '#^Property App\\Core\\Http\\Request\:\:\$path is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Http/Request.php
-
-		-
 			message: '#^Variable \$_FILES on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.variable
 			count: 1
@@ -716,12 +626,6 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 3
 			path: app/Core/Http/Request.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$middleware\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
 
 		-
 			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
@@ -826,18 +730,6 @@ parameters:
 			path: app/Core/Http/RouteMatcher.php
 
 		-
-			message: '#^Access to private property App\\Core\\Http\\Request\:\:\$method\.$#'
-			identifier: property.private
-			count: 2
-			path: app/Core/Http/RouteRegister.php
-
-		-
-			message: '#^Access to private property App\\Core\\Http\\Request\:\:\$path\.$#'
-			identifier: property.private
-			count: 1
-			path: app/Core/Http/RouteRegister.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$flatRoutes$#'
 			identifier: parameter.notFound
 			count: 1
@@ -845,18 +737,6 @@ parameters:
 
 		-
 			message: '#^Access to an undefined property App\\Core\\Mvc\:\:\$middleware\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Http/Router.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$controllers\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Http/Router.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$routes\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Core/Http/Router.php
@@ -910,12 +790,6 @@ parameters:
 			path: app/Core/Migration.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Mvc.php
-
-		-
 			message: '#^Property App\\Core\\Mvc\:\:\$debugStatus is never read, only written\.$#'
 			identifier: property.onlyWritten
 			count: 1
@@ -946,18 +820,6 @@ parameters:
 			path: app/Core/Provider/WhoopsProvider.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$token\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
 			message: '#^If condition is always true\.$#'
 			identifier: if.alwaysTrue
 			count: 1
@@ -966,6 +828,12 @@ parameters:
 		-
 			message: '#^Loose comparison using \=\= between false and true will always evaluate to false\.$#'
 			identifier: equal.alwaysFalse
+			count: 1
+			path: app/Core/Services/AuthService.php
+
+		-
+			message: '#^PHPDoc tag @param for parameter \$model with type App\\Core\\DataLayer\\Model is not subtype of native type App\\Model\\User\.$#'
+			identifier: parameter.phpDocType
 			count: 1
 			path: app/Core/Services/AuthService.php
 
@@ -994,46 +862,22 @@ parameters:
 			path: app/Core/Services/PathResolver.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Services\\SessionStorage\:\:\$attributes\.$#'
-			identifier: property.notFound
+			message: '#^Method App\\Core\\Services\\SessionStorage\:\:flashSessionDestroy\(\) is unused\.$#'
+			identifier: method.unused
 			count: 1
 			path: app/Core/Services/SessionStorage.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Core/Services/SessionStorage.php
-
-		-
-			message: '#^If condition is always false\.$#'
-			identifier: if.alwaysFalse
+			message: '#^Method App\\Core\\Services\\SessionStorage\:\:verifyInactivityTimeout\(\) is unused\.$#'
+			identifier: method.unused
 			count: 1
 			path: app/Core/Services/SessionStorage.php
 
 		-
-			message: '#^Method App\\Core\\Services\\SessionStorage\:\:__get\(\) with return type void returns mixed but should not return anything\.$#'
-			identifier: return.void
-			count: 4
-			path: app/Core/Services/SessionStorage.php
-
-		-
-			message: '#^Method App\\Core\\Services\\SessionStorage\:\:__set\(\) with return type void returns mixed but should not return anything\.$#'
-			identifier: return.void
+			message: '#^Property App\\Core\\Services\\SessionStorage\:\:\$inactivityTimeout is unused\.$#'
+			identifier: property.unused
 			count: 1
 			path: app/Core/Services/SessionStorage.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$lifetime$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Core/Services/SessionStorage.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$storage\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Storage.php
 
 		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$session$#'
@@ -1046,90 +890,6 @@ parameters:
 			identifier: new.static
 			count: 2
 			path: app/Core/Support/Collection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array controllers\)\: Unexpected token "\\n \* ", expected ''\('' at offset 281 on line 10$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array filesystem\)\: Unexpected token "\\n \* ", expected ''\('' at offset 309 on line 11$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array menu\)\: Unexpected token "\\n \* ", expected ''\('' at offset 358 on line 13$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array middleware\)\: Unexpected token "\\n \* ", expected ''\('' at offset 386 on line 14$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array resources\)\: Unexpected token "\\n \* ", expected ''\('' at offset 336 on line 12$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array settings\)\: Unexpected token "\\n \* ", expected ''\('' at offset 412 on line 15$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @method has invalid value \(array storage use filesystem\)\: Unexpected token "use", expected ''\('' at offset 438 on line 16$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array controllers\)\: Unexpected token "controllers", expected variable at offset 28 on line 2$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array filesystem\)\: Unexpected token "filesystem", expected variable at offset 64 on line 3$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array menu\)\: Unexpected token "menu", expected variable at offset 99 on line 4$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array middleware\)\: Unexpected token "middleware", expected variable at offset 128 on line 5$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array routes\)\: Unexpected token "routes", expected variable at offset 163 on line 6$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array settings\)\: Unexpected token "settings", expected variable at offset 241 on line 8$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
-
-		-
-			message: '#^PHPDoc tag @property\-read has invalid value \(array storage use filesystem\)\: Unexpected token "storage", expected variable at offset 194 on line 7$#'
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Support/Collection/ConfigCollection.php
 
 		-
 			message: '#^Method App\\Core\\Support\\Debug\\VarDumper\:\:dd\(\) should never return but return statement found\.$#'
@@ -1154,12 +914,6 @@ parameters:
 			identifier: nullCoalesce.offset
 			count: 1
 			path: app/Core/Support/Debug/debug.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$folder\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Support/Tree/TreeProject.php
 
 		-
 			message: '#^Call to static method make\(\) on an unknown class App\\Core\\Support\\Tree\\Storage\.$#'
@@ -1192,18 +946,6 @@ parameters:
 			path: app/Core/Support/Tree/TreeProject.php
 
 		-
-			message: '#^Trait App\\Core\\Traits\\Getter is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: app/Core/Traits/Getter.php
-
-		-
-			message: '#^Trait App\\Core\\Traits\\Setter is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: app/Core/Traits/Setter.php
-
-		-
 			message: '#^Right side of \|\| is always false\.$#'
 			identifier: booleanOr.rightAlwaysFalse
 			count: 1
@@ -1220,18 +962,6 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: app/Core/Validator.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$menu\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/View.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$resources\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/View.php
 
 		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$variables$#'
@@ -1258,12 +988,6 @@ parameters:
 			path: app/Core/View.php
 
 		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Middleware/AuthMiddleware.php
-
-		-
 			message: '#^Result of method App\\Core\\Http\\Response\:\:send\(\) \(void\) is used\.$#'
 			identifier: method.void
 			count: 1
@@ -1274,12 +998,6 @@ parameters:
 			identifier: method.void
 			count: 1
 			path: app/Middleware/MethodOverrideMiddleware.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Support\\Collection\\ConfigCollection\:\:\$settings\.$#'
-			identifier: property.notFound
-			count: 2
-			path: app/Middleware/RateLimitMiddleware.php
 
 		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$expiry_date\.$#'
@@ -1304,3 +1022,33 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Model/User.php
+
+		-
+			message: '#^Access to protected property App\\Model\\User\:\:\$id\.$#'
+			identifier: property.protected
+			count: 1
+			path: app/Services/PasswordService.php
+
+		-
+			message: '#^Access to protected property App\\Model\\User\:\:\$password\.$#'
+			identifier: property.protected
+			count: 1
+			path: app/Services/PasswordService.php
+
+		-
+			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$expiry_date\.$#'
+			identifier: property.notFound
+			count: 2
+			path: app/Services/TokenService.php
+
+		-
+			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$used\.$#'
+			identifier: property.notFound
+			count: 1
+			path: app/Services/TokenService.php
+
+		-
+			message: '#^Unsafe call to private method App\\Services\\TokenService\:\:isBad\(\) through static\:\:\.$#'
+			identifier: staticClassAccess.privateMethod
+			count: 1
+			path: app/Services/TokenService.php

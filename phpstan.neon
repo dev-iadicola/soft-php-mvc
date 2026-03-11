@@ -8,6 +8,7 @@ parameters:
         - app/Controllers/
         - app/Model/
         - app/Middleware/
+        - app/Services/
     excludePaths:
         - views/
         - vendor/

@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
-use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Attributes\RouteAttr;
-use App\Model\Skill;
+use App\Services\SkillService;
 use App\Core\Http\Request;
 
 class SkillMngController extends AdminController
@@ -17,14 +16,14 @@ class SkillMngController extends AdminController
   #[RouteAttr('/skill', 'get', 'admin.skill')]
   public function store(Request $request): void
   {
-    Skill::query()->create($request->all());
+    SkillService::create($request->all());
 
     response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 #[RouteAttr('skill-edit/{id}', 'get','admin.skill.edit')]
   public function edit(Request $request, string $id)
   {
-    $skill = Skill::query()->find($id);
+    $skill = SkillService::findOrFail((int) $id);
     return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
 #[RouteAttr('skill-update/{id}', 'patch','admin.skill.update')]
@@ -32,7 +31,7 @@ class SkillMngController extends AdminController
   {
     $data = $request->all();
 
-    Skill::query()->where('id', $id)->update($data);
+    SkillService::update((int) $id, $data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
   }
@@ -41,7 +40,7 @@ class SkillMngController extends AdminController
   public function destroy(Request $reqq, string $id)
   {
 
-    Skill::query()->where('id', $id)->delete();
+    SkillService::delete((int) $id);
 
     return response()->back()->withSuccess('Skills Eliminata con Successo!');
   }

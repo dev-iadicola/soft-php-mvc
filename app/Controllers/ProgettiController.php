@@ -4,17 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use App\Model\Project;
 use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
+use App\Services\ProjectService;
 
 class ProgettiController extends Controller
 {
     #[RouteAttr('progetti')]
     public function index(): void
     {
-        $projects = Project::query()->all();
+        $projects = ProjectService::getAll();
 
         view('progetti', compact('projects'));
     }
@@ -25,10 +25,10 @@ class ProgettiController extends Controller
         $slug = urldecode($slug);
 
         $project = is_numeric($slug)
-            ? Project::query()->find((int) $slug)
-            : Project::query()->where('title', $slug)->first();
+            ? ProjectService::findOrFail((int) $slug)
+            : ProjectService::findBySlug($slug);
 
-        $projects = Project::query()->all();
+        $projects = ProjectService::getAll();
 
         view('progetto', compact('project', 'projects'));
     }

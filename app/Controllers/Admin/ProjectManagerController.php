@@ -10,14 +10,14 @@ use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Core\Validation\Validator;
 use App\Model\Project;
+use App\Services\ProjectService;
 
 class ProjectManagerController extends AdminController
 {
     #[RouteAttr(path: 'project', method: 'get', name: 'admin.projects')]
     public function index()
     {
-        $projects = Project::query()->orderBy('id', 'DESC')->get();
-
+        $projects = ProjectService::getAll();
 
         return view('admin.portfolio.project', [
             'projects' => $projects,
@@ -28,9 +28,8 @@ class ProjectManagerController extends AdminController
     #[RouteAttr(path: 'project-edit/{id}', method: 'get', name: 'admin.project.edit')]
     public function edit(Request $request, int $id)
     {
-
-        $project = Project::query()->find($id);
-        $projects = Project::query()->orderBy('id', 'DESC')->get();
+        $project = ProjectService::findOrFail($id);
+        $projects = ProjectService::getAll();
 
         return view('admin.portfolio.project', compact('project', 'projects'));
     }
@@ -39,7 +38,7 @@ class ProjectManagerController extends AdminController
     public function update(Request $request, int $id)
     {
         $data = $request->all();
-        $project = Project::query()->find($id);
+        $project = ProjectService::findOrFail($id);
         $validator = $this->validateRequest($request);
 
         if ($validator->fails()) {
@@ -75,7 +74,7 @@ class ProjectManagerController extends AdminController
             $data['img'] = $storage->getPath($path);
         }
 
-        Project::query()->where('id', $id)->update($data);
+        ProjectService::update($id, $data);
 
         return response()->back()->withSuccess($message);
     }
@@ -121,7 +120,7 @@ class ProjectManagerController extends AdminController
         $data = $valid->validated();
         $data['img'] = $storage->getPath($path);
         // Crea il progetto
-        Project::query()->create($data);
+        ProjectService::create($data);
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
@@ -132,12 +131,9 @@ class ProjectManagerController extends AdminController
         // trova e azione
         $data = $reqq->all();
 
-        $projectQ = Project::query()->where('id', $id);
-        if ( ! $projectQ->exists()) {
-            return response()->back()->withError('Progetto non trovato');
-        }
+        $project = ProjectService::findOrFail($id);
+
         // delete img if exist
-        $project = Project::query()->find($id);
         $storage = Storage::make('public');
         $imgPath = ltrim((string)$project->img, '/');
         if (str_starts_with($imgPath, 'storage/app/public/')) {
@@ -147,7 +143,7 @@ class ProjectManagerController extends AdminController
             $storage->delete($imgPath);
         }
 
-        Project::query()->where('id', $id)->delete();
+        ProjectService::delete($id);
 
         response()->back()->withSuccess('Progetto non eliminato correttamente.');
     }

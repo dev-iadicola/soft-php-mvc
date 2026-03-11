@@ -19,6 +19,9 @@ class Contatti extends Model
     protected ?string $typologie = null;
 
 
+    /**
+     * @deprecated Use \App\Services\ContactService::validate() instead.
+     */
     public function checkForm(array $post): bool
     {
         $nome =  $post['nome'];

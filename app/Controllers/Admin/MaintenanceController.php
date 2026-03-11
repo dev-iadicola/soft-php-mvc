@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 
-use App\Core\Config;
+use App\Services\MaintenanceService;
 use App\Core\Controllers\AdminController;
 use App\Core\Http\Request;
 use App\Core\Http\Attributes\RouteAttr;
@@ -26,13 +26,11 @@ class MaintenanceController extends AdminController
     {
         $root = $this->mvc->config->get('folder')->root . '/.env';
         if ($request->has('check')) {
-            $valueForEnv = 'true';
-            Config::updateEnv($root, 'MAINTENANCE', $valueForEnv);
+            MaintenanceService::enable($root);
             return response()->back()->withSuccess('Manutenzione attivata');
         }
 
-        $valueForEnv = 'false';
-        Config::updateEnv($root, 'MAINTENANCE', $valueForEnv);
+        MaintenanceService::disable($root);
         return response()->back()->withSuccess('Sito web attivato');
     }
 }

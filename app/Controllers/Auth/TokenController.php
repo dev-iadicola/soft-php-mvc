@@ -14,6 +14,8 @@ use App\Core\Http\Attributes\AttributeRoute;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Model\Token;
+use App\Services\TokenService;
+use App\Services\PasswordService;
 
 class TokenController extends Controller
 {
@@ -46,7 +48,7 @@ class TokenController extends Controller
             return response()->back()->withError("Whoops,something went worng!");
         }
         // * Generation of token
-        $token = Token::generateToken($request->string('email'));
+        $token = TokenService::generate($request->string('email'));
         $to = $request->string('email');
         $subject = 'Richiesta di reset Password';
         $page = 'token-mail';
@@ -73,7 +75,7 @@ class TokenController extends Controller
     #[RouteAttr('/validate-pin/{token}')]
     public function pagePin(Request $request, string $token)
     {
-        if (Token::isBad($token)) {
+        if (!TokenService::isValid($token)) {
             return $this->render('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
         }
         return $this->render('Auth.validate-token', compact('token'));
@@ -102,11 +104,10 @@ class TokenController extends Controller
             Log::Alert("Accesso sospetto: token mancante per la richiesta " . $request->uri() . "\n" . $request->getRequestInfo());
             return response()->set413();
         }
-        $user = User::changePassword(password: $data['password'], email: $token->email);
-        // * send email with email changed notofy
-        if (!empty($user) || !is_null($user)) {
-
-            Log::email("Passowrd was changed for user {$user->email}", $user->email, "Password Changed Successfully!");
+        $changed = PasswordService::changeByEmail(email: $token->email, newPassword: $data['password']);
+        // * send email with email changed notify
+        if ($changed) {
+            Log::email("Password was changed for user {$token->email}", $token->email, "Password Changed Successfully!");
         }
 
         return response()->redirect("/login")->withSuccess('Accedi con le nuove credenziali!');

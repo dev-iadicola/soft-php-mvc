@@ -15,7 +15,7 @@ use \App\Core\Http\Response;
 use App\Core\Connection\SMTP;
 use App\Core\DataLayer\Runtime\ORM;
 use App\Core\Services\SessionStorage;
-use \App\Core\Exception\NotFoundException;
+use App\Core\Exception\ExceptionHandler;
 use App\Core\Provider\NativeErrorProvider;
 use App\Core\Provider\WhoopsProvider;
 use App\Core\Services\CsrfService;
@@ -125,9 +125,8 @@ class Mvc
         try {
             // Risolve la richiesta, ovvero determina quale azione eseguire in base alla rotta
             $this->router->resolve();
-        } catch (NotFoundException $e) {
-            // Se la rotta non viene trovata, imposta una risposta 404
-            $this->response->set404($e);
+        } catch (\Throwable $e) {
+            ExceptionHandler::handle($e, $this->response);
         }
         // Invia la risposta al client
         $this->response->send();

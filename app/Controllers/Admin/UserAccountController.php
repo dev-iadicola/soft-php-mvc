@@ -8,7 +8,9 @@ use App\Core\Controllers\AdminController;
 use App\Core\Facade\Session;
 use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
+use App\Core\Exception\ValidationException;
 use App\Model\User;
+use App\Services\PasswordService;
 
 class UserAccountController extends AdminController
 {
@@ -68,25 +70,16 @@ class UserAccountController extends AdminController
             return response()->redirect('/login');
         }
 
-        $currentPassword = $request->string('current_password');
-        $password = $request->string('password');
-        $confirmed = $request->string('confirmed');
-
-        if (!password_verify($currentPassword, $user->password)) {
-            return response()->back()->withError('La password attuale non e corretta.');
+        try {
+            PasswordService::changeByUser(
+                user: $user,
+                currentPassword: $request->string('current_password'),
+                newPassword: $request->string('password'),
+                confirmed: $request->string('confirmed')
+            );
+        } catch (ValidationException $e) {
+            return response()->back()->withError($e->getMessage());
         }
-
-        if (strlen($password) < 8) {
-            return response()->back()->withError('La nuova password deve contenere almeno 8 caratteri.');
-        }
-
-        if ($password !== $confirmed) {
-            return response()->back()->withError('Le password non coincidono.');
-        }
-
-        User::query()->where('id', $user->id)->update([
-            'password' => password_hash($password, PASSWORD_BCRYPT),
-        ]);
 
         return response()->back()->withSuccess('Password aggiornata.');
     }

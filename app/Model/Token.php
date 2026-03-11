@@ -32,6 +32,9 @@ use DateTime;
         return ['used' => 'bool'];
      }
 
+     /**
+      * @deprecated Use \App\Services\TokenService::generate() instead.
+      */
      public static function generateToken(string $email): mixed{
         $token = bin2hex(random_bytes(100));
         $dataForToken = ['email' => $email, 'token' => $token];
@@ -45,9 +48,10 @@ use DateTime;
       * Summary of verifyToken
       * @param mixed $token
       * @return bool
-
-      Valida se il token ha i requisiti per permettere di accedere 
-
+      *
+      * Valida se il token ha i requisiti per permettere di accedere
+      *
+      * @deprecated Use \App\Services\TokenService::isValid() instead (inverted logic).
       */
      public static function isBad(string $token): bool{
 

@@ -16,6 +16,9 @@ class LogTrace extends Model
     protected ?string $indirizzo = null;
     protected ?string $device = null;
 
+    /**
+     * @deprecated Use \App\Services\LogService::create() instead.
+     */
     public static function ceateLog(int $id): mixed
     {
         $default = [
