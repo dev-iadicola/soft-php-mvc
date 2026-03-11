@@ -35,7 +35,7 @@ class MySqlBuilder extends AbstractBuilder
     {
         $sql = $this->toSql();
         foreach ($this->bindings as $key => $val) {
-            $val = is_numeric($val) ? $val : "'$val'";
+            $val = is_numeric($val) ? (string) $val : "'$val'";
             $sql = str_replace($key, $val, $sql);
         }
         return $sql;
