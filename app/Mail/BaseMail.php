@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Core\GetEnv;
 use App\Core\Contract\MailBaseInterface;
 
 abstract class BaseMail implements MailBaseInterface
@@ -16,8 +17,8 @@ abstract class BaseMail implements MailBaseInterface
     private ?string $page;
     public function __construct()
     {
-        $this->from = env('APP_EMAIL',null); 
-        $this->fromName = env('APP_NAME', null); 
+        $this->from = GetEnv::string('APP_EMAIL');
+        $this->fromName = GetEnv::string('APP_NAME');
     }
 
     public function directoryPage( string $page): void

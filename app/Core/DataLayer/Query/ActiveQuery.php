@@ -321,7 +321,11 @@ class ActiveQuery
             $this->executor->prepareAndExecute($this->builder->toInsert(), $this->builder->getBindings());
             $primaryKey = $this->hydrator->getModel()->primaryKey;
             $id = $this->executor->lastInsertId();
-            $lookupId = ($id !== false && $id !== '0' && $id !== 0) ? $id : ($values[$primaryKey] ?? null);
+            $lookupId = $values[$primaryKey] ?? null;
+
+            if ($lookupId === null && $id !== false && $id !== '0' && $id !== 0) {
+                $lookupId = $id;
+            }
             $this->builder->reset();
 
             if ($lookupId === null) {

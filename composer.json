@@ -22,16 +22,16 @@
         "filp/whoops": "^2.18",
         "sendinblue/api-v3-sdk": "^8.4",
         "symfony/var-dumper": "^6.4",
-        "nesbot/carbon": "^3.11",
+        "nesbot/carbon": "^2.73",
       "ext-pdo": "*",
-        "illuminate/validation": "^12.54",
-        "illuminate/translation": "^12.54"
+        "illuminate/validation": "^10.48",
+        "illuminate/translation": "^10.48"
     },
     "scripts": {
         "mvc": [
             "php app/Core/CLI/Kernel.php"
         ],
-        "analyse": "phpstan analyse",
+        "analyse": "phpstan analyse --debug --no-progress --memory-limit=1G",
         "rector": "rector process",
         "rector-check": "rector process --dry-run",
         "test": "phpunit --no-coverage",

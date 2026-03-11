@@ -8,6 +8,7 @@ use App\Core\Connection\SMTP;
 use App\Core\Contract\MailBaseInterface;
 use App\Core\GetEnv;
 use App\Core\Mvc;
+use RuntimeException;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mailer extends BaseMail implements MailBaseInterface
@@ -33,14 +34,9 @@ class Mailer extends BaseMail implements MailBaseInterface
 
         $from ??= GetEnv::requiredString('APP_EMAIL');
         $fromName ??= GetEnv::requiredString('APP_NAME');
-        $mail = smtp()->getMailer();
-        $content = $this->content;
-
-
-
-
-
         try {
+            $mail = smtp()->getMailer();
+            $content = $this->content;
 
             $mail->setFrom($from, $fromName);
             $mail->addAddress($to);
@@ -49,7 +45,7 @@ class Mailer extends BaseMail implements MailBaseInterface
             $mail->Body = $this->bodyHtml($body, $content);
 
             return $mail->send();
-        } catch (ExceptionSMTP $e) {
+        } catch (ExceptionSMTP|RuntimeException $e) {
             //echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
             return false;
         }

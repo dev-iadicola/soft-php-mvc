@@ -26,7 +26,7 @@ class ContattiController extends Controller
     #[RouteAttr('contatti', 'POST', 'contatti')]
     public function sendForm(Request $request)
     {
-        $post = $this->mvc->request->all();
+        $post = $request->all();
 
         try {
             ContactService::validate($post);
@@ -40,10 +40,10 @@ class ContattiController extends Controller
         $brevoMail = new BrevoMail();
 
         $brevoMail->bodyHtml('notifica', [
-            'nome' => $this->mvc->request->nome,
-            'email' => $this->mvc->request->email,
-            'messaggio' => $this->mvc->request->messaggio,
-            'typologie' => $this->mvc->request->typologie,
+            'nome' => $request->string('nome'),
+            'email' => $request->string('email'),
+            'messaggio' => $request->string('messaggio'),
+            'typologie' => $request->string('typologie'),
         ]);
         $brevoMail->setEmail($user->email, 'Messaggio dal tuo portfolio');
         $brevoMail->send();

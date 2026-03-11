@@ -160,7 +160,13 @@ if ( ! function_exists('is_octal')) {
 if ( ! function_exists(function: 'smtp')) {
     function smtp(): SMTP
     {
-        return new SMTP();
+        $mvc = mvc();
+
+        if ($mvc?->Smtp instanceof SMTP) {
+            return $mvc->Smtp;
+        }
+
+        throw new RuntimeException('SMTP provider is not configured.');
     }
 }
 

@@ -44,7 +44,7 @@ class Mvc
     public View $view;
     public Storage $storage;
     public \PDO $pdo;
-    public SMTP $Smtp;
+    public ?SMTP $Smtp = null;
     public Mailer $mailer;
     public SessionStorage $sessionStorage;
 
