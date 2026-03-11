@@ -286,20 +286,6 @@ class ActiveQuery
         return $this->hydrator->one($row);
     }
 
-    public function findOrFalse(int|string $id, ?string $column = 'id', int $fetchType = PDO::FETCH_ASSOC): bool|Model
-    {
-        $this->builder->where($column, $id);
-
-        $exist = $this->executor->fetch($this->builder->toSql(), $this->builder->getBindings());
-        $this->builder->reset();
-        if ($exist) {
-            return $this->hydrator->one($exist);
-        }
-
-        return false;
-
-    }
-
     public function findAll(int $fetchType = PDO::FETCH_ASSOC): array
     {
         $rows = $this->executor->fetchAll($this->builder->toSql(), $this->builder->getBindings(), $fetchType);

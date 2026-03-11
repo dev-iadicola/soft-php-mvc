@@ -26,7 +26,7 @@ class ServiceTest extends TestCase
     {
         $this->pdo = new \PDO('sqlite::memory:');
         $this->pdo->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
-        ORM::init($this->pdo, 'mysql');
+        ORM::init($this->pdo, 'sqlite');
 
         $this->createSchema();
         $this->envFile = sys_get_temp_dir() . '/soft-php-mvc-env-' . uniqid('', true) . '.env';

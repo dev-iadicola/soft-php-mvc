@@ -7,6 +7,7 @@ namespace App\Core\DataLayer\Factory;
 use App\Core\DataLayer\Query\AbstractBuilder;
 use App\Core\DataLayer\Query\MySqlBuilder;
 use App\Core\DataLayer\Query\PostgresQueryBuilder;
+use App\Core\DataLayer\Query\SqliteQueryBuilder;
 use InvalidArgumentException;
 
 class QueryBuilderFactory
@@ -15,8 +16,9 @@ class QueryBuilderFactory
 
         return match($driveName){
             'mysql' => new MySqlBuilder(),
+            'sqlite' => new SqliteQueryBuilder(),
             'postgres' => new PostgresQueryBuilder(),
-            default => throw new InvalidArgumentException("Unsupported drive> $driveName"),
+            default => throw new InvalidArgumentException("Unsupported driver: $driveName"),
         };
     } 
 }

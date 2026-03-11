@@ -10,12 +10,21 @@ use App\Core\Exception\QueryBuilderException;
 
 abstract class AbstractBuilder implements QueryBuilderInterface
 {
+    public const PRIMARY_KEY_COLUMN  = 'id';
+    public const TIMESTAMP_CREATED   = 'created_at';
+    public const TIMESTAMP_UPDATED   = 'updated_at';
+
+    /** Default system columns excluded from mass-assignment; override in subclasses when needed. */
+    protected array $systemColumns = [
+        self::PRIMARY_KEY_COLUMN,
+        self::TIMESTAMP_CREATED,
+        self::TIMESTAMP_UPDATED,
+    ];
+
     // Only declared model columns should survive mass-assignment filtering.
     protected array $allowedColumns = [];
     // Binding params
     protected array $bindings = [];
-
-    protected array $systemColumns = ['id', 'created_at', 'updated_at'];
 
     public int|float|string|null $id = null; // ID dell'istanza
     protected int $paramCounter = 0;
