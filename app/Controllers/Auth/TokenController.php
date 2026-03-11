@@ -102,13 +102,19 @@ class TokenController extends Controller
             return response()->set413();
         }
 
-        $changed = PasswordService::changeByEmail(email: $token->email, newPassword: $data['password']);
+        $tokenEmail = $token->getAttribute('email');
+
+        $changed = PasswordService::changeByEmail(email: (string) $tokenEmail, newPassword: $data['password']);
 
         // Invalidate the token after use
         Token::query()->where('token', $request->string('token'))->update(['used' => true]);
 
         if ($changed) {
-            Log::email("Password was changed for user {$token->email}", $token->email, "Password Changed Successfully!");
+            Log::email(
+                "Password was changed for user {$tokenEmail}",
+                (string) $tokenEmail,
+                "Password Changed Successfully!"
+            );
         }
 
         return response()->redirect("/login")->withSuccess('Accedi con le nuove credenziali!');

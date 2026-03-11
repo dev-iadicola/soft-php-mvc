@@ -17,14 +17,14 @@ abstract class CoreException extends Exception {
         int $code = 500,
         int $traceId = 1
         ){
-            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS,2);
-            $caller = $trace[$traceId]; 
-            if($caller && isset($caller["file"], $caller["line"])){
-              $this->file = $caller["file"];   
-              $this->line = $caller["line"];
-              
-              $message .= " (Origineted in {$this->file} on line  {$this->line}";
+            $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, $traceId + 1);
+            $caller = $trace[$traceId] ?? null;
 
+            if ($caller !== null && isset($caller["file"], $caller["line"])) {
+              $this->file = $caller["file"];
+              $this->line = $caller["line"];
+
+              $message .= " (Origineted in {$this->file} on line {$this->line})";
             }
 
             parent::__construct($message, $code);

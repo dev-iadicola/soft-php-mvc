@@ -114,7 +114,7 @@ class Mvc
         // * It creates a single mailer instance 
         //   to send transactional and system emails.  
         //   It loads SMTP credentials from environment variables and validates the connection on startup.    
-        $this->Smtp = (new SmtpProvider($this->response))->register();
+        $this->Smtp = (new SmtpProvider())->register();
 
 
 
