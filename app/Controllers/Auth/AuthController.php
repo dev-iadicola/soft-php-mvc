@@ -30,19 +30,19 @@ class AuthController extends Controller
         // verifica esistenza user
         $user = User::query()->where('email', $request->get('email'))->first();
 
-        if(empty($user)){
+        if (! $user instanceof User) {
             
             return view('Auth.login', ['message' => 'Credenziali non valide!']);
         }
 
         // conferma password
-        $confirmPassword = password_verify($request->string('password'), $user->password);
+        $confirmPassword = password_verify($request->string('password'), (string) $user->getAttribute('password'));
         if ($confirmPassword === false) {
             return redirect()->back()->withError('Utente non presente.');
         }
         // Autenticazione e traccia del log
         Auth::login($user);
-        LogService::create($user->id, $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '');
+        LogService::create((int) $user->getAttribute('id'), $_SERVER['REMOTE_ADDR'] ?? '', $_SERVER['HTTP_USER_AGENT'] ?? '');
         return redirect('admin/dashboard');
     }
 

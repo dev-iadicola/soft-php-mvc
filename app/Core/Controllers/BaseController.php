@@ -51,7 +51,6 @@ abstract class BaseController
      * @deprecated use global response
      * how: response()->redirect()->setStaus($num);
      * Summary of statusCode413
-     * @return void
      */
     public function statusCode413(): static
     {

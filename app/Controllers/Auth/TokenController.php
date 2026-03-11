@@ -23,10 +23,9 @@ class TokenController extends Controller
     /**
      * Forgot password
      * request of token via mail for reset password
-     * @return void
      */
     #[RouteAttr('/forgot', 'POST', 'email.send')]
-    public function forgotPasswordToken(Request $request)
+    public function forgotPasswordToken(Request $request): mixed
     {
         // * Input fields validation
         $validator = Validator::make(
@@ -73,7 +72,7 @@ class TokenController extends Controller
      * @param mixed $token
      */
     #[RouteAttr('/validate-pin/{token}')]
-    public function pagePin(Request $request, string $token)
+    public function pagePin(Request $request, string $token): mixed
     {
         if (!TokenService::isValid($token)) {
             return $this->render('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
@@ -82,7 +81,7 @@ class TokenController extends Controller
     }
 
     #[RouteAttr("/token/change-password", "POST")]
-    public function cahngePassword(Request $request)
+    public function cahngePassword(Request $request): mixed
     {
         $data = $request->all();
 

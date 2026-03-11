@@ -52,7 +52,7 @@ class UniqueRule implements RuleInterface
         // Parse params from string notation: "table,column,excludeId"
         if ($param !== null) {
             $parts = explode(',', $param);
-            $table = $parts[0] ?? $table;
+            $table = $parts[0];
             $column = $parts[1] ?? ($column !== '' ? $column : $field);
             $excludeId = isset($parts[2]) ? (int) $parts[2] : $excludeId;
         }
