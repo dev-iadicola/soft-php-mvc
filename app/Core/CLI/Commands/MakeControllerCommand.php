@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\CLI\Commands;
 
+use App\Core\CLI\Commands\Validation\ValidateClassName;
 use App\Core\CLI\Stubs\StubGenerator;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
@@ -26,23 +27,22 @@ class MakeControllerCommand implements CommandInterface
                 $className .= 'Controller';
             }
 
-            if (!preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $className)) {
-                Out::error('Invalid controller name. Use only letters, numbers, and underscores.');
-                return;
-            }
+            ValidateClassName::Validate($className, 'Controller');
 
-            $filePath = getcwd() . '/App/Controllers/' . $className . '.php';
+            $filePath = getcwd() . '/app/Controllers/' . $className . '.php';
 
             $saved = StubGenerator::make('controller')
                 ->replace(['{{CLASS}}' => $className])
                 ->saveTo($filePath);
 
             if (!$saved) {
-                Out::warn("Controller already exists: App/Controllers/{$className}.php");
+                Out::warn("Controller already exists: app/Controllers/{$className}.php");
                 return;
             }
 
-            Out::success("Controller created: App/Controllers/{$className}.php");
+            Out::success("Controller created: app/Controllers/{$className}.php");
+        } catch (\InvalidArgumentException $e) {
+            Out::error($e->getMessage());
         } catch (\Throwable $e) {
             Out::error("Failed to create controller: {$e->getMessage()}");
         }

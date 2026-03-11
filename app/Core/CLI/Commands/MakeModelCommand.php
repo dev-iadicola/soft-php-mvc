@@ -15,7 +15,7 @@ class MakeModelCommand implements CommandInterface
     {
         $name = $command[2] ?? null;
 
-        if (!$name || str_starts_with($name, '--')) {
+        if (!$name || str_starts_with($name, '-')) {
             Out::error('You must specify a model name. Example: php soft make:model Post');
             return;
         }
@@ -63,18 +63,18 @@ class MakeModelCommand implements CommandInterface
 
     private function createModel(string $className, string $table): void
     {
-        $filePath = getcwd() . '/App/Model/' . $className . '.php';
+        $filePath = getcwd() . '/app/Model/' . $className . '.php';
 
         $saved = StubGenerator::make('model')
             ->replace(['{{CLASS}}' => $className, '{{TABLE}}' => $table])
             ->saveTo($filePath);
 
         if (!$saved) {
-            Out::warn("Model already exists: App/Model/{$className}.php");
+            Out::warn("Model already exists: app/Model/{$className}.php");
             return;
         }
 
-        Out::success("Model created: App/Model/{$className}.php");
+        Out::success("Model created: app/Model/{$className}.php");
     }
 
     private function parseOptions(array $args): array

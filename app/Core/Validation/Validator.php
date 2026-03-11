@@ -7,7 +7,7 @@ namespace App\Core\Validation;
 use App\Core\Validation\Adapters\IlluminateValidatorAdapter;
 use App\Core\Validation\Contracts\ValidatorAdapterInterface;
 use App\Core\Validation\Rules\RuleInterface;
-use Exception;
+use App\Core\Exception\ValidationException;
 
 class Validator
 {
@@ -47,7 +47,7 @@ class Validator
     public function validated(): array
     {
         if ($this->fails()) {
-            throw new Exception('Cannot retrieve validated data when validation fails.');
+            throw new ValidationException($this->errors(), 'Cannot retrieve validated data when validation fails.');
         }
 
         return $this->adapter->validated();

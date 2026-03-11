@@ -54,9 +54,9 @@ return [
      * AuthMiddleware and CsrfMiddleware.
      */
     "session" => [
-        'lifetime'       =>  GetEnv::int('SESSION_LIFETIME', 3600) ?? 3600,       // 1 hour
-        'auth-lifetime'  =>  GetEnv::int('SESSION_LIFETIME_AUTH', 3600) ?? 3600,  // 1 hour
-        'timeout'        =>  GetEnv::int('TIMEOUT_SESSION', 900) ?? 900,         // 15 minutes
+        'lifetime'       =>  GetEnv::int('SESSION_LIFETIME', 3600),       // 1 hour
+        'auth-lifetime'  =>  GetEnv::int('SESSION_LIFETIME_AUTH', 3600),  // 1 hour
+        'timeout'        =>  GetEnv::int('TIMEOUT_SESSION', 900),         // 15 minutes
     ],
 
     /**
@@ -81,8 +81,8 @@ return [
      * - window: 60 seconds
      */
     'request' => [
-        'max'    => GetEnv::int('MAX_REQUEST', 100) ?? 100,
-        'window' => GetEnv::int('WINDOW', 60) ?? 60,
+        'max'    => GetEnv::int('MAX_REQUEST', 100),
+        'window' => GetEnv::int('WINDOW', 60),
     ],
     /**
      * Database driver.
@@ -91,6 +91,6 @@ return [
      * 
      */
     'db' => [
-        'driver' => GetEnv::string('DB_DRIVER', 'mysql') ?? 'mysql',
+        'driver' => GetEnv::string('DB_DRIVER', 'mysql'),
     ],
 ];

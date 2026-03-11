@@ -247,6 +247,10 @@ class ModelInspectCommand implements CommandInterface
      */
     private function resolveCasts(ReflectionClass $reflection, object $instance): array
     {
+        if (!$reflection->hasMethod('casts')) {
+            return [];
+        }
+
         $method = $reflection->getMethod('casts');
         $method->setAccessible(true);
 
@@ -258,6 +262,10 @@ class ModelInspectCommand implements CommandInterface
      */
     private function resolveColumnMap(ReflectionClass $reflection, object $instance): array
     {
+        if (!$reflection->hasMethod('columnMap')) {
+            return [];
+        }
+
         $method = $reflection->getMethod('columnMap');
         $method->setAccessible(true);
 

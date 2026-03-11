@@ -27,7 +27,7 @@ class TokenController extends Controller
     #[RouteAttr('/forgot', 'POST', 'email.send')]
     public function forgotPasswordToken(Request $request): mixed
     {
-        // * Input fields validation
+        // Input fields validation
         $validator = Validator::make(
             $request->all(),
             ['email' => ['required', 'email']],
@@ -41,35 +41,33 @@ class TokenController extends Controller
         }
 
 
-        // * email adress verificatrioin
+        // Email address verification
         $user = User::query()->where('email', $request->string('email'))->first();
-        if (empty($user)) {
-            return response()->back()->withError("Whoops,something went worng!");
+        if (! $user instanceof User) {
+            return response()->back()->withError("Whoops, something went wrong!");
         }
-        // * Generation of token
+        // Generation of token
         $token = TokenService::generate($request->string('email'));
         $to = $request->string('email');
         $subject = 'Richiesta di reset Password';
         $page = 'token-mail';
 
-        // * BrevoMail API send the mail with key
+        // BrevoMail API send the mail with key
         $brevoMail = new BrevoMail();
         $brevoMail->bodyHtml($page, ['token' => $token]);
         $brevoMail->setEmail($to, $subject);
-        $sended = $brevoMail->send();
-        if (! $sended) {
+        $sent = $brevoMail->send();
+        if (! $sent) {
             return response()->back()->withError("The mail wasn't sent. Verify your Brevo Account");
         }
-        Log::info("Richiesta token per cambiare passowrd accettata");
+        Log::info("Richiesta token per cambiare password accettata");
         return response()->back()->withSuccess('Mail was sent!, visit you email.');
     }
 
 
 
     /**
-     * Summary of pagePin
-     * @param \App\Core\Http\Request $request
-     * @param mixed $token
+     * Validate pin page
      */
     #[RouteAttr('/validate-pin/{token}')]
     public function pagePin(Request $request, string $token): mixed
@@ -81,30 +79,34 @@ class TokenController extends Controller
     }
 
     #[RouteAttr("/token/change-password", "POST")]
-    public function cahngePassword(Request $request): mixed
+    public function changePassword(Request $request): mixed
     {
         $data = $request->all();
 
-        // Validazione della password
-        $validatorPassword = Validator::make($request->all(), [
-            'password' => ["min:8", "confimed"],
-            ["password" => "Password don't match"]
-        ]);
+        // Password validation
+        $validatorPassword = Validator::make(
+            $request->all(),
+            ['password' => ["min:8", "confirmed"]],
+            ['password' => "Password don't match"]
+        );
 
-        // If password dont match, redirect back with error message for the fileds worng
+        // If password validation fails, redirect back with error
         if ($validatorPassword->fails()) {
             return response()->back()->withError($validatorPassword->errors());
         }
 
-        //Validazione del token
-        $token =  Token::query()->where('token', $request->string('token'))->first();
-        if (empty($token) || is_null($token)) {
-            // TODO: create a sistem to block 
+        // Token validation
+        $token = Token::query()->where('token', $request->string('token'))->first();
+        if (! $token instanceof Token) {
             Log::Alert("Accesso sospetto: token mancante per la richiesta " . $request->uri() . "\n" . $request->getRequestInfo());
             return response()->set413();
         }
+
         $changed = PasswordService::changeByEmail(email: $token->email, newPassword: $data['password']);
-        // * send email with email changed notify
+
+        // Invalidate the token after use
+        Token::query()->where('token', $request->string('token'))->update(['used' => true]);
+
         if ($changed) {
             Log::email("Password was changed for user {$token->email}", $token->email, "Password Changed Successfully!");
         }

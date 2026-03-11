@@ -16,22 +16,31 @@ class MakeSeederCommand implements CommandInterface
         if (!$name) {
             $name = trim(readline('Seeder name (e.g. users_seeder): '));
         }
-        if (!$name) {
-            Out::error('You must specify a seeder name.');
+        if (!$name || str_starts_with($name, '-')) {
+            Out::error('You must specify a seeder name. Example: php soft make:seeder users_seeder');
             return;
         }
 
-        $table     = $this->guessTableName($name);
-        $timestamp = date('Y_m_d_His');
-        $fileName  = "{$timestamp}_{$name}.php";
+        try {
+            $table     = $this->guessTableName($name);
+            $timestamp = date('Y_m_d_His');
+            $fileName  = "{$timestamp}_{$name}.php";
 
-        $filePath = getcwd() . '/Database/seed/' . $fileName;
+            $filePath = getcwd() . '/Database/seed/' . $fileName;
 
-        StubGenerator::make('seeder')
-            ->replace(['{{TABLE}}' => $table])
-            ->saveTo($filePath);
+            $saved = StubGenerator::make('seeder')
+                ->replace(['{{TABLE}}' => $table])
+                ->saveTo($filePath);
 
-        Out::ln("Created seeder: $fileName");
+            if (!$saved) {
+                Out::warn("Seeder already exists: Database/seed/{$fileName}");
+                return;
+            }
+
+            Out::success("Seeder created: Database/seed/{$fileName}");
+        } catch (\Throwable $e) {
+            Out::error("Failed to create seeder: {$e->getMessage()}");
+        }
     }
 
     private function guessTableName(string $name): string

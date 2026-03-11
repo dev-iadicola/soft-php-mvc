@@ -30,7 +30,7 @@ class MakeModelCommandTest extends TestCase
         $command = new MakeModelCommand();
         $command->exe(['php', 'make:model', 'BlogPost']);
 
-        $file = $this->root . '/App/Model/BlogPost.php';
+        $file = $this->root . '/app/Model/BlogPost.php';
 
         $this->assertFileExists($file);
         $content = file_get_contents($file);
@@ -52,8 +52,8 @@ class MakeModelCommandTest extends TestCase
             '--resource',
         ]);
 
-        $this->assertFileExists($this->root . '/App/Model/AuditLog.php');
-        $this->assertFileExists($this->root . '/App/Controllers/AuditLogController.php');
+        $this->assertFileExists($this->root . '/app/Model/AuditLog.php');
+        $this->assertFileExists($this->root . '/app/Controllers/AuditLogController.php');
 
         $migrationFiles = glob($this->root . '/Database/migration/*_create_audit_logs_table.php');
         $this->assertNotFalse($migrationFiles);

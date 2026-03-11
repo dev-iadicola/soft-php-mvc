@@ -163,17 +163,6 @@ class Request
         return $_SERVER['HTTP_HOST'] ?? 'localhost';
     }
 
-    // Preleva la request URI
-    /**
-     * Summary of getRequestPath
-     *
-     * @deprecated utilizza il metodo uri()
-     */
-    public function getRequestPath(): string
-    {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
-    }
-
     // Cattura il metodo della richiesta
     public function getRequestMethod(): string
     {
@@ -202,11 +191,6 @@ class Request
         return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? $_SERVER['REQUEST_URI'];
     }
 
-    public function getURI(): string
-    {
-        return parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH) ?? '/';
-    }
-
     public function all(): array
     {
         return $this->attributes;
@@ -221,7 +205,4 @@ class Request
 
         return '/';
     }
-
-    // Cattura richiesta post
-
 }

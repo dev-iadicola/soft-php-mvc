@@ -39,7 +39,7 @@ class GeneratorTest extends TestCase
         $command = new MakeModelCommand();
         $command->exe(['php', 'make:model', 'Article']);
 
-        $file = $this->root . '/App/Model/Article.php';
+        $file = $this->root . '/app/Model/Article.php';
         $this->assertFileExists($file);
 
         $content = file_get_contents($file);
@@ -57,7 +57,7 @@ class GeneratorTest extends TestCase
         $command = new MakeControllerCommand();
         $command->exe(['php', 'make:controller', 'Blog']);
 
-        $file = $this->root . '/App/Controllers/BlogController.php';
+        $file = $this->root . '/app/Controllers/BlogController.php';
         $this->assertFileExists($file);
 
         $content = file_get_contents($file);
@@ -71,7 +71,7 @@ class GeneratorTest extends TestCase
         $command = new MakeControllerCommand();
         $command->exe(['php', 'make:controller', 'BlogController']);
 
-        $file = $this->root . '/App/Controllers/BlogController.php';
+        $file = $this->root . '/app/Controllers/BlogController.php';
         $this->assertFileExists($file);
 
         $content = file_get_contents($file);
@@ -136,7 +136,7 @@ class GeneratorTest extends TestCase
         $command = new MakeRepositoryCommand();
         $command->exe(['php', 'make:repository', 'User']);
 
-        $file = $this->root . '/App/Repository/UserRepository.php';
+        $file = $this->root . '/app/Repository/UserRepository.php';
         $this->assertFileExists($file);
 
         $content = file_get_contents($file);
@@ -187,7 +187,7 @@ class GeneratorTest extends TestCase
         $command = new MakeControllerCommand();
         $command->exe(['php', 'make:controller', 'Existing']);
 
-        $file = $this->root . '/App/Controllers/ExistingController.php';
+        $file = $this->root . '/app/Controllers/ExistingController.php';
         $originalContent = file_get_contents($file);
 
         // Run again — should not overwrite

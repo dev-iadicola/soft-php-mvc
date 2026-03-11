@@ -156,4 +156,113 @@ class RouteCollectionTest extends TestCase
         $mw = $stack->Middleware()->toArray();
         $this->assertSame(['auth', 'web'], $mw);
     }
+
+    // ========================================================================
+    // Stack merge — middleware deduplication and namePrefix propagation
+    // ========================================================================
+
+    public function testStackMergeDeduplicatesMiddleware(): void
+    {
+        $parent = new Stack();
+        $parent->addMiddleware(['web', 'auth']);
+
+        $child = new Stack();
+        $child->addMiddleware(['auth', 'admin']);
+
+        $parent->merge($child);
+        $parent->clean();
+
+        $mw = $parent->Middleware()->toArray();
+        $this->assertCount(3, $mw);
+        $this->assertContains('web', $mw);
+        $this->assertContains('auth', $mw);
+        $this->assertContains('admin', $mw);
+    }
+
+    public function testStackMergePreservesNamePrefix(): void
+    {
+        $stack1 = new Stack();
+        $stack1->setNamePrefix('admin.');
+
+        $stack2 = new Stack();
+        $stack2->addMiddleware('auth');
+
+        $stack1->merge($stack2);
+
+        // namePrefix should still be set after merge
+        $this->assertSame('admin.', $stack1->getNamePrefix());
+    }
+
+    public function testStackMergeCombinesPaths(): void
+    {
+        $parent = new Stack();
+        $parent->addPath('/api');
+
+        $child = new Stack();
+        $child->addPath('/v2');
+        $child->addPath('/users');
+
+        $parent->merge($child);
+
+        $paths = $parent->Path()->toArray();
+        $this->assertSame(['/api', '/v2', '/users'], $paths);
+    }
+
+    public function testStackToArrayReturnsAllFields(): void
+    {
+        $stack = new Stack();
+        $stack->addMiddleware(['auth', 'web']);
+        $stack->addPath('/admin');
+        $stack->setNamePrefix('admin.');
+        $stack->clean();
+
+        $arr = $stack->toArray();
+        $this->assertArrayHasKey('Middleware', $arr);
+        $this->assertArrayHasKey('path', $arr);
+        $this->assertArrayHasKey('namePrefix', $arr);
+        $this->assertSame('admin.', $arr['namePrefix']);
+    }
+
+    public function testStackFluentInterface(): void
+    {
+        $stack = new Stack();
+        $result = $stack->addMiddleware('auth')
+            ->addPath('/api')
+            ->setNamePrefix('api.')
+            ->clean();
+
+        $this->assertInstanceOf(Stack::class, $result);
+    }
+
+    // ========================================================================
+    // RouteCollection — named route edge cases
+    // ========================================================================
+
+    public function testDuplicateNamedRouteOverwritesPrevious(): void
+    {
+        $collection = new RouteCollection();
+        $collection->add($this->makeRoute('/old', 'GET', 'OldCtrl', 'index', 'dashboard'));
+        // Different path and method, same name — allowed by RouteCollection
+        $collection->add($this->makeRoute('/new', 'POST', 'NewCtrl', 'index', 'dashboard'));
+
+        $found = $collection->findByName('dashboard');
+        $this->assertNotNull($found);
+        // The last one registered wins
+        $this->assertSame('/new', $found->uri);
+    }
+
+    public function testRouteWithoutNameNotInNamedRoutes(): void
+    {
+        $collection = new RouteCollection();
+        $collection->add($this->makeRoute('/unnamed', 'GET', 'Ctrl', 'index', null));
+
+        $this->assertCount(1, $collection->all());
+        $this->assertEmpty($collection->getNamedRoutes());
+    }
+
+    public function testRouteDefinitionMiddlewareStoredCorrectly(): void
+    {
+        $route = $this->makeRoute('/test', 'GET', 'Ctrl', 'index', 'test', ['web', 'auth', 'admin']);
+        $this->assertSame(['web', 'auth', 'admin'], $route->middleware);
+    }
 }

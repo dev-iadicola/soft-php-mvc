@@ -70,11 +70,13 @@ final class StubGenerator
         }
 
         $dir = dirname($filePath);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
+        if (!is_dir($dir) && !mkdir($dir, 0755, true)) {
+            return false;
         }
 
-        file_put_contents($filePath, $this->content);
+        if (file_put_contents($filePath, $this->content) === false) {
+            return false;
+        }
 
         return true;
     }

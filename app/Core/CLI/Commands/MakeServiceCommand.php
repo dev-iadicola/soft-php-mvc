@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\CLI\Commands;
 
+use App\Core\CLI\Commands\Validation\ValidateClassName;
 use App\Core\CLI\Stubs\StubGenerator;
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
@@ -27,12 +28,11 @@ class MakeServiceCommand implements CommandInterface
                 $className .= 'Service';
             }
 
-            if (!preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $className)) {
-                Out::error('Invalid service name. Use only letters, numbers, and underscores.');
-                return;
-            }
+            ValidateClassName::Validate($className, 'Service');
 
             $this->createService($className);
+        } catch (\InvalidArgumentException $e) {
+            Out::error($e->getMessage());
         } catch (\Throwable $e) {
             Out::error("Failed to create service: {$e->getMessage()}");
         }

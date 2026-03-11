@@ -7,22 +7,12 @@ namespace App\Mail;
 use App\Core\Connection\SMTP;
 use App\Core\Contract\MailBaseInterface;
 use App\Core\GetEnv;
-use App\Core\Mvc;
 use RuntimeException;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
 class Mailer extends BaseMail implements MailBaseInterface
 {
-    private Mvc $mvc;
-
-    private  $content = [];
-
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
+    private array $content = [];
 
     public function sendEmail(
         string $to,
@@ -30,7 +20,7 @@ class Mailer extends BaseMail implements MailBaseInterface
         string $body,
         string $from = NULL,
         string $fromName = NULL,
-    ) {
+    ): bool {
 
         $from ??= GetEnv::requiredString('APP_EMAIL');
         $fromName ??= GetEnv::requiredString('APP_NAME');
@@ -51,8 +41,8 @@ class Mailer extends BaseMail implements MailBaseInterface
         }
     }
 
-    public function setContent($content = [])
+    public function setContent(array $content = []): array
     {
-        return  $this->content = $content;
+        return $this->content = $content;
     }
 }

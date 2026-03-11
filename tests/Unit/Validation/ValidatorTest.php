@@ -312,7 +312,7 @@ class ValidatorTest extends TestCase
 
     public function testValidatedThrowsWhenFails(): void
     {
-        $this->expectException(\Exception::class);
+        $this->expectException(\App\Core\Exception\ValidationException::class);
 
         $v = Validator::make([], ['name' => 'required']);
         $v->validated();

@@ -19,22 +19,31 @@ class MakeMigrationCommand implements CommandInterface
             $name = trim($name);
         }
 
-        if (!$name) {
-            Out::error('You must specify a migration name.');
+        if (!$name || str_starts_with($name, '-')) {
+            Out::error('You must specify a migration name. Example: php soft make:migration create_users_table');
             return;
         }
 
-        $table = $this->guessTableName($name);
-        $timestamp = date('Y_m_d_His');
-        $fileName = "{$timestamp}_{$name}.php";
+        try {
+            $table = $this->guessTableName($name);
+            $timestamp = date('Y_m_d_His');
+            $fileName = "{$timestamp}_{$name}.php";
 
-        $filePath = getcwd() . '/Database/migration/' . $fileName;
+            $filePath = getcwd() . '/Database/migration/' . $fileName;
 
-        StubGenerator::make('migration')
-            ->replace(['{{TABLE}}' => $table])
-            ->saveTo($filePath);
+            $saved = StubGenerator::make('migration')
+                ->replace(['{{TABLE}}' => $table])
+                ->saveTo($filePath);
 
-        Out::ln("Created migration: $fileName");
+            if (!$saved) {
+                Out::warn("Migration already exists: Database/migration/{$fileName}");
+                return;
+            }
+
+            Out::success("Migration created: Database/migration/{$fileName}");
+        } catch (\Throwable $e) {
+            Out::error("Failed to create migration: {$e->getMessage()}");
+        }
     }
 
     private function guessTableName(string $name): string

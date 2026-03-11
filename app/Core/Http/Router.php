@@ -19,7 +19,6 @@ class Router
     public Mvc $mvc;
     public ConfigCollection $config;
 
-    private RouteRegister $registry;
     private RouteMatcher $matcher;
     private RouteDispatcher $dispatcher;
     private RouteLoader $loader;
@@ -30,7 +29,6 @@ class Router
         $this->request = $mvc->request ?? mvc()->request;
         $this->config = $mvc->config ?? mvc()->config;
         $this->loader = new RouteLoader($this->config->get('controllers'));
-        $this->registry = new RouteRegister();
         $this->matcher = new RouteMatcher();
         $this->dispatcher = new RouteDispatcher();
     }

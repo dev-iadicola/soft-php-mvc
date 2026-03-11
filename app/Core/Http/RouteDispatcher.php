@@ -1,7 +1,6 @@
 <?php
 
 declare(strict_types=1);
-// App/Core/Http/RouteDispatcher.php
 
 namespace App\Core\Http;
 
@@ -19,38 +18,10 @@ use RuntimeException;
  */
 class RouteDispatcher
 {
-    private string $controller;
-
-    // public function dispatch(RouteDefinition $route)
-    // {
-
-    //     // dd($route);
-
-    //     // * Esegui middlewares
-    //     $response = $this->executeMiddleware($route->middleware);
-
-    //     if ($response) {
-    //         return;
-    //     }
-
-    //     // * Prepara controller e azioni
-    //     $controller =  new $route->controller();
-
-    //     $args = [mvc()->request];
-    //     $params = $route->getParams();
-    //     //dd($params);
-    //     foreach ($params as $item) {
-    //         $args[] = $item;
-    //     }
-    //     dd($args);
-    //     // Le magie di php
-    //     return call_user_func_array(callback: [$controller, $route->action], args: $args);
-    // }
-
     public function dispatch(RouteDefinition $route): mixed
     {
         // Run middlewares
-        $response = $this->executeMiddleware($route->middleware);
+        $response = $this->executeMiddleware($route->middleware, $route->controller);
 
         if ($response) {
             return null;
@@ -105,17 +76,15 @@ class RouteDispatcher
 
     }
 
-    private function executeMiddleware(array $middlewareArray): ?Response
+    private function executeMiddleware(array $middlewareArray, string $controllerClass): ?Response
     {
-
         $config = mvc()->config->get('middleware');
 
         foreach ($middlewareArray as $name) {
-
             // se non esiste nel config/middleware lancia l'eccezione.
             if ( ! array_key_exists($name, $config)) {
                 throw new InvalidArgumentException(
-                    "Key '{$name}' not found in config/middleware.php. If it's a typo, please check your controller {$this->controller} or its parent class " . get_parent_class($this->controller) . '.'
+                    "Key '{$name}' not found in config/middleware.php. If it's a typo, please check your controller {$controllerClass} or its parent class " . get_parent_class($controllerClass) . '.'
                 );
             }
 
