@@ -200,41 +200,44 @@
         font-size: 0.75rem;
         font-weight: 600;
         text-decoration: none;
-        border: 1px solid var(--border);
+        border: 1px solid var(--accent-green);
         border-radius: var(--radius);
-        color: var(--text-secondary);
-        background: transparent;
+        color: var(--accent-green);
+        background: rgba(63, 185, 80, 0.12);
         transition: all 0.2s;
     }
 
     .proj-card__btn:hover {
         border-color: var(--accent-green);
         color: var(--accent-green);
-        box-shadow: 0 0 8px var(--glow-green);
+        background: rgba(63, 185, 80, 0.3);
+        box-shadow: 0 0 10px var(--glow-green);
     }
 
     .proj-card__btn--primary {
         border-color: var(--accent-blue);
-        color: var(--accent-blue);
+        color: var(--bg-primary);
+        background: var(--accent-blue);
     }
 
     .proj-card__btn--primary:hover {
-        background: var(--accent-blue);
+        background: rgba(88, 166, 255, 0.85);
         color: var(--bg-primary);
-        box-shadow: 0 0 10px var(--glow-blue);
+        box-shadow: 0 0 14px var(--glow-blue);
     }
 
     .proj-card__btn--detail {
         margin-left: auto;
         border-color: var(--accent-orange);
         color: var(--accent-orange);
+        background: rgba(210, 153, 34, 0.12);
     }
 
     .proj-card__btn--detail:hover {
-        background: var(--accent-orange);
-        color: var(--bg-primary);
+        background: rgba(210, 153, 34, 0.3);
+        color: var(--accent-orange);
         border-color: var(--accent-orange);
-        box-shadow: 0 0 10px rgba(210, 153, 34, 0.2);
+        box-shadow: 0 0 10px rgba(210, 153, 34, 0.3);
     }
 </style>
 
