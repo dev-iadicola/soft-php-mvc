@@ -4,12 +4,10 @@ declare(strict_types=1);
 
 namespace App\Core\Facade;
 
-use App\Core\Contract\QueryBuilderInterface;
 use App\Core\Mvc;
 use App\Core\DataLayer\Model;
 use App\Core\Services\AuthService;
-use App\Core\DataLayer\QueryBuilder;
-use App\Core\Services\SessionStorage;
+use App\Model\User;
 
 /**
  * Summary of Auth: Facade + Singleton
@@ -25,26 +23,21 @@ class Auth {
     }
 
    /**
-    * Summary of check
     * Utilizzalo per verificare che un utente abbia effettuato l'accesso
-    * @return void
     */
    public static function check(): bool {
     return Auth::getInstance()->isLogged();
    }
 
-   public static function login(Model $user): bool
+   public static function login(User $user): bool
    {
     return Auth::getInstance()->login($user);
    }
 
    /**
-    * Summary of user
-    * 
-    * @return QueryBuilderInterface|null ritrna l'istanza del queryBuilder quindi è possibile effetuare 
-    * subito Auth::user()->id o altri campi. 
+    * @return Model|null
     */
-   public static function user(): QueryBuilderInterface|null{
+   public static function user(): ?Model {
     return self::getInstance()->user();
    }
 

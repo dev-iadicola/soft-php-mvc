@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 
+use App\Core\GetEnv;
 use App\Services\MaintenanceService;
 use App\Core\Controllers\AdminController;
 use App\Core\Http\Request;
@@ -17,7 +18,7 @@ class MaintenanceController extends AdminController
     #[RouteAttr(path: 'settings', method: 'get', name: 'admin.settings')]
     public function index()
     {
-        $env = getenv('MAINTENANCE');
+        $env = GetEnv::bool('MAINTENANCE', false);
         return $this->render('admin.settings', compact('env'));
     }
 

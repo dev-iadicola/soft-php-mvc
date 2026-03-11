@@ -58,8 +58,28 @@ class Session {
         Mvc::$mvc->sessionStorage->set($key, $value);
     }
 
+    public static function flash(string $key, mixed $value): void
+    {
+        Mvc::$mvc->sessionStorage->flash($key, $value);
+    }
 
+    public static function getFlashedErrors(): array
+    {
+        return Mvc::$mvc->sessionStorage->getFlashedErrors();
+    }
 
-    
+    public static function flashErrors(array $errors): void
+    {
+        Mvc::$mvc->sessionStorage->flashErrors($errors);
+    }
 
+    public static function flashOldInput(array $data): void
+    {
+        Mvc::$mvc->sessionStorage->flashOldInput($data);
+    }
+
+    public static function getOldInput(string $key, mixed $default = null): mixed
+    {
+        return Mvc::$mvc->sessionStorage->getOldInput($key, $default);
+    }
 }

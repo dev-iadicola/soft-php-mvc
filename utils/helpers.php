@@ -173,3 +173,26 @@ if ( ! function_exists(function: 'flashMessage')) {
         return Session::getFlash($key);
     }
 }
+
+/**
+ * Retrieve old input value from the previous request (flashed in session).
+ * Useful for repopulating form fields after validation errors.
+ */
+if ( ! function_exists('old')) {
+    function old(string $key, mixed $default = null): mixed
+    {
+        return session()->getOldInput($key, $default);
+    }
+}
+
+/**
+ * Retrieve flashed validation errors from the previous request.
+ *
+ * @return array<string, string[]>
+ */
+if ( ! function_exists('errors')) {
+    function errors(): array
+    {
+        return session()->getFlashedErrors();
+    }
+}

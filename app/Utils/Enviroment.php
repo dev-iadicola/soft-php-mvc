@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace App\Utils;
 
+use App\Core\GetEnv;
+
 /**
  * Class Enviroment
  *
@@ -25,24 +27,27 @@ class Enviroment
      */
     public static function get(string $key, mixed $default = null): mixed
     {
-        $value = getenv($key);
+        $value = GetEnv::raw($key, $default);
 
-        if ($value === false) {
-            return $default;
+        if (is_string($value)) {
+            $trimmed = trim($value);
+
+            if (in_array(strtolower($trimmed), ['true', 'false', '1', '0', 'on', 'off'], true)) {
+                return GetEnv::bool($key, is_bool($default) ? $default : null);
+            }
+
+            if (filter_var($trimmed, FILTER_VALIDATE_INT) !== false) {
+                return GetEnv::int($key, is_int($default) ? $default : null);
+            }
+
+            if (filter_var($trimmed, FILTER_VALIDATE_FLOAT) !== false) {
+                return GetEnv::float($key, is_float($default) ? $default : null);
+            }
+
+            return $trimmed;
         }
 
-        //  Normalizza i boolean (true/false)
-        if (in_array(strtolower($value), ['true', 'false', '1', '0', 'on', 'off'], true)) {
-            return filter_var($value, FILTER_VALIDATE_BOOLEAN);
-        }
-
-        // Se è numerico, convertilo in int o float
-        if (is_numeric($value)) {
-            return str_contains($value, '.') ? (float) $value : (int) $value;
-        }
-
-        // Altrimenti ritorna stringa pura
-        return trim($value);
+        return $value;
     }
 
     /**

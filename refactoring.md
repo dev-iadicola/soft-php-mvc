@@ -280,3 +280,138 @@ In `MakeModelCommand::parseOptions()`, il default branch del match chiama `Out::
 1. **RouteDispatcher**: le proprieta `$controller`, `$path`, `$method`, `$action`, `$name`, `$dispatche` sono dichiarate ma mai assegnate nel metodo `dispatch()`. `$this->controller` viene usato nel messaggio di errore di `executeMiddleware()` ma non viene valorizzato, causando potenziale errore se un middleware non e nel config.
 2. **RouteRegister**: non sembra essere usato nel flusso attuale (Router non chiama mai `register()`). Valutare se eliminarlo o integrarlo.
 3. **RouteDispatcher**: il blocco commentato in cima (vecchia implementazione di `dispatch()`) andrebbe rimosso.
+
+---
+
+## 10. CENSIMENTO FILE ORFANI (2026-03-11)
+
+Analisi sistematica di file potenzialmente non referenziati dal progetto.
+
+### 10.1 Comandi CLI non registrati nel Kernel
+
+| File | Motivo |
+|------|--------|
+| `app/Core/CLI/Commands/MakeTableCommand.php` | Non registrato in `Kernel.php` (nessuna chiave `make:table` in `$commands`). Il corpo del metodo `exe()` contiene solo `Out::success('ok')` — sembra uno stub placeholder mai completato. |
+
+### 10.2 Trait usato da un solo model
+
+| File | Motivo |
+|------|--------|
+| `app/Core/Traits/Relation.php` | Usato solo da `App\Model\Project`. Nessun altro model tra i 13 presenti lo importa. Non e orfano in senso stretto, ma il rapporto 1/13 suggerisce che o i model dovrebbero usarlo di piu, oppure la logica dovrebbe essere integrata direttamente in `Model` come base trait. |
+
+### 10.3 Controller senza rotte: nessuno trovato
+
+Tutti i controller in `app/Controllers/` (incluse le subdirectory `Admin/` e `Auth/`) hanno almeno un attributo `#[RouteAttr(...)]`. Nessun controller orfano.
+
+### 10.4 Stub: tutti usati
+
+Tutti e 7 gli stub in `app/Core/CLI/Stubs/` (`model.stub`, `controller.stub`, `middleware.stub`, `service.stub`, `repository.stub`, `migration.stub`, `seeder.stub`) sono referenziati dai rispettivi comandi `Make*Command` tramite `StubGenerator::make()`.
+
+### 10.5 Helper files: tutti referenziati
+
+I 5 file in `utils/` (`helpers.php`, `facades.php`, `types.php`, `var_dumper.php`, `response.php`) sono tutti referenziati: `helpers.php` e caricato via `composer.json` autoload files, e a sua volta include gli altri 4 tramite `require_once`.
+
+### 10.6 Middleware: tutti configurati
+
+Tutti e 7 i middleware in `app/Middleware/` sono registrati in `config/middleware.php` nei gruppi `web`, `api`, `guest` o `auth`.
+
+### 10.7 Services: tutti usati dai controller
+
+Tutti e 12 i service in `app/Services/` sono importati e usati da almeno un controller.
+
+### 10.8 Test: tutti referenziano classi esistenti
+
+| Test file | Classe target | Stato |
+|-----------|--------------|-------|
+| `tests/Unit/Storage/DriveFactoryTest.php` | `App\Core\Filesystem\DriveFactory` | Esiste |
+| `tests/Unit/Storage/StorageManagerTest.php` | `App\Core\Filesystem\StorageManager` | Esiste |
+| `tests/Unit/Storage/LocalDriveTest.php` | `App\Core\Filesystem\LocalDrive` | Esiste |
+| `tests/Unit/Storage/StorageTest.php` | `App\Core\Filesystem\Filesystem` | Esiste |
+| `tests/Unit/Storage/FilesystemTest.php` | `App\Core\Filesystem\Filesystem` | Esiste |
+| `tests/Unit/QueryBuilder/QBTest.php` | `App\Core\DataLayer\Query\MySqlBuilder` | Esiste |
+| `tests/Unit/CLI/MakeModelCommandTest.php` | `App\Core\CLI\Commands\MakeModelCommand` | Esiste |
+| `tests/Unit/Helpers/StrTest.php` | `App\Core\Helpers\Str` (presumibile) | Esiste |
+| `tests/Unit/Routing/RouteCollectionTest.php` | `App\Core\Http\Helpers\RouteCollection` | Esiste |
+| `tests/Unit/Routing/RouteMatcherTest.php` | Routing classes | Esistono |
+| `tests/Unit/Routing/RouteLoaderTest.php` | Routing attributes/helpers | Esistono |
+| `tests/Unit/Model/ModelTest.php` | `App\Core\DataLayer\Model`, `ModelHydrator` | Esistono |
+
+Nessun test orfano trovato.
+
+### 10.9 Riepilogo
+
+| Categoria | Orfani trovati |
+|-----------|---------------|
+| Comandi CLI | 1 (`MakeTableCommand`) |
+| Controller | 0 |
+| Trait | 0 (1 sotto-utilizzato) |
+| Stub | 0 |
+| Helper | 0 |
+| Middleware | 0 |
+| Services | 0 |
+| Test | 0 |
+
+---
+
+## 11. QUALITY GATES - Verifica configurazione (2026-03-11)
+
+### 11.1 Comando `composer qa`
+Aggiunto in `composer.json` sezione `scripts`:
+- `rector-check`: `rector process --dry-run`
+- `test`: `phpunit --no-coverage`
+- `lint`: `pint --test`
+- `qa`: esegue in sequenza `@rector-check`, `@analyse`, `@test`, `@lint`
+
+Lo script `analyse` esisteva gia (`phpstan analyse`), lo script `rector` esisteva gia (`rector process`). Non sono stati sovrascritti.
+
+### 11.2 Pre-push hook
+**File:** `.git/hooks/pre-push`
+- Eseguibile: si (`-rwxr-xr-x`)
+- Comandi: `phpstan analyse --no-ansi` e `phpunit --no-coverage --colors=never` — corretti, usano path `vendor/bin/`
+- Output: chiaro con indicatori visivi (emoji) per successo/fallimento
+- Exit codes: gestiti correttamente, esce con `exit 1` se un check fallisce
+- Nessuna modifica necessaria.
+
+### 11.3 Configurazione Pint
+`pint.json` non esisteva. Creato con preset `psr12` e regola `declare_strict_types: true`, coerente con le segnalazioni in sezione 3.1 (file che mancano `declare(strict_types=1)`).
+
+---
+
+## 12. Validazione e Request (2026-03-11)
+
+### Modifiche effettuate
+
+#### 12.1 FormRequest (`app/Core/Http/FormRequest.php`)
+Classe astratta per validazione dichiarativa nei controller. Metodi: `rules()` (astratto), `authorize()`, `messages()`, `validate()`, `data()`, `errors()`. Lancia `ValidationException` o `UnauthorizedException`.
+
+#### 12.2 Request accessor tipizzati (`app/Core/Http/Request.php`)
+Aggiunti `float()` e `array()`. I metodi `string()`, `int()`, `bool()` esistevano gia.
+
+#### 12.3 Custom rule registration nel Validator (`app/Core/Validation/Validator.php`)
+Aggiunto `Validator::extend(string $name, RuleInterface $rule)` e `Validator::removeExtension()`. Il metodo `validate()` controlla `static::$customRules` prima di cercare il metodo interno, permettendo di registrare regole custom per nome stringa.
+
+#### 12.4 UniqueRule (`app/Core/Validation/Rules/UniqueRule.php`)
+Regola di esempio che verifica unicita in database via PDO diretto. Supporta sia uso inline (`new UniqueRule('users', 'email')`) sia stringa dopo registrazione (`'unique:users,email,5'` con ID da escludere).
+
+#### 12.5 Flash session e old input (`app/Core/Services/SessionStorage.php`)
+Aggiunti: `flash()`, `getFlash()`, `hasFlash()`, `flashErrors()`, `getFlashedErrors()`, `flashOldInput()`, `getOldInput()`. Tutti operano sotto la chiave `$_SESSION['_flash']` per isolamento dai dati session normali.
+
+#### 12.6 Helper globali (`utils/helpers.php`)
+Aggiunte funzioni `old(string $key, mixed $default = null): mixed` e `errors(): array`.
+
+#### 12.7 Session Facade (`app/Core/Facade/Session.php`)
+Aggiunti metodi statici: `flash()`, `getFlashedErrors()`, `flashErrors()`, `flashOldInput()`, `getOldInput()`.
+
+#### 12.8 Test unitari (`tests/Unit/Validation/`)
+- `ValidatorTest.php` — 22 test: regole base, nullable, closure, RuleInterface inline, extend/removeExtension, custom messages, validated(), first(), implodeError()
+- `FormRequestTest.php` — 7 test: validazione OK, ValidationException, UnauthorizedException, custom messages, errors() pre/post validazione
+- `RequestAccessorTest.php` — 16 test: tutti gli accessor tipizzati (string, int, bool, float, array), default values, casting, has(), get()
+
+### Osservazioni durante lo sviluppo
+
+#### 12.9 Bug in Request: variabile `$server` non definita
+**File:** `app/Core/Http/Request.php`, metodi `getIp()`, `getUserAgent()`, `getHost()`
+Usano `$server['REMOTE_ADDR']` invece di `$_SERVER['REMOTE_ADDR']`. La variabile `$server` non esiste, quindi ritornano sempre il fallback. Corretto automaticamente dal linter durante la sessione.
+
+#### 12.10 SessionStorage: flash esistente ma diverso
+SessionStorage aveva gia `setFlashSession()` e `getFlashSession()` che operano direttamente su `$_SESSION[$key]`. I nuovi metodi `flash()` e `getFlash()` usano un namespace `$_SESSION['_flash'][$key]` per evitare collisioni. I metodi vecchi restano per backward compatibility ma i nuovi dovrebbero essere preferiti.

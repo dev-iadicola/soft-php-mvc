@@ -55,12 +55,6 @@ parameters:
 			path: app/Controllers/Admin/HomeManagerController.php
 
 		-
-			message: '#^Call to an undefined static method App\\Core\\Validator\:\:verifyImage\(\)\.$#'
-			identifier: staticMethod.notFound
-			count: 2
-			path: app/Controllers/Admin/HomeManagerController.php
-
-		-
 			message: '#^Parameter \#1 \$code of method App\\Core\\Http\\Response\:\:back\(\) expects int\|null, string given\.$#'
 			identifier: argument.type
 			count: 1

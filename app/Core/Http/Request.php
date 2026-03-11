@@ -14,6 +14,7 @@ class Request
 
     private array $files;
 
+    /** @phpstan-ignore property.onlyWritten */
     private string $lastUri = '/';
 
     /** @var array<string, mixed> */
@@ -58,6 +59,27 @@ class Request
     public function bool(string $key, bool $default = false): bool
     {
         return (bool) ($this->attributes[$key] ?? $default);
+    }
+
+    /**
+     * Get a value from the request attributes as a float.
+     */
+    public function float(string $key, float $default = 0.0): float
+    {
+        return (float) ($this->attributes[$key] ?? $default);
+    }
+
+    /**
+     * Get a value from the request attributes as an array.
+     *
+     * @param array<mixed> $default
+     * @return array<mixed>
+     */
+    public function array(string $key, array $default = []): array
+    {
+        $value = $this->attributes[$key] ?? $default;
+
+        return is_array($value) ? $value : [$value];
     }
 
     /**
@@ -128,17 +150,17 @@ class Request
 
     public function getIp(): string
     {
-        return $server['REMOTE_ADDR'] ?? 'Unknown';
+        return $_SERVER['REMOTE_ADDR'] ?? 'Unknown';
     }
 
     public function getUserAgent(): string
     {
-        return $server['HTTP_USER_AGENT'] ?? 'Unknown';
+        return $_SERVER['HTTP_USER_AGENT'] ?? 'Unknown';
     }
 
     public function getHost(): string
     {
-        return $server['HTTP_HOST'] ?? 'localhost';
+        return $_SERVER['HTTP_HOST'] ?? 'localhost';
     }
 
     // Preleva la request URI

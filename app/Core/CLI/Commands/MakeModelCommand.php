@@ -55,6 +55,9 @@ class MakeModelCommand implements CommandInterface
             'service' => fn () => (new MakeServiceCommand())->createService(
                 $className . 'Service',
             ),
+            'middleware' => fn () => (new MakeMiddlewareCommand())->createMiddleware(
+                $className . 'Middleware',
+            ),
         ];
     }
 
@@ -81,6 +84,7 @@ class MakeModelCommand implements CommandInterface
             'resource' => false,
             'repository' => false,
             'service' => false,
+            'middleware' => false,
             'table' => null,
         ];
 
@@ -105,6 +109,11 @@ class MakeModelCommand implements CommandInterface
                 continue;
             }
 
+            if ($arg === '--middleware') {
+                $options['middleware'] = true;
+                continue;
+            }
+
             if (str_starts_with($arg, '--table=')) {
                 $options['table'] = trim(substr($arg, 8));
                 continue;
@@ -120,6 +129,7 @@ class MakeModelCommand implements CommandInterface
                         'c' => $options['resource'] = true,
                         'r' => $options['repository'] = true,
                         's' => $options['service'] = true,
+                        'w' => $options['middleware'] = true,
                         default => Out::warn("Unknown flag: -{$flags[$i]}"),
                     };
                 }

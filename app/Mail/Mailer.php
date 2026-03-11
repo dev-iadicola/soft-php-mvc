@@ -6,6 +6,7 @@ namespace App\Mail;
 
 use App\Core\Connection\SMTP;
 use App\Core\Contract\MailBaseInterface;
+use App\Core\GetEnv;
 use App\Core\Mvc;
 use PHPMailer\PHPMailer\Exception as ExceptionSMTP;
 
@@ -30,8 +31,8 @@ class Mailer extends BaseMail implements MailBaseInterface
         string $fromName = NULL,
     ) {
 
-        $from ??= getenv('APP_EMAIL');
-        $fromName ??= getenv('APP_NAME');
+        $from ??= GetEnv::requiredString('APP_EMAIL');
+        $fromName ??= GetEnv::requiredString('APP_NAME');
         $mail = smtp()->getMailer();
         $content = $this->content;
 

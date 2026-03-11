@@ -73,7 +73,7 @@ class WhoopsProvider
         $pageHandler->addDataTable('Environment', [
             'PHP Version'        => phpversion(), // Versione attuale di PHP in uso.
             'Loaded Extensions'  => implode(', ', get_loaded_extensions()), // Tutte le estensioni PHP caricate.
-            'App Mode'           => getenv('APP_ENV'), // Valore della variabile d’ambiente APP_ENV (es. local, production).
+            'App Mode'           => \App\Core\GetEnv::string('APP_ENV', 'production'), // Valore della variabile d’ambiente APP_ENV (es. local, production).
             'Debug Mode'         => 'TRUE', // Mostra che il debug è attivo.
         ]);
 

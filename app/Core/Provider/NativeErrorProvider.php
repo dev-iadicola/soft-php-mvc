@@ -24,9 +24,7 @@ class NativeErrorProvider
     }
 
     /**
-     * Handles all PHP errors that do NOT srop the script. 
-     *
-     * @return void
+     * Handles all PHP errors that do NOT stop the script.
      */
     public function waringPhpError(int $errno, string $errstr, string $errfile, int $errline): bool
     {

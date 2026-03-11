@@ -7,9 +7,9 @@ namespace App\Core\Controllers;
 use App\Core\Facade\Session;
 use App\Core\Http\Attributes\AttributeMiddleware;
 use App\Core\Http\Attributes\ControllerAttr;
+use App\Core\Support\ErrorMessageFormatter;
 use \App\Core\Mvc;
 use App\Core\Services\SessionStorage;
-use App\Core\Validator;
 use App\Core\Storage;
 
 /**
@@ -30,14 +30,6 @@ abstract class BaseController
 
     /**
      * @deprecated use a global view('namedire.namefile') function.
-     * 
-     * @var $view inserire il file con estensione php per
-     * visualizzare la pagina
-     * @var array $message  
-     * All'interno di questo array insieramo  tutti i valori che sostituiranno 
-     * i placceholders. esempio {{page}} verrà sostituiro da una variabile con indice page presente in un array
-     *  
-     * per maggiori particolari,andare nel file View presente su /App/Core/View
      */
     public function render(string $view, array $variables = [], array|null $message = ['message' => '']): void
     {
@@ -47,10 +39,7 @@ abstract class BaseController
     }
 
     /**
-     * Summary of redirect
-     * @deprecated use @global response()->redirect($var); 
-     * @param mixed $var
-     * @return BaseController
+     * @deprecated use @global response()->redirect($var);
      */
     public function redirect(?string $var = null): static
     {
@@ -64,39 +53,31 @@ abstract class BaseController
      * Summary of statusCode413
      * @return void
      */
-    public function statusCode413(): void
+    public function statusCode413(): static
     {
         $this->mvc->response->set413();
+        return $this;
     }
 
 
 
     /**
-     * Summary of withError
      * @deprecated use @method  response()->withError();
-     * @param mixed $message
-     * @return BaseController
      */
-    public function withError(string $message): static
+    public function withError(string|array $message): static
     {
-        Session::setFlash('error', $message);
+        Session::setFlash('error', ErrorMessageFormatter::format($message));
         return $this;
     }
     /**
-     * Summary of withError
      * @deprecated use @method  response()->withSuccess();
-     * @param mixed $message
-     * @return BaseController
      */
     public function withSuccess(string $message): void
     {
         Session::setFlash('success', $message);
     }
     /**
-     * Summary of withError
      * @deprecated use @method  response()->withWarning();
-     * @param mixed $message
-     * @return BaseController
      */
     public function withWarning(string $message): void
     {

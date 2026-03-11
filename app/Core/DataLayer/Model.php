@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\DataLayer;
 
 use App\Core\DataLayer\Factory\ActiveQueryFactory;
+use App\Core\DataLayer\Support\DeclaredPropertyResolver;
 use App\Core\Helpers\Str;
 use JsonSerializable;
 use App\Core\DataLayer\Query\ActiveQuery;
@@ -125,9 +126,10 @@ class Model  implements JsonSerializable
         return $this->table = $table;
     }
 
-    public function save(): void
+    public function save(): static
     {
-         $this->query()->save($this);
+        $this->query()->save($this);
+        return $this;
     }
 
     public function toArray(): array
@@ -233,12 +235,11 @@ class Model  implements JsonSerializable
     private function getDeclaredDataProperties(): array
     {
         // Cache reflection results per model class to avoid recomputing schema metadata.
-        return self::$declaredPropertiesCache[static::class] ??= array_values(array_filter(
-            (new ReflectionClass(static::class))->getProperties(),
-            fn (ReflectionProperty $property): bool => ! $property->isStatic()
-                && ! in_array($property->getName(), self::INTERNAL_PROPERTIES, true)
-                && $property->getDeclaringClass()->getName() !== self::class
-        ));
+        return self::$declaredPropertiesCache[static::class] ??= DeclaredPropertyResolver::resolve(
+            new ReflectionClass(static::class),
+            self::INTERNAL_PROPERTIES,
+            self::class
+        );
     }
 
     private function isDeclaredModelProperty(string $key): bool

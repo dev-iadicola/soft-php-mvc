@@ -15,7 +15,7 @@ class Config
    
     /**
      * Summary of env
-     * @param string $env 
+     * @param string $envFile
      */
     public static function env(string $envFile):void
     {

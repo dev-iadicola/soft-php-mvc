@@ -23,11 +23,11 @@ class Database
     {
 
         // definiamo le credenziali
-        $host = getenv('DB_HOST');
-        $user = getenv('DB_USER');
-        $psw = getenv('DB_PSW');
-        $name = getenv('DB_NAME');
-        $port = getenv('DB_PORT') ?: 3306; // Usa la porta 3306 come predefinita se DB_PORT non è definito
+        $host = GetEnv::requiredString('DB_HOST');
+        $user = GetEnv::requiredString('DB_USER');
+        $psw = GetEnv::requiredString('DB_PSW');
+        $name = GetEnv::requiredString('DB_NAME');
+        $port = GetEnv::int('DB_PORT', 3306) ?? 3306;
 
 
         $_DSN = "mysql:host={$host};port={$port};dbname={$name};charset=utf8";

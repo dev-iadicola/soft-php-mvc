@@ -4,382 +4,76 @@ declare(strict_types=1);
 
 namespace App\Core\Validation;
 
-use Closure;
-use Exception;
+use App\Core\Validation\Adapters\IlluminateValidatorAdapter;
+use App\Core\Validation\Contracts\ValidatorAdapterInterface;
+use App\Core\Validation\Rules\RuleInterface;
 
 class Validator
 {
-    protected array $errors = [];
+    private static ?ValidatorAdapterInterface $adapterPrototype = null;
 
-    protected array $validated = [];
+    private ValidatorAdapterInterface $adapter;
 
-    public function __construct(protected array $data, protected array $rules, protected array $messages = [])
-    {
-
-        $this->validate();
+    public function __construct(
+        protected array $data,
+        protected array $rules,
+        protected array $messages = []
+    ) {
+        $this->adapter = clone self::adapterPrototype();
+        $this->adapter->validate($data, $rules, $messages);
     }
 
-    // * Alias statico
+    public static function extend(string $ruleName, RuleInterface $rule): void
+    {
+        self::adapterPrototype()->extend($ruleName, $rule);
+    }
+
+    public static function removeExtension(string $ruleName): void
+    {
+        self::adapterPrototype()->removeExtension($ruleName);
+    }
+
+    public static function useAdapter(ValidatorAdapterInterface $adapter): void
+    {
+        self::$adapterPrototype = $adapter;
+    }
+
     public static function make(array $data, array $rules, array $messages = []): self
     {
         return new self($data, $rules, $messages);
     }
 
-    /**
-     * Summary of validated
-     *
-     * @return array<string,mixed> the value of param passed
-     *
-     * @throws Exception if just one param is not passed to validator
-     */
     public function validated(): array
     {
-        if ($this->fails()) {
-            throw new Exception('Cannot retrieve validated data when validation fails.');
-        }
-
-        return $this->validated;
+        return $this->adapter->validated();
     }
 
     public function fails(): bool
     {
-        return ! empty($this->errors);
+        return $this->adapter->fails();
     }
 
     public function errors(): array
     {
-        return $this->errors;
+        return $this->adapter->errors();
     }
 
     public function implodeError(?string $separator = '<br>'): string
     {
-        return implode($separator, array_merge(...array_values($this->errors)));
-
+        return $this->adapter->implodeError($separator ?? '<br>');
     }
 
     public function first(string $field): ?string
     {
-        return $this->errors[$field][0] ?? null;
+        return $this->adapter->first($field);
     }
 
-    protected function addError(string $field, string $defaultMessage, ?string $rule = null): void
+    private static function adapterPrototype(): ValidatorAdapterInterface
     {
-        $key = $rule ? "{$field}.{$rule}" : $field;
-
-        $message = $this->messages[$key] ?? $defaultMessage;
-        $this->errors[$field][] = $message;
-    }
-
-    // populate all value checked the vaslidation
-    protected function buildValidated(): void
-    {
-        foreach ($this->rules as $field => $_) {
-            if ( ! isset($this->errors[$field]) && array_key_exists($field, $this->data)) {
-                $this->validated[$field] = $this->data[$field];
-            }
-        }
-    }
-
-    protected function validate(): void
-    {
-        foreach ($this->rules as $field => $rules) {
-            $value = $this->data[$field] ?? null;
-
-            if ( ! is_array($rules)) {
-                $rules = explode('|', $rules);
-            }
-
-            $hasNullable = in_array('nullable', $rules, true);
-            $hasRequired = in_array('required', $rules, true);
-
-            $isEmpty =
-                $value === null ||
-                (is_string($value) && trim($value) === '') ||
-                (is_array($value) && empty($value));
-
-            /**
-             * nullable + empty + NOT required → skip validation
-             */
-            if ($hasNullable && ! $hasRequired && $isEmpty) {
-                $this->validated[$field] = $value;
-
-                continue;
-            }
-
-            foreach ($rules as $rule) {
-
-                if ($rule === 'nullable') {
-                    continue;
-                }
-
-                // Closure rule
-                if ($rule instanceof Closure) {
-                    $result = $rule($value, $this->data);
-                    if ($result !== true) {
-                        $this->addError($field, $result ?? "The field {$field} is invalid.");
-                    }
-
-                    continue;
-                }
-
-                [$ruleName, $param] = array_pad(explode(':', $rule, 2), 2, null);
-
-                // Custom RuleInterface
-                if ($rule instanceof Rules\RuleInterface) {
-                    if ( ! $rule->passes($field, $value, $param)) {
-                        $this->addError($field, $rule->message($field, $param));
-                    }
-
-                    continue;
-                }
-
-                $method = 'validate' . ucfirst($ruleName);
-
-                if ( ! method_exists($this, $method)) {
-                    throw new Exception("Validation rule '{$ruleName}' not implemented.");
-                }
-
-                $this->$method($field, $value, $param);
-            }
+        if (self::$adapterPrototype instanceof ValidatorAdapterInterface) {
+            return self::$adapterPrototype;
         }
 
-        $this->buildValidated();
-    }
-
-    /**
-     * Regole di validaizone
-     */
-    protected function validateEmail(string $field, mixed $value, ?string $param): void
-    {
-        if ( ! filter_var($value, FILTER_VALIDATE_EMAIL)) {
-            $this->addError($field, "The {$field} field must be a valid email address.", 'email');
-        }
-    }
-
-    // * Confirmed: when the input is equal with orher input with name "confirmed"
-    protected function validateConfimed(string $field, mixed $value, ?string $param): void
-    {
-        $bool = ($field === $this->data['confirmed']) ? true : false;
-        if ( ! $bool) {
-            $this->addError($field, "The {$field} not equal to confirmed.");
-        }
-    }
-
-    protected function validateString(string $field, mixed $value, ?string $param): void
-    {
-        $isString = is_string($value);
-        if ( ! $isString) {
-            $this->addError($field, "The {$field} not are string.");
-        }
-    }
-
-    protected function validateMin(string $field, mixed $value, ?string $param): void
-    {
-        if (is_string($value) && strlen($value) < (int) $param) {
-            $this->addError($field, "The {$field} field must be at least {$param} characters.", 'min');
-        }
-    }
-
-    /**
-     * Validation Rules - Default English messages
-     */
-    protected function validateRequired(string $field, mixed $value, ?string $param): void
-    {
-        $error = "The {$field} is required";
-        if (null === $value) {
-            $this->addError($field, $error);
-        }
-        if (is_string($value) && trim($value) === '') {
-            $this->addError($field, $error);
-        }
-        if (is_array($value) && empty($value)) {
-            $this->addError($field, $error);
-        }
-    }
-
-    protected function validateMax(string $field, mixed $value, ?string $param): void
-    {
-        if (is_string($value) && strlen($value) > (int) $param) {
-            $this->addError($field, "The {$field} field may not be greater than {$param} characters.", 'max');
-        }
-    }
-
-    protected function validateNumeric(string $field, mixed $value): void
-    {
-        if ( ! is_numeric($value)) {
-            $this->addError($field, "The {$field} field must be a numeric value.", 'numeric');
-        }
-    }
-
-    protected function validateAlpha(string $field, mixed $value): void
-    {
-        if ( ! preg_match('/^[a-zA-Z]+$/', $value)) {
-            $this->addError($field, "The {$field} field may only contain letters.", 'alpha');
-        }
-    }
-
-    protected function validateAlphaNum(string $field, mixed $value): void
-    {
-        if ( ! preg_match('/^[a-zA-Z0-9]+$/', $value)) {
-            $this->addError($field, "The {$field} field may only contain letters and numbers.", 'alpha_num');
-        }
-    }
-
-    protected function validateRegex(string $field, mixed $value, ?string $param): void
-    {
-        if ( ! preg_match($param, $value)) {
-            $this->addError($field, "The {$field} field format is invalid.", 'regex');
-        }
-    }
-
-    protected function validateSame(string $field, mixed $value, ?string $param): void
-    {
-        $other = $this->data[$param] ?? null;
-        if ($value !== $other) {
-            $this->addError($field, "The {$field} field must match {$param}.", 'same');
-        }
-    }
-
-    protected function validateDifferent(string $field, mixed $value, ?string $param): void
-    {
-        $other = $this->data[$param] ?? null;
-        if ($value === $other) {
-            $this->addError($field, "The {$field} field must be different from {$param}.", 'different');
-        }
-    }
-
-    protected function validateDate(string $field, mixed $value): void
-    {
-        if ( ! strtotime($value)) {
-            $this->addError($field, "The {$field} field must be a valid date.", 'date');
-        }
-    }
-
-    protected function validateUrl(string $field, mixed $value): void
-    {
-        if ( ! filter_var($value, FILTER_VALIDATE_URL)) {
-            $this->addError($field, "The {$field} field must be a valid URL.", 'url');
-        }
-    }
-
-    protected function validateIp(string $field, mixed $value): void
-    {
-        if ( ! filter_var($value, FILTER_VALIDATE_IP)) {
-            $this->addError($field, "The {$field} field must be a valid IP address.", 'ip');
-        }
-    }
-
-    protected function validateFile(string $field, mixed $value): void
-    {
-        if ( ! isset($_FILES[$field]) || $_FILES[$field]['error'] !== UPLOAD_ERR_OK) {
-            $this->addError($field, "The file {$field} was not uploaded correctly.", 'file');
-        }
-    }
-
-    protected function validateMimes(string $field, mixed $value, ?string $param): void
-    {
-        if ( ! isset($_FILES[$field]['name'])) {
-            return;
-        }
-        $allowed = explode(',', $param);
-        $ext = pathinfo($_FILES[$field]['name'], PATHINFO_EXTENSION);
-        if ( ! in_array(strtolower($ext), $allowed)) {
-            $this->addError($field, "The file {$field} must be one of the following types: " . implode(', ', $allowed), 'mimes');
-        }
-    }
-
-    protected function validateUppercase(string $field, mixed $value): void
-    {
-        if ( ! preg_match('/[A-Z]/', $value)) {
-            $this->addError($field, "The {$field} field must contain at least one uppercase letter.", 'uppercase');
-        }
-    }
-
-    protected function validateNumber(string $field, mixed $value): void
-    {
-        if ( ! preg_match('/[0-9]/', $value)) {
-            $this->addError($field, "The {$field} field must contain at least one number.", 'number');
-        }
-    }
-
-    protected function validateSymbol(string $field, mixed $value): void
-    {
-        if ( ! preg_match('/[\W_]/', $value)) {
-            $this->addError($field, "The {$field} field must contain at least one special character.", 'symbol');
-        }
-    }
-
-    protected function validateIn(string $field, mixed $value, ?string $param): void
-    {
-        $allowed = explode(',', $param);
-        if ( ! in_array($value, $allowed)) {
-            $this->addError($field, "The {$field} field must be one of the following: " . implode(', ', $allowed), 'in');
-        }
-    }
-
-    protected function validateNotIn(string $field, mixed $value, ?string $param): void
-    {
-        $disallowed = explode(',', $param);
-        if (in_array($value, $disallowed)) {
-            $this->addError($field, "The {$field} field may not be one of the following: " . implode(', ', $disallowed), 'not_in');
-        }
-    }
-
-    protected function validateSize(string $field, mixed $value, ?string $param): void
-    {
-        if (strlen($value) !== (int) $param) {
-            $this->addError($field, "The {$field} field must be exactly {$param} characters long.", 'size');
-        }
-    }
-
-    protected function validateBoolean(string $field, mixed $value): void
-    {
-        $accepted = [true, false, 1, 0, '1', '0', 'true', 'false', 'yes', 'no'];
-        if ( ! in_array($value, $accepted, true)) {
-            $this->addError($field, "The {$field} field must be a boolean value (true or false).", 'boolean');
-        }
-    }
-
-    protected function validateInteger(string $field, mixed $value): void
-    {
-        if (filter_var($value, FILTER_VALIDATE_INT) === false) {
-            $this->addError($field, "The {$field} field must be an integer.", 'integer');
-        }
-    }
-
-    protected function validateDecimal(string $field, mixed $value): void
-    {
-        if (filter_var($value, FILTER_VALIDATE_FLOAT) === false) {
-            $this->addError($field, "The {$field} field must be a decimal number.", 'decimal');
-        }
-    }
-
-    protected function validateBetween(string $field, mixed $value, ?string $param): void
-    {
-        [$min, $max] = explode(',', $param);
-        if ($value < $min || $value > $max) {
-            $this->addError($field, "The {$field} field must be between {$min} and {$max}.", 'between');
-        }
-    }
-
-    protected function validateArrayMin(string $field, mixed $value, ?string $param): void
-    {
-        if (is_array($value) && count($value) < (int) $param) {
-            $this->addError($field, "The {$field} field must have at least {$param} items.", 'array_min');
-        }
-    }
-
-    protected function validateArrayMax(string $field, mixed $value, ?string $param): void
-    {
-        if (is_array($value) && count($value) > (int) $param) {
-            $this->addError($field, "The {$field} field may not have more than {$param} items.", 'array_max');
-        }
-    }
-
-    private function validateImage(string $field, mixed $value, ?string $param): void
-    {
-        if ( ! $value || null === $value || empty($value['tmp_name'] || $value['tmp_name']) !== false) {
-            $this->addError($field, "The {$field} field is not image", 'image');
-        }
+        return self::$adapterPrototype = new IlluminateValidatorAdapter();
     }
 }

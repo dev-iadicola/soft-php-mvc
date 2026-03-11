@@ -434,6 +434,8 @@ Auth::logout();
 
 ## Utilizzo
 
+La validazione applicativa usa `illuminate/validation`; [`App\Core\Validation\Validator`](/home/luigi/projects/soft-php-mvc/app/Core/Validation/Validator.php) delega a un adapter dedicato, così il progetto non dipende direttamente dalla libreria nei controller.
+
 ```php
 use App\Core\Validation\Validator;
 

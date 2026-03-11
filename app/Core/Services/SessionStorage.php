@@ -285,6 +285,77 @@ class SessionStorage
         return $flash;
     }
 
+    /**
+     * Flash a key/value pair into the session.
+     * The value will be available only on the next request.
+     */
+    public function flash(string $key, mixed $value): void
+    {
+        $_SESSION['_flash'][$key] = $value;
+    }
+
+    /**
+     * Retrieve and remove a flashed value.
+     */
+    public function getFlash(string $key, mixed $default = null): mixed
+    {
+        $value = $_SESSION['_flash'][$key] ?? $default;
+
+        unset($_SESSION['_flash'][$key]);
+
+        return $value;
+    }
+
+    /**
+     * Check if a flash key exists.
+     */
+    public function hasFlash(string $key): bool
+    {
+        return isset($_SESSION['_flash'][$key]);
+    }
+
+    /**
+     * Flash all validation errors into the session.
+     *
+     * @param array<string, string[]> $errors
+     */
+    public function flashErrors(array $errors): void
+    {
+        $this->flash('_errors', $errors);
+    }
+
+    /**
+     * Retrieve flashed validation errors.
+     *
+     * @return array<string, string[]>
+     */
+    public function getFlashedErrors(): array
+    {
+        $errors = $this->getFlash('_errors', []);
+
+        return is_array($errors) ? $errors : [];
+    }
+
+    /**
+     * Flash all old input data into the session (for repopulating forms).
+     *
+     * @param array<string, mixed> $data
+     */
+    public function flashOldInput(array $data): void
+    {
+        $this->flash('_old_input', $data);
+    }
+
+    /**
+     * Retrieve a previously flashed old input value.
+     */
+    public function getOldInput(string $key, mixed $default = null): mixed
+    {
+        $oldInput = $_SESSION['_flash']['_old_input'] ?? [];
+
+        return $oldInput[$key] ?? $default;
+    }
+
     private function flashSessionDestroy(): void
     {
         unset($_SESSION['FLASH'], $_SESSION['FLASH_TIME'], $_SESSION['FLASH_TTL']);

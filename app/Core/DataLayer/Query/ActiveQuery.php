@@ -361,25 +361,25 @@ class ActiveQuery
 
     }
 
-    public function save(Model $model): void
+    public function save(Model $model): Model
     {
         if ($model->exists()) {
             $dirty = $model->getAttributesForUpdate();
 
             if ($dirty === []) {
-                return;
+                return $model;
             }
 
             $this->where($model->primaryKey, $model->getAttribute($model->primaryKey));
             $this->update($dirty);
             $model->syncOriginal();
-            return;
+            return $model;
         }
 
         $payload = $model->getAttributesForInsert();
 
         if ($payload === []) {
-            return;
+            return $model;
         }
 
         $created = $this->create($payload);
@@ -389,6 +389,7 @@ class ActiveQuery
         }
 
         $model->syncOriginal();
+        return $model;
     }
 
     /** DELETE */

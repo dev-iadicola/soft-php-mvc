@@ -58,14 +58,7 @@ class OrmEngine
     }
 
 
-    /**
-     * Query Buiilder 
-     */
-    #region Query
 
-
-
-   
 
 
 

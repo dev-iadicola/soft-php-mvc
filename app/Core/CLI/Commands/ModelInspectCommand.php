@@ -6,6 +6,7 @@ namespace App\Core\CLI\Commands;
 
 use App\Core\CLI\System\Out;
 use App\Core\Contract\CommandInterface;
+use App\Core\DataLayer\Support\DeclaredPropertyResolver;
 use App\Core\Helpers\Str;
 use ReflectionClass;
 use ReflectionNamedType;
@@ -104,14 +105,11 @@ class ModelInspectCommand implements CommandInterface
      */
     private function getDataProperties(ReflectionClass $reflection): array
     {
-        $baseClass = 'App\\Core\\DataLayer\\Model';
-
-        return array_values(array_filter(
-            $reflection->getProperties(),
-            fn (ReflectionProperty $property): bool => !$property->isStatic()
-                && !in_array($property->getName(), self::INTERNAL_PROPERTIES, true)
-                && $property->getDeclaringClass()->getName() !== $baseClass
-        ));
+        return DeclaredPropertyResolver::resolve(
+            $reflection,
+            self::INTERNAL_PROPERTIES,
+            'App\\Core\\DataLayer\\Model'
+        );
     }
 
     private function resolveType(ReflectionProperty $property): string

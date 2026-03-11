@@ -25,13 +25,11 @@ class View
         $this->layout = $layout;
     }
     /**
-     * documented function render 
-     * 
-     *  * Renders a page with layout and placeholders
-     * 
-     * @param string $page the fle page path in C:*\views\pages\{your_string_point}.php
-     * @param array $variables varibale you want use compact($user->email)
-     * @param array $message other probably deprecable in future
+     * Renders a page with layout and placeholders
+     *
+     * @param string $page the file page path
+     * @param array $variables variables you want to use
+     * @param array|null $message other probably deprecable in future
      * @return string the page render
      */
     public function render(string $page, array $variables = [], array|null $message = []): string
@@ -119,9 +117,7 @@ class View
 
     public function getViewContent(string $folder, string $item, array $values = [], array $variables = []): string
     {
-        if (!isset($page) && isset($values['page'])) {
-            $page = $values['page'];
-        }
+        $page = $values['page'] ?? null;
 
         extract($values);
         extract($variables);

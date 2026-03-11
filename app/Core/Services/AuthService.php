@@ -35,36 +35,29 @@ class AuthService
      * Registra inoltre l'evento di accesso nella tabella LogTrace e imposta
      * l'istanza dell’utente corrente in memoria per i controlli futuri.
      *
-     * @param Model $model  The user model instance retrieved from the database.
-     *                      Istanza del modello utente recuperata dal database.
+     * @param User $model  The user model instance retrieved from the database.
      *
      * @return bool True if login is successful and the session is initialized,
      *              false otherwise.
-     *              True se il login è avvenuto con successo e la sessione è stata inizializzata,
-     *              false altrimenti.
      */
     public function login(User $model): bool
     {
-        if ($model) {
-            // Generate token from server and save the value
-            $token = static::generateToken();
-            // * Set lifetime of the session.
-             $this->_sessionStorage->setLifeTime(mvc()->config->get('settings.session.auth-lifetime'));
+        // Generate token from server and save the value
+        $token = static::generateToken();
+        // * Set lifetime of the session.
+        $this->_sessionStorage->setLifeTime(mvc()->config->get('settings.session.auth-lifetime'));
 
-            $model->setAttribute('token', $token);
-            // Save token in the database.
-            $model->save();
+        $model->setAttribute('token', $token);
+        // Save token in the database.
+        $model->save();
 
-            // Save the data of user and the token in session
-            static::startUserSession(token: $token);
+        // Save the data of user and the token in session
+        $this->startUserSession(token: $token);
 
-            // Save the model
-            $this->setUser($model);
+        // Save the model
+        $this->setUser($model);
 
-
-            return true;
-        }
-        return false;
+        return true;
     }
     /**
      * Summary of logout
@@ -99,8 +92,7 @@ class AuthService
 
     public function isLogged(): bool
     {
-        $logged = $this->_sessionStorage->get("LOGGED_IN") || $this->_user != null;
-        return !empty($logged) || $logged == true;
+        return (bool) $this->_sessionStorage->get("LOGGED_IN") || $this->_user !== null;
     }
 
     public function isAuthenticated(): bool

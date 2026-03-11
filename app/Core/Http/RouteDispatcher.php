@@ -19,19 +19,7 @@ use RuntimeException;
  */
 class RouteDispatcher
 {
-    private string $path;
-
-    private string $method;
-
-    private string $action;
-
     private string $controller;
-
-    private array $nameOfListMiddleware;
-
-    private ?string $name = null;
-
-    private RouteDispatcher $dispatche;
 
     // public function dispatch(RouteDefinition $route)
     // {
@@ -80,7 +68,7 @@ class RouteDispatcher
             $type = $param->getType();
 
             // Request Injection
-            if ($type && ! $type->isBuiltin()) {
+            if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
                 if ($type->getName() === Request::class) {
                     $args[] = mvc()->request;
 

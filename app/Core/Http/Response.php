@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\Http;
 
 use App\Core\Facade\Session;
+use App\Core\Support\ErrorMessageFormatter;
 use \App\Core\View;
 use Exception;
 
@@ -30,7 +31,7 @@ class Response
     }
 
 
-    public function send(): void
+    public function send(): static
     {
         if (!is_null($this->_redirectTo)) {
             foreach ($this->headers as $k => $v) {
@@ -45,6 +46,7 @@ class Response
 
         http_response_code($this->statusCode);
         echo $this->content;
+        return $this;
     }
     /**
      * Ritorna una risposta JSON.
@@ -72,24 +74,28 @@ class Response
      * 
      */
 
-    public function withSuccess(string $message): void
+    public function withSuccess(string $message): static
     {
         Session::setFlash('success', $message);
+        return $this;
     }
 
-    public function withWarning(string $message): void
+    public function withWarning(string $message): static
     {
         Session::setFlash('warning', $message);
+        return $this;
     }
 
-    public function withError(string $message): void
+    public function withError(string|array $message): static
     {
-        Session::setFlash('error', $message);
+        Session::setFlash('error', ErrorMessageFormatter::format($message));
+        return $this;
     }
 
-    public function with(string $key, string $message): void
+    public function with(string $key, string $message): static
     {
         Session::setFlash($key, $message);
+        return $this;
     }
     public function wantsJson(): bool
     {
@@ -139,7 +145,7 @@ class Response
         );
     }
 
-    public function set405(): void
+    public function set405(): static
     {
         $errorContent = $this->view->render('error', [
             'code' => 405,
@@ -147,11 +153,12 @@ class Response
         ]);
 
         // Imposta il codice di stato e il contenuto della risposta
-        $this->setCode(413);
+        $this->setCode(405);
         $this->setContent($errorContent);
+        return $this;
     }
 
-    public function set413(): void
+    public function set413(): static
     {
         // Imposta il layout desiderato
         $this->view->setLayout('default');
@@ -165,6 +172,7 @@ class Response
         // Imposta il codice di stato e il contenuto della risposta
         $this->setCode(413);
         $this->setContent($errorContent);
+        return $this;
     }
 
     public function set419(?string $errorMsg = null): static

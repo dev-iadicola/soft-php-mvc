@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Mail;
 
+use App\Core\GetEnv;
 use GuzzleHttp\Client;
 use SendinBlue\Client\Configuration;
 use SendinBlue\Client\Model\SendSmtpEmail;
@@ -26,7 +27,7 @@ class BrevoMail extends BaseMail
     {
         parent::__construct();
         $this->config = Configuration::getDefaultConfiguration()
-            ->setApiKey('api-key', getenv('BREVO_API_KEY'));
+            ->setApiKey('api-key', GetEnv::requiredString('BREVO_API_KEY'));
         $this->httpClient = new Client();
         $this->transactionalEmailsApi = new TransactionalEmailsApi($this->httpClient, $this->config);
     }
