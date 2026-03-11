@@ -6,7 +6,6 @@ namespace App\Core\Services;
 
 use App\Core\Helpers\Log;
 use App\Core\Contract\ITimeoutStrategy;
-use App\Traits\Attributes;
 use App\Utils\Enviroment;
 
 /**
@@ -95,35 +94,6 @@ class SessionStorage
      * @see https://owasp.org/www-project-cheat-sheets/cheatsheets/Session_Management_Cheat_Sheet.html
      */
 
-    public function __get(string $key): mixed
-    {
-
-        if (array_key_exists($key, $this->attributes)) {
-            return $this->attributes[$key];
-        }
-        if (property_exists($this, $key)) {
-            return $this->$key;
-        }
-        if (property_exists($this, $key)) {
-            return $this->$key;
-        }
-        return $_SESSION[$key];
-    }
-
-    public function __set(string $key, mixed $val): void
-    {
-        if (method_exists($this, $key)) {
-            $this->$key($val);
-            return;
-        }
-        if (property_exists($this, $key)) {
-            $this->$key = $val;
-            return;
-        }
-        // ! NOT CHANGE IT WORK
-        $_SESSION[$key] = $val;
-    }
-
     // * Bisogna utilizzarlo solo quando l'utente effettua il login
     /**
      * Sets the session lifetime.
@@ -142,7 +112,7 @@ class SessionStorage
         }
 
         // Se non è passato un valore, prendi quello dal file di configurazione
-        $this->lifetime = $lifetime ?? (int) mvc()->config->settings["session"]["lifetime"];
+        $this->lifetime = $lifetime ?? (int) mvc()->config->get('settings.session.lifetime');
 
         // Imposta la durata massima dei dati di sessione lato server
         ini_set('session.gc_maxlifetime', $this->lifetime);
@@ -165,7 +135,7 @@ class SessionStorage
 
     public function setTimeout(?int $time = null): void
     {
-        $this->timeout = $time ?? (int) mvc()->config->settings["session"]["timeout"];
+        $this->timeout = $time ?? (int) mvc()->config->get('settings.session.timeout');
         Log::debug("Session timeout set to {$this->timeout} seconds.");
     }
 
@@ -244,9 +214,9 @@ class SessionStorage
         return $_SESSION ?? null;
     }
 
-    public  function get(string $key): mixed
+    public  function get(string $key, mixed $default = null): mixed
     {
-        return $_SESSION[$key] ?? null;
+        return $_SESSION[$key] ?? $default;
     }
     /**
      * Summary of hasOrCreate
@@ -280,6 +250,14 @@ class SessionStorage
         return isset($_SESSION[$key]);
     }
 
+    public function remove(string $key): void
+    {
+        unset($_SESSION[$key]);
+    }
+
+    /**
+     * @deprecated Use remove() instead
+     */
     public function unset(string $key): array|null
     {
 

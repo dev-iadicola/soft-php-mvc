@@ -22,36 +22,36 @@ class AuthService
 
     /**
      * Handles the user login process.
-     * 
+     *
      * Generates a unique authentication token for the given user model,
      * persists it in the database, and initializes a new authenticated session.
      * Also logs the login event in the LogTrace table and sets the current user
      * instance in memory for subsequent authentication checks.
-     * 
+     *
      * Gestisce il processo di login dell'utente.
-     * 
+     *
      * Genera un token di autenticazione univoco per il modello utente fornito,
      * lo salva nel database e inizializza una nuova sessione autenticata.
      * Registra inoltre l'evento di accesso nella tabella LogTrace e imposta
      * l'istanza dell’utente corrente in memoria per i controlli futuri.
-     * 
+     *
      * @param Model $model  The user model instance retrieved from the database.
      *                      Istanza del modello utente recuperata dal database.
-     * 
+     *
      * @return bool True if login is successful and the session is initialized,
      *              false otherwise.
      *              True se il login è avvenuto con successo e la sessione è stata inizializzata,
      *              false altrimenti.
      */
-    public function login(Model $model): bool
+    public function login(User $model): bool
     {
         if ($model) {
             // Generate token from server and save the value
             $token = static::generateToken();
             // * Set lifetime of the session.
-             $this->_sessionStorage->setLifeTime(mvc()->config->settings['session']['auth-lifetime']);
+             $this->_sessionStorage->setLifeTime(mvc()->config->get('settings.session.auth-lifetime'));
 
-            $model->token = $token;
+            $model->setAttribute('token', $token);
             // Save token in the database.
             $model->save();
 
@@ -68,7 +68,7 @@ class AuthService
     }
     /**
      * Summary of logout
-     * 
+     *
      * Elimina la sessione dell'utente
      * @return void
      */
@@ -108,7 +108,7 @@ class AuthService
         if ($this->_sessionStorage->get('AUTH_TOKEN')) {
 
             $token = $this->_sessionStorage->get('AUTH_TOKEN');
-          
+
             return $this->verifyTokenInDatabase($token);
         }
         return false;
@@ -137,7 +137,7 @@ class AuthService
      * Initializes a new authenticated user session.
      * Stores the authentication token and environment data (IP, User-Agent)
      * and applies the configured auth session lifetime.
-     * 
+     *
      * Inizializza una nuova sessione utente autenticata.
      * Memorizza il token di autenticazione e i dati di ambiente (IP, User-Agent)
      * applicando la durata configurata per la sessione autenticata.
@@ -145,7 +145,7 @@ class AuthService
 
     private function startUserSession(string $token): void
     {
-        // setting the token, last ping, 
+        // setting the token, last ping,
         $this->_sessionStorage->create([
             'AUTH_TOKEN' => $token,
             'LAST_PING' => time(),
@@ -154,7 +154,7 @@ class AuthService
             'DEVICE' =>  $_SERVER['HTTP_USER_AGENT'],
             'SESSION_CONTEXT' => 'auth'
         ]);
-     
+
     }
 
 

@@ -15,7 +15,7 @@ class CorsMiddleware implements MiddlewareInterface
     public function exec(Request $request): mixed
     {
 
-        $this->allowedOrigin = mvc()->config->settings['allowed-origin'] ?? throw new RuntimeException("
+        $this->allowedOrigin = mvc()->config->get('settings.allowed-origin') ?? throw new RuntimeException("
             Your configutaion file 'config/settings.php' dont have the key 'allowed-origin' in array.
         ");
 

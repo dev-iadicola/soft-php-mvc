@@ -10,9 +10,9 @@ use App\Core\Contract\MiddlewareInterface;
 class MethodOverrideMiddleware implements MiddlewareInterface{
     public function exec(Request $request): mixed {
 
-        if(isset($request->_method)){
+        if($request->has('_method')){
             // allowed valid method
-            if(!in_array(strtoupper($request->_method), ['PUT', 'PATCH','DELETE'])){
+            if(!in_array(strtoupper($request->string('_method')), ['PUT', 'PATCH','DELETE'])){
                 
                 return response()->set405();
 

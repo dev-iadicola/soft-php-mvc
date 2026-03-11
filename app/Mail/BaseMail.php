@@ -23,7 +23,7 @@ abstract class BaseMail implements MailBaseInterface
     public function directoryPage( string $page): void
     {   
         $page = convertDotToSlash($page);
-        $this->page = mvc()->config->resources['mails'] . '/' . $page . '.php';
+        $this->page = mvc()->config->get('resources.mails') . '/' . $page . '.php';
     }
 
     public function bodyHtml(string $page, array $content = [])

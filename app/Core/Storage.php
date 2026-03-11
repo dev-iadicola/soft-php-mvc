@@ -26,7 +26,7 @@ class Storage
 
     public function __construct(string $disk)
     {
-        $this->config = Mvc::$mvc->config->storage;
+        $this->config = Mvc::$mvc->config->get('storage');
         $this->disk($disk);
     }
     /** 

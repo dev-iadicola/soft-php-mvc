@@ -12,9 +12,9 @@ class PathResolver
     }
     static public array $folders;
 
-    public function __get(string $name): mixed
+    public function resolve(string $folder): string
     {
-        return self::$folders[$name];
+        return self::$folders[$folder];
     }
     public static function set(string $key, string $root = ''): void
     {

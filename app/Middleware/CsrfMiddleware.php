@@ -16,7 +16,7 @@ class CsrfMiddleware implements MiddlewareInterface
         if(in_array($request->getRequestMethod(), ['POST','PUT','Sessione Avviata'])){
             $csfr = new CsrfService();
             $sessToken = $csfr->getToken();
-            $reqTok =  $request->_token  ?? null;
+            $reqTok =  $request->get('_token');
             
             if(! $sessToken || !$reqTok || ! hash_equals($sessToken, $reqTok)){
                Log::alert("Invalid CSRF: token in session = $sessToken, token in request = $reqTok");

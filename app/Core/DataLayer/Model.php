@@ -7,7 +7,6 @@ namespace App\Core\DataLayer;
 use App\Core\DataLayer\Factory\ActiveQueryFactory;
 use App\Core\Helpers\Str;
 use JsonSerializable;
-use App\Core\Traits\Attributes;
 use App\Core\DataLayer\Query\ActiveQuery;
 use DateTimeInterface;
 use ReflectionClass;
@@ -16,7 +15,7 @@ use ReflectionProperty;
 
 class Model  implements JsonSerializable
 {
-    use Attributes;
+    protected array $attributes = [];
 
     // These framework-level properties must never be treated as database columns.
     public const DATE_FORMAT = 'Y-m-d';
@@ -62,6 +61,27 @@ class Model  implements JsonSerializable
     public function jsonSerialize(): mixed
     {
         return $this->getAttribute();
+    }
+
+    /**
+     * Read-only magic getter – allows views to use `$model->property` syntax
+     * for protected declared properties and dynamic attributes.
+     */
+    public function __get(string $name): mixed
+    {
+        return $this->getAttribute($name);
+    }
+
+    /**
+     * Supports isset($model->property) checks for declared and dynamic properties.
+     */
+    public function __isset(string $name): bool
+    {
+        if ($this->resolvePropertyName($name) !== null) {
+            return true;
+        }
+
+        return array_key_exists($name, $this->attributes);
     }
 
     public function setAttribute(string $key, mixed $value): void

@@ -41,13 +41,13 @@ class TokenController extends Controller
 
 
         // * email adress verificatrioin
-        $user = User::query()->where('email', $request->email)->first();
+        $user = User::query()->where('email', $request->string('email'))->first();
         if (empty($user)) {
             return response()->back()->withError("Whoops,something went worng!");
         }
         // * Generation of token
-        $token = Token::generateToken($request->email);
-        $to = $request->email;
+        $token = Token::generateToken($request->string('email'));
+        $to = $request->string('email');
         $subject = 'Richiesta di reset Password';
         $page = 'token-mail';
 
@@ -96,7 +96,7 @@ class TokenController extends Controller
         }
 
         //Validazione del token
-        $token =  Token::query()->where('token', $request->token)->first();
+        $token =  Token::query()->where('token', $request->string('token'))->first();
         if (empty($token) || is_null($token)) {
             // TODO: create a sistem to block 
             Log::Alert("Accesso sospetto: token mancante per la richiesta " . $request->uri() . "\n" . $request->getRequestInfo());

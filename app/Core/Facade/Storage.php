@@ -17,7 +17,7 @@ use App\Core\Filesystem\StorageManager;
 class Storage
 {
     public static function make(string $diskName): Filesystem{
-        $manager = new StorageManager(Mvc::$mvc->config->filesystem);
+        $manager = new StorageManager(Mvc::$mvc->config->get('filesystem'));
         return $manager->disk($diskName);
     }
 
@@ -28,12 +28,12 @@ class Storage
     public static function dbPath(string $path, string $diskName = 'public'): string
     {
         $path = ltrim($path, '/');
-        $disks = Mvc::$mvc->config->filesystem['disks'] ?? [];
+        $disks = Mvc::$mvc->config->get('filesystem.disks', []);
         $disk = $disks[$diskName] ?? [];
         $visibility = $disk['visibility'] ?? null;
 
         if ($visibility === 'public' || $diskName === 'public') {
-            $publicBase = Mvc::$mvc->config->filesystem['public_base'] ?? '/storage';
+            $publicBase = Mvc::$mvc->config->get('filesystem.public_base', '/storage');
             return rtrim($publicBase, '/') . '/' . $path;
         }
 

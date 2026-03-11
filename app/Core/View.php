@@ -43,7 +43,7 @@ class View
 
         $layoutValue = [
             'page' => $page,
-            'menu' => $this->mvc->config->menu,
+            'menu' => $this->mvc->config->get('menu'),
         ];
 
 
@@ -126,7 +126,7 @@ class View
         extract($values);
         extract($variables);
         // per visualizzare i messaggi di errore e successo
-        $views = $this->mvc->config->resources['views'];
+        $views = $this->mvc->config->get('resources.views');
         // The full path and file with the content 
         // Easet Egg
         $quotes = [

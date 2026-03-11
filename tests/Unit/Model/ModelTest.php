@@ -238,12 +238,12 @@ class ModelTest extends TestCase
         $this->assertSame('Magic', $article->title);
     }
 
-    public function testMagicSetWritesTypedProperty(): void
+    public function testSetAttributeWritesTypedProperty(): void
     {
         $article = new Article();
-        $article->title = 'Written via magic';
+        $article->setAttribute('title', 'Written via setAttribute');
 
-        $this->assertSame('Written via magic', $article->getAttribute('title'));
+        $this->assertSame('Written via setAttribute', $article->getAttribute('title'));
     }
 
     public function testMagicGetFallsBackToAttributes(): void
@@ -254,10 +254,10 @@ class ModelTest extends TestCase
         $this->assertSame('dynamic_val', $article->dynamic_key);
     }
 
-    public function testMagicSetFallsBackToAttributes(): void
+    public function testSetAttributeFallsBackToAttributes(): void
     {
         $article = new Article();
-        $article->dynamic_key = 'set_via_magic';
+        $article->setAttribute('dynamic_key', 'set_via_magic');
 
         $this->assertSame('set_via_magic', $article->getAttribute('dynamic_key'));
     }

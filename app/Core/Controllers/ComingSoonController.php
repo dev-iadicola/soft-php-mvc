@@ -12,7 +12,7 @@ class ComingSoonController extends BaseController {
     public function comingSoon(): void
     {
         // * Configura la pagina di manutenzione all'interno della del file config\config.php
-       view(mvc()->config->settings["pages"]["MAINTENANCE"]);
+       view(mvc()->config->get('settings.pages.MAINTENANCE'));
     }
 
 }

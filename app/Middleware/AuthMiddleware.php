@@ -61,7 +61,7 @@ class AuthMiddleware implements MiddlewareInterface
     {
         $this->_authService = new AuthService(mvc()->sessionStorage);
 
-        $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->settings["session"]["timeout"]);
+        $this->_itimeout_strategy = new InactivityTimeout(mvc()->config->get('settings.session.timeout'));
 
         $validAuth = $this->_authService->isAuthenticated() && $this->checkSession($this->_itimeout_strategy);
 

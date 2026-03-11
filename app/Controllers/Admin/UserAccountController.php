@@ -33,7 +33,7 @@ class UserAccountController extends AdminController
             return response()->redirect('/login');
         }
 
-        $email = trim((string) ($request->email ?? ''));
+        $email = trim($request->string('email'));
         if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
             return response()->back()->withError('Inserisci un indirizzo email valido.');
         }
@@ -68,9 +68,9 @@ class UserAccountController extends AdminController
             return response()->redirect('/login');
         }
 
-        $currentPassword = (string) ($request->current_password ?? '');
-        $password = (string) ($request->password ?? '');
-        $confirmed = (string) ($request->confirmed ?? '');
+        $currentPassword = $request->string('current_password');
+        $password = $request->string('password');
+        $confirmed = $request->string('confirmed');
 
         if (!password_verify($currentPassword, $user->password)) {
             return response()->back()->withError('La password attuale non e corretta.');

@@ -55,7 +55,7 @@ if ( ! function_exists(function: 'printLn')) {
 if ( ! function_exists(function: 'printLn')) {
     function settings()
     {
-        return mvc()->config->settings;
+        return mvc()->config->get('settings');
     }
 }
 
@@ -110,7 +110,7 @@ if ( ! function_exists(function: 'css')) { // get css folder in assets folder
      */
     function css()
     {
-        return mvc()->config->resources['css'];
+        return mvc()->config->get('resources.css');
     }
 }
 

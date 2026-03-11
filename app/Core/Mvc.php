@@ -108,7 +108,7 @@ class Mvc
          *
          * This class is the single source of truth for all ORM components.
          */
-        ORM::init($this->pdo, $this->config->settings['db']['driver']);
+        ORM::init($this->pdo, $this->config->get('settings.db.driver'));
 
         // * Initializes the SMTP Provider, which configures and manages the mail transport layer.  
         // * It creates a single mailer instance 

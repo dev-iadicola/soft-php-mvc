@@ -48,6 +48,8 @@ class RouteRegister
 
     public function getByRequestMethod(Request $request): array {
        
-        return $this->routeByRequest[$request->method]?? throw new NotFoundException("Route not fount by $request->path and method $request->method");;
+        $method = $request->method();
+        $path = $request->path();
+        return $this->routeByRequest[$method] ?? throw new NotFoundException("Route not found by $path and method $method");
     }
 }

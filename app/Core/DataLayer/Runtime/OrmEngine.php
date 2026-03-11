@@ -39,7 +39,7 @@ class OrmEngine
     public function __construct(PDO $pdo)
     {
         $this->pdo = $pdo;
-        $this->queryBuilder = QueryBuilderFactory::create(Mvc::$mvc->config->settings['db']['driver']);
+        $this->queryBuilder = QueryBuilderFactory::create(Mvc::$mvc->config->get('settings.db.driver'));
         $this->queryExecutor = new QueryExecutor($pdo);
         $this->modelHydrator = new ModelHydrator($this->queryBuilder);
     }

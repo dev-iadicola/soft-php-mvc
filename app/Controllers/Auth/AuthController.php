@@ -28,7 +28,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         // verifica esistenza user
-        $user = User::query()->where('email', $request->email)->first();
+        $user = User::query()->where('email', $request->get('email'))->first();
 
         if(empty($user)){
             
@@ -36,7 +36,7 @@ class AuthController extends Controller
         }
 
         // conferma password
-        $confirmPassword = password_verify($request->password, $user->password);
+        $confirmPassword = password_verify($request->string('password'), $user->password);
         if ($confirmPassword === false) {
             return redirect()->back()->withError('Utente non presente.');
         }
@@ -71,7 +71,7 @@ class AuthController extends Controller
         if ($confirmed->fails()) {
             return response()->redirect()->back()->withError($confirmed->errors()); 
         }
-        $data['password'] = password_hash($request->password, PASSWORD_BCRYPT);
+        $data['password'] = password_hash($request->string('password'), PASSWORD_BCRYPT);
         User::upload($data);
 
         response()->redirect("/login")->withSuccess("Sign in comoplete, now sign up!");

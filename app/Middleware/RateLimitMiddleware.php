@@ -18,9 +18,9 @@ class RateLimitMiddleware implements MiddlewareInterface
     private int $window;
     public function exec(Request $request): mixed
     {   // I take the maximum limit of request allowed.
-        $this->maxRequest = mvc()->config->settings['request']['max'];
+        $this->maxRequest = mvc()->config->get('settings.request.max');
         // I take the time window for this limit.
-        $this->window = mvc()->config->settings['request']['window'];
+        $this->window = mvc()->config->get('settings.request.window');
 
         $count = Session::getOrCreate('request_count', 0);
         $start = Session::getOrCreate('request_start_time', time());

@@ -11,7 +11,7 @@ class TreeProject
     private $arrayResult = [];
     public function __construct(public Mvc $mvc)
     {
-        $baseroot = $this->mvc->config->folder->root;
+        $baseroot = $this->mvc->config->get('folder')->root;
         $this->generateTree($baseroot);
     }
 

@@ -24,8 +24,8 @@ class MaintenanceController extends AdminController
     #[RouteAttr(path: 'settings', method: 'POST', name: 'admin.settings.submit')]
     public function submit(Request $request)
     {
-        $root = $this->mvc->config->folder->root . '/.env';
-        if (isset($request->check)) {
+        $root = $this->mvc->config->get('folder')->root . '/.env';
+        if ($request->has('check')) {
             $valueForEnv = 'true';
             Config::updateEnv($root, 'MAINTENANCE', $valueForEnv);
             return response()->back()->withSuccess('Manutenzione attivata');

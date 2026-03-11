@@ -29,7 +29,7 @@ class TerminalController extends AdminController
     public function run(Request $request): void
     {
         $commands = self::ALLOWED_COMMANDS;
-        $input = trim($request->command ?? '');
+        $input = trim($request->string('command'));
         $output = '';
         $error = '';
 

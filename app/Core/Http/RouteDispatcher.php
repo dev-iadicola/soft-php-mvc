@@ -120,7 +120,7 @@ class RouteDispatcher
     private function executeMiddleware(array $middlewareArray): ?Response
     {
 
-        $config = mvc()->config->middleware;
+        $config = mvc()->config->get('middleware');
 
         foreach ($middlewareArray as $name) {
 

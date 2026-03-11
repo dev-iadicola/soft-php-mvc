@@ -4,12 +4,8 @@ declare(strict_types=1);
 
 namespace App\Core\Http;
 
-use App\Core\Traits\Attributes;
-
 class Request
 {
-    use Attributes;
-
     private string $path;
 
     private string $method;
@@ -20,6 +16,9 @@ class Request
 
     private string $lastUri = '/';
 
+    /** @var array<string, mixed> */
+    private array $attributes = [];
+
     public function __construct()
     {
         $this->path = $this->uri();
@@ -27,6 +26,62 @@ class Request
         $this->files = $_FILES ?? [];
         $this->method = $this->getRequestMethod();
         $this->attributes = $this->post;
+    }
+
+    /**
+     * Get a value from the request attributes.
+     */
+    public function get(string $key, mixed $default = null): mixed
+    {
+        return $this->attributes[$key] ?? $default;
+    }
+
+    /**
+     * Get a value from the request attributes as a string.
+     */
+    public function string(string $key, string $default = ''): string
+    {
+        return (string) ($this->attributes[$key] ?? $default);
+    }
+
+    /**
+     * Get a value from the request attributes as an integer.
+     */
+    public function int(string $key, int $default = 0): int
+    {
+        return (int) ($this->attributes[$key] ?? $default);
+    }
+
+    /**
+     * Get a value from the request attributes as a boolean.
+     */
+    public function bool(string $key, bool $default = false): bool
+    {
+        return (bool) ($this->attributes[$key] ?? $default);
+    }
+
+    /**
+     * Check if the request has a given attribute key.
+     */
+    public function has(string $key): bool
+    {
+        return array_key_exists($key, $this->attributes);
+    }
+
+    /**
+     * Get the request path.
+     */
+    public function path(): string
+    {
+        return $this->path;
+    }
+
+    /**
+     * Get the HTTP method.
+     */
+    public function method(): string
+    {
+        return $this->method;
     }
 
     public function files(): array
