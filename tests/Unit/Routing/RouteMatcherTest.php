@@ -37,11 +37,9 @@ class RouteMatcherTest extends TestCase
 
     private function makeRequest(string $uri, string $method = 'GET'): Request
     {
-        // Crea un mock di Request per i test
-        $request = $this->createMock(Request::class);
-        $request->method('uri')->willReturn($uri);
-        $request->method('getRequestMethod')->willReturn($method);
-        return $request;
+        $_SERVER['REQUEST_URI'] = $uri;
+        $_SERVER['REQUEST_METHOD'] = $method;
+        return new Request();
     }
 
     public function testExactPathMatch(): void
@@ -135,7 +133,6 @@ class RouteMatcherTest extends TestCase
             $this->makeRoute('/users'),
         ]);
 
-        // /users/extra non deve corrispondere a /users
         $request = $this->makeRequest('/users/extra');
         $result = $this->matcher->match($request, $collection);
 

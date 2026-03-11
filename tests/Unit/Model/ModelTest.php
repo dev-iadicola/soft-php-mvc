@@ -81,7 +81,7 @@ class ModelTest extends TestCase
         $article = new Article();
         $columns = $article->getPersistableColumns();
 
-        $expected = ['id', 'title', 'subtitle', 'overview', 'img', 'link', 'created_at'];
+        $expected = ['id', 'title', 'subtitle', 'overview', 'img', 'link', 'created_at', 'updated_at'];
         $this->assertSame($expected, $columns);
 
         // Internal framework properties must never leak into the column list.
@@ -445,9 +445,9 @@ class ModelTest extends TestCase
         $ref = new ReflectionProperty(Article::class, 'timestamps');
         $this->assertTrue($ref->getValue($article));
 
-        // LogTrace explicitly sets timestamps = false.
+        // LogTrace uses default timestamps = true (aligned to migration).
         $logTrace = new LogTrace();
         $ref = new ReflectionProperty(LogTrace::class, 'timestamps');
-        $this->assertFalse($ref->getValue($logTrace));
+        $this->assertTrue($ref->getValue($logTrace));
     }
 }
