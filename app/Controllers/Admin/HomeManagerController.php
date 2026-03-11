@@ -98,7 +98,19 @@ class HomeManagerController extends AdminController
     #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
         public function destroy(Request $reqq, string $id)
     {
-        // TODO: make validator
+        $validator = Validator::make(
+            ['id' => $id],
+            ['id' => ['required', 'integer', 'min:1']],
+            [
+                'id.required' => 'ID articolo mancante.',
+                'id.integer' => 'ID articolo non valido.',
+                'id.min' => 'ID articolo non valido.',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return response()->back()->withError($validator->implodeError());
+        }
 
         $article = ArticleService::findOrFail((int) $id);
         $name = $article->title;
@@ -108,7 +120,7 @@ class HomeManagerController extends AdminController
             $stg->deleteIfExist($article->img);
         }
         ArticleService::delete((int) $id);
-        return response()->back()->withSuccess('Articolo $name eliminato.');
+        return response()->back()->withSuccess("Articolo {$name} eliminato.");
     }
 
     private function validateRequest(Request $request): Validator

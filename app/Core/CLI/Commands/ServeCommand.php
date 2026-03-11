@@ -19,9 +19,8 @@ class ServeCommand implements CommandInterface
     private string $phpBin = 'php';
     public function exe(array $command): void
     {
-           $this->root = getcwd();
+        $this->root = getcwd();
         $this->parseOptions($command);
-     
 
         if (!is_dir($this->root)) {
             Out::error(" index.php  not found. Please check your project");
@@ -54,31 +53,16 @@ class ServeCommand implements CommandInterface
         // - -t {$this->root}: cartella root del progetto (es. "public")
         $cmd = "{$this->phpBin} -S {$this->host}:{$this->port} -t {$this->root}";
 
+        $url = "http://{$this->host}:{$this->port}";
+
+        if ($this->open) {
+            $this->openBrowser($url);
+        }
+
         // Esegue il comando costruito sopra mantenendo l'output visibile nel terminale in tempo reale.
         // A differenza di exec() o shell_exec(), passthru() non cattura l'output ma lo mostra direttamente.
         // Il processo resta attivo finché non viene interrotto (Ctrl + C).
         passthru($cmd);
-
-        // Se l'opzione --open è abilitata, apre automaticamente il browser di default
-        // con l'indirizzo del server, adattandosi al sistema operativo corrente:
-        $url ="http://{$this->host}:{$this->port}";
-        if ($this->open && PHP_OS_FAMILY === 'Windows') {
-            // Su Windows, il comando "start" apre l'URL nel browser predefinito.
-            // exec("explorer \"$url\"");
-            Out::info("Open not work in widnows");
-        } elseif ($this->open && PHP_OS_FAMILY === 'Darwin') {
-            // Su macOS, "open" apre l'URL nel browser di sistema.
-            // TODO: Da testare con VM
-            exec("open $url");
-        } elseif ($this->open) {
-            // Su Linux, "xdg-open" apre l'URL nel browser predefinito del desktop environment.
-            // TODO: da testare con vm
-            exec("xdg-open $url");
-        }
-
-
-
-        passthru("php -S $this->host:$this->port");
     }
 
     /**
@@ -125,14 +109,26 @@ class ServeCommand implements CommandInterface
 
 
 
-    private function isPortInUse($port): bool
+    private function isPortInUse(string $port): bool
     {
-        $connection =  @fsockopen('localhost', $port);
+        $connection =  @fsockopen('localhost', (int) $port);
         if (is_resource($connection)) {
             fclose($connection);
             return true;
         }
 
         return false;
+    }
+
+    private function openBrowser(string $url): void
+    {
+        $escapedUrl = escapeshellarg($url);
+
+        match (PHP_OS_FAMILY) {
+            'Windows' => pclose(popen('start "" ' . $escapedUrl, 'r')),
+            'Darwin' => exec("open {$escapedUrl} >/dev/null 2>&1 &"),
+            'Linux' => exec("xdg-open {$escapedUrl} >/dev/null 2>&1 &"),
+            default => Out::info("Open is not supported on " . PHP_OS_FAMILY),
+        };
     }
 }
