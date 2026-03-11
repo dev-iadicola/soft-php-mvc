@@ -28,9 +28,9 @@ class ProfileMngController extends AdminController
   }
 
   #[Get('profile/{id}', 'profile.edit')]
-  public function edit(Request $request, string $id)
+  public function edit(int $id)
   {
-    $profile = ProfileService::findOrFail((int) $id);
+    $profile = ProfileService::findOrFail($id);
     $skills = SkillService::getAll();
     $articles = ArticleService::getAll();
     $profiles = ProfileService::getAll();
@@ -38,20 +38,20 @@ class ProfileMngController extends AdminController
   }
 
   #[Post('profile/{id}', 'profile.update')]
-  public function update(Request $request, string $id)
+  public function update(Request $request, int $id)
   {
     $data = $request->all();
 
     $data['selected'] = isset($data['selected']) ? 1 : 0;
 
-    ProfileService::update((int) $id, $data);
+    ProfileService::update($id, $data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
 
   }
 
   #[Delete('/profile-delete/{id}', 'profile.delete')]
-  public function destroy(Request $reqq, int $id){
+  public function destroy(int $id){
 
     ProfileService::delete($id);
     return  response()->back()->withSuccess('Skills ELIMINATE');

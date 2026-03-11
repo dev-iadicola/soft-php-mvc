@@ -28,7 +28,7 @@ class CorsiManagerController extends AdminController
    }
 
    #[Get('corsi-edit/{id}')]
-   public function edit(Request $request, int  $id)
+   public function edit(int $id)
    {
       $corsi = CertificateService::getAll('id');
 
@@ -45,20 +45,20 @@ class CorsiManagerController extends AdminController
    }
 
    #[Patch('corsi-edit/{id}')]
-   public function update(Request $request, string $id)
+   public function update(Request $request, int $id)
    {
-      CertificateService::update((int) $id, $request->all());
+      CertificateService::update($id, $request->all());
       return response()->back()->withSuccess('Corso Aggiornato con successo!');
    }
 
    #[Delete('corso-delete/{id}')]
-   public function destroy(Request $request, string $id)
+   public function destroy(Request $request, int $id)
    {
       $data = $request->all();
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
          return response()->set413();
       }
-      CertificateService::delete((int) $id);
+      CertificateService::delete($id);
       return response()->back()->withSuccess('Corso ELIMINATO');
    }
 }

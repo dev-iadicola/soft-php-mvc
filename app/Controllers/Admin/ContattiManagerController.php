@@ -26,7 +26,7 @@ class ContattiManagerController extends AdminController
   }
 
   #[Get('contatti/{id}', 'admin.contatti')]
-  public function get(Request $request, int $id)
+  public function get(int $id)
   {
     $contatti = ContactService::getAll();
     $contatto = ContactService::findOrFail($id);

@@ -20,7 +20,7 @@ class ProgettiController extends Controller
     }
 
     #[Get('progetti/{slug}')]
-    public function show(Request $request, string $slug): void
+    public function show(string $slug): void
     {
         $slug = urldecode($slug);
 

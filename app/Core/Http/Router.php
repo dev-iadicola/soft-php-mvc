@@ -30,7 +30,7 @@ class Router
         $this->config = $mvc->config ?? mvc()->config;
         $this->loader = new RouteLoader($this->config->get('controllers'));
         $this->matcher = new RouteMatcher();
-        $this->dispatcher = new RouteDispatcher();
+        $this->dispatcher = new RouteDispatcher($this->request);
     }
 
     /**

@@ -61,10 +61,10 @@ class HomeManagerController extends AdminController
 
 
     #[Get('article-edit/{id}', 'article.edit')]
-    public function edit(Request $request, string $id)
+    public function edit(int $id)
     {
 
-        $article = ArticleService::findOrFail((int) $id);
+        $article = ArticleService::findOrFail($id);
         $articles = ArticleService::getAll();
         $skills = SkillService::getAll();
         $profiles = ProfileService::getAll();
@@ -103,7 +103,7 @@ class HomeManagerController extends AdminController
     }
 
     #[Delete('article-delete/{id}', 'article.delete')]
-        public function destroy(Request $reqq, string $id)
+        public function destroy(int $id)
     {
         $validator = Validator::make(
             ['id' => $id],
@@ -119,14 +119,14 @@ class HomeManagerController extends AdminController
             return response()->back()->withError($validator->implodeError());
         }
 
-        $article = ArticleService::findOrFail((int) $id);
+        $article = ArticleService::findOrFail($id);
         $name = $article->title;
 
         if(isset($article->img)){
             $stg = new Storage('images');
             $stg->deleteIfExist($article->img);
         }
-        ArticleService::delete((int) $id);
+        ArticleService::delete($id);
         return response()->back()->withSuccess("Articolo {$name} eliminato.");
     }
 

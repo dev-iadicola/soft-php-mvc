@@ -8,7 +8,6 @@ use App\Core\Contract\MiddlewareInterface;
 use App\Core\Http\Helpers\RouteDefinition;
 use InvalidArgumentException;
 use ReflectionMethod;
-use ReflectionNamedType;
 use RuntimeException;
 
 /**
@@ -18,6 +17,13 @@ use RuntimeException;
  */
 class RouteDispatcher
 {
+    public function __construct(
+        private ?Request $request = null,
+        private ?ControllerParameterResolver $parameterResolver = null,
+    ) {
+        $this->parameterResolver ??= new ControllerParameterResolver();
+    }
+
     public function dispatch(RouteDefinition $route): mixed
     {
         // Run middlewares
@@ -32,45 +38,7 @@ class RouteDispatcher
         $method = $route->action;
 
         $reflection = new ReflectionMethod($controller, $method);
-        $args = [];
-
-        foreach ($reflection->getParameters() as $param) {
-            $name = $param->getName();
-            $type = $param->getType();
-
-            // Request Injection
-            if ($type instanceof ReflectionNamedType && ! $type->isBuiltin()) {
-                if ($type->getName() === Request::class) {
-                    $args[] = mvc()->request;
-
-                    continue;
-                }
-            }
-
-            // Route Params
-            if (array_key_exists($name, $route->getParams())) {
-                $value = $route->getParam($name);
-                if ($type instanceof ReflectionNamedType) {
-                    settype($value, $type->getName());
-                }
-
-                $args[] = $value;
-
-                continue;
-            }
-
-            // Degault Value
-            if ($param->isDefaultValueAvailable()) {
-                $args[] = $param->getDefaultValue();
-
-                continue;
-            }
-
-            throw new RuntimeException(
-                "Missing route parameter '{$name}' for {$route->controller}::{$method}"
-            );
-        }
-      
+        $args = $this->parameterResolver->resolve($reflection, $route, $this->request);
 
         return call_user_func_array([$controller, $method], $args);
 
@@ -96,7 +64,11 @@ class RouteDispatcher
                 if ( ! $mw instanceof MiddlewareInterface) {
                     throw new RuntimeException("{$stringClass} must implement MiddlewareInterface");
                 }
-                $response = $mw->exec(mvc()->request); // execute middleware
+                if (! $this->request instanceof Request) {
+                    throw new RuntimeException('Unable to execute middleware without an active request instance');
+                }
+
+                $response = $mw->exec($this->request); // execute middleware
                 // if middleware has return value
                 if ($response) {
                     return $response;

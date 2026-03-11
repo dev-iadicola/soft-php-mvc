@@ -33,7 +33,7 @@ class ProjectManagerController extends AdminController
     }
 
     #[Get('project-edit/{id}', 'admin.project.edit')]
-    public function edit(Request $request, int $id)
+    public function edit(int $id)
     {
         $project = ProjectService::findOrFail($id);
         $projects = ProjectService::getAll();
@@ -133,11 +133,8 @@ class ProjectManagerController extends AdminController
     }
 
     #[Delete('project-delete/{id}', 'project.delete')]
-    public function destroy(Request $reqq, int $id)
+    public function destroy(int $id)
     {
-        // trova e azione
-        $data = $reqq->all();
-
         $project = ProjectService::findOrFail($id);
 
         // delete img if exist

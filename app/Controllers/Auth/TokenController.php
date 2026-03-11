@@ -68,7 +68,7 @@ class TokenController extends Controller
      * Validate pin page
      */
     #[Get('/validate-pin/{token}')]
-    public function pagePin(Request $request, string $token): mixed
+    public function pagePin(string $token): mixed
     {
         if (!TokenService::isValid($token)) {
             return view('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);

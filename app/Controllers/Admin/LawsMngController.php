@@ -35,9 +35,9 @@ class LawsMngController extends AdminController
     }
 
     #[Get('laws/{id}', 'laws.edit')]
-    public function edit(Request $req, string $id)
+    public function edit(int $id)
     {
-        $law = LawService::findOrFail((int) $id);
+        $law = LawService::findOrFail($id);
 
         $laws = LawService::getAll();
 
@@ -45,17 +45,17 @@ class LawsMngController extends AdminController
     }
 
     #[Patch('laws/{id}', 'laws.update')]
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
-        LawService::update((int) $id, $request->all());
+        LawService::update($id, $request->all());
 
         return response()->back()->withSuccess('Law is Updated');
     }
 
     #[Delete('laws-delete/{id}', 'laws.delete')]
-    public function destroy(Request $req, string $id)
+    public function destroy(int $id)
     {
-        LawService::delete((int) $id);
+        LawService::delete($id);
 
         return response()->back()->withSuccess("Law DELETE");
     }

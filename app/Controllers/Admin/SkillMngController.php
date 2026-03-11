@@ -27,26 +27,26 @@ class SkillMngController extends AdminController
     response()->back()->withSuccess('Skills Aggiornate conn Successo!');
   }
 #[Get('skill-edit/{id}', 'admin.skill.edit')]
-  public function edit(Request $request, string $id)
+  public function edit(int $id)
   {
-    $skill = SkillService::findOrFail((int) $id);
+    $skill = SkillService::findOrFail($id);
     return view('admin.portfolio.skill', compact('skill', 'skills', 'articles', 'profiles'));
   }
 #[Patch('skill-update/{id}', 'admin.skill.update')]
-  public function update(Request $request, string $id)
+  public function update(Request $request, int $id)
   {
     $data = $request->all();
 
-    SkillService::update((int) $id, $data);
+    SkillService::update($id, $data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
   }
 
   #[Delete('skill-delete/{id}')]
-  public function destroy(Request $reqq, string $id)
+  public function destroy(int $id)
   {
 
-    SkillService::delete((int) $id);
+    SkillService::delete($id);
 
     return response()->back()->withSuccess('Skills Eliminata con Successo!');
   }
