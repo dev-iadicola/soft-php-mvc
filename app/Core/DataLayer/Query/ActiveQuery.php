@@ -110,9 +110,9 @@ class ActiveQuery
         return $this;
     }
 
-    public function leftJoin(string $table, string $firstColumn, string $operator, string $seconColumn): static
+    public function leftJoin(string $table, string $firstColumn, string $operator, string $secondColumn): static
     {
-        $this->builder->leftJoin($table, $firstColumn, $operator, $seconColumn);
+        $this->builder->leftJoin($table, $firstColumn, $operator, $secondColumn);
 
         return $this;
     }

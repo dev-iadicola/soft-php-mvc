@@ -104,7 +104,7 @@ abstract class AbstractBuilder implements QueryBuilderInterface
 
     /**
      * Summary of setTable
-     * @deprecated use form($table)
+     * @deprecated use from($table)
      * @param string $table
      * @return void
      */
@@ -405,12 +405,23 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     // * ___________________________________________________
     public function whereBetween(string $column, string|int|float $min, string|int|float $max): static
     {
-        $this->whereClause .= " {$this->getPrefix()} {$column} BETWEEN {$this->addBind($min)} AND {$this->addBind($max)} ";
-        return $this;
+        return $this->buildWhereBetween($column, $min, $max, false);
     }
+
     public function whereNotBetween(string $column, string|int|float $min, string|int|float $max): static
     {
-        $this->whereClause .= " {$this->getPrefix()} {$column} NOT BETWEEN {$this->addBind($min)} AND {$this->addBind($max)} ";
+        return $this->buildWhereBetween($column, $min, $max, true);
+    }
+
+    private function buildWhereBetween(
+        string $column,
+        string|int|float $min,
+        string|int|float $max,
+        bool $negated
+    ): static {
+        $operator = $negated ? 'NOT BETWEEN' : 'BETWEEN';
+        $this->whereClause .= " {$this->getPrefix()} {$column} {$operator} {$this->addBind($min)} AND {$this->addBind($max)} ";
+
         return $this;
     }
 
