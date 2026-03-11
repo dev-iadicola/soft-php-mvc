@@ -1,0 +1,15 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    paths:
+        - app/Core/
+        - app/Controllers/
+        - app/Model/
+        - app/Middleware/
+    excludePaths:
+        - views/
+        - vendor/
+        - storage/
+    reportUnmatchedIgnoredErrors: false

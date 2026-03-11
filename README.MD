@@ -93,6 +93,9 @@ soft-php-mvc/
 ├── index.php                         # Entry point
 ├── composer.json                     # Dipendenze
 ├── phpunit.xml                       # Configurazione PHPUnit
+├── rector.php                        # Configurazione Rector
+├── phpstan.neon                      # Configurazione PHPStan livello 5
+├── phpstan-baseline.neon             # Baseline errori preesistenti PHPStan
 └── ORM.MD                            # Documentazione ORM
 ```
 
@@ -583,6 +586,8 @@ class DashboardController extends Controller { }
 | `seed:status` | Mostra stato seeder |
 | `serve` | Avvia server di sviluppo (opzioni: `--host`, `--port`, `--open`, `--https`) |
 | `test` | Esegue test PHPUnit (opzioni: `--compact`, `--filter`, `--suite`, `--group`, `--coverage`, `--stop`) |
+| `rector` | Esegue Rector (opzioni: `--dry`, `--dry-run`, `--clear`) |
+| `analyse` | Esegue PHPStan (opzioni: `--baseline`) |
 | `storage` | Gestione file storage |
 | `clear:cache` | Pulisce la cache |
 
@@ -603,6 +608,18 @@ php soft test --filter testPlural --compact
 
 # Esegue tutti i test con stop al primo errore
 php soft test --stop
+
+# Esegue Rector (aggiunge strict_types, type hints, ecc.)
+php soft rector
+
+# Preview modifiche Rector senza applicarle
+php soft rector --dry
+
+# Esegue analisi statica PHPStan livello 5
+php soft analyse
+
+# Genera baseline PHPStan per errori preesistenti
+php soft analyse --baseline
 ```
 
 ---
@@ -723,6 +740,8 @@ php soft test --coverage                   # Con code coverage
 |-----------|---------|-------|
 | `laravel/pint` | ^1.20 | Code style fixer |
 | `phpunit/phpunit` | ^10.5 | Testing |
+| `rector/rector` | ^2.3 | Refactoring automatico e strict_types |
+| `phpstan/phpstan` | ^2.1 | Analisi statica livello 5 |
 
 ---
 

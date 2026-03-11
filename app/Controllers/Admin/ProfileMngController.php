@@ -1,0 +1,59 @@
+<?php
+
+declare(strict_types=1);
+
+namespace   App\Controllers\Admin;
+
+use App\Core\Controllers\AdminController;
+use App\Model\Skill;
+use App\Model\Article;
+use App\Model\Profile;
+use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Request;
+use App\Core\Http\Attributes\RouteAttr;
+
+class ProfileMngController extends AdminController 
+{
+
+  #[RouteAttr(path: 'profile', method: 'get', name: 'profile')]
+  public function store(Request $request)
+  {   
+    Profile::query()->create($request->all());
+    return response()->back()->withSuccess('Skills Aggiornate conn Successo!');
+  }
+
+  #[RouteAttr(path: 'profile/{id}', method: 'get', name: 'profile.edit')]
+  public function edit(Request $request, string $id)
+  {
+    $profile = Profile::query()->find($id);
+    $skills = Skill::query()->orderBy('id', 'DESC')->get();
+    $articles = Article::query()->orderBy('created_at', 'DESC')->get();
+    $profiles = Profile::query()->orderBy('id', 'DESC')->get();
+    return view('admin.portfolio.home',  compact('profile','skills','articles','profiles'));
+  }
+
+  #[RouteAttr(path: 'profile/{id}', method: 'POST', name: 'profile.update')]
+  public function update(Request $request, string $id)
+  {
+    $data = $request->all();
+
+    $data['selected'] = isset($data['selected']) ? 1 : 0;
+
+    $project = Profile::query()->find($id);
+    Profile::query()->where('id', $id)->update($data);
+
+    return response()->back()->withSuccess('Aggiornamento Eseguito');
+    
+  }
+
+  #[RouteAttr(path: '/profile-delete/{id}', method: 'DELETE', name: 'profile.delete')]
+  public function destroy(Request $reqq, int $id){
+    // trova e azione
+    $data =  $reqq->all();
+
+    Profile::query()->where('id', $id)->delete();
+    return  response()->back()->withSuccess('Skills ELIMINATE');
+
+ }
+
+}
