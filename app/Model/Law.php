@@ -14,5 +14,7 @@ class Law extends Model
     protected int|string|null $id = null;
     protected ?string $title = null;
     protected ?string $testo = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
 }

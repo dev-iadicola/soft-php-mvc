@@ -26,6 +26,7 @@ use DateTime;
      protected ?bool $used = null;
      protected ?string $created_at = null;
      protected ?string $expiry_date = null;
+     protected ?string $updated_at = null;
 
      protected function casts(): array
      {

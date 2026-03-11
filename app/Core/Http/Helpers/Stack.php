@@ -9,11 +9,9 @@ use ArrayAccess;
 
 class Stack
 {
-
     private Collection $middleware;
     private Collection $path;
-
-    
+    private string $namePrefix = '';
 
     public function __construct()
     {
@@ -65,10 +63,23 @@ class Stack
         return $this;
     }
 
-    public function toArray(): array{
+    public function setNamePrefix(string $prefix): static
+    {
+        $this->namePrefix = $prefix;
+        return $this;
+    }
+
+    public function getNamePrefix(): string
+    {
+        return $this->namePrefix;
+    }
+
+    public function toArray(): array
+    {
         return [
-            "Middleware" => $this->middleware->toArray(),
-            "path" => $this->path->toArray(),
+            'Middleware' => $this->middleware->toArray(),
+            'path' => $this->path->toArray(),
+            'namePrefix' => $this->namePrefix,
         ];
     }
 }

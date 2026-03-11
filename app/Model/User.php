@@ -11,13 +11,12 @@ class User extends Model
 {
     protected string $table = 'users';
     protected int|string|null $id = null;
-    protected ?string $email = null;
-    protected ?string $password = null;
-    protected ?string $token = null;
-    protected ?string $indirizzo = null;
-    protected ?string $last_log = null;
     protected int|string|null $log_id = null;
+    protected ?string $password = null;
+    protected ?string $email = null;
+    protected ?string $token = null;
     protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
     /**
      * @deprecated Use \App\Services\PasswordService::changeByEmail() instead.

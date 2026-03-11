@@ -21,7 +21,7 @@ class Project extends Model
     */
    protected string $table = 'projects';
 
-   protected bool $timestamps = false;
+   protected int|string|null $id = null;
    protected int|string|null $technology_id = null;
    protected int|string|null $partner_id = null;
    protected ?string $title = null;
@@ -30,6 +30,8 @@ class Project extends Model
    protected ?string $link = null;
    protected ?string $img = null;
    protected ?string $website = null;
+   protected ?string $created_at = null;
+   protected ?string $updated_at = null;
 
    public function partner(): mixed
    {

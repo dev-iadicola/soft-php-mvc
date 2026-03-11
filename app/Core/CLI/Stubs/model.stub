@@ -10,4 +10,7 @@ class {{CLASS}} extends Model
 {
     protected string $table = '{{TABLE}}';
     protected int|string|null $id = null;
+
+    // Define your model properties here:
+    // protected ?string $name = null;
 }

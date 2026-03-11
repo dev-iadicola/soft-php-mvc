@@ -17,6 +17,8 @@ class Certificate extends Model
     protected ?int $certified = null;
     protected ?string $link = null;
     protected ?string $ente = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
     protected function casts(): array
     {

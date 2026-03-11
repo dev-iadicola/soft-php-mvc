@@ -10,11 +10,13 @@ class LogTrace extends Model
 {
     protected string $table = 'logs';
 
-    protected bool $timestamps = false;
+    protected int|string|null $id = null;
     protected int|string|null $user_id = null;
     protected ?string $last_log = null;
     protected ?string $indirizzo = null;
     protected ?string $device = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
     /**
      * @deprecated Use \App\Services\LogService::create() instead.

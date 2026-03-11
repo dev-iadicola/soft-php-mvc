@@ -175,3 +175,108 @@ I path assoluti erano costruiti in modo distribuito tramite `__DIR__`, `dirname(
 - Introdurre una piccola gerarchia di classi directory/path centralizzate come strato infrastrutturale unico.
 - Far dipendere helper, provider e generatori da queste classi invece che da percorsi relativi hardcoded.
 - Estendere gradualmente il pattern anche agli altri accessi filesystem applicativi.
+
+---
+
+## 7. COMPLETATO - Allineamento Model alle Migration (2026-03-11)
+
+Analisi e correzione di tutti i 13 model in `app/Model/` rispetto alle migration in `database/migration/`.
+
+### Correzioni applicate
+
+| Model | Problema | Fix |
+|-------|----------|-----|
+| **User** | Proprieta `indirizzo` e `last_log` non presenti in migration (sono colonne di `logs`, non di `users`) | Rimosse |
+| **User** | Mancava `updated_at` (aggiunto da migration timestamps) | Aggiunta |
+| **Contatti** | Mancava `id` | Aggiunta |
+| **Contatti** | Aveva `timestamps = false` ma la migration timestamps aggiunge le colonne | Rimosso `timestamps = false` |
+| **Contatti** | Mancava `updated_at` | Aggiunta |
+| **LogTrace** | Mancava `id` | Aggiunta |
+| **LogTrace** | Aveva `timestamps = false` ma la migration timestamps aggiunge le colonne | Rimosso `timestamps = false` |
+| **LogTrace** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Project** | Mancava `id` | Aggiunta |
+| **Project** | Aveva `timestamps = false` ma la migration timestamps aggiunge le colonne | Rimosso `timestamps = false` |
+| **Project** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Technology** | Table name `technologies` non corrispondeva a migration `technology` | Corretto in `technology` |
+| **Technology** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Article** | Mancava `updated_at` | Aggiunta |
+| **Certificate** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Curriculum** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Law** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Partner** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Profile** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Skill** | Mancava `created_at` e `updated_at` | Aggiunte |
+| **Token** | Mancava `updated_at` | Aggiunta |
+
+### Verifiche completate
+- Tutti i 13 model hanno `declare(strict_types=1)`
+- Tutti i tipi PHP sono coerenti con i tipi SQL delle migration
+- Tutte le colonne nullable hanno tipi nullable
+- Nessuna proprieta extra non presente nelle migration
+- Nessuna colonna mancante nei model
+
+---
+
+## 8. NOTE - CLI Commands Implementation (2026-03-11)
+
+### Comandi creati/aggiornati
+- **MakeServiceCommand** (`make:service`) - Nuovo comando per generare service in `app/Services/`
+- **ModelInspectCommand** (`model:inspect`) - Nuovo comando per ispezionare proprieta tipizzate dei model
+- **MakeControllerCommand** - Migliorato con validazione nome, gestione errori try/catch, protezione da flag come primo argomento
+- **MakeModelCommand** - Aggiunto supporto per flag combinabili `-m` `-c` `-r` `-s` (e combinazioni come `-mcrs`), aggiunto `--service` e `--controller` long flags
+
+### Osservazioni durante lo sviluppo
+
+#### 8.1 ValidateClassName e hardcoded a Middleware
+**File:** `app/Core/CLI/Commands/Validation/ValidateClassName.php`
+Il metodo `Validate()` ha il path `app/Middleware/` hardcoded alla riga 33 per il controllo file duplicato. Il parametro `$classEndName` suggerisce che dovrebbe essere generico, ma il check file existence e specifico per middleware. Questo validator non puo essere riutilizzato per controller, service, ecc.
+
+**Fix suggerito:** Accettare un terzo parametro `?string $basePath = null` oppure rimuovere il file existence check (delegandolo al chiamante).
+
+#### 8.2 Percorsi inconsistenti tra comandi
+- `MakeModelCommand` usa `getcwd() . '/App/Model/'` (App maiuscolo)
+- `MakeServiceCommand` usa `getcwd() . '/app/Services/'` (app minuscolo)
+- `MakeMiddlewareCommand` usa path relativo `app/Middleware/`
+- `MakeControllerCommand` usa `getcwd() . '/App/Controllers/'` (App maiuscolo)
+
+Il filesystem Linux e case-sensitive; questa inconsistenza puo causare file creati in directory sbagliate. Verificare quale sia la convenzione corretta del progetto.
+
+#### 8.3 Out::warn() dentro match expression
+In `MakeModelCommand::parseOptions()`, il default branch del match chiama `Out::warn()` che potrebbe avere side-effects inattesi nel contesto di un'espressione match. Funziona perche PHP permette statement expressions nel match, ma e un pattern insolito.
+
+---
+
+## 9. Routing Refactoring (2026-03-11)
+
+### Pulizia effettuata
+- **Router.php**: rimossi 3 metodi deprecati (`getRoute()`, `Exresolve()`, `dispatch(array)`) e un blocco commentato duplicato. Erano codice morto che aumentava la complessita senza essere usato.
+- **Router.php**: rimosso import inutilizzato `DashBoardController`.
+
+### Bug risolti in RouteLoader
+1. `extractRoutes()` lanciava eccezione per ogni metodo pubblico senza `#[RouteAttr]`. Impediva controller con metodi helper pubblici. Ora i metodi senza attributi di routing sono ignorati.
+2. `getAllControllers()`: la variabile `$controllers` non era inizializzata prima del loop. Aggiunto `$controllers = []`.
+3. Mancava validazione sull'esistenza della directory controller.
+4. Mancava validazione sull'esistenza effettiva della classe dopo il `require_once`.
+
+### Typo corretti in RouteLoader
+- `getReflrectedController` -> `getReflectedControllers`
+- `$conntrollerPath` -> `$controllerPath`
+- `GetAttributesOfController` -> `buildControllerStack`
+- `$refleciton` -> `$reflection`
+
+### Error reporting migliorato
+- Messaggi di errore chiari per attributi malformati (#[RouteAttr], #[ControllerAttr], #[Prefix], #[Middleware], #[NamePrefix])
+- Ogni messaggio indica: la classe, il file, e la sintassi corretta dell'attributo
+
+### Nuove feature aggiunte
+- Attributi Spatie-style: `#[Get]`, `#[Post]`, `#[Put]`, `#[Patch]`, `#[Delete]` (tutti estendono `RouteAttribute`)
+- Attributi di classe: `#[Prefix]`, `#[Middleware]`, `#[NamePrefix]`
+- `RouteHelper::url()` per URL generation da nomi rotta (reverse routing)
+- `RouteCache` per serializzazione/deserializzazione rotte in produzione
+- Comandi CLI: `route:list`, `route:cache`, `route:clear`
+- Test unitari: `RouteCollectionTest`, `RouteMatcherTest`, `RouteLoaderTest`
+
+### Problemi individuati ma NON corretti (fuori scope)
+1. **RouteDispatcher**: le proprieta `$controller`, `$path`, `$method`, `$action`, `$name`, `$dispatche` sono dichiarate ma mai assegnate nel metodo `dispatch()`. `$this->controller` viene usato nel messaggio di errore di `executeMiddleware()` ma non viene valorizzato, causando potenziale errore se un middleware non e nel config.
+2. **RouteRegister**: non sembra essere usato nel flusso attuale (Router non chiama mai `register()`). Valutare se eliminarlo o integrarlo.
+3. **RouteDispatcher**: il blocco commentato in cima (vecchia implementazione di `dispatch()`) andrebbe rimosso.

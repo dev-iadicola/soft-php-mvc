@@ -21,7 +21,13 @@ use App\Core\CLI\Commands\SeedStatusCommand;
 use App\Core\CLI\Commands\StorageCommand;
 use App\Core\CLI\Commands\TestCommand;
 use App\Core\CLI\Commands\RectorCommand;
+use App\Core\CLI\Commands\MakeRepositoryCommand;
+use App\Core\CLI\Commands\MakeServiceCommand;
+use App\Core\CLI\Commands\ModelInspectCommand;
 use App\Core\CLI\Commands\AnalyseCommand;
+use App\Core\CLI\Commands\Route\RouteListCommand;
+use App\Core\CLI\Commands\Route\RouteCacheCommand;
+use App\Core\CLI\Commands\Route\RouteClearCommand;
 
 class Kernel
 {
@@ -44,6 +50,8 @@ class Kernel
             'make:model' => MakeModelCommand::class,
             'make:controller' => MakeControllerCommand::class,
             'make:mw' => MakeMiddlewareCommand::class,
+            'make:repository' => MakeRepositoryCommand::class,
+            'make:service' => MakeServiceCommand::class,
             'make:migration' => MakeMigrationCommand::class,
             'migrate' => MigrateCommand::class,
             'migrate:rollback' => MigrateRollbackCommand::class,
@@ -56,10 +64,18 @@ class Kernel
             'print' => Out::class,
             'storage' => StorageCommand::class,
 
+            // Inspect
+            'model:inspect' => ModelInspectCommand::class,
+
             // Testing & Quality
             'test' => TestCommand::class,
             'rector' => RectorCommand::class,
             'analyse' => AnalyseCommand::class,
+
+            // Route commands
+            'route:list' => RouteListCommand::class,
+            'route:cache' => RouteCacheCommand::class,
+            'route:clear' => RouteClearCommand::class,
 
             // Clear commands
             'clear:cache' => ClearCacheCommand::class,
@@ -81,15 +97,28 @@ class Kernel
         $command = $argv[1] ?? null;
         if (!$command) {
             Out::info("Welcome to SoftCLI v1.0\nA lightweight PHP CLI tool for your project (in development).\n");
-            Out::ln("Future available commands:");
+            Out::ln("Available commands:");
             Out::ln("  make:controller   Create a new controller");
-            Out::ln("  make:model        Create a new model");
-            Out::ln("  make:table        Create a new table");
+            Out::ln("  make:model        Create a new model (-m migration, -c controller, -r repository, -s service)");
+            Out::ln("  make:mw           Create a new middleware");
+            Out::ln("  make:repository   Create a new repository");
+            Out::ln("  make:service      Create a new service");
+            Out::ln("  make:migration    Create a new migration");
+            Out::ln("  make:seeder       Create a new seeder");
             Out::ln("  migrate           Run DB migrations");
+            Out::ln("  migrate:rollback  Rollback last migration");
+            Out::ln("  migrate:status    Show migration status");
+            Out::ln("  seed              Run seeders");
+            Out::ln("  model:inspect     Inspect a model's properties");
             Out::ln("  serve             Start dev server");
             Out::ln("  test              Run PHPUnit tests");
+            Out::ln("  analyse           Run static analysis");
+            Out::ln("  route:list        List all registered routes");
+            Out::ln("  route:cache       Cache routes for production");
+            Out::ln("  route:clear       Clear the route cache");
+            Out::ln("  clear:cache       Clear application cache");
             Out::ln("\nUsage: php soft <command> [options]");
-            Out::ln("Example: php soft make:controller UserController");
+            Out::ln("Example: php soft make:model Post -mcrs");
             exit();
         }        
        

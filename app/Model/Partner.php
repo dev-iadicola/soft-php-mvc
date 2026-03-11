@@ -13,4 +13,6 @@ class Partner extends Model
     protected int|string|null $id = null;
     protected ?string $name = null;
     protected ?string $website = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 }

@@ -11,12 +11,13 @@ use App\Core\DataLayer\Model;
 class Contatti extends Model
 {
     protected string $table = 'contatti';
-    protected bool $timestamps = false;
+    protected int|string|null $id = null;
     protected ?string $nome = null;
     protected ?string $email = null;
     protected ?string $messaggio = null;
-    protected ?string $created_at = null;
     protected ?string $typologie = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
 
     /**

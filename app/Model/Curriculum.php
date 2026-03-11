@@ -15,6 +15,8 @@ class Curriculum extends Model
     protected ?string $title = null;
     protected ?string $img = null;
     protected ?int $download = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
     protected function casts(): array
     {

@@ -19,6 +19,7 @@ class Article extends Model
     protected ?string $img = null;
     protected ?string $link = null;
     protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
-   
+
 }

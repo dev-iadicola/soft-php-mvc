@@ -15,6 +15,8 @@ class Profile extends Model
     protected ?string $tagline = null;
     protected ?string $welcome_message = null;
     protected ?bool $selected = null;
+    protected ?string $created_at = null;
+    protected ?string $updated_at = null;
 
     protected function casts(): array
     {

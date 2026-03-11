@@ -26,21 +26,36 @@ class MakeModelCommand implements CommandInterface
 
         $this->createModel($className, $table);
 
-        if ($options['migration']) {
-            (new MakeMigrationCommand())->exe([
-                $command[0] ?? 'php',
-                'make:migration',
-                'create_' . $table . '_table',
-            ]);
-        }
+        $php = $command[0] ?? 'php';
 
-        if ($options['resource']) {
-            (new MakeControllerCommand())->exe([
-                $command[0] ?? 'php',
-                'make:controller',
-                $className . 'Controller',
-            ]);
+        $generators = $this->buildGenerators($className, $table, $php);
+
+        foreach ($generators as $key => $generator) {
+            if ($options[$key] ?? false) {
+                $generator();
+            }
         }
+    }
+
+    /**
+     * @return array<string, callable(): void>
+     */
+    private function buildGenerators(string $className, string $table, string $php): array
+    {
+        return [
+            'migration' => fn () => (new MakeMigrationCommand())->exe([
+                $php, 'make:migration', 'create_' . $table . '_table',
+            ]),
+            'resource' => fn () => (new MakeControllerCommand())->exe([
+                $php, 'make:controller', $className . 'Controller',
+            ]),
+            'repository' => fn () => (new MakeRepositoryCommand())->createRepository(
+                $className . 'Repository', $className,
+            ),
+            'service' => fn () => (new MakeServiceCommand())->createService(
+                $className . 'Service',
+            ),
+        ];
     }
 
     private function createModel(string $className, string $table): void
@@ -64,6 +79,8 @@ class MakeModelCommand implements CommandInterface
         $options = [
             'migration' => false,
             'resource' => false,
+            'repository' => false,
+            'service' => false,
             'table' => null,
         ];
 
@@ -73,13 +90,39 @@ class MakeModelCommand implements CommandInterface
                 continue;
             }
 
-            if ($arg === '--resource') {
+            if ($arg === '--resource' || $arg === '--controller') {
                 $options['resource'] = true;
+                continue;
+            }
+
+            if ($arg === '--repository') {
+                $options['repository'] = true;
+                continue;
+            }
+
+            if ($arg === '--service') {
+                $options['service'] = true;
                 continue;
             }
 
             if (str_starts_with($arg, '--table=')) {
                 $options['table'] = trim(substr($arg, 8));
+                continue;
+            }
+
+            // Short flags: -m (migration), -c (controller), -r (repository), -s (service)
+            // Combinable: -mcrs
+            if (str_starts_with($arg, '-') && !str_starts_with($arg, '--')) {
+                $flags = substr($arg, 1);
+                for ($i = 0, $len = strlen($flags); $i < $len; $i++) {
+                    match ($flags[$i]) {
+                        'm' => $options['migration'] = true,
+                        'c' => $options['resource'] = true,
+                        'r' => $options['repository'] = true,
+                        's' => $options['service'] = true,
+                        default => Out::warn("Unknown flag: -{$flags[$i]}"),
+                    };
+                }
             }
         }
 

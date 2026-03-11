@@ -13,8 +13,27 @@ class RouteCollection implements \IteratorAggregate
     private array $routes = []; //rotta
     private array $namedRoutes = []; // name che diamo alla rotta
 
-    public function getByName(string $name): RouteDefinition{
-       return $this->namedRoutes[$name];
+    public function getByName(string $name): RouteDefinition
+    {
+        return $this->namedRoutes[$name];
+    }
+
+    /**
+     * Cerca una rotta per nome, ritorna null se non trovata.
+     */
+    public function findByName(string $name): ?RouteDefinition
+    {
+        return $this->namedRoutes[$name] ?? null;
+    }
+
+    /**
+     * Ritorna tutte le rotte con nome registrato.
+     *
+     * @return array<string, RouteDefinition>
+     */
+    public function getNamedRoutes(): array
+    {
+        return $this->namedRoutes;
     }
     public function add(RouteDefinition $route): static
     {
