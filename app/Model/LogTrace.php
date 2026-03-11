@@ -11,7 +11,7 @@ class LogTrace extends Model
     protected string $table = 'logs';
 
     protected int|string|null $id = null;
-    protected int|string|null $user_id = null;
+    protected ?int $user_id = null;
     protected ?string $last_log = null;
     protected ?string $indirizzo = null;
     protected ?string $device = null;

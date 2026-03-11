@@ -14,7 +14,7 @@ class Curriculum extends Model
     protected int|string|null $id = null;
     protected ?string $title = null;
     protected ?string $img = null;
-    protected ?int $download = null;
+    protected int $download = 0;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 

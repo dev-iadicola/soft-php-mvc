@@ -113,7 +113,7 @@ class Kernel
             Out::ln("  serve             Start dev server");
             Out::ln("  test              Run PHPUnit tests");
             Out::ln("  analyse           Run static analysis");
-            Out::ln("  route:list        List all registered routes");
+            Out::ln("  route:list        List all registered routes (--method=GET --path=/api)");
             Out::ln("  route:cache       Cache routes for production");
             Out::ln("  route:clear       Clear the route cache");
             Out::ln("  clear:cache       Clear application cache");

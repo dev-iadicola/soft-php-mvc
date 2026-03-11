@@ -14,7 +14,7 @@ class Certificate extends Model
     protected int|string|null $id = null;
     protected ?string $title = null;
     protected ?string $overview = null;
-    protected ?int $certified = null;
+    protected ?string $certified = null;
     protected ?string $link = null;
     protected ?string $ente = null;
     protected ?string $created_at = null;
@@ -22,6 +22,6 @@ class Certificate extends Model
 
     protected function casts(): array
     {
-        return ['certified' => 'int'];
+        return ['certified' => 'string'];
     }
 }

@@ -23,7 +23,7 @@ use DateTime;
 
      protected ?string $email = null;
      protected ?string $token = null;
-     protected ?bool $used = null;
+     protected bool $used = false;
      protected ?string $created_at = null;
      protected ?string $expiry_date = null;
      protected ?string $updated_at = null;

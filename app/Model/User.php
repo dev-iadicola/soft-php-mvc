@@ -10,8 +10,8 @@ use App\Core\DataLayer\Model;
 class User extends Model
 {
     protected string $table = 'users';
-    protected int|string|null $id = null;
-    protected int|string|null $log_id = null;
+    protected ?int $id = null;
+    protected ?int $log_id = null;
     protected ?string $password = null;
     protected ?string $email = null;
     protected ?string $token = null;

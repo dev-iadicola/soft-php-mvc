@@ -22,8 +22,8 @@ class Project extends Model
    protected string $table = 'projects';
 
    protected int|string|null $id = null;
-   protected int|string|null $technology_id = null;
-   protected int|string|null $partner_id = null;
+   protected ?int $technology_id = null;
+   protected ?int $partner_id = null;
    protected ?string $title = null;
    protected ?string $overview = null;
    protected ?string $description = null;

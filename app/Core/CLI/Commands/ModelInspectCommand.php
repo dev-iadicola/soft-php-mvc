@@ -15,6 +15,10 @@ use ReflectionUnionType;
 
 class ModelInspectCommand implements CommandInterface
 {
+    private const MODEL_NAMESPACE = 'App\\Model\\';
+    private const MODEL_DIR = 'app/Model';
+    private const BASE_MODEL_CLASS = 'App\\Core\\DataLayer\\Model';
+
     private const INTERNAL_PROPERTIES = [
         'primaryKey',
         'table',
@@ -29,13 +33,13 @@ class ModelInspectCommand implements CommandInterface
         $name = $command[2] ?? null;
 
         if (!$name || str_starts_with($name, '-')) {
-            Out::error('You must specify a model name. Example: php soft model:inspect Article');
+            $this->listModels();
             return;
         }
 
         try {
             $className = Str::studly($name);
-            $fqcn = 'App\\Model\\' . $className;
+            $fqcn = self::MODEL_NAMESPACE . $className;
 
             if (!class_exists($fqcn)) {
                 Out::error("Model class not found: {$fqcn}");
@@ -48,16 +52,69 @@ class ModelInspectCommand implements CommandInterface
         }
     }
 
+    private function listModels(): void
+    {
+        $modelDir = getcwd() . DIRECTORY_SEPARATOR . self::MODEL_DIR;
+
+        if (!is_dir($modelDir)) {
+            Out::warn("Model directory not found: {$modelDir}");
+            return;
+        }
+
+        $files = glob($modelDir . DIRECTORY_SEPARATOR . '*.php');
+
+        if (empty($files)) {
+            Out::warn('No models found in ' . self::MODEL_DIR);
+            return;
+        }
+
+        Out::ln("──────────────────────────────────────────────");
+        Out::info("Available models (" . self::MODEL_DIR . ")");
+        Out::ln("──────────────────────────────────────────────");
+
+        $header = sprintf("  %-20s %-30s %-10s", 'Model', 'Table', 'Properties');
+        Out::ln($header);
+        Out::ln("  " . str_repeat('-', 60));
+
+        foreach ($files as $file) {
+            $className = pathinfo($file, PATHINFO_FILENAME);
+            $fqcn = self::MODEL_NAMESPACE . $className;
+
+            if (!class_exists($fqcn)) {
+                continue;
+            }
+
+            $reflection = new ReflectionClass($fqcn);
+
+            if ($reflection->isAbstract() || !$reflection->isSubclassOf(self::BASE_MODEL_CLASS)) {
+                continue;
+            }
+
+            $instance = new $fqcn();
+            $table = $instance->getTable();
+            $properties = $this->getDataProperties($reflection);
+            $count = count($properties);
+
+            Out::ln(sprintf("  %-20s %-30s %-10s", $className, $table, $count));
+        }
+
+        Out::ln("──────────────────────────────────────────────");
+        Out::ln("\nUsage: php soft model:inspect <ModelName>");
+    }
+
     private function inspect(string $fqcn, string $className): void
     {
         $reflection = new ReflectionClass($fqcn);
         $instance = new $fqcn();
 
         $table = $instance->getTable();
+        $casts = $this->resolveCasts($reflection, $instance);
+        $columnMap = $this->resolveColumnMap($reflection, $instance);
 
         Out::ln("──────────────────────────────────────────────");
-        Out::info("Model: {$className}");
-        Out::info("Table: {$table}");
+        Out::info("Model:        {$className}");
+        Out::info("Table:        {$table}");
+        Out::info("Primary key:  {$instance->primaryKey}");
         Out::ln("──────────────────────────────────────────────");
 
         $properties = $this->getDataProperties($reflection);
@@ -67,29 +124,34 @@ class ModelInspectCommand implements CommandInterface
             return;
         }
 
-        // Header
         $header = sprintf(
-            "  %-20s %-25s %-10s %-15s",
+            "  %-20s %-20s %-10s %-12s %-10s %-15s",
             'Property',
             'Type',
             'Nullable',
-            'Default'
+            'Default',
+            'Cast',
+            'Column'
         );
         Out::ln($header);
-        Out::ln("  " . str_repeat('-', 70));
+        Out::ln("  " . str_repeat('-', 87));
 
         foreach ($properties as $property) {
             $propertyName = $property->getName();
             $type = $this->resolveType($property);
             $nullable = $this->isNullable($property) ? 'yes' : 'no';
-            $default = $this->resolveDefault($property, $instance);
+            $default = $this->resolveDefault($property);
+            $cast = $casts[$propertyName] ?? '-';
+            $column = $columnMap[$propertyName] ?? $propertyName;
 
             $row = sprintf(
-                "  %-20s %-25s %-10s %-15s",
+                "  %-20s %-20s %-10s %-12s %-10s %-15s",
                 $propertyName,
                 $type,
                 $nullable,
-                $default
+                $default,
+                $cast,
+                $column
             );
             Out::ln($row);
         }
@@ -99,8 +161,6 @@ class ModelInspectCommand implements CommandInterface
     }
 
     /**
-     * Get declared data properties (excluding internal framework properties).
-     *
      * @return array<ReflectionProperty>
      */
     private function getDataProperties(ReflectionClass $reflection): array
@@ -108,7 +168,7 @@ class ModelInspectCommand implements CommandInterface
         return DeclaredPropertyResolver::resolve(
             $reflection,
             self::INTERNAL_PROPERTIES,
-            'App\\Core\\DataLayer\\Model'
+            self::BASE_MODEL_CLASS
         );
     }
 
@@ -159,26 +219,48 @@ class ModelInspectCommand implements CommandInterface
         return false;
     }
 
-    private function resolveDefault(ReflectionProperty $property, object $instance): string
+    private function resolveDefault(ReflectionProperty $property): string
     {
-        if ($property->hasDefaultValue()) {
-            $default = $property->getDefaultValue();
-
-            if ($default === null) {
-                return 'null';
-            }
-
-            if (is_bool($default)) {
-                return $default ? 'true' : 'false';
-            }
-
-            if (is_array($default)) {
-                return '[]';
-            }
-
-            return (string) $default;
+        if (!$property->hasDefaultValue()) {
+            return '(none)';
         }
 
-        return '(none)';
+        $default = $property->getDefaultValue();
+
+        if ($default === null) {
+            return 'null';
+        }
+
+        if (is_bool($default)) {
+            return $default ? 'true' : 'false';
+        }
+
+        if (is_array($default)) {
+            return '[]';
+        }
+
+        return (string) $default;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function resolveCasts(ReflectionClass $reflection, object $instance): array
+    {
+        $method = $reflection->getMethod('casts');
+        $method->setAccessible(true);
+
+        return $method->invoke($instance);
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    private function resolveColumnMap(ReflectionClass $reflection, object $instance): array
+    {
+        $method = $reflection->getMethod('columnMap');
+        $method->setAccessible(true);
+
+        return $method->invoke($instance);
     }
 }
