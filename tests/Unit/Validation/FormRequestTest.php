@@ -14,7 +14,9 @@ class FormRequestTest extends TestCase
     {
         // Create a Request mock with custom attributes
         $request = $this->createMock(Request::class);
-        $request->method('all')->willReturn($data);
+        $request->expects($this->any())
+            ->method('all')
+            ->willReturn($data);
 
         return new class($request, $rules, $messages, $authorized) extends FormRequest {
             private array $testRules;
