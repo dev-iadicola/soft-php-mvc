@@ -4,19 +4,23 @@ declare(strict_types=1);
 
 namespace App\Core\Controllers;
 
-use App\Core\Http\Attributes\ControllerAttr;
+use App\Core\Mvc;
+
 /**
- * ! Route name dont be implemented 
- * 
+ * Base class for admin-area controllers.
+ *
+ * Routing metadata is intentionally declared on concrete controllers,
+ * while this class centralizes admin-specific runtime behavior such as
+ * the default layout.
  */
-#[ControllerAttr(['auth'], '/admin', 'admin')] 
-abstract class AdminController extends BaseController {
+abstract class AdminController extends BaseController
+{
     
     protected string $defaultLayout = 'admin';
-    public function __construct(\App\Core\Mvc|null $mvc = null){
-        parent::__construct($mvc);     // eredita eventuali setup del parent
-        $this->setLayout($this->defaultLayout);  // sovrascrive il layout
-    }
-    
 
+    public function __construct(?Mvc $mvc = null)
+    {
+        parent::__construct($mvc);
+        mvc()->view->setLayout($this->defaultLayout);
+    }
 }

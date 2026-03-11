@@ -5,14 +5,21 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Http\Request;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Controllers\AdminController;
+use App\Core\Http\Attributes\Delete;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Patch;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Services\CertificateService;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class CorsiManagerController extends AdminController
 {
 
-   #[RouteAttr('/corsi')]
+   #[Get('/corsi')]
    public function index()
    {
       $corsi = CertificateService::getAll();
@@ -20,7 +27,7 @@ class CorsiManagerController extends AdminController
       return view('/admin/portfolio/corsi',  compact('corsi'));
    }
 
-   #[RouteAttr('corsi-edit/{id}', 'GET')]
+   #[Get('corsi-edit/{id}')]
    public function edit(Request $request, int  $id)
    {
       $corsi = CertificateService::getAll('id');
@@ -30,30 +37,28 @@ class CorsiManagerController extends AdminController
       return view('/admin/portfolio/corsi', compact('corsi', 'element'));
    }
 
-   #[RouteAttr('/corsi', 'POST')]
+   #[Post('/corsi')]
    public function store(Request $request)
    {
       CertificateService::create($request->all());
       return  redirect()->back()->withSuccess('Certificate creato con successo!');
    }
 
-   #[RouteAttr('corsi-edit/{id}', 'PATCH')]
+   #[Patch('corsi-edit/{id}')]
    public function update(Request $request, string $id)
    {
       CertificateService::update((int) $id, $request->all());
-      $this->withSuccess('Corso Aggiornato con successo!');
-      return response()->back();
+      return response()->back()->withSuccess('Corso Aggiornato con successo!');
    }
 
-   #[RouteAttr('corso-delete/{id}','DELETE')]
+   #[Delete('corso-delete/{id}')]
    public function destroy(Request $request, string $id)
    {
       $data = $request->all();
       if (!isset($data['_method']) || !$data['_method'] === 'DELETE') {
-         return $this->statusCode413();
+         return response()->set413();
       }
       CertificateService::delete((int) $id);
-      $this->withSuccess('Corso ELIMINATO');
-      return response()->back();
+      return response()->back()->withSuccess('Corso ELIMINATO');
    }
 }

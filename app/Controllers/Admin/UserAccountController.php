@@ -6,15 +6,20 @@ namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
 use App\Core\Facade\Session;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Exception\ValidationException;
 use App\Model\User;
 use App\Services\PasswordService;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class UserAccountController extends AdminController
 {
-    #[RouteAttr(path: 'edit-profile', method: 'GET', name: 'admin.account.edit')]
+    #[Get('edit-profile', 'admin.account.edit')]
     public function edit()
     {
         $user = $this->currentUser();
@@ -26,7 +31,7 @@ class UserAccountController extends AdminController
         return view('admin.edit-profile', compact('user'));
     }
 
-    #[RouteAttr(path: 'edit-profile', method: 'POST', name: 'admin.account.update')]
+    #[Post('edit-profile', 'admin.account.update')]
     public function update(Request $request)
     {
         $user = $this->currentUser();
@@ -49,7 +54,7 @@ class UserAccountController extends AdminController
         return response()->back()->withSuccess('Profilo aggiornato.');
     }
 
-    #[RouteAttr(path: 'password', method: 'GET', name: 'admin.password')]
+    #[Get('password', 'admin.password')]
     public function passwordForm()
     {
         $user = $this->currentUser();
@@ -61,7 +66,7 @@ class UserAccountController extends AdminController
         return view('admin.change-password', compact('user'));
     }
 
-    #[RouteAttr(path: 'password', method: 'POST', name: 'admin.password.update')]
+    #[Post('password', 'admin.password.update')]
     public function passwordUpdate(Request $request)
     {
         $user = $this->currentUser();

@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controllers\Controller;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
 use App\Services\CertificateService;
 
 class CertificatiController extends Controller
 {
 
-    #[RouteAttr('certificati')]
+    #[Get('certificati')]
     public function index(): void
     {
         $certificati = CertificateService::getAll();

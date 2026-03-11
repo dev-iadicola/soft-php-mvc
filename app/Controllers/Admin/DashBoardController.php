@@ -6,14 +6,18 @@ namespace App\Controllers\Admin;
 
 use App\Model\Contatti;
 use App\Core\Facade\Auth;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Controllers\AdminController;
 use App\Core\Controllers\AuthenticationController;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Prefix;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class DashBoardController extends AdminController{
 
     
-    #[RouteAttr('/dashboard','GET', 'admin.dashboard')]
+    #[Get('/dashboard', 'admin.dashboard')]
     public function index(){
        
         $messages = Contatti::query()->orderBy('id', 'DESC')->get();

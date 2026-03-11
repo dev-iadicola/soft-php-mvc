@@ -6,7 +6,8 @@ namespace App\Controllers;
 
 use App\Model\User;
 use App\Core\Controllers\Controller;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Exception\ValidationException;
 use App\Mail\BrevoMail;
@@ -16,14 +17,14 @@ class ContattiController extends Controller
 {
 
 
-    #[RouteAttr('contatti', 'get', 'contatti')]
+    #[Get('contatti', 'contatti')]
     public function index(): void
     {
         view('contatti');
     }
 
 
-    #[RouteAttr('contatti', 'POST', 'contatti')]
+    #[Post('contatti', 'contatti')]
     public function sendForm(Request $request)
     {
         $post = $request->all();

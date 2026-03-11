@@ -431,6 +431,20 @@ class RouteLoaderTest extends TestCase
         $loader->load();
     }
 
+    public function testLoaderReportsMalformedSpatieRouteAttributeWithAttributeName(): void
+    {
+        $loader = new RouteLoader([]);
+        $classControllers = new ClassControllers();
+        $classControllers->addController(Fixtures\InvalidSpatieRouteController::class);
+        $loader->getControllerStacks($classControllers);
+
+        $this->expectException(LoaderAttributeException::class);
+        $this->expectExceptionMessage('Invalid route attribute App\Core\Http\Attributes\Get');
+        $this->expectExceptionMessage('InvalidSpatieRouteController::broken()');
+
+        $this->invokeExtractRoutes($loader, $classControllers);
+    }
+
     public function testMiddlewareMergedFromControllerAndRoute(): void
     {
         $loader = new RouteLoader([]);

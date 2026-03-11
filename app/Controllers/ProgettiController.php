@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controllers\Controller;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
 use App\Core\Http\Request;
 use App\Services\ProjectService;
 
 class ProgettiController extends Controller
 {
-    #[RouteAttr('progetti')]
+    #[Get('progetti')]
     public function index(): void
     {
         $projects = ProjectService::getAll();
@@ -19,7 +19,7 @@ class ProgettiController extends Controller
         view('progetti', compact('projects'));
     }
 
-    #[RouteAttr('progetti/{slug}')]
+    #[Get('progetti/{slug}')]
     public function show(Request $request, string $slug): void
     {
         $slug = urldecode($slug);

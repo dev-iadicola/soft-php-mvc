@@ -6,15 +6,22 @@ namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
 use App\Core\Facade\Storage;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Delete;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Patch;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Validation\Validator;
 use App\Model\Project;
 use App\Services\ProjectService;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class ProjectManagerController extends AdminController
 {
-    #[RouteAttr(path: 'project', method: 'get', name: 'admin.projects')]
+    #[Get('project', 'admin.projects')]
     public function index()
     {
         $projects = ProjectService::getAll();
@@ -25,7 +32,7 @@ class ProjectManagerController extends AdminController
         ]);
     }
 
-    #[RouteAttr(path: 'project-edit/{id}', method: 'get', name: 'admin.project.edit')]
+    #[Get('project-edit/{id}', 'admin.project.edit')]
     public function edit(Request $request, int $id)
     {
         $project = ProjectService::findOrFail($id);
@@ -34,7 +41,7 @@ class ProjectManagerController extends AdminController
         return view('admin.portfolio.project', compact('project', 'projects'));
     }
 
-    #[RouteAttr(path: 'project-update/{id}', method: 'POST', name: 'project.update')]
+    #[Post('project-update/{id}', 'project.update')]
     public function update(Request $request, int $id)
     {
         $data = $request->all();
@@ -79,7 +86,7 @@ class ProjectManagerController extends AdminController
         return response()->back()->withSuccess($message);
     }
 
-    #[RouteAttr('project-upsert/{id}', 'PATCH', 'admin.project.upset')]
+    #[Patch('project-upsert/{id}', 'admin.project.upset')]
     public function upset(Request $request, ?int $id = 0)
     {
         if ($id == 0) {
@@ -90,7 +97,7 @@ class ProjectManagerController extends AdminController
 
     }
 
-    #[RouteAttr(path: 'project-store', method: 'POST', name: 'admin.project.store')]
+    #[Post('project-store', 'admin.project.store')]
     public function store(Request $request)
     {
         // validate req
@@ -125,7 +132,7 @@ class ProjectManagerController extends AdminController
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
 
-    #[RouteAttr(path: 'project-delete/{id}', method: 'DELETE', name: 'project.delete')]
+    #[Delete('project-delete/{id}', 'project.delete')]
     public function destroy(Request $reqq, int $id)
     {
         // trova e azione

@@ -79,6 +79,42 @@ class GeneratorTest extends TestCase
         $this->assertStringNotContainsString('BlogControllerController', $content);
     }
 
+    public function testMakeControllerAddsPrefixAndMiddlewareAttributesWhenRequested(): void
+    {
+        $command = new MakeControllerCommand();
+        $command->exe([
+            'php',
+            'make:controller',
+            'Store',
+            '--prefix=/admin',
+            '--middleware=auth,verified',
+        ]);
+
+        $file = $this->root . '/app/Controllers/StoreController.php';
+        $this->assertFileExists($file);
+
+        $content = file_get_contents($file);
+        $this->assertStringContainsString("use App\\Core\\Http\\Attributes\\Prefix;", $content);
+        $this->assertStringContainsString("use App\\Core\\Http\\Attributes\\Middleware;", $content);
+        $this->assertStringContainsString("#[Prefix('/admin')]", $content);
+        $this->assertStringContainsString("#[Middleware(['auth', 'verified'])]", $content);
+    }
+
+    public function testMakeControllerOmitsOptionalAttributesWhenNotConfigured(): void
+    {
+        $command = new MakeControllerCommand();
+        $command->exe(['php', 'make:controller', 'PublicPage']);
+
+        $file = $this->root . '/app/Controllers/PublicPageController.php';
+        $this->assertFileExists($file);
+
+        $content = file_get_contents($file);
+        $this->assertStringNotContainsString('Attributes\\Prefix', $content);
+        $this->assertStringNotContainsString('Attributes\\Middleware', $content);
+        $this->assertStringNotContainsString('#[Prefix(', $content);
+        $this->assertStringNotContainsString('#[Middleware(', $content);
+    }
+
     // ========================================================================
     // make:middleware (make:mw)
     // ========================================================================

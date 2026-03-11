@@ -321,8 +321,9 @@ class RouteLoader
             try {
                 $instances[] = $attr->newInstance();
             } catch (\Throwable $e) {
+                $attributeName = $attr->getName();
                 throw new LoaderAttributeException(
-                    "Invalid route attribute on {$method->class}::{$method->getName()}(): "
+                    "Invalid route attribute {$attributeName} on {$method->class}::{$method->getName()}(): "
                     . $e->getMessage() . ". "
                     . "Expected: #[Get('/path', name: 'name', middleware: ['mw'])]"
                 );

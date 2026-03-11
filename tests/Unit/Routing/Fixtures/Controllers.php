@@ -170,3 +170,9 @@ class ControllerWithConstructor
     #[Get('/index')]
     public function index(): void {}
 }
+
+class InvalidSpatieRouteController
+{
+    #[Get(123)]
+    public function broken(): void {}
+}

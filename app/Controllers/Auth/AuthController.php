@@ -8,23 +8,23 @@ namespace App\Controllers\Auth;
 use App\Model\User;
 use App\Core\Facade\Auth;
 use App\Core\Http\Request;
-
 use App\Core\Validation\Validator;
 use App\Core\Controllers\Controller;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Post;
 use App\Services\LogService;
 
 class AuthController extends Controller
 {
 
-    #[RouteAttr('/login')]
+    #[Get('/login')]
     public function index(): void
     {
         // pagina login
         view('Auth.login');
     }
 
-    #[RouteAttr('login','POST', 'login')]
+    #[Post('login', 'login')]
     public function login(Request $request)
     {
         // verifica esistenza user
@@ -46,13 +46,13 @@ class AuthController extends Controller
         return redirect('admin/dashboard');
     }
 
-    #[RouteAttr('forgot')]
+    #[Get('forgot')]
     public function forgotPassword()
     {
         return view('Auth.forgot');
     }
 
-    #[RouteAttr('sign-up')]
+    #[Get('sign-up')]
     public function signUp()
     {
         $user = User::query()->all();
@@ -64,7 +64,7 @@ class AuthController extends Controller
                 
     }
 
-    #[RouteAttr('/sign-up','post')]
+    #[Post('/sign-up')]
     public function registration(Request $request)
     {
         $confirmed =  Validator::make($request->all(),["password" => ["confirmed","required","min:8"]]);
@@ -76,11 +76,11 @@ class AuthController extends Controller
 
         response()->redirect("/login")->withSuccess("Sign in comoplete, now sign up!");
     }
-    #[RouteAttr('/logout', 'POST', 'logout')]
+    #[Post('/logout', 'logout')]
     public function logout(){
-        $this->setLayout('default');
+        mvc()->view->setLayout('default');
         Auth::logout();
-        return $this->mvc->response->redirect('/login');
+        return response()->redirect('/login');
     }
 
 

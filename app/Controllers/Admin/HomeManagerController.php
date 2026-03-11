@@ -7,18 +7,25 @@ namespace App\Controllers\Admin;
 
 use App\Core\Storage;
 use App\Core\Http\Request;
+use App\Core\Http\Attributes\Delete;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Patch;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Core\Validation\Validator;
 use App\Services\ArticleService;
 use App\Services\SkillService;
 use App\Services\ProfileService;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Controllers\AdminController;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class HomeManagerController extends AdminController
 {
 
 
-    #[RouteAttr('/home','get','admin.home')]
+    #[Get('/home', 'admin.home')]
     public function index()
     {
         // visualizza per la gestione della home
@@ -29,7 +36,7 @@ class HomeManagerController extends AdminController
         return view('admin.portfolio.home',  compact('articles','skills','profiles'));
     }
 
-    #[RouteAttr('/article-store','POST','article.store')]
+    #[Post('/article-store', 'article.store')]
     public function store(Request $request)
     {
         $data = $request->all();
@@ -53,7 +60,7 @@ class HomeManagerController extends AdminController
     }
 
 
-    #[RouteAttr('article-edit/{id}', 'GET', 'article.edit')]
+    #[Get('article-edit/{id}', 'article.edit')]
     public function edit(Request $request, string $id)
     {
 
@@ -66,7 +73,7 @@ class HomeManagerController extends AdminController
         return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
     }
 
-    #[RouteAttr('article-update','patch','article.update')]
+    #[Patch('article-update', 'article.update')]
     public function update(Request $request, string $id): void
     {
         $data = $request->all();
@@ -95,7 +102,7 @@ class HomeManagerController extends AdminController
         redirect()->back('Articolo Aggiornato con successo!');
     }
 
-    #[RouteAttr('article-delete/{id}', 'DELETE', 'article.delete')]
+    #[Delete('article-delete/{id}', 'article.delete')]
         public function destroy(Request $reqq, string $id)
     {
         $validator = Validator::make(

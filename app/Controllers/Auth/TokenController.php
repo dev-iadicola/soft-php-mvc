@@ -4,18 +4,17 @@ declare(strict_types=1);
 
 namespace App\Controllers\Auth;
 
-use App\Controllers\Admin\AbstractAdminController;
 use App\Core\Controllers\Controller;
 use App\Core\Helpers\Log;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Post;
 use App\Core\Validation\Validator;
 use App\Mail\BrevoMail;
 use App\Model\User;
-use App\Core\Http\Attributes\AttributeRoute;
-use App\Core\Http\Attributes\RouteAttr;
 use App\Core\Http\Request;
 use App\Model\Token;
-use App\Services\TokenService;
 use App\Services\PasswordService;
+use App\Services\TokenService;
 
 class TokenController extends Controller
 {
@@ -24,7 +23,7 @@ class TokenController extends Controller
      * Forgot password
      * request of token via mail for reset password
      */
-    #[RouteAttr('/forgot', 'POST', 'email.send')]
+    #[Post('/forgot', 'email.send')]
     public function forgotPasswordToken(Request $request): mixed
     {
         // Input fields validation
@@ -35,9 +34,8 @@ class TokenController extends Controller
         );
 
         if ($validator->fails() === true) {
-
-            $this->withError($validator->errors());
-            return $this->render('Auth.forgot');
+            response()->withError($validator->errors());
+            return view('Auth.forgot');
         }
 
 
@@ -69,16 +67,16 @@ class TokenController extends Controller
     /**
      * Validate pin page
      */
-    #[RouteAttr('/validate-pin/{token}')]
+    #[Get('/validate-pin/{token}')]
     public function pagePin(Request $request, string $token): mixed
     {
         if (!TokenService::isValid($token)) {
-            return $this->render('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
+            return view('Auth.forgot', ['message' => 'Non hai le credenziali per accedere']);
         }
-        return $this->render('Auth.validate-token', compact('token'));
+        return view('Auth.validate-token', compact('token'));
     }
 
-    #[RouteAttr("/token/change-password", "POST")]
+    #[Post('/token/change-password')]
     public function changePassword(Request $request): mixed
     {
         $data = $request->all();

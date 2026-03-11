@@ -5,30 +5,36 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Delete;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Patch;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Services\LawService;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class LawsMngController extends AdminController
 {
 
-    #[RouteAttr('/laws')]
+    #[Get('/laws')]
     public function index()
     {
         $laws = LawService::getAll();
         return view('admin.laws.index', compact('laws'));
     }
 
-    #[RouteAttr('/laws', 'POST')]
+    #[Post('/laws')]
     public function store(Request $request)
     {
         LawService::create($request->all());
 
-        $this->withSuccess('New Law has be created');
-        return response()->back();
+        return response()->back()->withSuccess('New Law has be created');
     }
 
-    #[RouteAttr(path: 'laws/{id}', method: 'get', name: 'laws.edit')]
+    #[Get('laws/{id}', 'laws.edit')]
     public function edit(Request $req, string $id)
     {
         $law = LawService::findOrFail((int) $id);
@@ -38,16 +44,15 @@ class LawsMngController extends AdminController
         return view('admin.laws.index', compact('laws', 'law'));
     }
 
-    #[RouteAttr(path: 'laws/{id}', method: 'patch', name: 'laws.update')]
+    #[Patch('laws/{id}', 'laws.update')]
     public function update(Request $request, string $id)
     {
         LawService::update((int) $id, $request->all());
 
-        $this->withSuccess('Law is Updated');
-        return response()->back();
+        return response()->back()->withSuccess('Law is Updated');
     }
 
-    #[RouteAttr(path: 'laws-delete/{id}', method: 'DELETE', name: 'laws.delete')]
+    #[Delete('laws-delete/{id}', 'laws.delete')]
     public function destroy(Request $req, string $id)
     {
         LawService::delete((int) $id);

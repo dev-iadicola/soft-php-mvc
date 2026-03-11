@@ -5,13 +5,17 @@ declare(strict_types=1);
 namespace App\Controllers\Admin;
 
 use App\Core\Controllers\AdminController;
-use App\Core\Http\Attributes\RouteAttr;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Prefix;
 use App\Services\LogService;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class LogsController extends AdminController
 {
 
-    #[RouteAttr(path: '/logs', method: 'get', name: 'admin.logs')]
+    #[Get('/logs', 'admin.logs')]
     public function index()
     {
         $logs = LogService::getLoginStats();

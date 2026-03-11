@@ -8,21 +8,26 @@ namespace App\Controllers\Admin;
 use App\Core\GetEnv;
 use App\Services\MaintenanceService;
 use App\Core\Controllers\AdminController;
+use App\Core\Http\Attributes\Get;
+use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
-use App\Core\Http\Attributes\RouteAttr;
 
+#[Prefix('/admin')]
+#[Middleware('auth')]
 class MaintenanceController extends AdminController
 {
 
 
-    #[RouteAttr(path: 'settings', method: 'get', name: 'admin.settings')]
+    #[Get('settings', 'admin.settings')]
     public function index()
     {
         $env = GetEnv::bool('MAINTENANCE', false);
-        return $this->render('admin.settings', compact('env'));
+        return view('admin.settings', compact('env'));
     }
 
-    #[RouteAttr(path: 'settings', method: 'POST', name: 'admin.settings.submit')]
+    #[Post('settings', 'admin.settings.submit')]
     public function submit(Request $request)
     {
         $root = $this->mvc->config->get('folder')->root . '/.env';
