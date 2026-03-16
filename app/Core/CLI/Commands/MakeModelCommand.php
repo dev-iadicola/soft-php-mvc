@@ -22,9 +22,10 @@ class MakeModelCommand implements CommandInterface
 
         $options = $this->parseOptions(array_slice($command, 3));
         $className = Str::studly($name);
-        $table = $options['table'] ?? Str::plural(Str::lower($className));
+        $customTable = $options['table'] ?? null;
+        $table = $customTable ?? Str::plural(Str::snake($className));
 
-        $this->createModel($className, $table);
+        $this->createModel($className, $table, $customTable !== null);
 
         $php = $command[0] ?? 'php';
 
@@ -61,12 +62,16 @@ class MakeModelCommand implements CommandInterface
         ];
     }
 
-    private function createModel(string $className, string $table): void
+    private function createModel(string $className, string $table, bool $customTable): void
     {
         $filePath = getcwd() . '/app/Model/' . $className . '.php';
 
+        $tableLine = $customTable
+            ? "    protected string \$table = '{$table}';\n"
+            : '';
+
         $saved = StubGenerator::make('model')
-            ->replace(['{{CLASS}}' => $className, '{{TABLE}}' => $table])
+            ->replace(['{{CLASS}}' => $className, '{{TABLE_LINE}}' => $tableLine])
             ->saveTo($filePath);
 
         if (!$saved) {

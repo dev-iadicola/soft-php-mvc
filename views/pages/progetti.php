@@ -150,6 +150,28 @@
         margin-bottom: 0.6rem;
     }
 
+    .proj-card__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .proj-card__partner {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        font-family: var(--font-mono);
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 0.15rem 0.5rem;
+        border-radius: 3px;
+        background: rgba(88, 166, 255, 0.1);
+        color: var(--accent-blue);
+        border: 1px solid rgba(88, 166, 255, 0.2);
+        width: fit-content;
+    }
+
     .proj-card__overview,
     .proj-card__overview * {
         font-size: 0.8rem;
@@ -247,6 +269,17 @@
         <h3 class="projects-section__title">Progetti</h3>
     </div>
 
+    <?php if (isset($technologies) && $technologies !== []) : ?>
+        <div class="mb-4 d-flex flex-wrap gap-2">
+            <a href="/progetti" class="proj-card__btn <?= empty($selectedTechnology) ? 'proj-card__btn--primary' : '' ?>">tutti</a>
+            <?php foreach ($technologies as $technology) : ?>
+                <a href="/progetti?technology=<?= urlencode($technology->name) ?>" class="proj-card__btn <?= ($selectedTechnology ?? null) === $technology->name ? 'proj-card__btn--primary' : '' ?>">
+                    <?= $technology->name ?>
+                </a>
+            <?php endforeach; ?>
+        </div>
+    <?php endif; ?>
+
     <div class="projects-section__grid">
         <?php foreach ($projects as $project) { ?>
             <article class="proj-card">
@@ -266,12 +299,22 @@
                 <div class="proj-card__body">
                     <h4 class="proj-card__title"><?= $project->title ?></h4>
 
-                    <?php if ($project->technology): ?>
-                        <span class="proj-card__tech">
-                            <i class="fa fa-code" aria-hidden="true"></i>
-                            <?= $project->technology->name ?? 'N/A' ?>
-                        </span>
-                    <?php endif; ?>
+                    <div class="proj-card__meta">
+                        <?php $projectTechnologies = $project->technologies(); ?>
+                        <?php foreach ($projectTechnologies as $technology) : ?>
+                            <span class="proj-card__tech">
+                                <i class="fa fa-code" aria-hidden="true"></i>
+                                <?= $technology->name ?>
+                            </span>
+                        <?php endforeach; ?>
+
+                        <?php if ($project->partner): ?>
+                            <span class="proj-card__partner">
+                                <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                                <?= $project->partner->name ?>
+                            </span>
+                        <?php endif; ?>
+                    </div>
 
                     <div class="proj-card__overview">{{{ $project->overview }}}</div>
 

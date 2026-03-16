@@ -634,7 +634,7 @@
             <span class="contact-hero__stat-label">Progetti realizzati</span>
         </div>
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">5+</span>
+            <span class="contact-hero__stat-value"><?= count($technologies ?? []) ?>+</span>
             <span class="contact-hero__stat-label">Tecnologie</span>
         </div>
     </div>
@@ -710,19 +710,9 @@
 <!-- TECH STACK -->
 <div class="contact-stack fade-in-section">
     <span class="contact-stack__label">// tech stack:</span>
-    <span class="contact-stack__tag">PHP</span>
-    <span class="contact-stack__tag">Laravel</span>
-    <span class="contact-stack__tag">Filament</span>
-    <span class="contact-stack__tag">Java</span>
-    <span class="contact-stack__tag">Spring Boot</span>
-    <span class="contact-stack__tag">C#</span>
-    <span class="contact-stack__tag">React</span>
-    <span class="contact-stack__tag">TypeScript</span>
-    <span class="contact-stack__tag">Python</span>
-    <span class="contact-stack__tag">PostgreSQL</span>
-    <span class="contact-stack__tag">MySQL</span>
-    <span class="contact-stack__tag">Docker</span>
-    <span class="contact-stack__tag">REST API</span>
+    <?php foreach (($technologies ?? []) as $technology) : ?>
+        <span class="contact-stack__tag"><?= $technology->name ?></span>
+    <?php endforeach; ?>
 </div>
 
 <!-- CTA -->

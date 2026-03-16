@@ -7,6 +7,8 @@ namespace App\Model;
 use App\Core\DataLayer\Model;
 use App\Core\Traits\Relation;
 use App\Model\Partner;
+use App\Model\Technology;
+use App\Services\ProjectTechnologyService;
 
 
 class Project extends Model
@@ -14,10 +16,10 @@ class Project extends Model
  use Relation;
    /**
     * Summary of table
-    * @var string $table 
-    * Questa variabile è importante per poter inserire staticamente il nome della colonna 
+    * @var string $table
+    * Questa variabile è importante per poter inserire staticamente il nome della colonna
     * permettendoci di rispamiare tempo
-    * 
+    *
     */
    protected string $table = 'projects';
 
@@ -40,6 +42,18 @@ class Project extends Model
 
    public function technology(): mixed
    {
-      return $this->hasMany(Technology::class,'technology_id');
+      return $this->belongsTo(Technology::class, 'technology_id');
+   }
+
+   /**
+    * @return array<int, Technology>
+    */
+   public function technologies(): array
+   {
+      if ($this->id === null) {
+         return [];
+      }
+
+      return ProjectTechnologyService::getByProject((int) $this->id);
    }
 }

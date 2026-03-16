@@ -108,7 +108,9 @@ class Kernel
             Out::ln("  migrate           Run DB migrations");
             Out::ln("  migrate:rollback  Rollback last migration");
             Out::ln("  migrate:status    Show migration status");
-            Out::ln("  seed              Run seeders");
+            Out::ln("  seed              Run seeders (--class=name, --fresh)");
+            Out::ln("  seed:rollback     Rollback seeders (--step=N)");
+            Out::ln("  seed:status       Show seeder status");
             Out::ln("  model:inspect     Inspect a model's properties");
             Out::ln("  serve             Start dev server");
             Out::ln("  test              Run PHPUnit tests");

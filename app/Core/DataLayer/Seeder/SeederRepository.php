@@ -56,15 +56,36 @@ class SeederRepository
 
     public function getLastBatch(): array
     {
-        $lastBatch = $this->getLastBatchNumber();
-        if ($lastBatch === 0) {
+        return $this->getByBatch($this->getLastBatchNumber());
+    }
+
+    /**
+     * Restituisce i seeder di un batch specifico (ordine inverso per rollback).
+     */
+    public function getByBatch(int $batch): array
+    {
+        if ($batch === 0) {
             return [];
         }
 
         $stmt = $this->pdo->prepare(
             "SELECT `seeder` FROM `{$this->table}` WHERE `batch` = ? ORDER BY `seeder` DESC"
         );
-        $stmt->execute([$lastBatch]);
+        $stmt->execute([$batch]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Restituisce gli ultimi N numeri di batch (dal più recente).
+     *
+     * @return int[]
+     */
+    public function getBatchNumbers(int $count): array
+    {
+        $stmt = $this->pdo->prepare(
+            "SELECT DISTINCT `batch` FROM `{$this->table}` ORDER BY `batch` DESC LIMIT ?"
+        );
+        $stmt->execute([$count]);
         return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 

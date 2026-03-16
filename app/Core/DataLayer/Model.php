@@ -49,9 +49,9 @@ class Model  implements JsonSerializable
             return $this->table;
         }
 
-        // Auto-resolve: App\Model\Article → "articles", App\Model\Technology → "technologies"
+        // Auto-resolve: App\Model\Article → "articles", App\Model\ProjectTechnology → "project_technologies"
         $class = (new ReflectionClass(static::class))->getShortName();
-        return $this->table = Str::plural(Str::lower($class));
+        return $this->table = Str::plural(Str::snake($class));
     }
 
     public function getKeyId(): string

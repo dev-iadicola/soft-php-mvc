@@ -15,8 +15,7 @@ class SeedStatusCommand implements CommandInterface
     {
         Config::env(getcwd() . '/.env');
 
-        $seederPath = getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'seed';
-        $runner = new SeederRunner($seederPath);
+        $runner = new SeederRunner(SeederRunner::defaultPath());
         $status = $runner->status();
 
         if (empty($status)) {

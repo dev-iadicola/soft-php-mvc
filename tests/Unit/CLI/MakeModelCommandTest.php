@@ -36,7 +36,7 @@ class MakeModelCommandTest extends TestCase
         $content = file_get_contents($file);
 
         $this->assertStringContainsString("class BlogPost extends Model", $content);
-        $this->assertStringContainsString("protected string \$table = 'blogposts';", $content);
+        $this->assertStringNotContainsString('protected string $table', $content);
         $this->assertStringContainsString('protected ?int $id = null;', $content);
     }
 

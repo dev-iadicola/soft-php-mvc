@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Core\DataLayer\Seeder;
 
 use App\Core\CLI\System\Out;
+use App\Core\Database;
 use PDOException;
 
 class SeederRunner
@@ -18,6 +19,11 @@ class SeederRunner
         $this->repository = new SeederRepository();
     }
 
+    public static function defaultPath(): string
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'seed';
+    }
+
     public function ensureRepository(): void
     {
         if (!$this->repository->repositoryExists()) {
@@ -26,13 +32,32 @@ class SeederRunner
         }
     }
 
-    public function runSeed(): int
+    /**
+     * Esegue i seeder pendenti.
+     *
+     * @param string|null $class Nome file specifico da eseguire (es. "users_seeder")
+     */
+    public function runSeed(?string $class = null): int
     {
         $this->ensureRepository();
 
         $files = $this->getSeederFiles();
         $ran = $this->repository->getRan();
-        $pending = array_diff($files, $ran);
+
+        if ($class !== null) {
+            $match = $this->findSeederByClass($files, $class);
+            if ($match === null) {
+                Out::error("Seeder not found: $class");
+                return 0;
+            }
+            if (in_array($match, $ran, true)) {
+                Out::warn("Seeder already ran: $match");
+                return 0;
+            }
+            $pending = [$match];
+        } else {
+            $pending = array_values(array_diff($files, $ran));
+        }
 
         if (empty($pending)) {
             Out::ln('Nothing to seed.');
@@ -40,57 +65,83 @@ class SeederRunner
         }
 
         $batch = $this->repository->getLastBatchNumber() + 1;
-        $count = 0;
+        $pdo = Database::getInstance()->getConnection();
 
-        foreach ($pending as $file) {
-            $seeder = $this->resolve($file);
+        $pdo->beginTransaction();
+        try {
+            $count = 0;
+            foreach ($pending as $file) {
+                $seeder = $this->resolve($file);
 
-            if (!$seeder instanceof Seeder) {
-                Out::warn("Skipping $file: does not return a Seeder instance.");
-                continue;
-            }
+                if (!$seeder instanceof Seeder) {
+                    Out::warn("Skipping $file: does not return a Seeder instance.");
+                    continue;
+                }
 
-            try {
                 $inserted = $seeder->execute();
                 $this->repository->log($file, $batch);
                 Out::ln("Seeded: $file ($inserted rows)");
                 $count++;
-            } catch (PDOException $e) {
-                Out::error("Failed to seed $file: " . $e->getMessage());
             }
+            $pdo->commit();
+            return $count;
+        } catch (PDOException $e) {
+            $pdo->rollBack();
+            Out::error("Seed batch failed, transaction rolled back: " . $e->getMessage());
+            return 0;
         }
-
-        return $count;
     }
 
-    public function runRollback(): int
+    /**
+     * Rollback all + re-seed.
+     */
+    public function runFresh(?string $class = null): int
     {
         $this->ensureRepository();
 
-        $lastBatch = $this->repository->getLastBatch();
+        $ran = $this->repository->getRan();
+        if (!empty($ran)) {
+            $this->rollbackAll();
+        }
 
-        if (empty($lastBatch)) {
+        return $this->runSeed($class);
+    }
+
+    /**
+     * Rollback degli ultimi N batch.
+     */
+    public function runRollback(int $steps = 1): int
+    {
+        $this->ensureRepository();
+
+        $batches = $this->repository->getBatchNumbers($steps);
+
+        if (empty($batches)) {
             Out::ln('Nothing to rollback.');
             return 0;
         }
 
         $count = 0;
 
-        foreach ($lastBatch as $file) {
-            $seeder = $this->resolve($file);
+        foreach ($batches as $batchNumber) {
+            $files = $this->repository->getByBatch($batchNumber);
 
-            if (!$seeder instanceof Seeder) {
-                Out::warn("Skipping $file: does not return a Seeder instance.");
-                continue;
-            }
+            foreach ($files as $file) {
+                $seeder = $this->resolve($file);
 
-            try {
-                $seeder->rollback();
-                $this->repository->delete($file);
-                Out::ln("Rolled back (truncated): $file");
-                $count++;
-            } catch (PDOException $e) {
-                Out::error("Failed to rollback $file: " . $e->getMessage());
+                if (!$seeder instanceof Seeder) {
+                    Out::warn("Skipping $file: does not return a Seeder instance.");
+                    continue;
+                }
+
+                try {
+                    $seeder->rollback();
+                    $this->repository->delete($file);
+                    Out::ln("Rolled back (truncated): $file");
+                    $count++;
+                } catch (PDOException $e) {
+                    Out::error("Failed to rollback $file: " . $e->getMessage());
+                }
             }
         }
 
@@ -127,6 +178,43 @@ class SeederRunner
         }
 
         return $status;
+    }
+
+    private function rollbackAll(): void
+    {
+        $ran = array_reverse($this->repository->getRan());
+
+        foreach ($ran as $file) {
+            $seeder = $this->resolve($file);
+
+            if (!$seeder instanceof Seeder) {
+                continue;
+            }
+
+            try {
+                $seeder->rollback();
+                $this->repository->delete($file);
+                Out::ln("Rolled back (truncated): $file");
+            } catch (PDOException $e) {
+                Out::error("Failed to rollback $file: " . $e->getMessage());
+            }
+        }
+    }
+
+    /**
+     * Cerca un file seeder per nome parziale (es. "users_seeder" matcha "2026_..._users_seeder.php").
+     */
+    private function findSeederByClass(array $files, string $class): ?string
+    {
+        $class = str_replace('.php', '', $class);
+
+        foreach ($files as $file) {
+            if (str_ends_with($file, $class . '.php')) {
+                return $file;
+            }
+        }
+
+        return null;
     }
 
     private function getSeederFiles(): array

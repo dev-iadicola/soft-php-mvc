@@ -9,7 +9,6 @@ use App\Core\DataLayer\Model;
 
 class User extends Model
 {
-    protected string $table = 'users';
     protected ?int $id = null;
     protected ?int $log_id = null;
     protected string $password;

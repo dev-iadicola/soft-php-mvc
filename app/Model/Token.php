@@ -11,14 +11,6 @@ use DateTime;
  class Token extends Model{
 
 
-    /**
-     * Summary of table
-     * @var string $table 
-     * Questa variabile è importante per poter inserire staticamente il nome della colonna 
-     * permettendoci di rispamiare tempo
-     * 
-     */
-     protected string $table = 'tokens';
      public string $primaryKey = 'token';
 
      protected ?string $email = null;

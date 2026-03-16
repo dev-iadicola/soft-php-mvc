@@ -10,10 +10,14 @@ use App\Model\Article;
 use App\Model\Token;
 use App\Model\User;
 use App\Services\ArticleService;
+use App\Services\LinkFooterService;
 use App\Services\LogService;
 use App\Services\MaintenanceService;
+use App\Services\PartnerService;
 use App\Services\PasswordService;
+use App\Services\ProjectTechnologyService;
 use App\Services\TerminalService;
+use App\Services\TechnologyService;
 use App\Services\TokenService;
 use PHPUnit\Framework\TestCase;
 
@@ -67,6 +71,88 @@ class ServiceTest extends TestCase
 
         $this->expectException(NotFoundException::class);
         ArticleService::findOrFail((int) $created->id);
+    }
+
+    public function testTechnologyServiceCrudLifecycle(): void
+    {
+        $created = TechnologyService::create([
+            'name' => 'Laravel',
+        ]);
+
+        $this->assertSame('Laravel', $created->name);
+        $this->assertNotNull($created->id);
+
+        $all = TechnologyService::getAll();
+        $this->assertCount(1, $all);
+        $this->assertSame('Laravel', $all[0]->name);
+
+        $updated = TechnologyService::update((int) $created->id, ['name' => 'Symfony']);
+        $this->assertTrue($updated);
+        $this->assertSame('Symfony', TechnologyService::findOrFail((int) $created->id)->name);
+
+        TechnologyService::delete((int) $created->id);
+
+        $this->expectException(NotFoundException::class);
+        TechnologyService::findOrFail((int) $created->id);
+    }
+
+    public function testPartnerServiceCrudLifecycle(): void
+    {
+        $created = PartnerService::create([
+            'name' => 'Acme',
+            'website' => 'https://acme.test',
+        ]);
+
+        $this->assertSame('Acme', $created->name);
+        $this->assertSame('https://acme.test', $created->website);
+        $this->assertNotNull($created->id);
+
+        $all = PartnerService::getAll();
+        $this->assertCount(1, $all);
+
+        $updated = PartnerService::update((int) $created->id, ['name' => 'Acme Updated']);
+        $this->assertTrue($updated);
+        $this->assertSame('Acme Updated', PartnerService::findOrFail((int) $created->id)->name);
+
+        PartnerService::delete((int) $created->id);
+
+        $this->expectException(NotFoundException::class);
+        PartnerService::findOrFail((int) $created->id);
+    }
+
+    public function testLinkFooterServiceCrudLifecycle(): void
+    {
+        $created = LinkFooterService::create([
+            'title' => 'Portfolio',
+            'link' => '/portfolio',
+        ]);
+
+        $this->assertSame('Portfolio', $created->title);
+        $this->assertSame('/portfolio', $created->link);
+
+        $updated = LinkFooterService::update((int) $created->id, ['title' => 'Progetti']);
+        $this->assertTrue($updated);
+        $this->assertSame('Progetti', LinkFooterService::findOrFail((int) $created->id)->title);
+
+        LinkFooterService::delete((int) $created->id);
+
+        $this->expectException(NotFoundException::class);
+        LinkFooterService::findOrFail((int) $created->id);
+    }
+
+    public function testProjectTechnologyServiceSyncsManyToManyRelations(): void
+    {
+        $this->pdo->exec("INSERT INTO projects (id, title) VALUES (1, 'Soft MVC')");
+        $this->pdo->exec("INSERT INTO technology (id, name) VALUES (1, 'PHP'), (2, 'Laravel'), (3, 'React')");
+
+        ProjectTechnologyService::syncForProject(1, [1, '2', 2, 3]);
+
+        $stack = ProjectTechnologyService::getByProject(1);
+
+        $this->assertCount(3, $stack);
+        $names = array_map(static fn ($technology) => $technology->name, $stack);
+        sort($names);
+        $this->assertSame(['Laravel', 'PHP', 'React'], $names);
     }
 
     public function testPasswordServiceChangeByEmailHashesPassword(): void
@@ -231,6 +317,54 @@ class ServiceTest extends TestCase
             last_log TEXT,
             indirizzo TEXT,
             device TEXT,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
+        $this->pdo->exec('CREATE TABLE technology (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
+        $this->pdo->exec('CREATE TABLE projects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            technology_id INTEGER,
+            partner_id INTEGER,
+            title TEXT,
+            overview TEXT,
+            description TEXT,
+            link TEXT,
+            img TEXT,
+            website TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
+        $this->pdo->exec('CREATE TABLE project_technologies (
+            project_id INTEGER NOT NULL,
+            technology_id INTEGER NOT NULL,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
+        $this->pdo->exec('CREATE TABLE partners (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
+            website TEXT,
+            sort_order INTEGER NOT NULL DEFAULT 0,
+            created_at TEXT,
+            updated_at TEXT
+        )');
+
+        $this->pdo->exec('CREATE TABLE links_footer (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            title TEXT NOT NULL,
+            link TEXT NOT NULL,
+            sort_order INTEGER NOT NULL DEFAULT 0,
             created_at TEXT,
             updated_at TEXT
         )');

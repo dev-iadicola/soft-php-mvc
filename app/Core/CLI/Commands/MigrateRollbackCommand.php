@@ -15,7 +15,7 @@ class MigrateRollbackCommand implements CommandInterface
     {
         Config::env(getcwd() . '/.env');
 
-        $migrationPath = getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'migration';
+        $migrationPath = getcwd() . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'migration';
         $migrator = new Migrator($migrationPath);
 
         $count = $migrator->runDown();

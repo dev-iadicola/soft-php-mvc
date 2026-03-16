@@ -15,7 +15,10 @@ use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Validation\Validator;
 use App\Model\Project;
+use App\Services\PartnerService;
 use App\Services\ProjectService;
+use App\Services\ProjectTechnologyService;
+use App\Services\TechnologyService;
 
 #[Prefix('/admin')]
 #[Middleware('auth')]
@@ -29,6 +32,8 @@ class ProjectManagerController extends AdminController
         return view('admin.portfolio.project', [
             'projects' => $projects,
             'project'  => null,
+            'partners' => PartnerService::getAll(),
+            'technologies' => TechnologyService::getAll(),
         ]);
     }
 
@@ -38,7 +43,12 @@ class ProjectManagerController extends AdminController
         $project = ProjectService::findOrFail($id);
         $projects = ProjectService::getAll();
 
-        return view('admin.portfolio.project', compact('project', 'projects'));
+        return view('admin.portfolio.project', [
+            'project' => $project,
+            'projects' => $projects,
+            'partners' => PartnerService::getAll(),
+            'technologies' => TechnologyService::getAll(),
+        ]);
     }
 
     #[Post('project-update/{id}', 'project.update')]
@@ -82,6 +92,7 @@ class ProjectManagerController extends AdminController
         }
 
         ProjectService::update($id, $data);
+        ProjectTechnologyService::syncForProject($id, $this->resolveTechnologyIds($request));
 
         return response()->back()->withSuccess($message);
     }
@@ -127,7 +138,8 @@ class ProjectManagerController extends AdminController
         $data = $valid->validated();
         $data['img'] = $storage->getPath($path);
         // Crea il progetto
-        ProjectService::create($data);
+        $project = ProjectService::create($data);
+        ProjectTechnologyService::syncForProject((int) $project->getAttribute('id'), $this->resolveTechnologyIds($request));
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
@@ -165,6 +177,9 @@ class ProjectManagerController extends AdminController
             'description' => ['required', 'string'],
             'link'        => ['nullable'],
             'img'         => ['nullable'],
+            'partner_id'  => ['nullable', 'integer'],
+            'technology_id' => ['nullable', 'integer'],
+            'website'     => ['nullable'],
         ];
 
         if ($request->hasFile('img')) {
@@ -184,5 +199,20 @@ class ProjectManagerController extends AdminController
         );
 
         return $validator;
+    }
+
+    /**
+     * @return array<int|string>
+     */
+    private function resolveTechnologyIds(Request $request): array
+    {
+        $technologyIds = $request->array('technology_ids');
+        $primaryTechnologyId = $request->int('technology_id');
+
+        if ($primaryTechnologyId > 0) {
+            $technologyIds[] = $primaryTechnologyId;
+        }
+
+        return $technologyIds;
     }
 }

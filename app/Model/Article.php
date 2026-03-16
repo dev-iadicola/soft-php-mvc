@@ -10,8 +10,6 @@ use App\Core\DataLayer\Model;
 
 class Article extends Model
 {
-
-    protected string $table = 'articles';
     protected ?int $id = null;
     protected string $title;
     protected string $subtitle;

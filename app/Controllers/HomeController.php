@@ -12,31 +12,33 @@ use App\Model\Certificate;
 use App\Services\ArticleService;
 use App\Services\SkillService;
 use App\Services\ProfileService;
+use App\Services\TechnologyService;
 
-class HomeController extends Controller {
-
-
-
-
+class HomeController extends Controller
+{
     #[Get('/')]
-    public function index(): void {
-        // recupero dati dal database
+    public function index(): void
+    {
         $certificati = Certificate::query()->orderBy('certified', 'DESC')->get();
         $projects = Project::query()->orderBy(' id', 'DESC')->get();
         $articles = ArticleService::getAll();
         $profiles = ProfileService::getSelected();
         $skills = SkillService::getAll();
+        $technologies = TechnologyService::getAll();
 
-
-        view('home',compact('articles',
-        'certificati','projects','profiles','skills') );
+        view('home', compact(
+            'articles',
+            'certificati',
+            'projects',
+            'profiles',
+            'skills',
+            'technologies'
+        ));
     }
 
     #[Get('/law')]
-    public function cookie(): void {
+    public function cookie(): void
+    {
         view('cookie-law');
     }
-
-
-
 }

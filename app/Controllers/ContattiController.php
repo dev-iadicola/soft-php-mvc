@@ -12,6 +12,7 @@ use App\Core\Http\Request;
 use App\Core\Exception\ValidationException;
 use App\Mail\BrevoMail;
 use App\Services\ContactService;
+use App\Services\TechnologyService;
 
 class ContattiController extends Controller
 {
@@ -20,7 +21,9 @@ class ContattiController extends Controller
     #[Get('contatti', 'contatti')]
     public function index(): void
     {
-        view('contatti');
+        view('contatti', [
+            'technologies' => TechnologyService::getAll(),
+        ]);
     }
 
 

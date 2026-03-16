@@ -38,6 +38,8 @@
                         <li><a href="/contatti" class="{{ isActivePage('contatti', $page) }}">~/contatti</a></li>
                         <li><a href="/portfolio" class="{{ isActivePage('portfolio', $page) }}">~/portfolio</a></li>
                         <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">~/progetti</a></li>
+                        <li><a href="/tech-stack" class="{{ isActivePage('tech-stack', $page) }}">~/tech-stack</a></li>
+                        <li><a href="/partners" class="{{ isActivePage('partners', $page) }}">~/partners</a></li>
                         <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">~/certificati</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/"><i class="fa fa-github" aria-hidden="true"></i> github</a></li>
                     </ul>

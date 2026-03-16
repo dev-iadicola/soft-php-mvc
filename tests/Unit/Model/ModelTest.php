@@ -393,10 +393,10 @@ class ModelTest extends TestCase
 
     public function testPluralizeSimple(): void
     {
-        // "testmodelnottable" → "testmodelnottables" (simple 's' suffix)
+        // "TestModelNoTable" → snake → "test_model_no_table" → plural → "test_model_no_tables"
         $model = new TestModelNoTable();
         $table = $model->getTable();
-        $this->assertSame('testmodelnotables', $table);
+        $this->assertSame('test_model_no_tables', $table);
     }
 
     public function testPluralizeEndingInY(): void

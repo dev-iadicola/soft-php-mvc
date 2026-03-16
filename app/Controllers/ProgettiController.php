@@ -8,15 +8,18 @@ use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Request;
 use App\Services\ProjectService;
+use App\Services\TechnologyService;
 
 class ProgettiController extends Controller
 {
     #[Get('progetti')]
-    public function index(): void
+    public function index(Request $request): void
     {
-        $projects = ProjectService::getAll();
+        $selectedTechnology = isset($_GET['technology']) ? trim((string) $_GET['technology']) : null;
+        $projects = ProjectService::getAll(technology: $selectedTechnology);
+        $technologies = TechnologyService::getAll();
 
-        view('progetti', compact('projects'));
+        view('progetti', compact('projects', 'technologies', 'selectedTechnology'));
     }
 
     #[Get('progetti/{slug}')]

@@ -12,8 +12,21 @@ class ProjectService
     /**
      * @return array<int, Project>
      */
-    public static function getAll(string $orderBy = 'id', string $order = 'DESC'): array
+    public static function getAll(string $orderBy = 'id', string $order = 'DESC', ?string $technology = null): array
     {
+        if ($technology !== null && $technology !== '') {
+            /** @var array<int, Project> */
+            return Project::query()->query(
+                'SELECT DISTINCT projects.*
+                 FROM projects
+                 INNER JOIN project_technologies ON project_technologies.project_id = projects.id
+                 INNER JOIN technology ON technology.id = project_technologies.technology_id
+                 WHERE technology.name = :technology
+                 ORDER BY projects.id DESC',
+                [':technology' => $technology]
+            );
+        }
+
         return Project::query()->orderBy($orderBy, $order)->get();
     }
 

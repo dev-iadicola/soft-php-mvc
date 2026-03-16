@@ -78,6 +78,26 @@
         font-family: inherit;
     }
 
+    .proj-detail__meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+
+    .proj-detail__meta-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.35rem 0.7rem;
+        font-family: var(--font-mono);
+        font-size: 0.72rem;
+        border-radius: var(--radius);
+        border: 1px solid var(--border);
+        background: var(--bg-card);
+        color: var(--text-secondary);
+    }
+
     .proj-detail__overview {
         padding-bottom: 1.2rem;
         margin-bottom: 1.2rem;
@@ -227,6 +247,25 @@
             <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
                  alt="<?= $project->title ?>" />
         </figure>
+
+        <div class="proj-detail__meta">
+            <?php foreach ($project->technologies() as $technology) : ?>
+                <div class="proj-detail__meta-item">
+                    <i class="fa fa-code" aria-hidden="true"></i>
+                    <?= $technology->name ?>
+                </div>
+            <?php endforeach; ?>
+            <?php if ($project->partner) : ?>
+                <div class="proj-detail__meta-item">
+                    <i class="fa fa-handshake-o" aria-hidden="true"></i>
+                    <?php if (!empty($project->partner->website)) : ?>
+                        <a href="<?= $project->partner->website ?>" target="_blank" rel="noopener noreferrer"><?= $project->partner->name ?></a>
+                    <?php else : ?>
+                        <?= $project->partner->name ?>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
+        </div>
 
         <div class="proj-detail__content">
             <button type="button" class="proj-detail__tts" data-tts-toggle>
