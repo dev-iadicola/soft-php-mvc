@@ -42,6 +42,7 @@
                                 <div class="mt-2">
                                     <a href="/admin/skill/<?= $skill->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="/admin/skill-delete/<?= $skill->id ?>" method="POST" style="display: inline;">
+                                        @csrf
                                         @delete
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete <?= $skill->title ?>?')" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>

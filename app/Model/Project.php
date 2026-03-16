@@ -14,14 +14,6 @@ use App\Services\ProjectTechnologyService;
 class Project extends Model
 {
  use Relation;
-   /**
-    * Summary of table
-    * @var string $table
-    * Questa variabile è importante per poter inserire staticamente il nome della colonna
-    * permettendoci di rispamiare tempo
-    *
-    */
-   protected string $table = 'projects';
 
    protected ?int $id = null;
    protected ?int $technology_id = null;
@@ -32,6 +24,7 @@ class Project extends Model
    protected ?string $link = null;
    protected ?string $img = null;
    protected ?string $website = null;
+   protected int $sort_order = 0;
    protected ?string $created_at = null;
    protected ?string $updated_at = null;
 

@@ -18,6 +18,7 @@ use App\Core\Enum\HttpActionType;
             action="{{ route('admin.project.upset', ['id' =>$project?->id ?? 0 ]) }}" 
             enctype="multipart/form-data">
 
+                @csrf
                 {{ HttpActionType::PATCH->value}}
                 {{ HttpActionType::POST->value}}
                 <div class="form-group">
@@ -77,11 +78,15 @@ use App\Core\Enum\HttpActionType;
     <!-- Sezione Progetti Esistenti -->
     <h3 class="text-center my-4">Progetti Esistenti</h3>
     <div class="container">
-        <div class="row">
+        <div class="row" id="sortable-list" data-entity="project">
             <?php if(isset($projects) && count($projects) > 0 ): ?>
             <?php foreach ($projects as $p) : ?>
-                <div class="col-md-4 mb-4">
+                <div class="col-md-4 mb-4" data-id="<?= $p->id ?>">
                     <div class="card shadow-sm border-0">
+                        <div class="card-header bg-light d-flex align-items-center gap-2 py-1 px-2">
+                            <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
+                            <small class="text-muted">Trascina per riordinare</small>
+                        </div>
                         <!-- Immagine del Progetto -->
                         <img src="<?= $p->img ?>" class="object-fit-contain border rounded w-100 h-100" alt="<?= $p->title ?>">
 
@@ -95,6 +100,7 @@ use App\Core\Enum\HttpActionType;
 
                             <div class="mt-3 d-flex justify-content-between">
                                 <form action="/admin/project-delete/<?= $p->id ?>" method="POST" class="d-inline">
+                                    @csrf
                                     @delete
                                     <button type="submit" onclick="return confirm('Sei sicuro di voler eliminare <?= $p->title ?>?')" class="btn btn-danger btn-sm">Elimina</button>
                                 </form>
@@ -153,4 +159,7 @@ use App\Core\Enum\HttpActionType;
         }
     };
 
+    document.addEventListener('DOMContentLoaded', function () {
+        initSortable('sortable-list');
+    });
 </script>

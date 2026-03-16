@@ -12,7 +12,7 @@ class PartnerService
     /**
      * @return array<int, Partner>
      */
-    public static function getAll(string $orderBy = 'name', string $order = 'ASC'): array
+    public static function getAll(string $orderBy = 'sort_order', string $order = 'ASC'): array
     {
         return Partner::query()->orderBy($orderBy, $order)->get();
     }

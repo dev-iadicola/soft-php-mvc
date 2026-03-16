@@ -12,7 +12,7 @@ class TechnologyService
     /**
      * @return array<int, Technology>
      */
-    public static function getAll(string $orderBy = 'name', string $order = 'ASC'): array
+    public static function getAll(string $orderBy = 'sort_order', string $order = 'ASC'): array
     {
         return Technology::query()->orderBy($orderBy, $order)->get();
     }

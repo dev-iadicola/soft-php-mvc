@@ -8,7 +8,6 @@ use App\Core\DataLayer\Model;
 
 class ProjectTechnology extends Model
 {
-    protected string $table = 'project_technologies';
     protected ?int $project_id = null;
     protected ?int $technology_id = null;
     protected ?string $created_at = null;

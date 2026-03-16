@@ -3,6 +3,7 @@
         <div class="col-lg-5">
             <?php $url = isset($partner->id) ? "/admin/partner-update/{$partner->id}" : '/admin/partner'; ?>
             <form method="POST" action="<?= $url ?>" class="shadow-sm p-4 bg-light rounded border">
+                @csrf
                 <?php if (isset($partner->id)) : ?>
                     @patch
                 <?php endif; ?>
@@ -36,18 +37,22 @@
                 <?php if ($partners === []) : ?>
                     <p class="text-muted mb-0">Nessun partner disponibile.</p>
                 <?php else : ?>
-                    <div class="list-group">
+                    <div class="list-group" id="sortable-list" data-entity="partner">
                         <?php foreach ($partners as $item) : ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3">
-                                <div>
-                                    <strong><?= $item->name ?></strong>
+                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $item->id ?>">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
+                                    <div>
+                                        <strong><?= $item->name ?></strong>
                                     <?php if (!empty($item->website)) : ?>
                                         <div class="small"><a href="<?= $item->website ?>" target="_blank" rel="noopener noreferrer"><?= $item->website ?></a></div>
-                                    <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <a href="/admin/partner-edit/<?= $item->id ?>" class="btn btn-outline-primary btn-sm">Modifica</a>
                                     <form action="/admin/partner-delete/<?= $item->id ?>" method="POST" onsubmit="return confirm('Eliminare <?= $item->name ?>?');">
+                                        @csrf
                                         @delete
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Elimina</button>
                                     </form>
@@ -60,3 +65,4 @@
         </div>
     </div>
 </div>
+<script>document.addEventListener('DOMContentLoaded', function () { initSortable('sortable-list'); });</script>

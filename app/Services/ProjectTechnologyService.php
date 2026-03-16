@@ -20,7 +20,7 @@ class ProjectTechnologyService
              FROM technology
              INNER JOIN project_technologies ON project_technologies.technology_id = technology.id
              WHERE project_technologies.project_id = :project_id
-             ORDER BY technology.name ASC',
+             ORDER BY technology.sort_order ASC, technology.name ASC',
             [':project_id' => (string) $projectId]
         );
     }

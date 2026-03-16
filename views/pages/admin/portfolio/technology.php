@@ -3,6 +3,7 @@
         <div class="col-lg-5">
             <?php $url = isset($technology->id) ? "/admin/technology-update/{$technology->id}" : '/admin/technology'; ?>
             <form method="POST" action="<?= $url ?>" class="shadow-sm p-4 bg-light rounded border">
+                @csrf
                 <?php if (isset($technology->id)) : ?>
                     @patch
                 <?php endif; ?>
@@ -40,16 +41,20 @@
                 <?php if ($technologies === []) : ?>
                     <p class="text-muted mb-0">Nessuna tecnologia configurata.</p>
                 <?php else : ?>
-                    <div class="list-group">
+                    <div class="list-group" id="sortable-list" data-entity="technology">
                         <?php foreach ($technologies as $item) : ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3">
-                                <div>
-                                    <strong><?= $item->name ?></strong>
-                                    <div class="text-muted small">ID #<?= $item->id ?></div>
+                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $item->id ?>">
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
+                                    <div>
+                                        <strong><?= $item->name ?></strong>
+                                        <div class="text-muted small">ID #<?= $item->id ?></div>
+                                    </div>
                                 </div>
                                 <div class="d-flex gap-2">
                                     <a href="/admin/technology-edit/<?= $item->id ?>" class="btn btn-outline-primary btn-sm">Modifica</a>
                                     <form action="/admin/technology-delete/<?= $item->id ?>" method="POST" onsubmit="return confirm('Eliminare <?= $item->name ?>?');">
+                                        @csrf
                                         @delete
                                         <button type="submit" class="btn btn-outline-danger btn-sm">Elimina</button>
                                     </form>
@@ -62,3 +67,4 @@
         </div>
     </div>
 </div>
+<script>document.addEventListener('DOMContentLoaded', function () { initSortable('sortable-list'); });</script>

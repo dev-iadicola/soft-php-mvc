@@ -12,6 +12,7 @@ class LinkFooter extends Model
     protected ?int $id = null;
     protected string $title;
     protected string $link;
+    protected int $sort_order = 0;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 }

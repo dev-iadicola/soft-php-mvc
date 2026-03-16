@@ -12,7 +12,7 @@ class ProjectService
     /**
      * @return array<int, Project>
      */
-    public static function getAll(string $orderBy = 'id', string $order = 'DESC', ?string $technology = null): array
+    public static function getAll(string $orderBy = 'sort_order', string $order = 'ASC', ?string $technology = null): array
     {
         if ($technology !== null && $technology !== '') {
             /** @var array<int, Project> */
@@ -22,7 +22,7 @@ class ProjectService
                  INNER JOIN project_technologies ON project_technologies.project_id = projects.id
                  INNER JOIN technology ON technology.id = project_technologies.technology_id
                  WHERE technology.name = :technology
-                 ORDER BY projects.id DESC',
+                 ORDER BY projects.sort_order ASC',
                 [':technology' => $technology]
             );
         }

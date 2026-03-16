@@ -4,6 +4,7 @@
     <div class="card shadow-sm">
         <div class="card-body">
             <form method="POST" action="/admin/password">
+                @csrf
                 <div class="form-group">
                     <label for="current_password">Password attuale</label>
                     <input type="password" class="form-control" id="current_password" name="current_password" required>

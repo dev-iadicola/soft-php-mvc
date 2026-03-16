@@ -76,7 +76,57 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/quill@1.3.7/dist/quill.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
     <script src="<?= assets('vendor/ckeditor/js/execute.js')?>"></script>
+
+    <script>
+        function initSortable(elementId) {
+            var el = document.getElementById(elementId);
+            if (!el) return;
+
+            var entity = el.getAttribute('data-entity');
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            Sortable.create(el, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'bg-light',
+                onEnd: function () {
+                    var items = el.querySelectorAll('[data-id]');
+                    var order = [];
+                    items.forEach(function (item) {
+                        order.push(parseInt(item.getAttribute('data-id')));
+                    });
+
+                    var formData = new URLSearchParams();
+                    formData.append('_method', 'PATCH');
+                    formData.append('_token', csrfToken);
+                    formData.append('entity', entity);
+                    order.forEach(function (id) { formData.append('order[]', id); });
+
+                    fetch('/admin/sort-order', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        body: formData.toString()
+                    })
+                    .then(function (res) { return res.json(); })
+                    .then(function (data) {
+                        if (data.success) {
+                            var toast = document.createElement('div');
+                            toast.className = 'alert alert-success position-fixed bottom-0 end-0 m-3';
+                            toast.style.zIndex = '9999';
+                            toast.textContent = 'Ordine aggiornato';
+                            document.body.appendChild(toast);
+                            setTimeout(function () { toast.remove(); }, 2000);
+                        }
+                    })
+                    .catch(function () {
+                        alert('Errore durante il salvataggio dell\'ordine.');
+                    });
+                }
+            });
+        }
+    </script>
 
     <!-- Editor init moved to assets/vendor/ckeditor/js/execute.js -->
 

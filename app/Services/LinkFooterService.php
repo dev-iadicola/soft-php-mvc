@@ -12,7 +12,7 @@ class LinkFooterService
     /**
      * @return array<int, LinkFooter>
      */
-    public static function getAll(string $orderBy = 'title', string $order = 'ASC'): array
+    public static function getAll(string $orderBy = 'sort_order', string $order = 'ASC'): array
     {
         return LinkFooter::query()->orderBy($orderBy, $order)->get();
     }

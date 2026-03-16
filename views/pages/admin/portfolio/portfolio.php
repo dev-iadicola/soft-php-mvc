@@ -9,6 +9,7 @@
         $url = isset($pfolio->id) ? "/admin/portfolio-update/{$pfolio->id}" : '/admin/portfolio';
         ?>
         <form method="POST" action="<?= $url ?>" class="p-3">
+            @csrf
             <div class="form-group mb-3">
                 <label for="title" class="form-label">Titolo</label>
                 <input type="text" class="form-control shadow-sm" id="title" name="title" value="<?= $pfolio->title ?? '' ?>" required>
@@ -45,6 +46,7 @@
                             <?php endif ?>
                             <div class="mt-3 d-flex justify-content-between">
                                 <form action="/admin/portfolio-delete/<?= $project->id ?>" method="POST" class="d-inline">
+                                    @csrf
                                     @delete
                                     <button onclick="return confirm('Vuoi davvero eliminare <?= $project->title ?>?')" class="btn btn-danger btn-sm">Elimina</button>
                                 </form>
