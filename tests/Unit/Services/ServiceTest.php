@@ -288,6 +288,7 @@ class ServiceTest extends TestCase
             overview TEXT,
             img TEXT,
             link TEXT,
+            is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT,
             updated_at TEXT
         )');
@@ -325,6 +326,7 @@ class ServiceTest extends TestCase
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             name TEXT NOT NULL,
             sort_order INTEGER NOT NULL DEFAULT 0,
+            is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT,
             updated_at TEXT
         )');
@@ -340,6 +342,7 @@ class ServiceTest extends TestCase
             img TEXT,
             website TEXT,
             sort_order INTEGER NOT NULL DEFAULT 0,
+            is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT,
             updated_at TEXT
         )');
@@ -356,6 +359,7 @@ class ServiceTest extends TestCase
             name TEXT NOT NULL,
             website TEXT,
             sort_order INTEGER NOT NULL DEFAULT 0,
+            is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT,
             updated_at TEXT
         )');
@@ -365,6 +369,7 @@ class ServiceTest extends TestCase
             title TEXT NOT NULL,
             link TEXT NOT NULL,
             sort_order INTEGER NOT NULL DEFAULT 0,
+            is_active INTEGER NOT NULL DEFAULT 1,
             created_at TEXT,
             updated_at TEXT
         )');

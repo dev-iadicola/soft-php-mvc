@@ -18,6 +18,14 @@ class TechnologyService
     }
 
     /**
+     * @return array<int, Technology>
+     */
+    public static function getActive(string $orderBy = 'sort_order', string $order = 'ASC'): array
+    {
+        return Technology::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Technology

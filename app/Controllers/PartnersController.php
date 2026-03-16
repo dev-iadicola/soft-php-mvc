@@ -14,7 +14,7 @@ class PartnersController extends Controller
     public function index(): void
     {
         view('partners', [
-            'partners' => PartnerService::getAll(),
+            'partners' => PartnerService::getActive(),
         ]);
     }
 }

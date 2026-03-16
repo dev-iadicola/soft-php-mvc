@@ -25,7 +25,13 @@ class Project extends Model
    protected ?string $img = null;
    protected ?string $website = null;
    protected int $sort_order = 0;
+   protected bool $is_active = true;
    protected ?string $created_at = null;
+
+   protected function casts(): array
+   {
+      return ['is_active' => 'bool'];
+   }
    protected ?string $updated_at = null;
 
    public function partner(): mixed

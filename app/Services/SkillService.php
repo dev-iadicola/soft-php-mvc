@@ -18,6 +18,14 @@ class SkillService
     }
 
     /**
+     * @return array<int, Skill>
+     */
+    public static function getActive(string $orderBy = 'id', string $order = 'DESC'): array
+    {
+        return Skill::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Skill

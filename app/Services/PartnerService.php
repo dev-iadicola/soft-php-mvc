@@ -18,6 +18,14 @@ class PartnerService
     }
 
     /**
+     * @return array<int, Partner>
+     */
+    public static function getActive(string $orderBy = 'sort_order', string $order = 'ASC'): array
+    {
+        return Partner::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Partner

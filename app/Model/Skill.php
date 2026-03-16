@@ -12,7 +12,12 @@ class Skill extends Model
     protected ?int $id = null;
     protected string $title;
     protected ?string $description = null;
+    protected bool $is_active = true;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 
+    protected function casts(): array
+    {
+        return ['is_active' => 'bool'];
+    }
 }

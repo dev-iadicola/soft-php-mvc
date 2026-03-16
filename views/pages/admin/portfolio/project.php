@@ -68,6 +68,10 @@ use App\Core\Enum\HttpActionType;
                         </div>
                     </div>
                 </div>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" <?= ($project->is_active ?? true) ? 'checked' : '' ?>>
+                    <label class="form-check-label" for="is_active">Visibile nel portfolio pubblico</label>
+                </div>
                 <button type="submit" class="btn btn-success mt-5 w-100">Salva Progetto</button>
             </form>
         </div>

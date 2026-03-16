@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Controllers;
 
-use \App\Core\Mvc;
-use App\Model\Project;
 use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\Get;
-use App\Model\Certificate;
+use App\Services\ProjectService;
 use App\Services\ArticleService;
+use App\Services\CertificateService;
 use App\Services\SkillService;
 use App\Services\ProfileService;
 use App\Services\TechnologyService;
@@ -19,12 +18,12 @@ class HomeController extends Controller
     #[Get('/')]
     public function index(): void
     {
-        $certificati = Certificate::query()->orderBy('certified', 'DESC')->get();
-        $projects = Project::query()->orderBy(' id', 'DESC')->get();
-        $articles = ArticleService::getAll();
+        $certificati = CertificateService::getActive();
+        $projects = ProjectService::getActive();
+        $articles = ArticleService::getActive();
         $profiles = ProfileService::getSelected();
-        $skills = SkillService::getAll();
-        $technologies = TechnologyService::getAll();
+        $skills = SkillService::getActive();
+        $technologies = TechnologyService::getActive();
 
         view('home', compact(
             'articles',

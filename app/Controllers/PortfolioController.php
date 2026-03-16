@@ -16,10 +16,10 @@ class PortfolioController extends Controller
     #[Get('portfolio')]
     public function index(): void
     {
-        $projects = ProjectService::getAll();
-        $certificati = CertificateService::getAll();
-        $partners = PartnerService::getAll();
-        $technologies = TechnologyService::getAll();
+        $projects = ProjectService::getActive();
+        $certificati = CertificateService::getActive();
+        $partners = PartnerService::getActive();
+        $technologies = TechnologyService::getActive();
 
         view('portfolio', compact('projects', 'certificati', 'partners', 'technologies'));
     }

@@ -81,7 +81,7 @@ class ModelTest extends TestCase
         $article = new Article();
         $columns = $article->getPersistableColumns();
 
-        $expected = ['id', 'title', 'subtitle', 'overview', 'img', 'link', 'created_at', 'updated_at'];
+        $expected = ['id', 'title', 'subtitle', 'overview', 'img', 'link', 'is_active', 'created_at', 'updated_at'];
         $this->assertSame($expected, $columns);
 
         // Internal framework properties must never leak into the column list.

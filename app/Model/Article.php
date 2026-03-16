@@ -16,8 +16,12 @@ class Article extends Model
     protected ?string $overview = null;
     protected ?string $img = null;
     protected ?string $link = null;
+    protected bool $is_active = true;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 
-
+    protected function casts(): array
+    {
+        return ['is_active' => 'bool'];
+    }
 }

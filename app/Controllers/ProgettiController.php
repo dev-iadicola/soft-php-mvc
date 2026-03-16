@@ -16,8 +16,8 @@ class ProgettiController extends Controller
     public function index(Request $request): void
     {
         $selectedTechnology = isset($_GET['technology']) ? trim((string) $_GET['technology']) : null;
-        $projects = ProjectService::getAll(technology: $selectedTechnology);
-        $technologies = TechnologyService::getAll();
+        $projects = ProjectService::getActive(technology: $selectedTechnology);
+        $technologies = TechnologyService::getActive();
 
         view('progetti', compact('projects', 'technologies', 'selectedTechnology'));
     }
@@ -31,7 +31,7 @@ class ProgettiController extends Controller
             ? ProjectService::findOrFail((int) $slug)
             : ProjectService::findBySlug($slug);
 
-        $projects = ProjectService::getAll();
+        $projects = ProjectService::getActive();
 
         view('progetto', compact('project', 'projects'));
     }

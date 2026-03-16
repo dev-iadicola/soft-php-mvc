@@ -14,7 +14,7 @@ class TechnologyController extends Controller
     public function index(): void
     {
         view('technology', [
-            'technologies' => TechnologyService::getAll(),
+            'technologies' => TechnologyService::getActive(),
         ]);
     }
 }

@@ -31,6 +31,27 @@ class ProjectService
     }
 
     /**
+     * @return array<int, Project>
+     */
+    public static function getActive(string $orderBy = 'sort_order', string $order = 'ASC', ?string $technology = null): array
+    {
+        if ($technology !== null && $technology !== '') {
+            /** @var array<int, Project> */
+            return Project::query()->query(
+                'SELECT DISTINCT projects.*
+                 FROM projects
+                 INNER JOIN project_technologies ON project_technologies.project_id = projects.id
+                 INNER JOIN technology ON technology.id = project_technologies.technology_id
+                 WHERE technology.name = :technology AND projects.is_active = 1
+                 ORDER BY projects.sort_order ASC',
+                [':technology' => $technology]
+            );
+        }
+
+        return Project::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Project

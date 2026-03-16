@@ -17,11 +17,12 @@ class Certificate extends Model
     protected string $certified;
     protected string $link;
     protected string $ente;
+    protected bool $is_active = true;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
 
     protected function casts(): array
     {
-        return ['certified' => 'string'];
+        return ['certified' => 'string', 'is_active' => 'bool'];
     }
 }

@@ -38,7 +38,7 @@
                 <?php else : ?>
                     <div class="list-group" id="sortable-list" data-entity="link_footer">
                         <?php foreach ($links as $link) : ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $link->id ?>">
+                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $link->id ?>" style="<?= $link->is_active ? '' : 'opacity: 0.5;' ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
                                     <div>
@@ -47,6 +47,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-<?= $link->is_active ? 'success' : 'secondary' ?> btn-sm toggle-active-btn" onclick="toggleActive('link_footer', <?= $link->id ?>, this)"><?= $link->is_active ? 'Attivo' : 'Archiviato' ?></button>
                                     <a href="/admin/footer-links-edit/<?= $link->id ?>" class="btn btn-outline-primary btn-sm">Modifica</a>
                                     <form action="/admin/footer-links-delete/<?= $link->id ?>" method="POST" onsubmit="return confirm('Eliminare <?= $link->title ?>?');">
                                         @csrf

@@ -55,6 +55,7 @@ class ProjectManagerController extends AdminController
     public function update(Request $request, int $id)
     {
         $data = $request->all();
+        $data['is_active'] = isset($data['is_active']) ? 1 : 0;
         $project = ProjectService::findOrFail($id);
         $validator = $this->validateRequest($request);
 

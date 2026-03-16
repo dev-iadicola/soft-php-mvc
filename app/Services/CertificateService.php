@@ -18,6 +18,14 @@ class CertificateService
     }
 
     /**
+     * @return array<int, Certificate>
+     */
+    public static function getActive(string $orderBy = 'certified', string $order = 'DESC'): array
+    {
+        return Certificate::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Certificate

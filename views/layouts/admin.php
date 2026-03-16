@@ -126,6 +126,39 @@
                 }
             });
         }
+
+        function toggleActive(entity, id, buttonEl) {
+            var csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+            var formData = new URLSearchParams();
+            formData.append('_method', 'PATCH');
+            formData.append('_token', csrfToken);
+            formData.append('entity', entity);
+            formData.append('id', id);
+
+            fetch('/admin/toggle-active', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: formData.toString()
+            })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+                if (data.success) {
+                    var item = buttonEl.closest('[data-id]');
+                    if (data.is_active) {
+                        buttonEl.textContent = 'Attivo';
+                        buttonEl.className = 'btn btn-success btn-sm toggle-active-btn';
+                        if (item) item.style.opacity = '1';
+                    } else {
+                        buttonEl.textContent = 'Archiviato';
+                        buttonEl.className = 'btn btn-secondary btn-sm toggle-active-btn';
+                        if (item) item.style.opacity = '0.5';
+                    }
+                }
+            })
+            .catch(function () {
+                alert('Errore durante il cambio di stato.');
+            });
+        }
     </script>
 
     <!-- Editor init moved to assets/vendor/ckeditor/js/execute.js -->

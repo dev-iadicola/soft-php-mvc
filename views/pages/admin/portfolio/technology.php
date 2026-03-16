@@ -43,7 +43,7 @@
                 <?php else : ?>
                     <div class="list-group" id="sortable-list" data-entity="technology">
                         <?php foreach ($technologies as $item) : ?>
-                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $item->id ?>">
+                            <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $item->id ?>" style="<?= $item->is_active ? '' : 'opacity: 0.5;' ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
                                     <div>
@@ -52,6 +52,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-<?= $item->is_active ? 'success' : 'secondary' ?> btn-sm toggle-active-btn" onclick="toggleActive('technology', <?= $item->id ?>, this)"><?= $item->is_active ? 'Attivo' : 'Archiviato' ?></button>
                                     <a href="/admin/technology-edit/<?= $item->id ?>" class="btn btn-outline-primary btn-sm">Modifica</a>
                                     <form action="/admin/technology-delete/<?= $item->id ?>" method="POST" onsubmit="return confirm('Eliminare <?= $item->name ?>?');">
                                         @csrf

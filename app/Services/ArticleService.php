@@ -18,6 +18,14 @@ class ArticleService
     }
 
     /**
+     * @return array<int, Article>
+     */
+    public static function getActive(string $orderBy = 'created_at', string $order = 'DESC'): array
+    {
+        return Article::query()->where('is_active', true)->orderBy($orderBy, $order)->get();
+    }
+
+    /**
      * @throws NotFoundException
      */
     public static function findOrFail(int $id): Article
