@@ -33,7 +33,7 @@ class ToggleActiveController extends AdminController
     public function toggle(Request $request)
     {
         $entity = $request->string('entity');
-        $id = $request->integer('id');
+        $id = $request->int('id');
 
         if (!isset(self::ENTITY_MAP[$entity])) {
             return response()->json(['error' => 'Unknown entity.'], 400);
@@ -52,6 +52,7 @@ class ToggleActiveController extends AdminController
             return response()->json(['error' => 'Record not found.'], 404);
         }
 
+        /** @phpstan-ignore property.notFound */
         $newState = !((bool) $record->is_active);
 
         $modelClass::query()->where('id', $id)->update([
