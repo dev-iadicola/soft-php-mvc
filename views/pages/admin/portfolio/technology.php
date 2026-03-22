@@ -1,3 +1,19 @@
+<style>
+    .icon-preview {
+        font-size: 2rem;
+        min-width: 40px;
+        text-align: center;
+    }
+    .icon-select-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .icon-select-wrapper select {
+        flex: 1;
+    }
+</style>
+
 <div class="container my-5">
     <div class="row g-4">
         <div class="col-lg-5">
@@ -25,6 +41,23 @@
                     >
                 </div>
 
+                <div class="mb-3">
+                    <label for="icon" class="form-label">Icona</label>
+                    <div class="icon-select-wrapper">
+                        <div class="icon-preview" id="icon-preview">
+                            <?php if (!empty($technology->icon)) : ?>
+                                <i class="<?= htmlspecialchars($technology->icon) ?>"></i>
+                            <?php else : ?>
+                                <span class="text-muted">-</span>
+                            <?php endif; ?>
+                        </div>
+                        <select class="form-select" id="icon" name="icon">
+                            <option value="">-- Nessuna icona --</option>
+                        </select>
+                    </div>
+                    <div class="form-text">Scegli un'icona dalla libreria Devicon. Puoi digitare nel campo per filtrare.</div>
+                </div>
+
                 <button type="submit" class="btn btn-primary w-100">
                     <?= isset($technology->id) ? 'Salva modifiche' : 'Aggiungi tecnologia' ?>
                 </button>
@@ -46,6 +79,9 @@
                             <div class="list-group-item d-flex justify-content-between align-items-center gap-3" data-id="<?= $item->id ?>" style="<?= $item->is_active ? '' : 'opacity: 0.5;' ?>">
                                 <div class="d-flex align-items-center gap-2">
                                     <span class="drag-handle text-muted" style="cursor: grab;"><i class="fa fa-bars"></i></span>
+                                    <?php if (!empty($item->icon)) : ?>
+                                        <i class="<?= htmlspecialchars($item->icon) ?>" style="font-size: 1.4rem; width: 28px; text-align: center;"></i>
+                                    <?php endif; ?>
                                     <div>
                                         <strong><?= $item->name ?></strong>
                                         <div class="text-muted small">ID #<?= $item->id ?></div>
@@ -68,4 +104,61 @@
         </div>
     </div>
 </div>
-<script>document.addEventListener('DOMContentLoaded', function () { initSortable('sortable-list'); });</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    initSortable('sortable-list');
+
+    const DEVICONS = [
+        'android', 'angular', 'apache', 'apple', 'arduino', 'aws', 'azure', 'babel',
+        'bash', 'bitbucket', 'bootstrap', 'c', 'cakephp', 'centos', 'chrome', 'circleci',
+        'clojure', 'cmake', 'codepen', 'composer', 'confluence', 'cplusplus', 'csharp',
+        'css3', 'dart', 'debian', 'digitalocean', 'django', 'docker', 'dot-net', 'dotnetcore',
+        'drupal', 'electron', 'elixir', 'elm', 'ember', 'erlang', 'eslint', 'express',
+        'figma', 'firebase', 'firefox', 'flask', 'flutter', 'gatsby', 'gcc', 'git',
+        'github', 'gitlab', 'go', 'google', 'googlecloud', 'gradle', 'graphql', 'gulp',
+        'haskell', 'heroku', 'html5', 'hugo', 'illustrator', 'intellij', 'ionic', 'java',
+        'javascript', 'jeet', 'jenkins', 'jest', 'jetbrains', 'jira', 'jquery', 'julia',
+        'jupyter', 'karma', 'kotlin', 'kubernetes', 'laravel', 'latex', 'less', 'linkedin',
+        'linux', 'lua', 'magento', 'markdown', 'materialui', 'matlab', 'maven', 'mocha',
+        'mongodb', 'moodle', 'mysql', 'nestjs', 'nextjs', 'nginx', 'nixos', 'nodejs',
+        'npm', 'nuxtjs', 'objectivec', 'openal', 'opensuse', 'opera', 'oracle', 'pandas',
+        'perl', 'photoshop', 'php', 'phpstorm', 'postgresql', 'postman', 'powershell',
+        'premierepro', 'processing', 'prometheus', 'pycharm', 'python', 'pytorch', 'r',
+        'rails', 'raspberrypi', 'react', 'redis', 'redhat', 'redux', 'ruby', 'rust',
+        'safari', 'salesforce', 'sass', 'scala', 'selenium', 'sequelize', 'sketch',
+        'slack', 'solidity', 'spring', 'sqlite', 'ssh', 'storybook', 'svelte', 'swift',
+        'symfony', 'tailwindcss', 'terraform', 'tomcat', 'trello', 'typescript', 'ubuntu',
+        'unity', 'unrealengine', 'vagrant', 'vim', 'visualstudio', 'vscode', 'vuejs',
+        'webpack', 'windows8', 'wordpress', 'xcode', 'yarn', 'yii', 'zend'
+    ];
+
+    const VARIANTS = ['plain', 'original', 'line'];
+    const currentValue = <?= json_encode($technology->icon ?? '') ?>;
+    const select = document.getElementById('icon');
+    const preview = document.getElementById('icon-preview');
+
+    // Build all options
+    DEVICONS.forEach(function (name) {
+        VARIANTS.forEach(function (variant) {
+            const className = 'devicon-' + name + '-' + variant;
+            const option = document.createElement('option');
+            option.value = className;
+            option.textContent = name + ' (' + variant + ')';
+            if (className === currentValue) {
+                option.selected = true;
+            }
+            select.appendChild(option);
+        });
+    });
+
+    // Update preview on change
+    select.addEventListener('change', function () {
+        if (this.value) {
+            preview.innerHTML = '<i class="' + this.value + '"></i>';
+        } else {
+            preview.innerHTML = '<span class="text-muted">-</span>';
+        }
+    });
+});
+</script>

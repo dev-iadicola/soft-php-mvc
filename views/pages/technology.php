@@ -21,6 +21,14 @@
         gap: 0.6rem;
     }
 
+    .tech-card__icon {
+        font-size: 1.6rem;
+        width: 28px;
+        text-align: center;
+        flex-shrink: 0;
+        color: var(--accent-green);
+    }
+
     .tech-card__dot {
         width: 10px;
         height: 10px;
@@ -42,7 +50,11 @@
     <div class="tech-grid">
         <?php foreach (($technologies ?? []) as $technology) : ?>
             <article class="tech-card">
-                <span class="tech-card__dot"></span>
+                <?php if (!empty($technology->icon)) : ?>
+                    <i class="tech-card__icon <?= htmlspecialchars($technology->icon) ?>"></i>
+                <?php else : ?>
+                    <span class="tech-card__dot"></span>
+                <?php endif; ?>
                 <span><?= $technology->name ?></span>
             </article>
         <?php endforeach; ?>

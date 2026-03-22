@@ -10,6 +10,7 @@ class Technology extends Model{
     protected string $table = 'technology';
     protected ?int $id = null;
     protected string $name;
+    protected ?string $icon = null;
     protected int $sort_order = 0;
     protected bool $is_active = true;
     protected ?string $created_at = null;
