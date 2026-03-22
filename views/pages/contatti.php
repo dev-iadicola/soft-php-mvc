@@ -1,3 +1,11 @@
+<?php
+
+$contactHero = $contactHero ?? null;
+$contactCards = $contactCards ?? [];
+$technologies = $technologies ?? [];
+
+?>
+
 <style>
     /* === CONTACT PAGE - BOLD STYLE === */
 
@@ -617,25 +625,23 @@
 
 <!-- HERO -->
 <div class="contact-hero fade-in-section">
-    <span class="contact-hero__badge">// open to work</span>
-    <h2 class="contact-hero__title">Costruiamo qualcosa<br><em>insieme</em></h2>
+    <span class="contact-hero__badge"><?= $contactHero?->badge ?? '// open to work' ?></span>
+    <h2 class="contact-hero__title"><?= $contactHero?->title_html ?? 'Costruiamo qualcosa<br><em>insieme</em>' ?></h2>
     <p class="contact-hero__desc">
-        Software Engineer con esperienza in <strong>PHP</strong>, <strong>Java</strong>, <strong>React</strong> e <strong>C#</strong>.
-        Ho progettato sistemi ERP, integrazioni marketplace, gestionali sanitari e piattaforme enterprise.
-        Contattami per dare vita alla tua idea.
+        <?= $contactHero?->description_html ?? 'Software Engineer con esperienza in <strong>PHP</strong>, <strong>Java</strong>, <strong>React</strong> e <strong>C#</strong>.<br>Ho progettato sistemi ERP, integrazioni marketplace, gestionali sanitari e piattaforme enterprise.<br>Contattami per dare vita alla tua idea.' ?>
     </p>
     <div class="contact-hero__stats">
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">3+</span>
-            <span class="contact-hero__stat-label">Anni di esperienza</span>
+            <span class="contact-hero__stat-value"><?= $contactHero?->primary_stat_value ?? 'Dal 2020' ?></span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->primary_stat_label ?? 'Nel campo' ?></span>
         </div>
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">10+</span>
-            <span class="contact-hero__stat-label">Progetti realizzati</span>
+            <span class="contact-hero__stat-value"><?= $contactHero?->secondary_stat_value ?? '10+' ?></span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->secondary_stat_label ?? 'Progetti realizzati' ?></span>
         </div>
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">5+</span>
-            <span class="contact-hero__stat-label">Tecnologie</span>
+            <span class="contact-hero__stat-value"><?= count($technologies ?? []) ?>+</span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->technology_stat_label ?? 'Tecnologie' ?></span>
         </div>
     </div>
 </div>
@@ -648,81 +654,31 @@
     </div>
 
     <div class="contact-services">
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--green">
-                <i class="fa fa-globe" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Applicazioni Web & ERP</h4>
-                <p class="contact-service__desc">Piattaforme gestionali, e-commerce, dashboard analitiche e sistemi multi-canale.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">Laravel</span>
-                    <span class="contact-service__mini-tag">React</span>
-                    <span class="contact-service__mini-tag">Filament</span>
+        <?php foreach ($contactCards as $card) : ?>
+            <div class="contact-service">
+                <div class="contact-service__icon-wrap contact-service__icon-wrap--<?= htmlspecialchars($card->color) ?>">
+                    <i class="fa <?= htmlspecialchars($card->icon) ?>" aria-hidden="true"></i>
+                </div>
+                <div class="contact-service__content">
+                    <h4 class="contact-service__title"><?= htmlspecialchars($card->title) ?></h4>
+                    <p class="contact-service__desc"><?= htmlspecialchars($card->description) ?></p>
+                    <div class="contact-service__tags">
+                        <?php foreach ($card->getTagsArray() as $tag) : ?>
+                            <span class="contact-service__mini-tag"><?= htmlspecialchars($tag) ?></span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--blue">
-                <i class="fa fa-cogs" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">API & Integrazioni</h4>
-                <p class="contact-service__desc">API REST, integrazioni marketplace (eBay, Amazon SP-API), sincronizzazione dati.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">REST</span>
-                    <span class="contact-service__mini-tag">Spring Boot</span>
-                    <span class="contact-service__mini-tag">OAuth</span>
-                </div>
-            </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--purple">
-                <i class="fa fa-sitemap" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Architettura Software</h4>
-                <p class="contact-service__desc">Design patterns, architetture MVC, Layered, Hexagonal e SOA. Code review.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">SOLID</span>
-                    <span class="contact-service__mini-tag">Clean Code</span>
-                    <span class="contact-service__mini-tag">DDD</span>
-                </div>
-            </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--orange">
-                <i class="fa fa-wrench" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Refactoring & DevOps</h4>
-                <p class="contact-service__desc">Ottimizzazione codice, containerizzazione, CI/CD e gestione ambienti di deploy.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">Docker</span>
-                    <span class="contact-service__mini-tag">CI/CD</span>
-                    <span class="contact-service__mini-tag">Git</span>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </section>
 
 <!-- TECH STACK -->
 <div class="contact-stack fade-in-section">
     <span class="contact-stack__label">// tech stack:</span>
-    <span class="contact-stack__tag">PHP</span>
-    <span class="contact-stack__tag">Laravel</span>
-    <span class="contact-stack__tag">Filament</span>
-    <span class="contact-stack__tag">Java</span>
-    <span class="contact-stack__tag">Spring Boot</span>
-    <span class="contact-stack__tag">C#</span>
-    <span class="contact-stack__tag">React</span>
-    <span class="contact-stack__tag">TypeScript</span>
-    <span class="contact-stack__tag">Python</span>
-    <span class="contact-stack__tag">PostgreSQL</span>
-    <span class="contact-stack__tag">MySQL</span>
-    <span class="contact-stack__tag">Docker</span>
-    <span class="contact-stack__tag">REST API</span>
+    <?php foreach (($technologies ?? []) as $technology) : ?>
+        <span class="contact-stack__tag"><?= $technology->name ?></span>
+    <?php endforeach; ?>
 </div>
 
 <!-- CTA -->

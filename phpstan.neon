@@ -1,0 +1,18 @@
+includes:
+    - phpstan-baseline.neon
+
+parameters:
+    level: 5
+    parallel:
+        maximumNumberOfProcesses: 1
+    paths:
+        - app/Core/
+        - app/Controllers/
+        - app/Model/
+        - app/Middleware/
+        - app/Services/
+    excludePaths:
+        - views/
+        - vendor/
+        - storage/
+    reportUnmatchedIgnoredErrors: false

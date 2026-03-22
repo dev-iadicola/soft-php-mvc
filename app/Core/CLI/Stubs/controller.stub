@@ -1,0 +1,18 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Controllers;
+
+use App\Core\Controllers\Controller;
+use App\Core\Http\Attributes\Get;
+{{USES}}
+
+{{ATTRIBUTES}}
+class {{CLASS}} extends Controller
+{
+    #[Get('/')]
+    public function index(): void
+    {
+    }
+}

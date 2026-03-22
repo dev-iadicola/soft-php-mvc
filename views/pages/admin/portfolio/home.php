@@ -44,6 +44,7 @@
                                  <a href="/admin/article/create" class="btn btn-outline-success btn-sm">Create</a>
                                     <a href="/admin/article/<?= $article->id ?>" class="btn btn-outline-primary btn-sm">Edit</a>
                                     <form action="/admin/article-delete/<?= $article->id ?>" method="POST" style="display: inline;">
+                                        @csrf
                                         @delete
                                         <button type="submit" onclick="return confirm('Are you sure you want to delete <?= $article->title ?>?')" class="btn btn-outline-danger btn-sm">Delete</button>
                                     </form>

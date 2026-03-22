@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="<?= csrf_token() ?>">
 
-    <title>Luigi Iadicola // dev</title>
+    <title>Iadicola // dev</title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
 
     <!-- Bootstrap 5 CSS -->
@@ -38,6 +38,8 @@
                         <li><a href="/contatti" class="{{ isActivePage('contatti', $page) }}">~/contatti</a></li>
                         <li><a href="/portfolio" class="{{ isActivePage('portfolio', $page) }}">~/portfolio</a></li>
                         <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">~/progetti</a></li>
+                        <li><a href="/tech-stack" class="{{ isActivePage('tech-stack', $page) }}">~/tech-stack</a></li>
+                        <li><a href="/partners" class="{{ isActivePage('partners', $page) }}">~/partners</a></li>
                         <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">~/certificati</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/"><i class="fa fa-github" aria-hidden="true"></i> github</a></li>
                     </ul>

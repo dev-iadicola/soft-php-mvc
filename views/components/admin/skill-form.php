@@ -14,6 +14,7 @@ $urlSkill = isset($skill->id) ? "/admin/skill/{$skill->id}" : '/admin/skill';
     <div id="collapseSkill" class="collapse <?= isset($skill->id) ? 'show' : '' ?>" aria-labelledby="headingSkill" data-parent="#accordion">
         <div class="card-body shadow p-3 border border-dark m-2 rounded">
             <form method="POST" action="<?= $urlSkill ?>" enctype="multipart/form-data">
+                @csrf
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" class="form-control" id="title"  name="title" value="<?= $skill->title ?? '' ?>" required>

@@ -5,6 +5,7 @@
     <!-- Course Form -->
     <?php $url = isset($element->id) ? "/admin/corso-update/{$element->id}" : '/admin/corsi'; ?>
     <form method="POST" action="<?= $url ?>" class="shadow-lg p-4 bg-light rounded">
+        @csrf
         <h3 class="mb-3"><?php (isset($element->title)) ? "Modifica ". $element->title : 'Add new' ?>
         </h3>
 
@@ -76,6 +77,7 @@
                             <?php endif; ?>
                             <div class="d-flex justify-content-between mt-3">
                                 <form action="/admin/corso-delete/<?= $corso->id ?>" method="POST" onsubmit="return confirm('Are you sure you want to delete <?= $corso->title ?>?')">
+                                    @csrf
                                     @delete
                                     <button type="submit" class="btn btn-danger btn-sm">Delete</button>
                                 </form>

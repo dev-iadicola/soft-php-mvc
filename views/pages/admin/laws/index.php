@@ -12,6 +12,7 @@
             ?>
 
             <form method="POST" action="<?= $url ?>" enctype="multipart/form-data">
+                @csrf
                 <div class="form-group">
                     <label for="title">Title</label>
                     <input type="text" class="form-control" id="title" name="title" value="<?= isset($law->title) ? htmlspecialchars($law->title) : '' ?>" required>
@@ -37,6 +38,7 @@
                             <!-- Card Header with options -->
                             <div class="card-header d-flex justify-content-between">
                                 <form action="/admin/law-delete/<?= htmlspecialchars($law->id, ENT_QUOTES, 'UTF-8') ?>" method="POST">
+                                    @csrf
                                     @delete
                                     <button type="submit" onclick="return confirm('Are you sure you want to eliminate <?= htmlspecialchars($law->title, ENT_QUOTES, 'UTF-8') ?>?')" class="btn btn-danger">Delete</button>
                                 </form>

@@ -12,6 +12,7 @@ use App\Middleware\MaintenanceMiddleware;
 use App\Middleware\MethodOverrideMiddleware;
 use App\Middleware\RateLimitMiddleware;
 use App\Middleware\SecureHeaderMiddleware;
+use App\Middleware\VisitorTrackingMiddleware;
 
 return [
      // Middlewares for all web routes (html, forms, etc.)
@@ -27,8 +28,11 @@ return [
         CorsMiddleware::class,
         RateLimitMiddleware::class
     ],
-    // Middleware for maintenance
-    'guest' => [MaintenanceMiddleware::class],
+    // Middleware for maintenance and visitor tracking
+    'guest' => [
+        MaintenanceMiddleware::class,
+        VisitorTrackingMiddleware::class,
+    ],
     // Middleware for user auth.
     'auth' => [AuthMiddleware::class]
 ];

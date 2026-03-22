@@ -55,7 +55,7 @@ if ( ! function_exists(function: 'printLn')) {
 if ( ! function_exists(function: 'printLn')) {
     function settings()
     {
-        return mvc()->config->settings;
+        return mvc()->config->get('settings');
     }
 }
 
@@ -110,7 +110,7 @@ if ( ! function_exists(function: 'css')) { // get css folder in assets folder
      */
     function css()
     {
-        return mvc()->config->resources['css'];
+        return mvc()->config->get('resources.css');
     }
 }
 
@@ -160,7 +160,13 @@ if ( ! function_exists('is_octal')) {
 if ( ! function_exists(function: 'smtp')) {
     function smtp(): SMTP
     {
-        return new SMTP();
+        $mvc = mvc();
+
+        if ($mvc?->Smtp instanceof SMTP) {
+            return $mvc->Smtp;
+        }
+
+        throw new RuntimeException('SMTP provider is not configured.');
     }
 }
 
@@ -171,5 +177,28 @@ if ( ! function_exists(function: 'flashMessage')) {
     function flashMessage(string $key): ?string
     {
         return Session::getFlash($key);
+    }
+}
+
+/**
+ * Retrieve old input value from the previous request (flashed in session).
+ * Useful for repopulating form fields after validation errors.
+ */
+if ( ! function_exists('old')) {
+    function old(string $key, mixed $default = null): mixed
+    {
+        return session()->getOldInput($key, $default);
+    }
+}
+
+/**
+ * Retrieve flashed validation errors from the previous request.
+ *
+ * @return array<string, string[]>
+ */
+if ( ! function_exists('errors')) {
+    function errors(): array
+    {
+        return session()->getFlashedErrors();
     }
 }

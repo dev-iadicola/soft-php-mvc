@@ -1,0 +1,16 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Model;
+
+use App\Core\DataLayer\Model;
+
+class {{CLASS}} extends Model
+{
+{{TABLE_LINE}}    protected ?int $id = null;
+
+    // Define your model properties here:
+    // protected string $name;            // NOT NULL columns: uninitialized, set during hydration
+    // protected ?string $bio = null;     // NULLABLE columns: use nullable type
+}

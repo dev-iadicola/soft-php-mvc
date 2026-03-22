@@ -15,91 +15,45 @@
   </div>
 
   <div class="row">
-    
-    <div class="col-lg-3 col-md-3 col-sm-12 pr-0 mb-3">
-      <div class="card  ">
-        <div class="card-header"><i class="fa fa-bar-chart"></i> Visite</div>
-        <div class="">
-          <canvas id="myLineChart"></canvas>
 
-          <script>
-            // Dati del grafico
-            const data = {
-              labels: ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug'], // Etichette per l'asse X
-              datasets: [{
-                label: 'Vendite Mensili', // Etichetta del dataset
-                data: [30, 45, 60, 70, 50, 80, 90], // Dati da tracciare
-                borderColor: 'rgba(75, 192, 192, 1)', // Colore del bordo della linea
-                backgroundColor: 'rgba(75, 192, 192, 0.2)', // Colore di riempimento sotto la linea
-                fill: true, // Riempi sotto la linea
-                tension: 0.1 // Arrotondamento della curva della linea
-              }]
-            };
-
-            // Configurazione del grafico
-            const config = {
-              type: 'line', // Tipo di grafico
-              data: data,
-              options: {
-                responsive: true, // Rende il grafico responsive
-                plugins: {
-                  legend: {
-                    position: 'top', // Posizione della legenda
-                  },
-                  tooltip: {
-                    callbacks: {
-                      label: function(tooltipItem) {
-                        return `Vendite: ${tooltipItem.raw} units`;
-                      }
-                    }
-                  }
-                },
-                scales: {
-                  x: {
-                    title: {
-                      display: true,
-                      text: 'Mese'
-                    }
-                  },
-                  y: {
-                    title: {
-                      display: true,
-                      text: 'Vendite'
-                    }
-                  }
-                }
-              }
-            };
-
-            // Creazione del grafico
-            const ctxVisit = document.getElementById('myLineChart').getContext('2d');
-            new Chart(ctxVisit, config);
-          </script>
-
-
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card">
+        <div class="card-header"><i class="fa fa-bar-chart"></i> Visite (7 giorni)</div>
+        <div class="card-body p-2">
+          <canvas id="myLineChart" height="150"></canvas>
         </div>
-
       </div>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-warning">
-        <div class="card-header"><i class="fa fa-user-plus"></i> Message</div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card text-white bg-primary">
+        <div class="card-header"><i class="fa fa-eye"></i> Visite Totali</div>
         <div class="card-body">
-          <h3 class="card-title">44</h3>
+          <h3 class="card-title"><?= number_format($totalVisits) ?></h3>
         </div>
-        <a class="card-footer text-right text-white" href="#">
-          More info <i class="fa fa-arrow-circle-right"></i>
+        <a class="card-footer text-right text-white" href="/admin/visitors">
+          Dettagli <i class="fa fa-arrow-circle-right"></i>
         </a>
       </div>
     </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-danger">
-        <div class="card-header"><i class="fa fa-pie-chart"></i> Unique Visitor</div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card text-white bg-warning">
+        <div class="card-header"><i class="fa fa-commenting"></i> Messaggi</div>
         <div class="card-body">
-          <h3 class="card-title">65</h3>
+          <h3 class="card-title"><?= count($messages) ?></h3>
         </div>
-        <a class="card-footer text-right text-white" href="#">
-          More info <i class="fa fa-arrow-circle-right"></i>
+        <a class="card-footer text-right text-white" href="/admin/contatti">
+          Dettagli <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card text-white bg-danger">
+        <div class="card-header"><i class="fa fa-users"></i> Visitatori Unici</div>
+        <div class="card-body">
+          <h3 class="card-title"><?= number_format($uniqueVisitors) ?></h3>
+        </div>
+        <a class="card-footer text-right text-white" href="/admin/visitors">
+          Dettagli <i class="fa fa-arrow-circle-right"></i>
         </a>
       </div>
     </div>
@@ -226,27 +180,57 @@
 
 </section>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
-  const ctx = document.getElementById('myChart');
+document.addEventListener('DOMContentLoaded', function() {
+  // Mini grafico visite settimanali
+  var dailyData = <?= json_encode($dailyVisits) ?>;
+  var dailyLabels = dailyData.map(function(d) {
+    var parts = (d.date || '').split('-');
+    return parts.length >= 3 ? parts[2] + '/' + parts[1] : d.date;
+  });
+  var dailyCounts = dailyData.map(function(d) { return parseInt(d.count) || 0; });
 
-  new Chart(ctx, {
-    type: 'bar',
+  new Chart(document.getElementById('myLineChart').getContext('2d'), {
+    type: 'line',
     data: {
-      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      labels: dailyLabels,
       datasets: [{
-        label: '# of Votes',
-        data: [12, 19, 3, 5, 2, 3],
-        borderWidth: 1
+        label: 'Visite',
+        data: dailyCounts,
+        borderColor: 'rgba(75, 192, 192, 1)',
+        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 2
       }]
     },
     options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true
-        }
+        x: { display: true, ticks: { font: { size: 10 } } },
+        y: { beginAtZero: true, ticks: { precision: 0 } }
       }
     }
   });
+
+  // Doughnut chart
+  var ctxDoughnut = document.getElementById('myChart');
+  if (ctxDoughnut) {
+    new Chart(ctxDoughnut, {
+      type: 'doughnut',
+      data: {
+        labels: ['Visite Oggi', 'Totali'],
+        datasets: [{
+          data: [<?= $todayVisits ?>, <?= max($totalVisits - $todayVisits, 0) ?>],
+          backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(199, 199, 199, 0.3)']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }
+      }
+    });
+  }
+});
 </script>

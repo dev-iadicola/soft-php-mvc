@@ -56,7 +56,7 @@
     <div><br></div>
     <div><br></div>
     <div><br></div>
-    <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">This Cookie Policy explains how <bdt class="question">Luigi Iadicola </bdt> ("<strong>Company</strong>," "<strong>we</strong>," "<strong>us</strong>," and "<strong>our</strong>") uses cookies and similar technologies to recognize you when you visit our website at  </span></span><span style="color: rgb(0, 58, 250); font-size: 15px;"><span data-custom-class="body_text">
+    <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">This Cookie Policy explains how <bdt class="question">Iadicola </bdt> ("<strong>Company</strong>," "<strong>we</strong>," "<strong>us</strong>," and "<strong>our</strong>") uses cookies and similar technologies to recognize you when you visit our website at  </span></span><span style="color: rgb(0, 58, 250); font-size: 15px;"><span data-custom-class="body_text">
                     <bdt class="question"><a href="https://iadicola.netsons.org" target="_blank" data-custom-class="link">https://iadicola.netsons.org</a></bdt>
                 </span></span><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text"> ("<strong>Website</strong>"). It explains what these technologies are and why we use them, as well as your rights to control our use of them.</span></span></span></div>
     <div style="line-height: 1.5;"><br></div>
@@ -66,7 +66,7 @@
     <div style="line-height: 1.5;"><br></div>
     <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">Cookies are small data files that are placed on your computer or mobile device when you visit a website. Cookies are widely used by website owners in order to make their websites work, or to work more efficiently, as well as to provide reporting information.</span></span></span></div>
     <div style="line-height: 1.5;"><br></div>
-    <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">Cookies set by the website owner (in this case, <bdt class="question">Luigi Iadicola </bdt>) are called "first-party cookies." Cookies set by parties other than the website owner are called "third-party cookies." Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics). The parties that set these third-party cookies can recognize your computer both when it visits the website in question and also when it visits certain other websites.</span></span></span></div>
+    <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(89, 89, 89); font-size: 15px;"><span data-custom-class="body_text">Cookies set by the website owner (in this case, <bdt class="question">Iadicola </bdt>) are called "first-party cookies." Cookies set by parties other than the website owner are called "third-party cookies." Third-party cookies enable third-party features or functionality to be provided on or through the website (e.g., advertising, interactive content, and analytics). The parties that set these third-party cookies can recognize your computer both when it visits the website in question and also when it visits certain other websites.</span></span></span></div>
     <div style="line-height: 1.5;"><br></div>
     <div style="line-height: 1.5;"><span style="color: rgb(127, 127, 127);"><span style="color: rgb(0, 0, 0); font-size: 15px;"><strong><span data-custom-class="heading_1">Why do we use cookies?</span></strong></span></span></div>
     <div style="line-height: 1.5;"><br></div>
@@ -132,7 +132,7 @@
     <div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">If you have any questions about our use of cookies or other technologies, please<bdt class="block-component"></bdt> email us at <bdt class="question">luigi.iadicola30@gmail.com</bdt> or by post to<bdt class="else-block"></bdt>:</span></span></span></span></div>
     <div style="line-height: 1.5;"><span data-custom-class="body_text"><br></span></div>
     <div style="line-height: 1.5;"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span style="font-size: 15px; color: rgb(89, 89, 89);"><span data-custom-class="body_text">
-                    <bdt class="question">Luigi Iadicola </bdt>
+                    <bdt class="question">Iadicola </bdt>
                 </span></span></span></div>
     <div style="line-height: 1.5;">
         <bdt class="block-component"><span style="font-size: 15px;"></span></bdt><span style="font-size: 15px;">

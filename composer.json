@@ -5,7 +5,7 @@
     "license": "MIT",
     "autoload": {
         "psr-4": {
-            "App\\": "App/"
+            "App\\": "app/"
         },
         "files": [
             "utils/helpers.php"
@@ -22,16 +22,31 @@
         "filp/whoops": "^2.18",
         "sendinblue/api-v3-sdk": "^8.4",
         "symfony/var-dumper": "^6.4",
-        "nesbot/carbon": "^3.11",
-      "ext-pdo": "*"
+        "nesbot/carbon": "^2.73",
+      "ext-pdo": "*",
+        "illuminate/validation": "^10.48",
+        "illuminate/translation": "^10.48"
     },
     "scripts": {
         "mvc": [
-            "php App/Core/CLI/Kernel.php"
+            "php app/Core/CLI/Kernel.php"
+        ],
+        "analyse": "phpstan analyse --debug --no-progress --memory-limit=1G",
+        "rector": "rector process",
+        "rector-check": "rector process --dry-run",
+        "test": "phpunit --no-coverage",
+        "lint": "pint --test",
+        "qa": [
+            "@rector-check",
+            "@analyse",
+            "@test",
+            "@lint"
         ]
     },
     "require-dev": {
         "laravel/pint": "^1.20",
-        "phpunit/phpunit": "^10.5"
+        "phpunit/phpunit": "^10.5",
+        "rector/rector": "^2.3",
+        "phpstan/phpstan": "^2.1"
     }
 }

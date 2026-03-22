@@ -66,13 +66,18 @@
 </style>
 
 <footer class="site-footer">
+    <?php
+    try {
+        $footerLinks = \App\Services\LinkFooterService::getAll();
+    } catch (\Throwable) {
+        $footerLinks = [];
+    }
+    ?>
     <div class="container">
         <ul class="site-footer__nav">
-            <li><a href="/">~/home</a></li>
-            <li><a href="/contatti">~/contatti</a></li>
-            <li><a href="/certificati">~/certificati</a></li>
-            <li><a href="/laws">~/cookie-policy</a></li>
-            <li><a href="/portfolio">~/portfolio</a></li>
+            <?php foreach ($footerLinks as $footerLink) : ?>
+                <li><a href="<?= $footerLink->link ?>"><?= '~/'.strtolower(str_replace(' ', '-', $footerLink->title)) ?></a></li>
+            <?php endforeach; ?>
         </ul>
 
         <ul class="site-footer__social">
@@ -88,6 +93,6 @@
             </li>
         </ul>
 
-        <p class="site-footer__copy">&copy; 2022-{{ date('Y') }} luigi.iadicola // software developer</p>
+        <p class="site-footer__copy">&copy; 2022-{{ date('Y') }} iadicola // software developer</p>
     </div>
 </footer>

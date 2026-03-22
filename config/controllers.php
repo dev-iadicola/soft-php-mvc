@@ -16,7 +16,7 @@
  * controller classes by namespace without hardcoding file paths.
  */
 return [
-    "App\\Core\\Controllers" => baseRoot() . "/App/Core/Controllers", # ! Default Controller, don't remove this
-    "App\\Controllers" => baseRoot() . "/App/Controllers",
+    "App\\Core\\Controllers" => baseRoot() . "/app/Core/Controllers", # ! Default Controller, don't remove this
+    "App\\Controllers" => baseRoot() . "/app/Controllers",
 
 ];

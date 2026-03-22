@@ -1,4 +1,8 @@
 <?php
+
+declare(strict_types=1);
+
+use App\Core\GetEnv;
 /**
  * -------------------------------------------------------------
  * Application Global Settings
@@ -50,9 +54,9 @@ return [
      * AuthMiddleware and CsrfMiddleware.
      */
     "session" => [
-        'lifetime'       =>  env('SESSION_LIFETIME', 3600),       // 1 hour
-        'auth-lifetime'  =>  env('SESSION_LIFETIME_AUTH', 3600),  // 1 hour
-        'timeout'        =>  env('TIMEOUT_SESSION', 900),         // 15 minutes
+        'lifetime'       =>  GetEnv::int('SESSION_LIFETIME', 3600),       // 1 hour
+        'auth-lifetime'  =>  GetEnv::int('SESSION_LIFETIME_AUTH', 3600),  // 1 hour
+        'timeout'        =>  GetEnv::int('TIMEOUT_SESSION', 900),         // 15 minutes
     ],
 
     /**
@@ -77,8 +81,8 @@ return [
      * - window: 60 seconds
      */
     'request' => [
-        'max'    => env('MAX_REQUEST', 100),
-        'window' => env('WINDOW', 60),
+        'max'    => GetEnv::int('MAX_REQUEST', 100),
+        'window' => GetEnv::int('WINDOW', 60),
     ],
     /**
      * Database driver.
@@ -87,6 +91,6 @@ return [
      * 
      */
     'db' => [
-        'driver' => env('DB_DRIVER','mysql'),
+        'driver' => GetEnv::string('DB_DRIVER', 'mysql'),
     ],
 ];

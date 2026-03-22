@@ -12,7 +12,7 @@ class QBTest extends TestCase
         // QueryBuilder “vuoto”, nessuna connessione
         $this->qb = new MySqlBuilder();
         $this->qb->from('users');
-        $this->qb->setFillable(['id', 'name', 'active', 'p.created_at']);
+        $this->qb->setAllowedColumns(['id', 'name', 'active', 'p.created_at']);
     }
 
     public function testSimpleSelect()
@@ -69,6 +69,28 @@ class QBTest extends TestCase
             ->whereBetween('age', 18, 30)
             ->toRawSql();
         $this->assertStringContainsString('WHERE age BETWEEN', $sql);
+    }
+
+    public function testWhereNotBetween()
+    {
+        $sql = $this->qb
+            ->select('*')
+            ->whereNotBetween('age', 18, 30)
+            ->toRawSql();
+
+        $this->assertStringContainsString('WHERE age NOT BETWEEN', $sql);
+    }
+
+    public function testWhereInAndWhereNotIn()
+    {
+        $sql = $this->qb
+            ->select('*')
+            ->whereIn('id', [1, 2, 3])
+            ->whereNotIn('active', [0])
+            ->toRawSql();
+
+        $this->assertStringContainsString('WHERE id IN', $sql);
+        $this->assertStringContainsString('AND active NOT IN', $sql);
     }
 
     public function testMultipleClauses()

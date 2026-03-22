@@ -10,6 +10,7 @@
 
 
             <form method="POST" action="/admin/settings" enctype="multipart/form-data">
+                @csrf
                 <div class="form-group">
                     <label for="title">Sito web in manutenzione</label>
                 </div>

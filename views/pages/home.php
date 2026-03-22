@@ -160,10 +160,12 @@
         <span class="skills-grid__tag">// skills</span>
         <h3 class="skills-grid__title">Competenze</h3>
     </div>
-    <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
-        Software Engineer con focus su backend e architettura applicativa. Esperienza su sistemi enterprise,
-        integrazioni API e sviluppo full-stack con PHP, Java, React e C#.
-    </p>
+    <?php $activeProfile = $profiles[0] ?? null; ?>
+    <?php if ($activeProfile?->bio) : ?>
+        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+            <?= $activeProfile->bio ?>
+        </p>
+    <?php endif; ?>
     <div class="skills-grid__list">
         <?php foreach ($skills as $skill): ?>
             <article class="skill-item">

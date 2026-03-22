@@ -40,7 +40,12 @@
                 </div>
 
 
-                <button type="submit" class="btn btn-success w-100">Salva Articolo</button>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="is_active" id="article_is_active" value="1" checked>
+                    <label class="form-check-label" for="article_is_active">Visibile nel sito pubblico</label>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mt-3">Salva Articolo</button>
             </form>
 
             <!-- ===== FORM SKILL ===== -->
@@ -56,7 +61,12 @@
                     <textarea class="form-control" name="description" rows="4" placeholder="Descrizione breve della skill"></textarea>
                 </div>
 
-                <button type="submit" class="btn btn-success w-100">Salva Skill</button>
+                <div class="form-check mt-3">
+                    <input class="form-check-input" type="checkbox" name="is_active" id="skill_is_active" value="1" checked>
+                    <label class="form-check-label" for="skill_is_active">Visibile nel sito pubblico</label>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100 mt-3">Salva Skill</button>
             </form>
 
             <!-- ===== FORM PROFILE ===== -->
@@ -75,6 +85,11 @@
                 <div class="mb-3">
                     <label class="form-label">Messaggio di benvenuto</label>
                     <textarea class="form-control" name="welcome_message" rows="3" placeholder="Scrivi un messaggio di benvenuto..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Bio (sottotitolo sezione competenze)</label>
+                    <textarea class="form-control" name="bio" rows="3" placeholder="Es. Software Engineer con focus su backend e architettura applicativa..."></textarea>
                 </div>
 
                 <div class="mb-3">

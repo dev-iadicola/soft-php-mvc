@@ -1,9 +1,197 @@
-#!/bin/bash
+#!/usr/bin/env php
+<?php
 
-SERVICE="app"
+/**
+ * Dock - Docker wrapper for SoftCLI
+ * Usage: php dock <command> [options]
+ *
+ * Examples:
+ *   php dock soft migrate
+ *   php dock soft seed --fresh
+ *   php dock composer install
+ *   php dock up / down / restart / logs
+ *   php dock shell
+ *   php dock test
+ */
 
-if [ $# -eq 0 ]; then
-    docker compose exec "$SERVICE" bash
-else
-    docker compose exec "$SERVICE" "$@"
-fi
+$containerName = 'soft-php-mvc';
+$dbContainer = 'soft-php-mvc-db';
+$dockerCompose = 'docker compose';
+
+// Colors
+$red = "\033[0;31m";
+$green = "\033[0;32m";
+$yellow = "\033[1;33m";
+$nc = "\033[0m";
+
+function run(string $cmd, bool $passthru = true): int
+{
+    if ($passthru) {
+        passthru($cmd, $exitCode);
+        return $exitCode;
+    }
+    exec($cmd, $output, $exitCode);
+    return $exitCode;
+}
+
+function dockerRunning(): bool
+{
+    exec('docker info 2>/dev/null', $output, $code);
+    return $code === 0;
+}
+
+function containerRunning(string $name): bool
+{
+    exec("docker ps --format '{{.Names}}'", $output);
+    return in_array($name, $output, true);
+}
+
+function ensureContainer(string $containerName, string $dockerCompose): void
+{
+    global $yellow, $green, $red, $nc;
+
+    if (!containerRunning($containerName)) {
+        echo "{$yellow}Container '{$containerName}' is not running. Starting...{$nc}\n";
+        run("{$dockerCompose} up -d");
+        sleep(2);
+        if (!containerRunning($containerName)) {
+            echo "{$red}Error: Failed to start container.{$nc}\n";
+            exit(1);
+        }
+        echo "{$green}Container started.{$nc}\n";
+    }
+}
+
+function ttyFlags(): string
+{
+    return posix_isatty(STDIN) ? '-it' : '-i';
+}
+
+function showHelp(): void
+{
+    global $green, $yellow, $nc;
+
+    echo "{$green}Dock{$nc} - Docker wrapper for SoftCLI\n";
+    echo "\n";
+    echo "Usage: php dock <command> [options]\n";
+    echo "\n";
+    echo "{$yellow}Docker commands:{$nc}\n";
+    echo "  up              Start containers\n";
+    echo "  down            Stop containers\n";
+    echo "  restart         Restart containers\n";
+    echo "  build           Build containers\n";
+    echo "  logs            View container logs\n";
+    echo "\n";
+    echo "{$yellow}Application commands:{$nc}\n";
+    echo "  soft <cmd>      Run SoftCLI (e.g. php dock soft migrate)\n";
+    echo "  php <args>      Run PHP command\n";
+    echo "  composer <cmd>  Run Composer command\n";
+    echo "  test [args]     Run PHPUnit tests\n";
+    echo "  rector [args]   Run Rector\n";
+    echo "  shell           Open bash shell in container\n";
+    echo "  mysql           Open MySQL CLI\n";
+    echo "\n";
+    echo "{$yellow}Examples:{$nc}\n";
+    echo "  php dock up                    Start the environment\n";
+    echo "  php dock soft migrate          Run migrations\n";
+    echo "  php dock soft seed --fresh     Run seeders\n";
+    echo "  php dock soft make:model Post  Create a new model\n";
+    echo "  php dock composer require x/y  Install a package\n";
+    echo "  php dock test                  Run tests\n";
+}
+
+// ─── Main ──────────────────────────────────────────
+
+if (!dockerRunning()) {
+    echo "{$red}Error: Docker is not running.{$nc}\n";
+    exit(1);
+}
+
+$command = $argv[1] ?? null;
+$args = array_slice($argv, 2);
+$argsStr = implode(' ', array_map('escapeshellarg', $args));
+$flags = ttyFlags();
+
+switch ($command) {
+    // Docker Compose commands
+    case 'up':
+        run("{$dockerCompose} up -d {$argsStr}");
+        break;
+    case 'down':
+        run("{$dockerCompose} down {$argsStr}");
+        break;
+    case 'restart':
+        run("{$dockerCompose} restart {$argsStr}");
+        break;
+    case 'build':
+        run("{$dockerCompose} build {$argsStr}");
+        break;
+    case 'logs':
+        run("{$dockerCompose} logs -f {$argsStr}");
+        break;
+
+    // Shell
+    case 'shell':
+    case 'bash':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} bash");
+        break;
+
+    // SoftCLI
+    case 'soft':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} php soft {$argsStr}");
+        break;
+
+    // Raw PHP
+    case 'php':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} php {$argsStr}");
+        break;
+
+    // Composer
+    case 'composer':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} composer {$argsStr}");
+        break;
+
+    // PHPUnit
+    case 'test':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} vendor/bin/phpunit {$argsStr}");
+        break;
+
+    // Rector
+    case 'rector':
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} vendor/bin/rector {$argsStr}");
+        break;
+
+    // MySQL CLI
+    case 'mysql':
+        ensureContainer($containerName, $dockerCompose);
+        $dbPsw = getenv('DB_PSW') ?: 'secret';
+        $dbName = getenv('DB_NAME') ?: 'soft_mvc';
+        run("docker exec {$flags} {$dbContainer} mysql -uroot -p\"{$dbPsw}\" \"{$dbName}\" {$argsStr}");
+        break;
+
+    // Help
+    case 'help':
+    case '-h':
+    case '--help':
+        showHelp();
+        break;
+
+    // No args: open shell
+    case null:
+        ensureContainer($containerName, $dockerCompose);
+        run("docker exec {$flags} {$containerName} bash");
+        break;
+
+    // Fallback: run any command inside the container
+    default:
+        ensureContainer($containerName, $dockerCompose);
+        $allArgs = implode(' ', array_map('escapeshellarg', array_slice($argv, 1)));
+        run("docker exec {$flags} {$containerName} {$allArgs}");
+        break;
+}

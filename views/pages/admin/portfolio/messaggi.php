@@ -14,6 +14,7 @@
             <div class="d-flex flex-row mt-2">
                 <button class="btn btn-warning me-5" onclick="hideMessage()">Close X</button>
                 <form action="{{route('admin.contatti.delete', ['id'=>$contatto->id])}}" method="POST">
+                   @csrf
                    @delete
                     <button class="btn btn-danger" onclick="return confirm('Sicuro di voler eliminare il messaggio di <?= $contatto->nome .' '.$contatto->typologie ?>?')">Delete X</button>
                 </form>
