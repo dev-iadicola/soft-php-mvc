@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controllers\Controller;
+use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
 use App\Services\ProjectService;
 use App\Services\ArticleService;
@@ -25,13 +26,16 @@ class HomeController extends Controller
         $skills = SkillService::getActive();
         $technologies = TechnologyService::getActive();
 
+        $seo = Seo::make();
+
         view('home', compact(
             'articles',
             'certificati',
             'projects',
             'profiles',
             'skills',
-            'technologies'
+            'technologies',
+            'seo'
         ));
     }
 

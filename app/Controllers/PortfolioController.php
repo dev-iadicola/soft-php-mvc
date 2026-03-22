@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controllers\Controller;
+use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
 use App\Services\CertificateService;
 use App\Services\PartnerService;
@@ -20,7 +21,11 @@ class PortfolioController extends Controller
         $certificati = CertificateService::getActive();
         $partners = PartnerService::getActive();
         $technologies = TechnologyService::getActive();
+        $seo = Seo::make([
+            'title' => 'Portfolio',
+            'description' => 'Portfolio completo: progetti, certificazioni, partner e tecnologie utilizzate.',
+        ]);
 
-        view('portfolio', compact('projects', 'certificati', 'partners', 'technologies'));
+        view('portfolio', compact('projects', 'certificati', 'partners', 'technologies', 'seo'));
     }
 }

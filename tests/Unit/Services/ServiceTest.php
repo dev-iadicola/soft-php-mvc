@@ -284,6 +284,7 @@ class ServiceTest extends TestCase
         $this->pdo->exec('CREATE TABLE articles (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             title TEXT,
+            slug TEXT,
             subtitle TEXT,
             overview TEXT,
             img TEXT,
@@ -336,6 +337,7 @@ class ServiceTest extends TestCase
             technology_id INTEGER,
             partner_id INTEGER,
             title TEXT,
+            slug TEXT,
             overview TEXT,
             description TEXT,
             link TEXT,

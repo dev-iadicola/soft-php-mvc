@@ -1,5 +1,29 @@
 # Changelog
 
+## feature/seo-metadata
+
+### Slug automatici
+- Aggiunta colonna `slug` (VARCHAR 150, nullable) a `projects` e `articles`
+- Proprietà `?string $slug` aggiunta ai model `Project` e `Article`
+- Generazione automatica dello slug da `Str::slug($title)` in `ProjectService::create/update` e `ArticleService::create/update`
+- `ProjectService::findBySlug()` cerca prima per slug, poi fallback per titolo (compatibilità URL precedenti)
+- Aggiunto `ArticleService::findBySlug()`
+- Aggiornata vista progetti per usare slug negli URL invece di `urlencode($title)`
+- Migration per popolare gli slug dei record esistenti
+
+### Meta description e og:image dinamici
+- Creato helper `App\Core\Helpers\Seo` con metodo `Seo::make()` per generare array meta tag (title, description, image, url)
+- Aggiornato layout `default.php` con supporto a: `<meta name="description">`, Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`), `<link rel="canonical">`
+- Tag `<title>` ora dinamico (pagina + suffisso sito)
+- Aggiornati controller pubblici: HomeController, ProgettiController, PortfolioController, TechnologyController
+- Per pagine senza SEO esplicito, fallback ai valori default
+
+### Sitemap XML
+- Creato `SitemapController` con rotta `GET /sitemap.xml`
+- Genera XML con: 7 pagine statiche (home, portfolio, progetti, tech-stack, partners, certificati, contatti), tutti i progetti attivi con slug e lastmod, tutti gli articoli attivi con link esterno
+
+---
+
 ## feature/technology-icons
 
 - Aggiunta colonna `icon` (VARCHAR 100, nullable) alla tabella `technology`

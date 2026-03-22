@@ -5,8 +5,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="<?= csrf_token() ?>">
+    <?php $seo = $seo ?? []; ?>
+    <?php if (!empty($seo['description'])) : ?>
+        <meta name="description" content="<?= htmlspecialchars($seo['description']) ?>">
+    <?php endif; ?>
 
-    <title>Iadicola // dev</title>
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($seo['title'] ?? 'Iadicola // dev') ?>">
+    <?php if (!empty($seo['description'])) : ?>
+        <meta property="og:description" content="<?= htmlspecialchars($seo['description']) ?>">
+    <?php endif; ?>
+    <?php if (!empty($seo['image'])) : ?>
+        <meta property="og:image" content="<?= htmlspecialchars($seo['image']) ?>">
+    <?php endif; ?>
+    <?php if (!empty($seo['url'])) : ?>
+        <meta property="og:url" content="<?= htmlspecialchars($seo['url']) ?>">
+        <link rel="canonical" href="<?= htmlspecialchars($seo['url']) ?>">
+    <?php endif; ?>
+
+    <title><?= htmlspecialchars($seo['title'] ?? 'Iadicola // dev') ?></title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
 
     <!-- Bootstrap 5 CSS -->

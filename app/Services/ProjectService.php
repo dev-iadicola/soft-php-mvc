@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Helpers\Str;
 use App\Model\Project;
 use App\Core\Exception\NotFoundException;
 
@@ -70,17 +71,32 @@ class ProjectService
     public static function findBySlug(string $slug): ?Project
     {
         /** @var Project|null */
-        return Project::query()->where('title', $slug)->first();
+        $project = Project::query()->where('slug', $slug)->first();
+
+        // Fallback: cerca per titolo (compatibilita con URL pre-slug)
+        if ($project === null) {
+            $project = Project::query()->where('title', $slug)->first();
+        }
+
+        return $project;
     }
 
     public static function create(array $data): Project
     {
+        if (!isset($data['slug']) && isset($data['title'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
         /** @var Project */
         return Project::query()->create($data);
     }
 
     public static function update(int $id, array $data): bool
     {
+        if (isset($data['title']) && !isset($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
         return Project::query()->where('id', $id)->update($data);
     }
 

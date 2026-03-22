@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+use App\Core\Helpers\Str;
 use App\Model\Article;
 use App\Core\Exception\NotFoundException;
 
@@ -40,14 +41,28 @@ class ArticleService
         return $article;
     }
 
+    public static function findBySlug(string $slug): ?Article
+    {
+        /** @var Article|null */
+        return Article::query()->where('slug', $slug)->first();
+    }
+
     public static function create(array $data): Article
     {
+        if (!isset($data['slug']) && isset($data['title'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
         /** @var Article */
         return Article::query()->create($data);
     }
 
     public static function update(int $id, array $data): bool
     {
+        if (isset($data['title']) && !isset($data['slug'])) {
+            $data['slug'] = Str::slug($data['title']);
+        }
+
         return Article::query()->where('id', $id)->update($data);
     }
 
