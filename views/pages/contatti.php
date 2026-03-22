@@ -617,25 +617,23 @@
 
 <!-- HERO -->
 <div class="contact-hero fade-in-section">
-    <span class="contact-hero__badge">// open to work</span>
-    <h2 class="contact-hero__title">Costruiamo qualcosa<br><em>insieme</em></h2>
+    <span class="contact-hero__badge"><?= $contactHero?->badge ?? '// open to work' ?></span>
+    <h2 class="contact-hero__title"><?= $contactHero?->title_html ?? 'Costruiamo qualcosa<br><em>insieme</em>' ?></h2>
     <p class="contact-hero__desc">
-        Software Engineer con esperienza in <strong>PHP</strong>, <strong>Java</strong>, <strong>React</strong> e <strong>C#</strong>.
-        Ho progettato sistemi ERP, integrazioni marketplace, gestionali sanitari e piattaforme enterprise.
-        Contattami per dare vita alla tua idea.
+        <?= $contactHero?->description_html ?? 'Software Engineer con esperienza in <strong>PHP</strong>, <strong>Java</strong>, <strong>React</strong> e <strong>C#</strong>.<br>Ho progettato sistemi ERP, integrazioni marketplace, gestionali sanitari e piattaforme enterprise.<br>Contattami per dare vita alla tua idea.' ?>
     </p>
     <div class="contact-hero__stats">
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">3+</span>
-            <span class="contact-hero__stat-label">Anni di esperienza</span>
+            <span class="contact-hero__stat-value"><?= $contactHero?->primary_stat_value ?? 'Dal 2020' ?></span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->primary_stat_label ?? 'Nel campo' ?></span>
         </div>
         <div class="contact-hero__stat">
-            <span class="contact-hero__stat-value">10+</span>
-            <span class="contact-hero__stat-label">Progetti realizzati</span>
+            <span class="contact-hero__stat-value"><?= $contactHero?->secondary_stat_value ?? '10+' ?></span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->secondary_stat_label ?? 'Progetti realizzati' ?></span>
         </div>
         <div class="contact-hero__stat">
             <span class="contact-hero__stat-value"><?= count($technologies ?? []) ?>+</span>
-            <span class="contact-hero__stat-label">Tecnologie</span>
+            <span class="contact-hero__stat-label"><?= $contactHero?->technology_stat_label ?? 'Tecnologie' ?></span>
         </div>
     </div>
 </div>

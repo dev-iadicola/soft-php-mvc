@@ -93,6 +93,6 @@
             </li>
         </ul>
 
-        <p class="site-footer__copy">&copy; 2022-{{ date('Y') }} luigi.iadicola // software developer</p>
+        <p class="site-footer__copy">&copy; 2022-{{ date('Y') }} iadicola // software developer</p>
     </div>
 </footer>

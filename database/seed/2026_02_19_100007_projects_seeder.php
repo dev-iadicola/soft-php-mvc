@@ -48,7 +48,7 @@ return Seeder::table('projects')
         'title' => 'Libreria C# - IadicolaCore',
         'technology_id' => 5,
         'overview' => 'Libreria .NET di utilità per logging, eccezioni e supporto allo sviluppo di app console.',
-        'description' => "<p><strong>IadicolaCore</strong> è una libreria .NET sviluppata da <i>Luigi Iadicola</i> che raccoglie strumenti e classi di utilità per semplificare la creazione di applicazioni console e framework personali.<br>Include componenti per la gestione dei log, delle eccezioni e varie funzioni di supporto generiche per velocizzare lo sviluppo.</p><p>La libreria è pensata per offrire un insieme di strumenti comuni da riutilizzare in più progetti .NET, mantenendo il codice pulito, leggibile e modulare.</p>",
+        'description' => "<p><strong>IadicolaCore</strong> è una libreria .NET sviluppata da <i>Iadicola</i> che raccoglie strumenti e classi di utilità per semplificare la creazione di applicazioni console e framework personali.<br>Include componenti per la gestione dei log, delle eccezioni e varie funzioni di supporto generiche per velocizzare lo sviluppo.</p><p>La libreria è pensata per offrire un insieme di strumenti comuni da riutilizzare in più progetti .NET, mantenendo il codice pulito, leggibile e modulare.</p>",
         'link' => 'https://github.com/dev-iadicola/IadicolaCore',
         'img' => '/storage/images/C_Sharp_and_Dot_NET.png',
         'website' => '',

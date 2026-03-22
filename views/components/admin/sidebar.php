@@ -27,6 +27,7 @@
                 <div class="card card-body mt-2">
                     <a class="dropdown-item text-dark<?= $page === '/admin/home' ? ' active' : '' ?>" href="/admin/home">Gestione Home Page</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/contatti' ? ' active' : '' ?>" href="/admin/contatti">Messaggi</a>
+                    <a class="dropdown-item text-dark<?= ($page === '/admin/contact-hero' || str_starts_with($page, '/admin/contact-hero-')) ? ' active' : '' ?>" href="/admin/contact-hero">Hero Contatti</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/project' || str_starts_with($page, '/admin/project-')) ? ' active' : '' ?>" href="/admin/project">Progetti</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/corsi' || str_starts_with($page, '/admin/corso-')) ? ' active' : '' ?>" href="/admin/corsi">Corsi Professionali</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/technology' || str_starts_with($page, '/admin/technology-')) ? ' active' : '' ?>" href="/admin/technology">Stack Tecnologico</a>
