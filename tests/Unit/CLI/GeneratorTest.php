@@ -191,7 +191,7 @@ class GeneratorTest extends TestCase
         $command = new MakeMigrationCommand();
         $command->exe(['php', 'make:migration', 'create_posts_table']);
 
-        $migrationFiles = glob($this->root . '/Database/migration/*_create_posts_table.php');
+        $migrationFiles = glob($this->root . '/database/migration/*_create_posts_table.php');
         $this->assertNotEmpty($migrationFiles);
         $this->assertCount(1, $migrationFiles);
 
@@ -206,7 +206,7 @@ class GeneratorTest extends TestCase
         $command = new MakeMigrationCommand();
         $command->exe(['php', 'make:migration', 'create_tags_table']);
 
-        $migrationFiles = glob($this->root . '/Database/migration/*_create_tags_table.php');
+        $migrationFiles = glob($this->root . '/database/migration/*_create_tags_table.php');
         $this->assertNotEmpty($migrationFiles);
 
         $fileName = basename($migrationFiles[0]);

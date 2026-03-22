@@ -55,7 +55,7 @@ class MakeModelCommandTest extends TestCase
         $this->assertFileExists($this->root . '/app/Model/AuditLog.php');
         $this->assertFileExists($this->root . '/app/Controllers/AuditLogController.php');
 
-        $migrationFiles = glob($this->root . '/Database/migration/*_create_audit_logs_table.php');
+        $migrationFiles = glob($this->root . '/database/migration/*_create_audit_logs_table.php');
         $this->assertNotFalse($migrationFiles);
         $this->assertCount(1, $migrationFiles);
     }
