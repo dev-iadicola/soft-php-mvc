@@ -1,5 +1,16 @@
 # Changelog
 
+## feature/technology-icons
+
+- Aggiunta colonna `icon` (VARCHAR 100, nullable) alla tabella `technology`
+- Aggiunta proprietà `?string $icon` al model `Technology`
+- Aggiunto CDN Devicon (~130 icone tecnologie) nei layout admin e pubblico
+- Aggiunto `<select>` con anteprima live nella vista admin per scegliere l'icona dalla libreria Devicon (3 varianti: plain, original, line)
+- Aggiornata la vista pubblica tech stack: mostra l'icona Devicon se presente, altrimenti fallback al dot verde
+- Aggiornata validazione nel controller per accettare il campo `icon`
+
+---
+
 ## Refactoring: da fillable a incapsulamento (proprieta tipizzate)
 
 ### Fase 1 - Base Model e Attributes trait
