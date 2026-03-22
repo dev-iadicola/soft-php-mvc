@@ -1,6 +1,7 @@
 <?php
 
 $contactHero = $contactHero ?? null;
+$contactCards = $contactCards ?? [];
 $technologies = $technologies ?? [];
 
 ?>
@@ -653,62 +654,22 @@ $technologies = $technologies ?? [];
     </div>
 
     <div class="contact-services">
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--green">
-                <i class="fa fa-globe" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Applicazioni Web & ERP</h4>
-                <p class="contact-service__desc">Piattaforme gestionali, e-commerce, dashboard analitiche e sistemi multi-canale.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">Laravel</span>
-                    <span class="contact-service__mini-tag">React</span>
-                    <span class="contact-service__mini-tag">Filament</span>
+        <?php foreach ($contactCards as $card) : ?>
+            <div class="contact-service">
+                <div class="contact-service__icon-wrap contact-service__icon-wrap--<?= htmlspecialchars($card->color) ?>">
+                    <i class="fa <?= htmlspecialchars($card->icon) ?>" aria-hidden="true"></i>
+                </div>
+                <div class="contact-service__content">
+                    <h4 class="contact-service__title"><?= htmlspecialchars($card->title) ?></h4>
+                    <p class="contact-service__desc"><?= htmlspecialchars($card->description) ?></p>
+                    <div class="contact-service__tags">
+                        <?php foreach ($card->getTagsArray() as $tag) : ?>
+                            <span class="contact-service__mini-tag"><?= htmlspecialchars($tag) ?></span>
+                        <?php endforeach; ?>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--blue">
-                <i class="fa fa-cogs" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">API & Integrazioni</h4>
-                <p class="contact-service__desc">API REST, integrazioni marketplace (eBay, Amazon SP-API), sincronizzazione dati.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">REST</span>
-                    <span class="contact-service__mini-tag">Spring Boot</span>
-                    <span class="contact-service__mini-tag">OAuth</span>
-                </div>
-            </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--purple">
-                <i class="fa fa-sitemap" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Architettura Software</h4>
-                <p class="contact-service__desc">Design patterns, architetture MVC, Layered, Hexagonal e SOA. Code review.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">SOLID</span>
-                    <span class="contact-service__mini-tag">Clean Code</span>
-                    <span class="contact-service__mini-tag">DDD</span>
-                </div>
-            </div>
-        </div>
-        <div class="contact-service">
-            <div class="contact-service__icon-wrap contact-service__icon-wrap--orange">
-                <i class="fa fa-wrench" aria-hidden="true"></i>
-            </div>
-            <div class="contact-service__content">
-                <h4 class="contact-service__title">Refactoring & DevOps</h4>
-                <p class="contact-service__desc">Ottimizzazione codice, containerizzazione, CI/CD e gestione ambienti di deploy.</p>
-                <div class="contact-service__tags">
-                    <span class="contact-service__mini-tag">Docker</span>
-                    <span class="contact-service__mini-tag">CI/CD</span>
-                    <span class="contact-service__mini-tag">Git</span>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 </section>
 

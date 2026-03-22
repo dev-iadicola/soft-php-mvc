@@ -17,12 +17,12 @@
 
                 <div class="mb-3">
                     <label for="title_html" class="form-label">Titolo HTML</label>
-                    <textarea class="form-control" id="title_html" name="title_html" rows="3" required><?= $item->title_html ?? '' ?></textarea>
+                    <textarea class="form-control editor" id="title_html" name="title_html" rows="3" required><?= $item->title_html ?? '' ?></textarea>
                 </div>
 
                 <div class="mb-3">
                     <label for="description_html" class="form-label">Descrizione HTML</label>
-                    <textarea class="form-control" id="description_html" name="description_html" rows="5" required><?= $item->description_html ?? '' ?></textarea>
+                    <textarea class="form-control editor" id="description_html" name="description_html" rows="5" required><?= $item->description_html ?? '' ?></textarea>
                 </div>
 
                 <div class="row">

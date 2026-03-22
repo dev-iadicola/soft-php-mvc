@@ -117,13 +117,16 @@ class View
 
     public function getViewContent(string $folder, string $item, array $values = [], array $variables = []): string
     {
+        // per visualizzare i messaggi di errore e successo
+        $views = $this->mvc->config->get('resources.views');
+        // Resolve file path BEFORE extract() — extract can overwrite $item/$folder
+        $originFile = "$views/$folder/$item.php";
+
         $page = $values['page'] ?? null;
 
         extract($values);
         extract($variables);
-        // per visualizzare i messaggi di errore e successo
-        $views = $this->mvc->config->get('resources.views');
-        // The full path and file with the content 
+        // The full path and file with the content
         // Easet Egg
         $quotes = [
             "it vanished like my weekend plans",
@@ -140,7 +143,6 @@ class View
             "runtime decided the problem it's me, not you"
         ];
         $message = $quotes[array_rand($quotes)];
-        $originFile = "$views/$folder/$item.php";
         
         $originFilePath = $originFile;
         if (!file_exists($originFile)) {
