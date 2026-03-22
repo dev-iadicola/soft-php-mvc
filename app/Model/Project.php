@@ -11,6 +11,22 @@ use App\Model\Technology;
 use App\Services\ProjectTechnologyService;
 
 
+/**
+ * @property int|null $id
+ * @property int|null $technology_id
+ * @property int|null $partner_id
+ * @property string $title
+ * @property string|null $slug
+ * @property string|null $overview
+ * @property string|null $description
+ * @property string|null $link
+ * @property string|null $img
+ * @property string|null $website
+ * @property int $sort_order
+ * @property bool $is_active
+ * @property string|null $created_at
+ * @property string|null $updated_at
+ */
 class Project extends Model
 {
  use Relation;

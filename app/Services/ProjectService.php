@@ -70,11 +70,12 @@ class ProjectService
 
     public static function findBySlug(string $slug): ?Project
     {
-        /** @var Project|null */
+        /** @var Project|null $project */
         $project = Project::query()->where('slug', $slug)->first();
 
         // Fallback: cerca per titolo (compatibilita con URL pre-slug)
         if ($project === null) {
+            /** @var Project|null $project */
             $project = Project::query()->where('title', $slug)->first();
         }
 
