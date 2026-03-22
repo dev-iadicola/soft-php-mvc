@@ -25,7 +25,7 @@ class VisitorRepository extends BaseRepository
         /** @var array<int, Visitor> */
         return $this->query()->query(
             'SELECT * FROM visitors ORDER BY created_at DESC LIMIT :limit',
-            [':limit' => $limit]
+            [':limit' => (string) $limit]
         );
     }
 
