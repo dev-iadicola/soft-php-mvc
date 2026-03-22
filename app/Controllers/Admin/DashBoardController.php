@@ -11,18 +11,23 @@ use App\Core\Controllers\AuthenticationController;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Attributes\Middleware;
 use App\Core\Http\Attributes\Prefix;
+use App\Services\VisitorService;
 
 #[Prefix('/admin')]
 #[Middleware('auth')]
 class DashBoardController extends AdminController{
 
-    
+
     #[Get('/dashboard', 'admin.dashboard')]
     public function index(){
-       
+
         $messages = Contatti::query()->orderBy('id', 'DESC')->get();
-       
-       return view('admin.dashboard', compact('messages'));
+        $totalVisits = VisitorService::getTotalVisits();
+        $uniqueVisitors = VisitorService::getUniqueVisitors();
+        $todayVisits = VisitorService::getTodayVisits();
+        $dailyVisits = VisitorService::getVisitsByDay(7);
+
+       return view('admin.dashboard', compact('messages', 'totalVisits', 'uniqueVisitors', 'todayVisits', 'dailyVisits'));
     }
 
 

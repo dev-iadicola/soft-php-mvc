@@ -18,6 +18,12 @@
         </a>
     </li>
     <li class="nav-item my-2">
+        <a href="/admin/visitors" class="nav-link text-white<?= $page === '/admin/visitors' ? ' active' : '' ?>">
+            <i class="fa fa-line-chart me-2"></i>
+            Visitatori
+        </a>
+    </li>
+    <li class="nav-item my-2">
         <div>
             <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapsePortfolio" aria-expanded="false" aria-controls="collapsePortfolio">
                 Gestione Portfolio
