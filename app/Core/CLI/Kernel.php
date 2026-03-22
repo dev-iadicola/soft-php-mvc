@@ -10,6 +10,7 @@ use App\Core\CLI\Commands\MakeModelCommand;
 use App\Core\CLI\Commands\MakeMigrationCommand;
 use App\Core\CLI\Commands\MakeControllerCommand;
 use App\Core\CLI\Commands\MigrateCommand;
+use App\Core\CLI\Commands\MigrateFreshCommand;
 use App\Core\CLI\Commands\MigrateRollbackCommand;
 use App\Core\CLI\Commands\MigrateStatusCommand;
 use App\Core\CLI\Commands\Clear\ClearCacheCommand;
@@ -54,6 +55,7 @@ class Kernel
             'make:service' => MakeServiceCommand::class,
             'make:migration' => MakeMigrationCommand::class,
             'migrate' => MigrateCommand::class,
+            'migrate:fresh' => MigrateFreshCommand::class,
             'migrate:rollback' => MigrateRollbackCommand::class,
             'migrate:status' => MigrateStatusCommand::class,
             'make:seeder' => MakeSeederCommand::class,
@@ -106,6 +108,7 @@ class Kernel
             Out::ln("  make:migration    Create a new migration");
             Out::ln("  make:seeder       Create a new seeder");
             Out::ln("  migrate           Run DB migrations");
+            Out::ln("  migrate:fresh     Drop all tables and re-run migrations (--seed)");
             Out::ln("  migrate:rollback  Rollback last migration");
             Out::ln("  migrate:status    Show migration status");
             Out::ln("  seed              Run seeders (--class=name, --fresh)");

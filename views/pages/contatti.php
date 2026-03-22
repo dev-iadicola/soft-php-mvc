@@ -1,3 +1,10 @@
+<?php
+
+$contactHero = $contactHero ?? null;
+$technologies = $technologies ?? [];
+
+?>
+
 <style>
     /* === CONTACT PAGE - BOLD STYLE === */
 

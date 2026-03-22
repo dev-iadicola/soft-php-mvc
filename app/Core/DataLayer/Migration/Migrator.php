@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Core\DataLayer\Migration;
 
 use App\Core\CLI\System\Out;
+use App\Core\Database;
+use PDO;
 use PDOException;
 
 class Migrator
@@ -16,6 +18,29 @@ class Migrator
     {
         $this->migrationPath = rtrim($migrationPath, DIRECTORY_SEPARATOR);
         $this->repository = new MigrationRepository();
+    }
+
+    public function fresh(): int
+    {
+        $this->dropAllTables();
+        Out::success('Dropped all tables.');
+
+        return $this->runUp();
+    }
+
+    private function dropAllTables(): void
+    {
+        $pdo = Database::getInstance()->getConnection();
+
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 0');
+
+        $tables = $pdo->query('SHOW TABLES')->fetchAll(PDO::FETCH_COLUMN);
+
+        foreach ($tables as $table) {
+            $pdo->exec("DROP TABLE IF EXISTS `{$table}`");
+        }
+
+        $pdo->exec('SET FOREIGN_KEY_CHECKS = 1');
     }
 
     public function ensureRepository(): void

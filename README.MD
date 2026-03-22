@@ -578,9 +578,12 @@ class DashboardController extends Controller { }
 | `make:model <name>` | Crea Model (opzioni: `--migration`, `--resource`, `--table=name`) |
 | `make:controller <name>` | Crea Controller |
 | `make:mw <name>` | Crea Middleware |
+| `make:repository <name>` | Crea Repository |
+| `make:service <name>` | Crea Service |
 | `make:migration <name>` | Crea file di migrazione con timestamp |
 | `make:seeder <name>` | Crea file seeder |
 | `migrate` | Esegue migrazioni pendenti |
+| `migrate:fresh` | Droppa tutte le tabelle e riesegue le migrazioni (`--seed` per eseguire anche i seeder) |
 | `migrate:rollback` | Rollback ultima batch di migrazioni |
 | `migrate:status` | Mostra stato migrazioni |
 | `seed` | Esegue i seeder |
@@ -590,6 +593,10 @@ class DashboardController extends Controller { }
 | `test` | Esegue test PHPUnit (opzioni: `--compact`, `--filter`, `--suite`, `--group`, `--coverage`, `--stop`) |
 | `rector` | Esegue Rector (opzioni: `--dry`, `--dry-run`, `--clear`) |
 | `analyse` | Esegue PHPStan (opzioni: `--baseline`) |
+| `model:inspect` | Ispeziona le proprieta di un model |
+| `route:list` | Lista tutte le route registrate (`--method=GET`, `--path=/api`) |
+| `route:cache` | Cache delle route per produzione |
+| `route:clear` | Pulisce la cache delle route |
 | `storage` | Gestione file storage |
 | `clear:cache` | Pulisce la cache |
 
@@ -601,6 +608,9 @@ php soft make:model Post --migration --resource
 
 # Esegue migrazioni
 php soft migrate
+
+# Droppa tutto e riesegue migrazioni + seeder
+php soft migrate:fresh --seed
 
 # Avvia server sulla porta 9000
 php soft serve --port 9000

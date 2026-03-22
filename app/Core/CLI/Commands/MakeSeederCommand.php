@@ -26,18 +26,18 @@ class MakeSeederCommand implements CommandInterface
             $timestamp = date('Y_m_d_His');
             $fileName  = "{$timestamp}_{$name}.php";
 
-            $filePath = getcwd() . '/Database/seed/' . $fileName;
+            $filePath = getcwd() . '/database/seed/' . $fileName;
 
             $saved = StubGenerator::make('seeder')
                 ->replace(['{{TABLE}}' => $table])
                 ->saveTo($filePath);
 
             if (!$saved) {
-                Out::warn("Seeder already exists: Database/seed/{$fileName}");
+                Out::warn("Seeder already exists: database/seed/{$fileName}");
                 return;
             }
 
-            Out::success("Seeder created: Database/seed/{$fileName}");
+            Out::success("Seeder created: database/seed/{$fileName}");
         } catch (\Throwable $e) {
             Out::error("Failed to create seeder: {$e->getMessage()}");
         }

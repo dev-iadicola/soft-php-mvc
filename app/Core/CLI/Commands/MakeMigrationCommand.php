@@ -29,18 +29,18 @@ class MakeMigrationCommand implements CommandInterface
             $timestamp = date('Y_m_d_His');
             $fileName = "{$timestamp}_{$name}.php";
 
-            $filePath = getcwd() . '/Database/migration/' . $fileName;
+            $filePath = getcwd() . '/database/migration/' . $fileName;
 
             $saved = StubGenerator::make('migration')
                 ->replace(['{{TABLE}}' => $table])
                 ->saveTo($filePath);
 
             if (!$saved) {
-                Out::warn("Migration already exists: Database/migration/{$fileName}");
+                Out::warn("Migration already exists: database/migration/{$fileName}");
                 return;
             }
 
-            Out::success("Migration created: Database/migration/{$fileName}");
+            Out::success("Migration created: database/migration/{$fileName}");
         } catch (\Throwable $e) {
             Out::error("Failed to create migration: {$e->getMessage()}");
         }

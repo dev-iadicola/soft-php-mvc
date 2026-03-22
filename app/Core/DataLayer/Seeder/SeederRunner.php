@@ -21,7 +21,7 @@ class SeederRunner
 
     public static function defaultPath(): string
     {
-        return getcwd() . DIRECTORY_SEPARATOR . 'Database' . DIRECTORY_SEPARATOR . 'seed';
+        return getcwd() . DIRECTORY_SEPARATOR . 'database' . DIRECTORY_SEPARATOR . 'seed';
     }
 
     public function ensureRepository(): void
