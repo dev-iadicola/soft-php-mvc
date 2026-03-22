@@ -36,16 +36,16 @@ class LogService
     /**
      * Get login statistics grouped by IP address and device.
      *
-     * @return array<int, mixed>
+     * @return array<int, array<string, mixed>>
      */
     public static function getLoginStats(): array
     {
-        $query = "SELECT indirizzo, device, COUNT(*) AS login_count, MAX(last_log) AS last_log
-        FROM logs
-        GROUP BY indirizzo, device;";
-
-        /** @var array<int, mixed> */
-        return LogTrace::query()->query($query);
+        return LogTrace::query()
+            ->select(['indirizzo', 'device'])
+            ->selectAggregate('COUNT', '*', 'login_count')
+            ->selectAggregate('MAX', 'last_log', 'last_log')
+            ->groupBy(['indirizzo', 'device'])
+            ->fetchRows();
     }
 
     /**

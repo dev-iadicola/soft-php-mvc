@@ -16,15 +16,15 @@ class ProjectService
     {
         if ($technology !== null && $technology !== '') {
             /** @var array<int, Project> */
-            return Project::query()->query(
-                'SELECT DISTINCT projects.*
-                 FROM projects
-                 INNER JOIN project_technologies ON project_technologies.project_id = projects.id
-                 INNER JOIN technology ON technology.id = project_technologies.technology_id
-                 WHERE technology.name = :technology
-                 ORDER BY projects.sort_order ASC',
-                [':technology' => $technology]
-            );
+            return Project::query()
+                ->distinct()
+                ->select('projects.*')
+                ->from('projects')
+                ->join('project_technologies', 'project_technologies.project_id', '=', 'projects.id')
+                ->join('technology', 'technology.id', '=', 'project_technologies.technology_id')
+                ->where('technology.name', $technology)
+                ->orderBy('projects.sort_order')
+                ->get();
         }
 
         return Project::query()->orderBy($orderBy, $order)->get();
@@ -37,15 +37,16 @@ class ProjectService
     {
         if ($technology !== null && $technology !== '') {
             /** @var array<int, Project> */
-            return Project::query()->query(
-                'SELECT DISTINCT projects.*
-                 FROM projects
-                 INNER JOIN project_technologies ON project_technologies.project_id = projects.id
-                 INNER JOIN technology ON technology.id = project_technologies.technology_id
-                 WHERE technology.name = :technology AND projects.is_active = 1
-                 ORDER BY projects.sort_order ASC',
-                [':technology' => $technology]
-            );
+            return Project::query()
+                ->distinct()
+                ->select('projects.*')
+                ->from('projects')
+                ->join('project_technologies', 'project_technologies.project_id', '=', 'projects.id')
+                ->join('technology', 'technology.id', '=', 'project_technologies.technology_id')
+                ->where('technology.name', $technology)
+                ->where('projects.is_active', 1)
+                ->orderBy('projects.sort_order')
+                ->get();
         }
 
         return Project::query()->where('is_active', true)->orderBy($orderBy, $order)->get();

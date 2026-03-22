@@ -26,15 +26,37 @@ trait Relation {
         return $model::query()->where($localKey ?: 'id', $this->getAttribute($foreignKey))->first();
     }
 
-    public function belongsToMany(string $related, string $table, string $foreignKey, string $relatedKey): Collection|array {
-        return $related::query()->join($table, $table . '.' . $foreignKey, '=', $this->getTable() . '.' . $relatedKey)
-            ->where($this->getTable() . '.' . $this->getKeyId(), $this->getAttribute($this->getKeyId()))
+    /**
+     * Many-to-many relation through a pivot table.
+     *
+     * @param string $related      Related model class
+     * @param string $pivotTable   Pivot table name (e.g. 'project_technologies')
+     * @param string $foreignPivotKey  Pivot column pointing to this model (e.g. 'project_id')
+     * @param string $relatedPivotKey  Pivot column pointing to the related model (e.g. 'technology_id')
+     */
+    public function belongsToMany(string $related, string $pivotTable, string $foreignPivotKey, string $relatedPivotKey): Collection|array {
+        $relatedTable = (new $related())->getTable();
+
+        return $related::query()
+            ->join($pivotTable, $pivotTable . '.' . $relatedPivotKey, '=', $relatedTable . '.id')
+            ->where($pivotTable . '.' . $foreignPivotKey, $this->getAttribute($this->getKeyId()))
             ->get();
     }
 
+    /**
+     * Many-to-many relation through an intermediate table.
+     *
+     * @param string $related     Related model class
+     * @param string $through     Intermediate table name
+     * @param string $firstKey    Intermediate column pointing to this model
+     * @param string $secondKey   Intermediate column pointing to the related model
+     */
     public function belongsToManyThrough(string $related, string $through, string $firstKey, string $secondKey): Collection|array {
-        return $related::query()->join($through, $through . '.' . $firstKey, '=', $this->getTable() . '.' . $secondKey)
-            ->where($this->getTable() . '.' . $this->getKeyId(), $this->getAttribute($this->getKeyId()))
+        $relatedTable = (new $related())->getTable();
+
+        return $related::query()
+            ->join($through, $through . '.' . $secondKey, '=', $relatedTable . '.id')
+            ->where($through . '.' . $firstKey, $this->getAttribute($this->getKeyId()))
             ->get();
     }
 

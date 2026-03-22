@@ -4,17 +4,14 @@ declare(strict_types=1);
 
 namespace App\Core\Repository;
 
-use App\Core\DataLayer\Table;
+use App\Core\DataLayer\Query\ActiveQuery;
 use App\Model\LogTrace;
 
 class LogRepository extends BaseRepository
 {
-    private Table $table;
-
     public function __construct()
     {
         parent::__construct(LogTrace::class);
-        $this->table = new Table('logs');
     }
 
     /**
@@ -25,19 +22,18 @@ class LogRepository extends BaseRepository
      */
     public function getLoginStatsPaginated(array $filters, int $limit, int $offset): array
     {
-        [$where, $params] = $this->buildFilterClauses($filters);
+        $q = $this->query()
+            ->select(['indirizzo', 'device', 'user_id'])
+            ->selectAggregate('COUNT', '*', 'login_count')
+            ->selectAggregate('MAX', 'last_log', 'last_log');
 
-        $sql = "SELECT indirizzo, device, COUNT(*) AS login_count, MAX(last_log) AS last_log, user_id
-                FROM logs"
-            . ($where !== '' ? " WHERE {$where}" : '')
-            . " GROUP BY indirizzo, device, user_id
-                ORDER BY last_log DESC
-                LIMIT :limit OFFSET :offset";
+        $this->applyFilters($q, $filters);
 
-        $params[':limit'] = $limit;
-        $params[':offset'] = $offset;
-
-        return $this->table->fetchAll($sql, $params);
+        return $q->groupBy(['indirizzo', 'device', 'user_id'])
+            ->orderBy('last_log', 'DESC')
+            ->limit($limit)
+            ->offset($offset)
+            ->fetchRows();
     }
 
     /**
@@ -47,15 +43,13 @@ class LogRepository extends BaseRepository
      */
     public function countLoginStats(array $filters): int
     {
-        [$where, $params] = $this->buildFilterClauses($filters);
+        $q = $this->query()
+            ->select('1')
+            ->groupBy(['indirizzo', 'device', 'user_id']);
 
-        $sql = "SELECT COUNT(*) FROM (
-                    SELECT 1 FROM logs"
-            . ($where !== '' ? " WHERE {$where}" : '')
-            . " GROUP BY indirizzo, device, user_id
-                ) AS sub";
+        $this->applyFilters($q, $filters);
 
-        return (int) $this->table->scalar($sql, $params);
+        return count($q->fetchRows());
     }
 
     /**
@@ -66,14 +60,13 @@ class LogRepository extends BaseRepository
      */
     public function getAllLogs(array $filters): array
     {
-        [$where, $params] = $this->buildFilterClauses($filters);
+        $q = $this->query()
+            ->select(['id', 'user_id', 'indirizzo', 'device', 'last_log', 'created_at']);
 
-        $sql = "SELECT id, user_id, indirizzo, device, last_log, created_at
-                FROM logs"
-            . ($where !== '' ? " WHERE {$where}" : '')
-            . " ORDER BY last_log DESC";
+        $this->applyFilters($q, $filters);
 
-        return $this->table->fetchAll($sql, $params);
+        return $q->orderBy('last_log', 'DESC')
+            ->fetchRows();
     }
 
     /**
@@ -81,16 +74,14 @@ class LogRepository extends BaseRepository
      */
     public function deleteOlderThan(string $date): int
     {
-        $sql = "DELETE FROM logs WHERE last_log < :date";
-        $stmt = $this->table->fetchAll("SELECT COUNT(*) as cnt FROM logs WHERE last_log < :date", [':date' => $date]);
-        $count = (int) ($stmt[0]['cnt'] ?? 0);
+        $count = $this->query()
+            ->where('last_log', '<', $date)
+            ->count();
 
         if ($count > 0) {
-            // Use Table's fetchAll with a DELETE won't work, use PDO directly
-            $pdo = \App\Core\Database::getInstance()->getConnection();
-            $s = $pdo->prepare($sql);
-            $s->bindValue(':date', $date);
-            $s->execute();
+            $this->query()
+                ->where('last_log', '<', $date)
+                ->delete();
         }
 
         return $count;
@@ -103,43 +94,36 @@ class LogRepository extends BaseRepository
      */
     public function getDistinctDevices(): array
     {
-        $rows = $this->table->fetchAll("SELECT DISTINCT device FROM logs ORDER BY device");
+        $rows = $this->query()
+            ->distinct()
+            ->select('device')
+            ->orderBy('device')
+            ->fetchRows();
+
         return array_column($rows, 'device');
     }
 
     /**
-     * Build WHERE clause and params from filters.
+     * Apply common filters to a query.
      *
      * @param array<string, mixed> $filters
-     * @return array{0: string, 1: array<string, mixed>}
      */
-    private function buildFilterClauses(array $filters): array
+    private function applyFilters(ActiveQuery $q, array $filters): void
     {
-        $conditions = [];
-        $params = [];
-
         if (!empty($filters['date_from'])) {
-            $conditions[] = "last_log >= :date_from";
-            $params[':date_from'] = $filters['date_from'] . ' 00:00:00';
+            $q->where('last_log', '>=', $filters['date_from'] . ' 00:00:00');
         }
 
         if (!empty($filters['date_to'])) {
-            $conditions[] = "last_log <= :date_to";
-            $params[':date_to'] = $filters['date_to'] . ' 23:59:59';
+            $q->where('last_log', '<=', $filters['date_to'] . ' 23:59:59');
         }
 
         if (!empty($filters['user_id'])) {
-            $conditions[] = "user_id = :user_id";
-            $params[':user_id'] = (int) $filters['user_id'];
+            $q->where('user_id', (int) $filters['user_id']);
         }
 
         if (!empty($filters['device'])) {
-            $conditions[] = "device LIKE :device";
-            $params[':device'] = '%' . $filters['device'] . '%';
+            $q->where('device', 'LIKE', '%' . $filters['device'] . '%');
         }
-
-        $where = implode(' AND ', $conditions);
-
-        return [$where, $params];
     }
 }

@@ -30,7 +30,14 @@ interface QueryBuilderInterface extends SqlExecutableInterface
 
     // GROUP BY / HAVING
     public function groupBy(string|array $columns): static;
+    public function groupByRaw(string $expression): static;
     public function having(string $column, string $operator, mixed $value): static;
+    public function havingRaw(string $expression): static;
+
+    // AGGREGATE
+    public function selectRaw(string $expression): static;
+    public function selectAggregate(string $function, string $column, ?string $alias = null): static;
+    public function toAggregate(string $function, string $column = '*'): string;
 
     // ORDER BY
     public function orderBy(array|string $columns, string $direction = 'ASC'): static;

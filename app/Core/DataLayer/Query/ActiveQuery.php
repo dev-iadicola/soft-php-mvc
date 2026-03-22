@@ -254,6 +254,148 @@ class ActiveQuery
     }
 
     // * ___________________________________________________
+    // region AGGREGATE
+    // * ___________________________________________________
+
+    /**
+     * Add a raw SQL expression to the SELECT clause.
+     */
+    public function selectRaw(string $expression): static
+    {
+        $this->builder->selectRaw($expression);
+        return $this;
+    }
+
+    /**
+     * Add an aggregate function to the SELECT clause.
+     */
+    public function selectAggregate(string $function, string $column, ?string $alias = null): static
+    {
+        $this->builder->selectAggregate($function, $column, $alias);
+        return $this;
+    }
+
+    /**
+     * GROUP BY with a raw expression.
+     */
+    public function groupByRaw(string $expression): static
+    {
+        $this->builder->groupByRaw($expression);
+        return $this;
+    }
+
+    /**
+     * HAVING with a raw expression.
+     */
+    public function havingRaw(string $expression): static
+    {
+        $this->builder->havingRaw($expression);
+        return $this;
+    }
+
+    /**
+     * Return COUNT(*) or COUNT(column) as a single integer.
+     */
+    public function count(string $column = '*'): int
+    {
+        $sql = $this->builder->toAggregate('COUNT', $column);
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        return (int) $this->executor->fetchColumn($sql, $bindings);
+    }
+
+    /**
+     * Return COUNT(DISTINCT column) as a single integer.
+     */
+    public function countDistinct(string $column): int
+    {
+        $sql = $this->builder->toAggregate('COUNT', "DISTINCT {$column}");
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        return (int) $this->executor->fetchColumn($sql, $bindings);
+    }
+
+    /**
+     * Return SUM(column) as a numeric value.
+     */
+    public function sum(string $column): int|float
+    {
+        $sql = $this->builder->toAggregate('SUM', $column);
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        $result = $this->executor->fetchColumn($sql, $bindings);
+        return $result === false ? 0 : (int) $result;
+    }
+
+    /**
+     * Return AVG(column) as a float.
+     */
+    public function avg(string $column): float
+    {
+        $sql = $this->builder->toAggregate('AVG', $column);
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        $result = $this->executor->fetchColumn($sql, $bindings);
+        return $result === false ? 0.0 : (float) $result;
+    }
+
+    /**
+     * Return MAX(column).
+     */
+    public function max(string $column): mixed
+    {
+        $sql = $this->builder->toAggregate('MAX', $column);
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        $result = $this->executor->fetchColumn($sql, $bindings);
+        return $result === false ? null : $result;
+    }
+
+    /**
+     * Return MIN(column).
+     */
+    public function min(string $column): mixed
+    {
+        $sql = $this->builder->toAggregate('MIN', $column);
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        $result = $this->executor->fetchColumn($sql, $bindings);
+        return $result === false ? null : $result;
+    }
+
+    /**
+     * Execute the current query and return raw associative arrays (not hydrated models).
+     * Useful for aggregate queries with GROUP BY that don't map to a single model.
+     *
+     * @return array<int, array<string, mixed>>
+     */
+    public function fetchRows(int $fetchType = PDO::FETCH_ASSOC): array
+    {
+        $rows = $this->executor->fetchAll($this->builder->toSql(), $this->builder->getBindings(), $fetchType);
+        $this->builder->reset();
+
+        return is_array($rows) ? $rows : [];
+    }
+
+    /**
+     * Execute the current query and return a single scalar value (first column, first row).
+     */
+    public function scalar(): mixed
+    {
+        $sql = $this->builder->toSql();
+        $bindings = $this->builder->getBindings();
+        $this->builder->reset();
+
+        return $this->executor->fetchColumn($sql, $bindings);
+    }
+
+    // * ___________________________________________________
     // region DEBUG
     // * ___________________________________________________
     public function toSql(): string

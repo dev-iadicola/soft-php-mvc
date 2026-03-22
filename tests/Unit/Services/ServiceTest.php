@@ -248,11 +248,11 @@ class ServiceTest extends TestCase
 
         $firefoxStats = array_values(array_filter(
             $stats,
-            static fn (object $stat): bool => $stat->indirizzo === '127.0.0.1' && $stat->device === 'Firefox'
+            static fn (array $stat): bool => $stat['indirizzo'] === '127.0.0.1' && $stat['device'] === 'Firefox'
         ));
 
         $this->assertCount(1, $firefoxStats);
-        $this->assertSame(2, (int) $firefoxStats[0]->login_count);
+        $this->assertSame(2, (int) $firefoxStats[0]['login_count']);
     }
 
     public function testMaintenanceServiceTogglesEnvFlag(): void

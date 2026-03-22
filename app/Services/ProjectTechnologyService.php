@@ -15,14 +15,13 @@ class ProjectTechnologyService
     public static function getByProject(int $projectId): array
     {
         /** @var array<int, Technology> */
-        return Technology::query()->query(
-            'SELECT technology.* 
-             FROM technology
-             INNER JOIN project_technologies ON project_technologies.technology_id = technology.id
-             WHERE project_technologies.project_id = :project_id
-             ORDER BY technology.sort_order ASC, technology.name ASC',
-            [':project_id' => (string) $projectId]
-        );
+        return Technology::query()
+            ->select('technology.*')
+            ->from('technology')
+            ->join('project_technologies', 'project_technologies.technology_id', '=', 'technology.id')
+            ->where('project_technologies.project_id', $projectId)
+            ->orderBy(['technology.sort_order', 'technology.name'])
+            ->get();
     }
 
     /**
@@ -35,18 +34,14 @@ class ProjectTechnologyService
             array_filter($technologyIds, static fn (mixed $id): bool => (int) $id > 0)
         )));
 
-        ProjectTechnology::query()->query(
-            'DELETE FROM project_technologies WHERE project_id = :project_id',
-            [':project_id' => (string) $projectId]
-        );
+        ProjectTechnology::query()
+            ->where('project_id', $projectId)
+            ->delete();
 
         foreach ($uniqueIds as $technologyId) {
             ProjectTechnology::query()->query(
                 'INSERT INTO project_technologies (project_id, technology_id) VALUES (:project_id, :technology_id)',
-                [
-                    ':project_id' => (string) $projectId,
-                    ':technology_id' => (string) $technologyId,
-                ]
+                [':project_id' => (string) $projectId, ':technology_id' => (string) $technologyId]
             );
         }
     }

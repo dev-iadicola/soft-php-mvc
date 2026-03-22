@@ -190,6 +190,18 @@ abstract class AbstractBuilder implements QueryBuilderInterface
             : $this->selectValues = $value;
         return $this;
     }
+
+    /**
+     * Add a raw expression to the SELECT clause.
+     * Useful for aggregate functions: COUNT(*) AS cnt, MAX(col) AS max_col, etc.
+     */
+    public function selectRaw(string $expression): static
+    {
+        $this->selectValues = ($this->selectValues === '*')
+            ? $expression
+            : $this->selectValues . ', ' . $expression;
+        return $this;
+    }
   // * Example of use User::select(['name', 'email'])->distinct()->get();
     public function distinct(): static
     {
@@ -435,6 +447,75 @@ abstract class AbstractBuilder implements QueryBuilderInterface
     }
 
 
+
+    // * ___________________________________________________
+    #region AGGREGATE HELPERS
+    // * ___________________________________________________
+
+    /**
+     * Add an aggregate expression to the SELECT clause.
+     *
+     * @param string $function  SQL aggregate function (COUNT, SUM, AVG, MAX, MIN)
+     * @param string $column    Column name or '*'
+     * @param string|null $alias  Optional alias for the result
+     */
+    public function selectAggregate(string $function, string $column, ?string $alias = null): static
+    {
+        $allowedFunctions = ['COUNT', 'SUM', 'AVG', 'MAX', 'MIN'];
+        $function = strtoupper(trim($function));
+
+        if (!in_array($function, $allowedFunctions, true)) {
+            throw new QueryBuilderException("Invalid aggregate function: {$function}");
+        }
+
+        $expr = "{$function}({$column})";
+        if ($alias !== null) {
+            $expr .= " AS {$alias}";
+        }
+
+        return $this->selectRaw($expr);
+    }
+
+    /**
+     * Build a SQL string for a simple aggregate query (single scalar result).
+     *
+     * @param string $function  SQL aggregate function
+     * @param string $column    Column name or '*'
+     */
+    public function toAggregate(string $function, string $column = '*'): string
+    {
+        $function = strtoupper(trim($function));
+
+        $parts = [
+            "SELECT {$function}({$column})",
+            trim($this->from),
+            trim($this->joinClause),
+            trim($this->whereClause),
+        ];
+
+        return preg_replace('/\s+/', ' ', implode(' ', array_filter($parts))) . ';';
+    }
+
+    /**
+     * GROUP BY with a raw expression (e.g. DATE(created_at), YEARWEEK(created_at)).
+     */
+    public function groupByRaw(string $expression): static
+    {
+        if (!empty($this->groupByClause)) {
+            throw new QueryBuilderException("You can't use groupBy()/groupByRaw() more than once in the same query");
+        }
+        $this->groupByClause = 'GROUP BY ' . $expression;
+        return $this;
+    }
+
+    /**
+     * HAVING with a raw SQL expression.
+     */
+    public function havingRaw(string $expression): static
+    {
+        $this->havingClause .= " HAVING {$expression} ";
+        return $this;
+    }
 
     // * ___________________________________________________
     #region To QUERY
