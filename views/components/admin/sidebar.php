@@ -1,125 +1,145 @@
 <?php $page = request()->uri(); ?>
 
-<a href="/" target="_blank" class="d-flex align-items-center mb-3 mt-5 mb-md-0 me-md-auto text-white text-decoration-none">
-    <svg class="bi me-2" width="16" height="70">
-        <use xlink:href="#bootstrap"></use>
-    </svg>
-    <span class="fs-4 mt-5">Visita il tuo sito</span>
+<!-- Brand -->
+<a href="/admin/dashboard" class="sidebar-brand">
+    <span class="sidebar-brand__icon"><i data-lucide="layout-dashboard" style="width:18px;height:18px;"></i></span>
+    <span class="sidebar-brand__text">Soft MVC</span>
 </a>
-<hr>
 
-<ul class="nav nav-pills flex-column mb-auto">
-    <li class="nav-item my-2">
-        <a href="/admin/dashboard" class="nav-link text-white<?= $page === '/admin/dashboard' ? ' active' : '' ?>" aria-current="page">
-            <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#home"></use>
-            </svg>
-            Dashboard
-        </a>
-    </li>
-    <li class="nav-item my-2">
-        @include('components.admin.notification-bell')
-    </li>
-    <li class="nav-item my-2">
-        <a href="/admin/visitors" class="nav-link text-white<?= $page === '/admin/visitors' ? ' active' : '' ?>">
-            <i class="fa fa-line-chart me-2"></i>
-            Visitatori
-        </a>
-    </li>
-    <li class="nav-item my-2">
-        <div>
-            <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapsePortfolio" aria-expanded="false" aria-controls="collapsePortfolio">
-                Gestione Portfolio
-            </button>
+<!-- Navigation -->
+<nav>
+    <ul class="sidebar-nav">
+        <!-- Main -->
+        <li class="sidebar-section-title">Principale</li>
 
-            <div class="collapse" id="collapsePortfolio">
-                <div class="card card-body mt-2">
-                    <a class="dropdown-item text-dark<?= $page === '/admin/home' ? ' active' : '' ?>" href="/admin/home">Gestione Home Page</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/contatti' ? ' active' : '' ?>" href="/admin/contatti">Messaggi</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/contact-hero' || str_starts_with($page, '/admin/contact-hero-')) ? ' active' : '' ?>" href="/admin/contact-hero">Hero Contatti</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/project' || str_starts_with($page, '/admin/project-')) ? ' active' : '' ?>" href="/admin/project">Progetti</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/corsi' || str_starts_with($page, '/admin/corso-')) ? ' active' : '' ?>" href="/admin/corsi">Corsi Professionali</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/technology' || str_starts_with($page, '/admin/technology-')) ? ' active' : '' ?>" href="/admin/technology">Stack Tecnologico</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/partner' || str_starts_with($page, '/admin/partner-')) ? ' active' : '' ?>" href="/admin/partner">Partner</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/footer-links' || str_starts_with($page, '/admin/footer-links-')) ? ' active' : '' ?>" href="/admin/footer-links">Footer Links</a>
-                    <a class="dropdown-item text-dark<?= ($page === '/admin/email-templates' || str_starts_with($page, '/admin/email-templates')) ? ' active' : '' ?>" href="/admin/email-templates">Template Email</a>
-                </div>
-            </div>
-        </div>
-    </li>
-    <li class="nav-item my-2">
-        <div>
-            <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapseLaws" aria-expanded="false" aria-controls="collapseLaws">
-                Laws
-            </button>
+        <li class="sidebar-nav-item">
+            <a href="/admin/dashboard" class="sidebar-nav-link<?= $page === '/admin/dashboard' ? ' active' : '' ?>">
+                <i data-lucide="home" style="width:18px;height:18px;"></i>
+                <span class="sidebar-nav-link__text">Dashboard</span>
+            </a>
+        </li>
+        <li class="sidebar-nav-item">
+            <a href="/admin/visitors" class="sidebar-nav-link<?= $page === '/admin/visitors' ? ' active' : '' ?>">
+                <i data-lucide="bar-chart-3" style="width:18px;height:18px;"></i>
+                <span class="sidebar-nav-link__text">Visitatori</span>
+            </a>
+        </li>
 
-            <div class="collapse" id="collapseLaws">
-                <div class="card card-body mt-2">
-                    <a class="dropdown-item text-dark<?= $page === '/admin/laws' ? ' active' : '' ?>" href="/admin/laws">Policy and Laws</a>
-                </div>
-            </div>
-        </div>
-    </li>
-    <li class="nav-item my-2">
-        <div>
-            <button class="btn btn-light w-100 text-left px-4" type="button" data-toggle="collapse" data-target="#collapseUser" aria-expanded="false" aria-controls="collapseUser">
-                User
-            </button>
+        <!-- Portfolio -->
+        <li class="sidebar-section-title">Gestione Contenuti</li>
 
-            <div class="collapse" id="collapseUser">
-                <div class="card card-body mt-2">
-                    <a class="dropdown-item text-dark<?= $page === '/admin/settings' ? ' active' : '' ?>" href="/admin/settings">Impostazioni</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/security' ? ' active' : '' ?>" href="/admin/security">Sicurezza 2FA</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/sessions' ? ' active' : '' ?>" href="/admin/sessions">Sessioni Attive</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/password' ? ' active' : '' ?>" href="/admin/password">Cambia Password</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/edit-profile' ? ' active' : '' ?>" href="/admin/edit-profile">Edit Profile</a>
-                    <a class="dropdown-item text-dark<?= $page === '/admin/logs' ? ' active' : '' ?>" href="/admin/logs">Logs</a>
-                </div>
-            </div>
-        </div>
-    </li>
-    <li class="nav-item my-2">
-        <a href="/admin/terminal" class="nav-link text-white<?= $page === '/admin/terminal' ? ' active' : '' ?>">
-            <i class="fa fa-terminal me-2"></i>
-            Terminal
-        </a>
-    </li>
-    <li class="nav-item my-5">
-        <form action="/logout" method="POST" class="text-white text-decoration-none no-underline" aria-current="page">
-            @csrf
-            <svg class="bi me-2" width="16" height="16">
-                <use xlink:href="#logout"></use>
-            </svg>
-            <button type="submit" class="btn btn-link text-white text-decoration-none p-0">
-                <strong>Log-out</strong>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-left ms-1" viewBox="0 0 16 16">
-                    <path fill-rule="evenodd" d="M6 12.5a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-9a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v2a.5.5 0 0 1-1 0v-2A1.5 1.5 0 0 1 6.5 2h8A1.5 1.5 0 0 1 16 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-8A1.5 1.5 0 0 1 5 12.5v-2a.5.5 0 0 1 1 0z" />
-                    <path fill-rule="evenodd" d="M.146 8.354a.5.5 0 0 1 0-.708l3-3a.5.5 0 1 1 .708.708L1.707 7.5H10.5a.5.5 0 0 1 0 1H1.707l2.147 2.146a.5.5 0 0 1-.708.708z" />
-                </svg>
+        <li class="sidebar-nav-item">
+            <button class="sidebar-submenu-toggle<?= _sidebarGroupActive($page, ['/admin/home', '/admin/contatti', '/admin/contact-hero', '/admin/project', '/admin/corsi']) ? ' active' : '' ?>"
+                    data-target="submenu-portfolio"
+                    aria-expanded="<?= _sidebarGroupActive($page, ['/admin/home', '/admin/contatti', '/admin/contact-hero', '/admin/project', '/admin/corsi']) ? 'true' : 'false' ?>">
+                <i data-lucide="briefcase" style="width:18px;height:18px;"></i>
+                <span>Portfolio</span>
+                <span class="sidebar-submenu-chevron"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
             </button>
-        </form>
-    </li>
-</ul>
-<hr>
+            <ul id="submenu-portfolio" class="sidebar-submenu<?= _sidebarGroupActive($page, ['/admin/home', '/admin/contatti', '/admin/contact-hero', '/admin/project', '/admin/corsi']) ? ' open' : '' ?>">
+                <li><a href="/admin/home" class="sidebar-submenu-link<?= $page === '/admin/home' ? ' active' : '' ?>">Home Page</a></li>
+                <li><a href="/admin/contatti" class="sidebar-submenu-link<?= $page === '/admin/contatti' || str_starts_with($page, '/admin/contatti/') ? ' active' : '' ?>">Messaggi</a></li>
+                <li><a href="/admin/contact-hero" class="sidebar-submenu-link<?= $page === '/admin/contact-hero' || str_starts_with($page, '/admin/contact-hero-') ? ' active' : '' ?>">Hero Contatti</a></li>
+                <li><a href="/admin/project" class="sidebar-submenu-link<?= $page === '/admin/project' || str_starts_with($page, '/admin/project-') ? ' active' : '' ?>">Progetti</a></li>
+                <li><a href="/admin/corsi" class="sidebar-submenu-link<?= $page === '/admin/corsi' || str_starts_with($page, '/admin/corso-') ? ' active' : '' ?>">Corsi</a></li>
+            </ul>
+        </li>
+
+        <li class="sidebar-nav-item">
+            <button class="sidebar-submenu-toggle<?= _sidebarGroupActive($page, ['/admin/technology', '/admin/partner', '/admin/footer-links', '/admin/email-templates']) ? ' active' : '' ?>"
+                    data-target="submenu-config"
+                    aria-expanded="<?= _sidebarGroupActive($page, ['/admin/technology', '/admin/partner', '/admin/footer-links', '/admin/email-templates']) ? 'true' : 'false' ?>">
+                <i data-lucide="settings-2" style="width:18px;height:18px;"></i>
+                <span>Configurazione</span>
+                <span class="sidebar-submenu-chevron"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
+            </button>
+            <ul id="submenu-config" class="sidebar-submenu<?= _sidebarGroupActive($page, ['/admin/technology', '/admin/partner', '/admin/footer-links', '/admin/email-templates']) ? ' open' : '' ?>">
+                <li><a href="/admin/technology" class="sidebar-submenu-link<?= $page === '/admin/technology' || str_starts_with($page, '/admin/technology-') ? ' active' : '' ?>">Stack Tecnologico</a></li>
+                <li><a href="/admin/partner" class="sidebar-submenu-link<?= $page === '/admin/partner' || str_starts_with($page, '/admin/partner-') ? ' active' : '' ?>">Partner</a></li>
+                <li><a href="/admin/footer-links" class="sidebar-submenu-link<?= $page === '/admin/footer-links' || str_starts_with($page, '/admin/footer-links-') ? ' active' : '' ?>">Footer Links</a></li>
+                <li><a href="/admin/email-templates" class="sidebar-submenu-link<?= $page === '/admin/email-templates' || str_starts_with($page, '/admin/email-templates') ? ' active' : '' ?>">Template Email</a></li>
+            </ul>
+        </li>
+
+        <li class="sidebar-nav-item">
+            <a href="/admin/laws" class="sidebar-nav-link<?= $page === '/admin/laws' ? ' active' : '' ?>">
+                <i data-lucide="scale" style="width:18px;height:18px;"></i>
+                <span class="sidebar-nav-link__text">Policy & Laws</span>
+            </a>
+        </li>
+
+        <!-- System -->
+        <li class="sidebar-section-title">Sistema</li>
+
+        <li class="sidebar-nav-item">
+            <button class="sidebar-submenu-toggle<?= _sidebarGroupActive($page, ['/admin/settings', '/admin/security', '/admin/sessions', '/admin/password', '/admin/edit-profile', '/admin/logs']) ? ' active' : '' ?>"
+                    data-target="submenu-user"
+                    aria-expanded="<?= _sidebarGroupActive($page, ['/admin/settings', '/admin/security', '/admin/sessions', '/admin/password', '/admin/edit-profile', '/admin/logs']) ? 'true' : 'false' ?>">
+                <i data-lucide="user-cog" style="width:18px;height:18px;"></i>
+                <span>Account</span>
+                <span class="sidebar-submenu-chevron"><i data-lucide="chevron-right" style="width:14px;height:14px;"></i></span>
+            </button>
+            <ul id="submenu-user" class="sidebar-submenu<?= _sidebarGroupActive($page, ['/admin/settings', '/admin/security', '/admin/sessions', '/admin/password', '/admin/edit-profile', '/admin/logs']) ? ' open' : '' ?>">
+                <li><a href="/admin/settings" class="sidebar-submenu-link<?= $page === '/admin/settings' ? ' active' : '' ?>">Impostazioni</a></li>
+                <li><a href="/admin/security" class="sidebar-submenu-link<?= $page === '/admin/security' ? ' active' : '' ?>">Sicurezza 2FA</a></li>
+                <li><a href="/admin/sessions" class="sidebar-submenu-link<?= $page === '/admin/sessions' ? ' active' : '' ?>">Sessioni Attive</a></li>
+                <li><a href="/admin/password" class="sidebar-submenu-link<?= $page === '/admin/password' ? ' active' : '' ?>">Cambia Password</a></li>
+                <li><a href="/admin/edit-profile" class="sidebar-submenu-link<?= $page === '/admin/edit-profile' ? ' active' : '' ?>">Modifica Profilo</a></li>
+                <li><a href="/admin/logs" class="sidebar-submenu-link<?= $page === '/admin/logs' ? ' active' : '' ?>">Logs</a></li>
+            </ul>
+        </li>
+
+        <li class="sidebar-nav-item">
+            <a href="/admin/terminal" class="sidebar-nav-link<?= $page === '/admin/terminal' ? ' active' : '' ?>">
+                <i data-lucide="terminal" style="width:18px;height:18px;"></i>
+                <span class="sidebar-nav-link__text">Terminal</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+<!-- Footer: Logout -->
+<div class="sidebar-footer">
+    <a href="/" target="_blank" class="sidebar-nav-link" style="margin-bottom:4px;">
+        <i data-lucide="external-link" style="width:18px;height:18px;"></i>
+        <span class="sidebar-nav-link__text">Visita il sito</span>
+    </a>
+    <form action="/logout" method="POST" style="margin:0;">
+        @csrf
+        <button type="submit" class="sidebar-logout-btn">
+            <i data-lucide="log-out" style="width:18px;height:18px;"></i>
+            <span>Logout</span>
+        </button>
+    </form>
+</div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    var currentPath = '<?= $page ?>';
-    var collapseIds = ['collapsePortfolio', 'collapseLaws', 'collapseUser'];
+// Sidebar submenu toggle
+document.querySelectorAll('.sidebar-submenu-toggle').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        var targetId = this.getAttribute('data-target');
+        var submenu = document.getElementById(targetId);
+        var isOpen = submenu.classList.contains('open');
 
-    collapseIds.forEach(function(id) {
-        var collapse = document.getElementById(id);
-
-        if (!collapse) {
-            return;
+        if (isOpen) {
+            submenu.classList.remove('open');
+            this.setAttribute('aria-expanded', 'false');
+        } else {
+            submenu.classList.add('open');
+            this.setAttribute('aria-expanded', 'true');
         }
-
-        var links = collapse.querySelectorAll('a');
-        links.forEach(function(link) {
-            if (link.getAttribute('href') === currentPath) {
-                $(collapse).collapse('show');
-            }
-        });
     });
 });
 </script>
+
+<?php
+// Helper function for sidebar group active state
+function _sidebarGroupActive(string $currentPage, array $prefixes): bool {
+    foreach ($prefixes as $prefix) {
+        if ($currentPage === $prefix || str_starts_with($currentPage, $prefix . '-') || str_starts_with($currentPage, $prefix . '/')) {
+            return true;
+        }
+    }
+    return false;
+}
+?>

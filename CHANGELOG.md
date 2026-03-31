@@ -1,5 +1,58 @@
 # Changelog
 
+## feature/admin-responsive-ui
+
+### Redesign completo layout admin
+- Riscritto `admin.css` da zero con design system coerente: palette colori semantica (primary, success, warning, danger, info), variabili CSS per spacing, radius, shadow e tipografia
+- Sostituito Font Awesome 4.7 con Lucide Icons (SVG, moderno, consistente)
+- Aggiunto font Inter tramite Google Fonts come font sans-serif principale dell'admin
+- Rimosso font-weight 700 forzato su tutti gli elementi, introdotta scala tipografica chiara (h1-h4, body, caption, label)
+
+### Nuova topbar admin
+- Creata topbar fissa con breadcrumb dinamico della pagina corrente, area notifiche e dropdown utente (avatar, profilo, impostazioni, sicurezza, logout)
+- Hamburger menu per toggle sidebar su tablet/mobile
+- Dropdown utente con link rapidi a profilo, impostazioni, sicurezza e logout
+
+### Redesign sidebar
+- Sidebar ridisegnata con stile moderno: brand in alto, sezioni titolate (Principale, Gestione Contenuti, Sistema), link con icone Lucide e indicatore attivo (barra laterale colorata)
+- Sotto-menu collassabili con chevron animato e auto-apertura in base alla pagina corrente
+- Backdrop scuro su mobile con chiusura al tap fuori
+- Helper PHP `_sidebarGroupActive()` per gestire lo stato attivo dei gruppi di navigazione
+- Rimosso vecchio toggle button `#toggle-sidebar` e meccanismo jQuery per collasso
+
+### Notifiche spostate in topbar
+- Campanellino notifiche spostato dalla sidebar alla topbar, con dropdown posizionato sotto il bottone
+- Icone notifica aggiornate a Lucide (bell, mail, info)
+- Polling 30s mantenuto, stile dropdown aggiornato
+
+### Dashboard ridisegnata
+- Stat card riscritte con stile moderno: icona colorata su sfondo tenue, valore grande, label descrittiva, hover con elevazione
+- Layout stat card con CSS Grid responsive (`auto-fit, minmax(220px, 1fr)`)
+- Grafici Chart.js aggiornati con palette coerente (primary indigo), grid minimali, font Inter
+- Lista messaggi ridisegnata: avatar con iniziale, badge tipologia, indicatore non-letto con sfondo warning, layout compatto
+
+### Session messages
+- Flash message ridisegnati con stile admin coerente: bordo colorato, icone Lucide (check, alert-circle, alert-triangle), auto-dismiss dopo 5 secondi con fade-out
+
+### Footer admin
+- Creato footer admin dedicato e minimale inline nel layout (copyright, link "Visita il sito"), separato dal footer pubblico
+- Sticky footer: resta in fondo anche con contenuto corto grazie a flexbox
+
+### Toast system
+- Introdotto sistema toast globale `adminToast(message, type)` per feedback azioni (sortable, toggle active, errori)
+- Toast con animazione slide-in/fade-out, posizionamento fixed bottom-right
+
+### Pulizia tecnica
+- Rimossa dipendenza da Font Awesome 4.7 CDN duplicata
+- Rimosso script `window.onload` di warning per protocollo file
+- Aggiunto cache-busting automatico (`?v=time()`) sul CSS admin
+- Aggiunta pulizia view cache dopo modifiche layout
+
+### Nota design system
+- Lo stile admin segue i pattern visivi di UntitledUI (palette, radius, spacing, tipografia) come riferimento per la futura migrazione a React+TypeScript+Inertia
+
+---
+
 ## feature/first-user-registration
 
 ### Bootstrap primo account admin

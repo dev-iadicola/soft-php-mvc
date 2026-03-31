@@ -10,8 +10,7 @@ try {
 
 <div id="notification-bell" class="notification-bell">
     <button id="notification-toggle" class="notification-bell__btn" title="Notifiche">
-        <i class="fa fa-bell"></i>
-        <span class="notification-bell__label">Notifiche</span>
+        <i data-lucide="bell" style="width:20px;height:20px;"></i>
         <span id="notification-badge" class="notification-bell__badge <?= $unreadCount > 0 ? 'notification-bell__badge--visible' : '' ?>">
             <?= $unreadCount ?>
         </span>
@@ -21,7 +20,7 @@ try {
         <div class="notification-bell__header">
             <strong>Notifiche</strong>
             <?php if ($unreadCount > 0) : ?>
-                <form method="POST" action="/admin/notifications/read-all" style="display:inline;">
+                <form method="POST" action="/admin/notifications/read-all" style="display:inline;margin:0;">
                     <input type="hidden" name="_token" value="<?= csrf_token() ?>">
                     <button type="submit" class="notification-bell__read-all">Segna tutte come lette</button>
                 </form>
@@ -30,7 +29,10 @@ try {
 
         <div class="notification-bell__list">
             <?php if ($unreadCount === 0) : ?>
-                <div class="notification-bell__empty">Nessuna nuova notifica</div>
+                <div class="notification-bell__empty">
+                    <i data-lucide="bell-off" style="width:24px;height:24px;opacity:0.3;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;"></i>
+                    Nessuna nuova notifica
+                </div>
             <?php else : ?>
                 <?php foreach ($unreadNotifications as $notification) : ?>
                     <form method="POST" action="/admin/notifications/<?= $notification->id ?>/read" class="notification-bell__item-form">
@@ -38,9 +40,9 @@ try {
                         <button type="submit" class="notification-bell__item">
                             <span class="notification-bell__icon">
                                 <?php if ($notification->type === 'new_contact') : ?>
-                                    <i class="fa fa-envelope"></i>
+                                    <i data-lucide="mail" style="width:16px;height:16px;"></i>
                                 <?php else : ?>
-                                    <i class="fa fa-info-circle"></i>
+                                    <i data-lucide="info" style="width:16px;height:16px;"></i>
                                 <?php endif; ?>
                             </span>
                             <span class="notification-bell__content">

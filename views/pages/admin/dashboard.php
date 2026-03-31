@@ -1,193 +1,205 @@
-<style>
-  .border-left-bold {
-    border-left: 4px solid #ffc107 !important;
-    background-color: rgba(255, 193, 7, 0.05);
-  }
-</style>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h4 mb-1">Dashboard</h1>
+        <p class="text-muted small mb-0">Panoramica del tuo sito</p>
+    </div>
+</div>
 
-<section class="container justify-content-center m-auto">
+<!-- Stat Cards -->
+<div class="dashboard-stats">
+    <a href="/admin/visitors" class="stat-card">
+        <div class="stat-card__icon stat-card__icon--primary">
+            <i data-lucide="eye" style="width:20px;height:20px;"></i>
+        </div>
+        <div class="stat-card__content">
+            <div class="stat-card__value"><?= number_format($totalVisits) ?></div>
+            <div class="stat-card__label">Visite Totali</div>
+        </div>
+    </a>
 
-  <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
-    <h1 class="h2"><i class="fa fa-tachometer"></i> Dashboard</h1>
-    <div class="btn-toolbar mb-2 mb-md-0">
-      <div class="btn-group mr-2">
-        <button class="btn btn-sm btn-primary">Share</button>
-        <button class="btn btn-sm btn-primary">Export</button>
-      </div>
-      <button class="btn btn-sm btn-primary dropdown-toggle">
-        <i class="fa fa-calendar"></i>
-        This week
-      </button>
-    </div>
-  </div>
+    <a href="/admin/contatti" class="stat-card">
+        <div class="stat-card__icon stat-card__icon--<?= $unreadCount > 0 ? 'danger' : 'warning' ?>">
+            <i data-lucide="mail" style="width:20px;height:20px;"></i>
+        </div>
+        <div class="stat-card__content">
+            <div class="stat-card__value"><?= $unreadCount ?></div>
+            <div class="stat-card__label">Messaggi non letti</div>
+        </div>
+    </a>
 
-  <div class="row">
+    <a href="/admin/visitors" class="stat-card">
+        <div class="stat-card__icon stat-card__icon--info">
+            <i data-lucide="users" style="width:20px;height:20px;"></i>
+        </div>
+        <div class="stat-card__content">
+            <div class="stat-card__value"><?= number_format($uniqueVisitors) ?></div>
+            <div class="stat-card__label">Visitatori Unici</div>
+        </div>
+    </a>
 
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card">
-        <div class="card-header"><i class="fa fa-bar-chart"></i> Visite (7 giorni)</div>
-        <div class="card-body p-2">
-          <canvas id="myLineChart" height="150"></canvas>
+    <a href="/admin/project" class="stat-card">
+        <div class="stat-card__icon stat-card__icon--success">
+            <i data-lucide="folder-open" style="width:20px;height:20px;"></i>
         </div>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-primary">
-        <div class="card-header"><i class="fa fa-eye"></i> Visite Totali</div>
-        <div class="card-body">
-          <h3 class="card-title"><?= number_format($totalVisits) ?></h3>
+        <div class="stat-card__content">
+            <div class="stat-card__value"><?= $totalProjects ?></div>
+            <div class="stat-card__label">Progetti Attivi</div>
         </div>
-        <a class="card-footer text-right text-white" href="/admin/visitors">
-          Dettagli <i class="fa fa-arrow-circle-right"></i>
-        </a>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white <?= $unreadCount > 0 ? 'bg-danger' : 'bg-warning' ?>">
-        <div class="card-header"><i class="fa fa-commenting"></i> Messaggi non letti</div>
-        <div class="card-body">
-          <h3 class="card-title"><?= $unreadCount ?></h3>
-        </div>
-        <a class="card-footer text-right text-white" href="/admin/contatti">
-          Dettagli <i class="fa fa-arrow-circle-right"></i>
-        </a>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-danger">
-        <div class="card-header"><i class="fa fa-users"></i> Visitatori Unici</div>
-        <div class="card-body">
-          <h3 class="card-title"><?= number_format($uniqueVisitors) ?></h3>
-        </div>
-        <a class="card-footer text-right text-white" href="/admin/visitors">
-          Dettagli <i class="fa fa-arrow-circle-right"></i>
-        </a>
-      </div>
-    </div>
-  </div>
+    </a>
 
-  <div class="row">
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-success">
-        <div class="card-header"><i class="fa fa-folder-open"></i> Progetti Attivi</div>
-        <div class="card-body">
-          <h3 class="card-title"><?= $totalProjects ?></h3>
+    <a href="/admin/home" class="stat-card">
+        <div class="stat-card__icon stat-card__icon--info">
+            <i data-lucide="file-text" style="width:20px;height:20px;"></i>
         </div>
-        <a class="card-footer text-right text-white" href="/admin/project">
-          Gestisci <i class="fa fa-arrow-circle-right"></i>
-        </a>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-info">
-        <div class="card-header"><i class="fa fa-pencil"></i> Articoli Attivi</div>
-        <div class="card-body">
-          <h3 class="card-title"><?= $totalArticles ?></h3>
+        <div class="stat-card__content">
+            <div class="stat-card__value"><?= $totalArticles ?></div>
+            <div class="stat-card__label">Articoli Attivi</div>
         </div>
-        <a class="card-footer text-right text-white" href="/admin/home">
-          Gestisci <i class="fa fa-arrow-circle-right"></i>
-        </a>
-      </div>
-    </div>
-  </div>
+    </a>
+</div>
 
-  <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card-collapsible card">
-        <div class="card-header">
-          Doughnut Chart <i class="fa fa-caret-down caret"></i>
+<!-- Charts Row -->
+<div class="dashboard-grid mb-4">
+    <!-- Weekly visits chart -->
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <h3><i data-lucide="trending-up" style="width:16px;height:16px;margin-right:6px;opacity:0.5;"></i> Visite (ultimi 7 giorni)</h3>
         </div>
-        <div class="card-body d-flex justify-content-around">
-          <canvas id="myChart"></canvas>
+        <div class="admin-card__body">
+            <canvas id="myLineChart" height="200"></canvas>
         </div>
-      </div>
     </div>
 
-    
-    <div class="col-lg-6 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card-collapsible card">
-        <div class="card-header">
-          Messaggi <i class="fa fa-commenting" aria-hidden="true"></i>
-          <?php if ($unreadCount > 0) : ?>
-            <span class="badge badge-danger ml-1"><?= $unreadCount ?> non letti</span>
-          <?php endif; ?>
+    <!-- Doughnut chart -->
+    <div class="admin-card">
+        <div class="admin-card__header">
+            <h3><i data-lucide="pie-chart" style="width:16px;height:16px;margin-right:6px;opacity:0.5;"></i> Visite oggi vs totali</h3>
         </div>
-        <div class="card-body">
-          <div class="list-group" style="max-height: 400px; overflow-y: auto;">
-            <?php foreach ($messages as $msg) : ?>
-              <a href="/admin/contatti/<?= $msg->id ?>" class="list-group-item list-group-item-action my-1 rounded-2 <?= !$msg->is_read ? 'border-left-bold' : '' ?>">
-                <div class="d-flex justify-content-between align-items-center">
-                  <h6 class="mb-1" style="<?= !$msg->is_read ? 'font-weight:bold;' : '' ?>">
-                    <?= htmlspecialchars($msg->nome) ?> — <?= htmlspecialchars($msg->typologie ?? '') ?>
-                  </h6>
-                  <?php if (!$msg->is_read) : ?>
-                    <span class="badge badge-warning">Nuovo</span>
-                  <?php endif; ?>
-                </div>
-                <p class="mb-1 text-muted small"><?= htmlspecialchars(substr($msg->messaggio, 0, 120)) ?>...</p>
-                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($msg->created_at)) ?></small>
-              </a>
-            <?php endforeach ?>
-          </div>
+        <div class="admin-card__body d-flex justify-content-center">
+            <canvas id="myChart" style="max-height:240px;"></canvas>
         </div>
-      </div>
     </div>
-  </div>
+</div>
 
-
-</section>
+<!-- Messages -->
+<div class="admin-card">
+    <div class="admin-card__header">
+        <h3>
+            <i data-lucide="inbox" style="width:16px;height:16px;margin-right:6px;opacity:0.5;"></i>
+            Messaggi recenti
+            <?php if ($unreadCount > 0) : ?>
+                <span class="admin-badge admin-badge--danger ml-2"><?= $unreadCount ?> non letti</span>
+            <?php endif; ?>
+        </h3>
+        <a href="/admin/contatti" class="btn btn-sm btn-admin-secondary">Vedi tutti</a>
+    </div>
+    <div class="admin-card__body p-0">
+        <div style="max-height: 400px; overflow-y: auto;">
+            <?php if (empty($messages)) : ?>
+                <div class="text-center py-4 text-muted">Nessun messaggio</div>
+            <?php else : ?>
+                <?php foreach ($messages as $msg) : ?>
+                    <a href="/admin/contatti/<?= $msg->id ?>" class="d-flex align-items-start gap-3 px-4 py-3 text-decoration-none" style="border-bottom: 1px solid var(--admin-border-light); transition: background 0.15s;<?= !$msg->is_read ? 'background: var(--admin-warning-light);' : '' ?>" onmouseover="this.style.background='var(--admin-surface-hover)'" onmouseout="this.style.background='<?= !$msg->is_read ? 'var(--admin-warning-light)' : '' ?>'">
+                        <div style="width:36px;height:36px;border-radius:50%;background:var(--admin-bg);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:600;color:var(--admin-text-secondary);font-size:0.8rem;">
+                            <?= strtoupper(substr($msg->nome ?? '?', 0, 1)) ?>
+                        </div>
+                        <div style="flex:1;min-width:0;">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <span style="font-weight:<?= !$msg->is_read ? '600' : '400' ?>;color:var(--admin-text);font-size:0.82rem;">
+                                    <?= htmlspecialchars($msg->nome) ?>
+                                    <?php if ($msg->typologie) : ?>
+                                        <span class="admin-badge admin-badge--info ml-1"><?= htmlspecialchars($msg->typologie) ?></span>
+                                    <?php endif; ?>
+                                </span>
+                                <small style="color:var(--admin-text-muted);font-size:0.7rem;white-space:nowrap;margin-left:8px;">
+                                    <?= date('d/m H:i', strtotime($msg->created_at)) ?>
+                                </small>
+                            </div>
+                            <p style="margin:0;color:var(--admin-text-secondary);font-size:0.78rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                                <?= htmlspecialchars(substr($msg->messaggio, 0, 120)) ?>
+                            </p>
+                        </div>
+                    </a>
+                <?php endforeach ?>
+            <?php endif; ?>
+        </div>
+    </div>
+</div>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  // Mini grafico visite settimanali
-  var dailyData = <?= json_encode($dailyVisits) ?>;
-  var dailyLabels = dailyData.map(function(d) {
-    var parts = (d.date || '').split('-');
-    return parts.length >= 3 ? parts[2] + '/' + parts[1] : d.date;
-  });
-  var dailyCounts = dailyData.map(function(d) { return parseInt(d.count) || 0; });
+    // Chart defaults
+    Chart.defaults.font.family = "'Inter', sans-serif";
+    Chart.defaults.font.size = 12;
+    Chart.defaults.color = '#64748b';
 
-  new Chart(document.getElementById('myLineChart').getContext('2d'), {
-    type: 'line',
-    data: {
-      labels: dailyLabels,
-      datasets: [{
-        label: 'Visite',
-        data: dailyCounts,
-        borderColor: 'rgba(75, 192, 192, 1)',
-        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-        fill: true,
-        tension: 0.3,
-        pointRadius: 2
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { display: true, ticks: { font: { size: 10 } } },
-        y: { beginAtZero: true, ticks: { precision: 0 } }
-      }
-    }
-  });
-
-  // Doughnut chart
-  var ctxDoughnut = document.getElementById('myChart');
-  if (ctxDoughnut) {
-    new Chart(ctxDoughnut, {
-      type: 'doughnut',
-      data: {
-        labels: ['Visite Oggi', 'Totali'],
-        datasets: [{
-          data: [<?= $todayVisits ?>, <?= max($totalVisits - $todayVisits, 0) ?>],
-          backgroundColor: ['rgba(54, 162, 235, 0.8)', 'rgba(199, 199, 199, 0.3)']
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: { legend: { position: 'bottom', labels: { boxWidth: 12 } } }
-      }
+    // Weekly visits line chart
+    var dailyData = <?= json_encode($dailyVisits) ?>;
+    var dailyLabels = dailyData.map(function(d) {
+        var parts = (d.date || '').split('-');
+        return parts.length >= 3 ? parts[2] + '/' + parts[1] : d.date;
     });
-  }
+    var dailyCounts = dailyData.map(function(d) { return parseInt(d.count) || 0; });
+
+    new Chart(document.getElementById('myLineChart').getContext('2d'), {
+        type: 'line',
+        data: {
+            labels: dailyLabels,
+            datasets: [{
+                label: 'Visite',
+                data: dailyCounts,
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.08)',
+                fill: true,
+                tension: 0.4,
+                pointRadius: 3,
+                pointBackgroundColor: '#4f46e5',
+                borderWidth: 2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: {
+                    grid: { display: false },
+                    ticks: { font: { size: 11 } }
+                },
+                y: {
+                    beginAtZero: true,
+                    ticks: { precision: 0 },
+                    grid: { color: 'rgba(0,0,0,0.04)' }
+                }
+            }
+        }
+    });
+
+    // Doughnut chart
+    var ctxDoughnut = document.getElementById('myChart');
+    if (ctxDoughnut) {
+        new Chart(ctxDoughnut, {
+            type: 'doughnut',
+            data: {
+                labels: ['Visite Oggi', 'Altre'],
+                datasets: [{
+                    data: [<?= $todayVisits ?>, <?= max($totalVisits - $todayVisits, 0) ?>],
+                    backgroundColor: ['#4f46e5', '#e2e8f0'],
+                    borderWidth: 0,
+                    borderRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 10, padding: 16, font: { size: 12 } }
+                    }
+                }
+            }
+        });
+    }
 });
 </script>
