@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Core\Inertia;
 
+use App\Core\Helpers\Seo;
 use Throwable;
 
 class SharedProps
@@ -45,10 +46,13 @@ class SharedProps
      */
     private static function defaultProps(): array
     {
+        $seo = self::seoDefaults();
+
         return [
             'app' => [
-                'name' => 'Soft MVC',
+                'name' => self::appName(),
                 'csrf_token' => self::csrfToken(),
+                'url' => Seo::baseUrl(),
             ],
             'auth' => [
                 'user' => self::authUser(),
@@ -57,6 +61,26 @@ class SharedProps
                 'success' => self::flash('success'),
                 'warning' => self::flash('warning'),
                 'error' => self::flash('error'),
+            ],
+            'site' => [
+                'base_url' => Seo::baseUrl(),
+                'maintenance_page' => self::maintenancePage(),
+            ],
+            'navigation' => [
+                'main' => self::mainNavigation(),
+            ],
+            'routing' => [
+                'current' => self::currentPath(),
+                'canonical' => $seo['url'],
+            ],
+            'seo' => [
+                'title' => $seo['title'],
+                'description' => $seo['description'],
+                'canonical' => $seo['url'],
+                'image' => $seo['image'],
+            ],
+            'meta' => [
+                'title' => $seo['title'],
             ],
         ];
     }
@@ -124,5 +148,88 @@ class SharedProps
         } catch (Throwable) {
             return null;
         }
+    }
+
+    private static function appName(): string
+    {
+        return 'Iadicola // dev';
+    }
+
+    /**
+     * @return array<int, array{href: string, label: string, external: bool}>
+     */
+    private static function mainNavigation(): array
+    {
+        $configured = mvc()?->config?->get('menu') ?? [];
+
+        if (!is_array($configured) || $configured === []) {
+            return self::fallbackNavigation();
+        }
+
+        $navigation = [];
+
+        foreach ($configured as $href => $label) {
+            if (!is_string($href) || !is_string($label)) {
+                continue;
+            }
+
+            $external = str_starts_with($href, 'http://') || str_starts_with($href, 'https://');
+            $normalizedHref = $external ? $href : self::normalizePath($href);
+
+            $navigation[] = [
+                'href' => $normalizedHref,
+                'label' => $label,
+                'external' => $external,
+            ];
+        }
+
+        return $navigation;
+    }
+
+    /**
+     * @return array<int, array{href: string, label: string, external: bool}>
+     */
+    private static function fallbackNavigation(): array
+    {
+        return [
+            ['href' => '/', 'label' => 'Home', 'external' => false],
+            ['href' => '/portfolio', 'label' => 'Portfolio', 'external' => false],
+            ['href' => '/progetti', 'label' => 'Progetti', 'external' => false],
+            ['href' => '/blog', 'label' => 'Blog', 'external' => false],
+            ['href' => '/contatti', 'label' => 'Contatti', 'external' => false],
+        ];
+    }
+
+    private static function currentPath(): string
+    {
+        return self::normalizePath(mvc()?->request?->uri() ?? ($_SERVER['REQUEST_URI'] ?? '/'));
+    }
+
+    private static function maintenancePage(): ?string
+    {
+        $page = mvc()?->config?->get('settings.pages.MAINTENANCE');
+
+        return is_string($page) && $page !== '' ? $page : null;
+    }
+
+    /**
+     * @return array{title: string, description: string, image: string, url: string}
+     */
+    private static function seoDefaults(): array
+    {
+        return Seo::make();
+    }
+
+    private static function normalizePath(string $path): string
+    {
+        if ($path === '') {
+            return '/';
+        }
+
+        if ($path[0] !== '/') {
+            $path = '/' . $path;
+        }
+
+        return $path === '/' ? $path : rtrim($path, '/');
     }
 }

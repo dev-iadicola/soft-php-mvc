@@ -38,6 +38,22 @@ class SharedPropsTest extends TestCase
 
         $resolved = SharedProps::resolve();
 
-        $this->assertArrayNotHasKey('meta', $resolved);
+        $this->assertArrayHasKey('meta', $resolved);
+        $this->assertNotSame('Before reset', $resolved['meta']['title']);
+    }
+
+    public function testItProvidesDefaultGuestSharedProps(): void
+    {
+        $_SERVER['HTTP_HOST'] = 'portfolio.test';
+        $_SERVER['REQUEST_URI'] = '/react-preview';
+
+        $resolved = SharedProps::resolve();
+
+        $this->assertSame('Iadicola // dev', $resolved['app']['name']);
+        $this->assertSame('/react-preview', $resolved['routing']['current']);
+        $this->assertSame('http://portfolio.test/react-preview', $resolved['routing']['canonical']);
+        $this->assertIsArray($resolved['navigation']['main']);
+        $this->assertSame('Home', $resolved['navigation']['main'][0]['label']);
+        $this->assertSame('http://portfolio.test/react-preview', $resolved['seo']['canonical']);
     }
 }

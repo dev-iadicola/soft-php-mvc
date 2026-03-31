@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/public-props-contract
+
+### Shared props pubbliche per React
+- Esteso `SharedProps` con contratto iniziale per il frontend pubblico: `site`, `navigation`, `routing`, `seo` e metadata base coerenti con l'URL corrente
+- Aggiornato `GuestLayout` per consumare la navigazione condivisa lato server quando disponibile, mantenendo fallback locale compatibile durante il porting graduale
+- Aggiunti test sul pacchetto di shared props guest per consolidare canonical, current path e navigazione principale del layout pubblico
+
+---
+
 ## feature/react/guest-layout-shell
 
 ### Shell guest/pubblica condivisa

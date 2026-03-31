@@ -73,12 +73,32 @@ export function GuestLayout({
 }: GuestLayoutProps) {
   const page = usePage<SharedPageProps>();
   const appName = useAppName();
+  const sharedNavigation = page.props.navigation?.main;
+  const resolvedNavigation =
+    navigation.length > 0
+      ? navigation
+      : Array.isArray(sharedNavigation) && sharedNavigation.length > 0
+        ? sharedNavigation
+            .filter(
+              (
+                item,
+              ): item is { external?: boolean; href: string; label: string } =>
+                typeof item === 'object' &&
+                item !== null &&
+                typeof item.href === 'string' &&
+                typeof item.label === 'string',
+            )
+            .map((item) => ({
+              href: item.href,
+              label: item.label,
+            }))
+        : DEFAULT_NAVIGATION;
 
   return (
     <div className="guest-shell">
       <GuestHeader
         currentPath={page.url}
-        navigation={navigation}
+        navigation={resolvedNavigation}
         primaryAction={primaryAction}
         secondaryAction={secondaryAction}
       />
