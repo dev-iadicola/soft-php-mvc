@@ -193,9 +193,9 @@ section {
 
 .notification-bell__dropdown {
     display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
+    position: fixed;
+    top: auto;
+    left: 260px;
     width: 320px;
     background: #fff;
     border: 1px solid #dee2e6;
@@ -276,17 +276,21 @@ section {
 .notification-bell__title {
     font-weight: 600;
     color: #212529;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 240px;
 }
 
 .notification-bell__message {
     color: #6c757d;
     font-size: 0.75rem;
-    white-space: nowrap;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
     overflow: hidden;
-    text-overflow: ellipsis;
+    max-width: 240px;
 }
 
 .notification-bell__time {
