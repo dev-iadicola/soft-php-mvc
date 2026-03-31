@@ -64,9 +64,18 @@ class EmailTemplateService
      */
     public static function sendIfActive(string $slug, string $toEmail, array $variables): bool
     {
-        $template = self::findBySlug($slug);
+        try {
+            $template = self::findBySlug($slug);
+        } catch (\Throwable) {
+            // Tabella non ancora creata
+            return false;
+        }
 
         if ($template === null || !$template->is_active) {
+            return false;
+        }
+
+        if ($toEmail === '') {
             return false;
         }
 
@@ -80,7 +89,8 @@ class EmailTemplateService
             $mailer->send();
 
             return true;
-        } catch (\Throwable) {
+        } catch (\Throwable $e) {
+            \App\Core\Helpers\Log::alert('Auto-reply failed: ' . $e->getMessage());
             return false;
         }
     }
