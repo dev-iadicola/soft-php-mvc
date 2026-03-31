@@ -1,5 +1,23 @@
 # Changelog
 
+## feature/profile-enhancements
+
+### Campi social
+- Migration: colonne `github_url`, `linkedin_url`, `twitter_url` (VARCHAR 255, nullable) su `profile`
+- Input URL nel form admin profilo
+- Icone social (GitHub, LinkedIn, Twitter) nella sezione hero pubblica, mostrate solo se valorizzate
+
+### Avatar
+- Migration: colonna `avatar` (VARCHAR 255, nullable)
+- Upload con resize 200x200 via `ImageHelper::processFromString()` nel controller
+- Mostrato nella hero pubblica con bordo circolare e fallback se assente
+
+### Bio estesa
+- Textarea bio con editor Quill (classe `editor`) nel form create profilo
+- Bio renderizzata come HTML nella sezione competenze pubblica
+
+---
+
 ## feature/projects-enhancements
 
 ### Stato progetto con enum

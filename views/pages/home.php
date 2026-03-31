@@ -139,6 +139,9 @@
                 <span class="hero-terminal__dot hero-terminal__dot--green"></span>
             </div>
             <div class="hero-terminal__body">
+                <?php if (!empty($profile->avatar)) : ?>
+                    <img src="<?= $profile->avatar ?>" alt="<?= $profile->name ?>" style="width: 80px; height: 80px; border-radius: 50%; border: 2px solid var(--accent-green); margin-bottom: 0.8rem; object-fit: cover;">
+                <?php endif; ?>
                 <div class="hero-terminal__prompt">$ whoami</div>
                 <h1 class="hero-terminal__name" id="name">
                     <span>&gt;</span> <?= strtoupper($profile->name) ?>
@@ -148,6 +151,19 @@
                     <span id="welcome"><?= $profile->welcome_message ?></span>
                     <span id="cursor-text" class="hero-terminal__cursor">|</span>
                 </div>
+                <?php if (!empty($profile->github_url) || !empty($profile->linkedin_url) || !empty($profile->twitter_url)) : ?>
+                    <div style="display: flex; gap: 0.8rem; margin-top: 0.8rem;">
+                        <?php if (!empty($profile->github_url)) : ?>
+                            <a href="<?= htmlspecialchars($profile->github_url) ?>" target="_blank" rel="noopener" style="color: var(--text-secondary); font-size: 1.2rem;" title="GitHub"><i class="fa fa-github"></i></a>
+                        <?php endif; ?>
+                        <?php if (!empty($profile->linkedin_url)) : ?>
+                            <a href="<?= htmlspecialchars($profile->linkedin_url) ?>" target="_blank" rel="noopener" style="color: var(--accent-blue); font-size: 1.2rem;" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+                        <?php endif; ?>
+                        <?php if (!empty($profile->twitter_url)) : ?>
+                            <a href="<?= htmlspecialchars($profile->twitter_url) ?>" target="_blank" rel="noopener" style="color: var(--accent-blue); font-size: 1.2rem;" title="Twitter"><i class="fa fa-twitter"></i></a>
+                        <?php endif; ?>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     <?php endforeach; ?>
@@ -162,9 +178,9 @@
     </div>
     <?php $activeProfile = $profiles[0] ?? null; ?>
     <?php if ($activeProfile?->bio) : ?>
-        <p style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
+        <div style="color: var(--text-secondary); margin-bottom: 1rem; font-size: 0.85rem;">
             <?= $activeProfile->bio ?>
-        </p>
+        </div>
     <?php endif; ?>
     <div class="skills-grid__list">
         <?php foreach ($skills as $skill): ?>

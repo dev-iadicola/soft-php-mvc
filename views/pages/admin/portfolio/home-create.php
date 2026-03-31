@@ -97,8 +97,26 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Bio (sottotitolo sezione competenze)</label>
-                    <textarea class="form-control" name="bio" rows="3" placeholder="Es. Software Engineer con focus su backend e architettura applicativa..."></textarea>
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-control editor" name="bio" rows="3" placeholder="Es. Software Engineer con focus su backend e architettura applicativa..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Avatar</label>
+                    <input type="file" class="form-control" name="avatar" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">GitHub URL</label>
+                    <input type="url" class="form-control" name="github_url" placeholder="https://github.com/...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">LinkedIn URL</label>
+                    <input type="url" class="form-control" name="linkedin_url" placeholder="https://linkedin.com/in/...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Twitter URL</label>
+                    <input type="url" class="form-control" name="twitter_url" placeholder="https://twitter.com/...">
                 </div>
 
                 <div class="mb-3">
