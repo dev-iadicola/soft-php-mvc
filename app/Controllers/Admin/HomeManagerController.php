@@ -17,6 +17,7 @@ use App\Core\Validation\Validator;
 use App\Services\ArticleService;
 use App\Services\SkillService;
 use App\Services\ProfileService;
+use App\Services\TagService;
 use App\Core\Controllers\AdminController;
 
 #[Prefix('/admin')]
@@ -28,12 +29,12 @@ class HomeManagerController extends AdminController
     #[Get('/home', 'admin.home')]
     public function index()
     {
-        // visualizza per la gestione della home
         $articles = ArticleService::getAll();
         $skills = SkillService::getAll();
         $profiles = ProfileService::getAll();
+        $tags = TagService::getAll();
 
-        return view('admin.portfolio.home',  compact('articles','skills','profiles'));
+        return view('admin.portfolio.home', compact('articles', 'skills', 'profiles', 'tags'));
     }
 
     #[Post('/article-store', 'article.store')]
@@ -54,7 +55,12 @@ class HomeManagerController extends AdminController
             $data['img'] = $storage->getRelativePath();
         }
 
-        ArticleService::create($data);
+        $article = ArticleService::create($data);
+
+        $tagIds = $request->array('tag_ids');
+        if ($tagIds !== []) {
+            TagService::syncForArticle((int) $article->getAttribute('id'), $tagIds);
+        }
 
         return response()->back()->withSuccess('Articolo Inserito con successo nella Home Page!');
     }
@@ -68,9 +74,10 @@ class HomeManagerController extends AdminController
         $articles = ArticleService::getAll();
         $skills = SkillService::getAll();
         $profiles = ProfileService::getAll();
+        $tags = TagService::getAll();
+        $articleTagIds = array_map(fn($t) => $t->id, TagService::getForArticle($id));
 
-
-        return view('admin.portfolio.home',  compact('articles', 'article', 'skills','profiles'));
+        return view('admin.portfolio.home', compact('articles', 'article', 'skills', 'profiles', 'tags', 'articleTagIds'));
     }
 
     #[Patch('article-update', 'article.update')]
@@ -95,10 +102,11 @@ class HomeManagerController extends AdminController
             unset($data['img']);
         }
 
-        // Trova porgetto
         ArticleService::update((int) $id, $data);
 
-        // feedback server
+        $tagIds = $request->array('tag_ids');
+        TagService::syncForArticle((int) $id, $tagIds);
+
         redirect()->back('Articolo Aggiornato con successo!');
     }
 

@@ -48,6 +48,15 @@
                                         <textarea class="form-control editor" name="overview" rows="4"><?= $article->overview ?? '' ?></textarea>
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label">Tag</label>
+                                        <?php $currentTagIds = $articleTagIds ?? []; ?>
+                                        <select name="tag_ids[]" class="form-control" multiple style="height: 80px;">
+                                            <?php foreach ($tags ?? [] as $tag) : ?>
+                                                <option value="<?= $tag->id ?>" <?= in_array($tag->id, $currentTagIds) ? 'selected' : '' ?>><?= htmlspecialchars($tag->name) ?></option>
+                                            <?php endforeach; ?>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">Immagine</label>
                                         <input type="file" class="form-control" name="img">
                                     </div>
