@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controllers\Controller;
 use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
+use App\Support\Inertia\PublicPageSerializer;
 use App\Services\TechnologyService;
 
 class TechnologyController extends Controller
@@ -19,8 +20,16 @@ class TechnologyController extends Controller
             'description' => 'Le tecnologie utilizzate nei progetti: PHP, Laravel, React, Docker e molto altro.',
         ]);
 
-        view('technology', [
-            'technologies' => TechnologyService::getActive(),
+        inertia('Public/TechStack', [
+            'meta' => [
+                'title' => 'Tech Stack',
+            ],
+            'page' => [
+                'technologies' => array_map(
+                    [PublicPageSerializer::class, 'technology'],
+                    TechnologyService::getActive()
+                ),
+            ],
             'seo' => $seo,
         ]);
     }

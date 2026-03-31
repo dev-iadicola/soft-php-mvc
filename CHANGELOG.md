@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/public-pages-porting
+
+### Porting React delle pagine pubbliche principali
+- Portati su Inertia i controller pubblici di home, portfolio, progetti, dettaglio progetto, blog, dettaglio articolo e tech stack, mantenendo URL e servizi applicativi esistenti
+- Introdotto `PublicPageSerializer` per serializzare in modo stabile profilo, skill, tecnologie, progetti, articoli e paginazione senza accoppiare il core framework ai payload dell'app
+- Aggiunte le nuove pagine React pubbliche con `GuestLayout` condiviso, filtri blog/progetti, card riusabili e viste dedicate per dettaglio articolo e dettaglio progetto
+- Preparato il frontend pubblico alla successiva fase SEO, separando chiaramente contratto props, shell guest e contenuto delle singole pagine
+
+---
+
 ## feature/react/untitledui-integration
 
 ### Base tecnica per Untitled UI nel frontend React

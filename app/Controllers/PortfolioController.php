@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controllers\Controller;
 use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
+use App\Support\Inertia\PublicPageSerializer;
 use App\Services\CertificateService;
 use App\Services\ProjectService;
 use App\Services\TechnologyService;
@@ -24,6 +25,16 @@ class PortfolioController extends Controller
             'description' => 'Portfolio completo: progetti, certificazioni e tecnologie utilizzate.',
         ]);
 
-        view('portfolio', compact('projects', 'certificati', 'technologies', 'seo'));
+        inertia('Public/Portfolio', [
+            'meta' => [
+                'title' => 'Portfolio',
+            ],
+            'page' => [
+                'certificates' => array_map([PublicPageSerializer::class, 'certificate'], $certificati),
+                'projects' => array_map([PublicPageSerializer::class, 'projectCard'], $projects),
+                'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
+            ],
+            'seo' => $seo,
+        ]);
     }
 }

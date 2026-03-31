@@ -8,6 +8,7 @@ use App\Core\Controllers\Controller;
 use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Request;
+use App\Support\Inertia\PublicPageSerializer;
 use App\Services\ProjectService;
 use App\Services\TechnologyService;
 
@@ -16,7 +17,8 @@ class ProgettiController extends Controller
     #[Get('progetti')]
     public function index(Request $request): void
     {
-        $selectedTechnology = isset($_GET['technology']) ? trim((string) $_GET['technology']) : null;
+        $selectedTechnology = trim((string) ($request->get('technology') ?? ''));
+        $selectedTechnology = $selectedTechnology !== '' ? $selectedTechnology : null;
         $projects = ProjectService::getActive(technology: $selectedTechnology);
         $technologies = TechnologyService::getActive();
         $seo = Seo::make([
@@ -24,7 +26,17 @@ class ProgettiController extends Controller
             'description' => 'Scopri i progetti di sviluppo web realizzati con PHP, Laravel, React e altre tecnologie.',
         ]);
 
-        view('progetti', compact('projects', 'technologies', 'selectedTechnology', 'seo'));
+        inertia('Public/Projects/Index', [
+            'meta' => [
+                'title' => 'Progetti',
+            ],
+            'page' => [
+                'projects' => array_map([PublicPageSerializer::class, 'projectCard'], $projects),
+                'selectedTechnology' => $selectedTechnology,
+                'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
+            ],
+            'seo' => $seo,
+        ]);
     }
 
     #[Get('progetti/{slug}')]
@@ -43,6 +55,18 @@ class ProgettiController extends Controller
             'image' => $project->img ?: null,
         ]);
 
-        view('progetto', compact('project', 'projects', 'seo'));
+        inertia('Public/Projects/Show', [
+            'meta' => [
+                'title' => (string) $project->title,
+            ],
+            'page' => [
+                'project' => PublicPageSerializer::projectDetail($project),
+                'relatedProjects' => array_values(array_filter(
+                    array_map([PublicPageSerializer::class, 'projectCard'], $projects),
+                    static fn(array $item): bool => $item['id'] !== (int) ($project->id ?? 0)
+                )),
+            ],
+            'seo' => $seo,
+        ]);
     }
 }

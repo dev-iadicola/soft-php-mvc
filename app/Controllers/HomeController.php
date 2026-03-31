@@ -7,6 +7,7 @@ namespace App\Controllers;
 use App\Core\Controllers\Controller;
 use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
+use App\Support\Inertia\PublicPageSerializer;
 use App\Services\ProjectService;
 use App\Services\ArticleService;
 use App\Services\CertificateService;
@@ -28,15 +29,20 @@ class HomeController extends Controller
 
         $seo = Seo::make();
 
-        view('home', compact(
-            'articles',
-            'certificati',
-            'projects',
-            'profiles',
-            'skills',
-            'technologies',
-            'seo'
-        ));
+        inertia('Public/Home', [
+            'meta' => [
+                'title' => $seo['title'],
+            ],
+            'page' => [
+                'articles' => array_map([PublicPageSerializer::class, 'articleCard'], $articles),
+                'certificates' => array_map([PublicPageSerializer::class, 'certificate'], $certificati),
+                'profiles' => array_map([PublicPageSerializer::class, 'profile'], $profiles),
+                'projects' => array_map([PublicPageSerializer::class, 'projectCard'], $projects),
+                'skills' => array_map([PublicPageSerializer::class, 'skill'], $skills),
+                'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
+            ],
+            'seo' => $seo,
+        ]);
     }
 
     #[Get('/law')]
