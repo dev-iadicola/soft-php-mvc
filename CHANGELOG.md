@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/migration-strategy
+
+### Strategia operativa di migrazione React + Inertia
+- Formalizzato l'ordine di esecuzione delle fasi: MVP tecnico Inertia, shell React condivise, pubblico a basso rischio, auth guest, admin core e solo dopo CRUD complessi
+- Definiti criteri di ingresso/uscita per ogni fase, insieme a regole di esecuzione per mantenere la migrazione incrementale, reversibile e deployabile
+- Chiariti i principali stop/go della roadmap: niente big bang, niente porting simultaneo di aree critiche, niente bootstrap caricato di librerie premature
+- Confermato `feature/react/inertia-backend-adapter` come primo branch tecnico che dovra toccare davvero il framework per introdurre Inertia
+
+---
+
 ## feature/react/architecture-rfc
 
 ### Decisioni architetturali per React + TypeScript + Inertia
