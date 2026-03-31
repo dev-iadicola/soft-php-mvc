@@ -87,6 +87,16 @@ class ContactService
         return Contatti::query()->orderBy('id', 'DESC')->first();
     }
 
+    public static function countUnread(): int
+    {
+        return Contatti::query()->where('is_read', 0)->count();
+    }
+
+    public static function markAsRead(int $id): void
+    {
+        Contatti::query()->where('id', $id)->update(['is_read' => 1]);
+    }
+
     /**
      * Delete a contact by ID.
      *

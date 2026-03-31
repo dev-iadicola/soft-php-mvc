@@ -1,5 +1,26 @@
 # Changelog
 
+## feature/admin-dashboard
+
+### Pulizia dashboard
+- Rimossi widget placeholder: tabella HTML con dati finti (Mark/Jacob/Larry) e form "Quick Form / Submit Ticket" non funzionante
+
+### Card riepilogo
+- Aggiunta card **Progetti Attivi** con conteggio da `ProjectService::getActive()`
+- Aggiunta card **Articoli Attivi** con conteggio da `ArticleService::getActive()`
+- Card Messaggi ora mostra il conteggio **non letti** invece del totale, con colore `bg-danger` se > 0
+
+### Sistema messaggi letti/non letti
+- Migration: aggiunta colonna `is_read` (TINYINT default 0) alla tabella `contatti`
+- Model `Contatti`: aggiunta proprietà `bool $is_read` con cast
+- `ContactService`: aggiunti metodi `countUnread()` e `markAsRead(int $id)`
+- Nuovo endpoint `POST /admin/contatti/{id}/read` per marcare come letto
+- Auto-read: apertura dettaglio messaggio (`GET /admin/contatti/{id}`) marca automaticamente come letto
+- Dashboard: messaggi non letti evidenziati con bordo sinistro giallo, font bold e badge "Nuovo"
+- Ogni messaggio nella dashboard è ora un link cliccabile al dettaglio
+
+---
+
 ## feature/seo-metadata
 
 ### Rimozione sezione Partners
