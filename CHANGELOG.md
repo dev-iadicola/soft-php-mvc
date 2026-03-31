@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/frontend-surface-audit
+
+### Audit superfici frontend da migrare
+- Aggiunto il documento `docs/react-frontend-surface-audit.md` con inventario delle superfici pubbliche, auth, admin, layout e componenti condivisi
+- Mappate le shell attuali (`default`, `admin`, `coming-soon`, `raw`) e le dipendenze reali a CDN, script inline e asset locali
+- Distinte le aree pubbliche, guest/auth e admin, con evidenza dei punti piu costosi da migrare e degli accoppiamenti attuali a helper, layout e JS globale
+- Formalizzati i primi slice naturali di porting per preparare il branch successivo `feature/react/architecture-rfc`
+
+---
+
 ## feature/react/feasibility-assessment
 
 ### Analisi di fattibilita React + TypeScript + Inertia
