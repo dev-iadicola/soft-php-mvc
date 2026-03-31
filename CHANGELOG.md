@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/migration-raw-sql-fix
+
+### Robustezza raw migration
+- Corretto `Migration::rawSql()` per filtrare statement vuoti e normalizzare gli array SQL
+- `executeUp()` e `executeDown()` ora trattano le raw migration senza query come no-op invece di tentare un `CREATE TABLE __raw__` invalido
+- Aggiunto test unitario per coprire il caso `rawSql([])` e l'esecuzione con statement vuoti
+
+---
+
 ## feature/demo-seeders
 
 ### Blog demo data

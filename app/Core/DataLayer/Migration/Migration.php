@@ -40,8 +40,8 @@ class Migration
     public static function rawSql(string|array $upSql, string|array|null $downSql = null): self
     {
         $self = new self('__raw__');
-        $self->rawUpSql = is_array($upSql) ? $upSql : [$upSql];
-        $self->rawDownSql = $downSql === null ? [] : (is_array($downSql) ? $downSql : [$downSql]);
+        $self->rawUpSql = self::normalizeRawSql($upSql);
+        $self->rawDownSql = $downSql === null ? [] : self::normalizeRawSql($downSql);
         return $self;
     }
 
@@ -383,6 +383,9 @@ class Migration
             }
             return;
         }
+        if ($this->tableName === '__raw__') {
+            return;
+        }
         $sql = $this->toCreateSql();
         $pdo->exec($sql);
     }
@@ -394,6 +397,9 @@ class Migration
             foreach ($this->rawDownSql as $sql) {
                 $pdo->exec($sql);
             }
+            return;
+        }
+        if ($this->tableName === '__raw__') {
             return;
         }
         if (!$this->dropTable) {
@@ -430,6 +436,20 @@ class Migration
             $this->lastConstraintIndex = array_key_last($this->constraints);
             $this->pendingForeign = null;
         }
+    }
+
+    /**
+     * @param string|array $sql
+     * @return array<int, string>
+     */
+    private static function normalizeRawSql(string|array $sql): array
+    {
+        $statements = is_array($sql) ? $sql : [$sql];
+
+        return array_values(array_filter(
+            array_map(static fn (mixed $statement): string => trim((string) $statement), $statements),
+            static fn (string $statement): bool => $statement !== ''
+        ));
     }
 
     private function getPdo(): PDO
