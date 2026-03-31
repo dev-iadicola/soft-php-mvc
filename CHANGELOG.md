@@ -1,5 +1,13 @@
 # Changelog
 
+## feature/react/qa-exit-criteria
+
+### Quality gate per la migrazione React
+- Aggiunto un workflow GitHub Actions dedicato ai branch React che esegue install dipendenze, build frontend, `phpstan` e `phpunit` su push e pull request
+- Tracciata nel repository una checklist QA esplicita con gate automatici, smoke test manuali e regression watchlist per chiudere i prossimi branch React in modo piu disciplinato
+
+---
+
 ## feature/react/execution-roadmap
 
 ### Roadmap esecutiva della migrazione React
