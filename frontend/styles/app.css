@@ -157,6 +157,70 @@ code {
   background: var(--app-primary-soft);
 }
 
+.preview-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.preview-card {
+  display: grid;
+  gap: 0.9rem;
+  padding: 1.35rem;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+}
+
+.preview-card--accent {
+  background: linear-gradient(135deg, rgba(15, 118, 110, 0.08), rgba(255, 255, 255, 0.95));
+}
+
+.preview-card__eyebrow {
+  margin: 0;
+  color: var(--app-primary);
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.preview-card__title {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.preview-card__copy {
+  margin: 0;
+  color: var(--app-text-muted);
+  line-height: 1.65;
+}
+
+.preview-list {
+  display: grid;
+  gap: 0.8rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.preview-list__item {
+  position: relative;
+  padding-left: 1.2rem;
+  color: var(--app-text);
+}
+
+.preview-list__item::before {
+  content: "";
+  position: absolute;
+  top: 0.62rem;
+  left: 0;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 999px;
+  background: var(--app-primary);
+}
+
 .flash-stack {
   display: grid;
   gap: 0.8rem;
@@ -204,6 +268,10 @@ code {
   .app-shell {
     grid-template-columns: 300px minmax(0, 1fr);
     align-items: start;
+  }
+
+  .preview-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .app-sidebar {

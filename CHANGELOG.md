@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/inertia-first-page
+
+### Prima pagina Inertia reale
+- Aggiunto il caricamento degli asset buildati dal manifest Vite dentro la risposta HTML Inertia, cosi la prima visita può montare davvero React senza script hardcoded
+- Introdotta una route di preview React/Inertia dedicata con pagina `Preview/Welcome` per validare end-to-end shared props, manifest assets e coesistenza con le view PHP legacy
+- Aggiunti test sul render HTML Inertia e sul resolver del manifest asset per consolidare la base della prima integrazione
+
+---
+
 ## feature/react/react-ts-bootstrap
 
 ### Deploy frontend compilato in CI

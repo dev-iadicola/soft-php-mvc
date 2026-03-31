@@ -12,6 +12,8 @@ class InertiaResponseFactory
         private Response $response,
         private string $version = '1',
         private string $rootElementId = 'app',
+        private ?InertiaAssetBundle $assetBundle = null,
+        private string $entrypoint = 'frontend/app.tsx',
     ) {}
 
     public function render(string $component, array $props = []): Response
@@ -50,6 +52,7 @@ class InertiaResponseFactory
     private function renderRootHtml(InertiaPage $page): string
     {
         $payload = $page->toArray();
+        $assetTags = $this->assetBundle?->renderTags($this->entrypoint) ?? '';
         $pageJson = json_encode(
             $payload,
             JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES
@@ -71,6 +74,7 @@ class InertiaResponseFactory
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{$csrfToken}">
     <title>{$title}</title>
+    {$assetTags}
 </head>
 <body>
     <div id="{$this->rootElementId}" data-page="{$pageJson}"></div>
