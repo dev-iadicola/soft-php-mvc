@@ -7,7 +7,7 @@
     <meta name="csrf-token" content="<?= csrf_token() ?>">
 
     <title>Persona MVC - Admin</title>
-    <link rel="icon" type="image/x-icon" href="<?= assets('/img/favicon.png') ?>">
+    <link rel="icon" type="image/x-icon" href="<?= assets('img/favicon.png') ?>">
 
     <!-- Bootstrap CSS -->
     <link href="<?= assets("vendor/bootstrap/css/bootstrap.min.css") ?>" rel="stylesheet">
@@ -21,12 +21,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
     <!-- Devicon - Technology icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css">
-
-
-    <!-- Editor styles -->
-    <!-- CDN favicon bootstrap --> 
-        <link rel="stylesheet" href="<?= assets('/vendor/cdn/favicon.min.css')?>">
-
 </head>
 
 

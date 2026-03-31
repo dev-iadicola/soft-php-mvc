@@ -1,5 +1,13 @@
 # Changelog
 
+## fix/admin-asset-404
+
+### Layout admin
+- Rimosso il riferimento al CSS inesistente `favicon.min.css` nel layout admin
+- Normalizzato il path del favicon admin per evitare URL asset con slash doppi
+
+---
+
 ## feature/migration-raw-sql-fix
 
 ### Robustezza raw migration
