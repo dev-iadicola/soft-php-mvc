@@ -6,6 +6,7 @@
 - Portate su Inertia le pagine admin di contatti, template email, tech stack e statistiche visitatori con serializzazione esplicita lato controller
 - Aggiunte nuove pagine React gestionali per inbox messaggi, editing template, gestione tecnologie e dashboard visitatori senza dipendere piu dalle view legacy PHP di quelle sezioni
 - Estesa la shell admin React con nuovi entry di navigazione e componenti/stili riusabili per liste record, pannelli secondari, placeholder editor e tabelle dati
+- Corretto il resolver asset Inertia per usare `/assets/build` come public path reale della build Vite, eliminando i 404 su CSS e JS delle pagine React
 
 ---
 

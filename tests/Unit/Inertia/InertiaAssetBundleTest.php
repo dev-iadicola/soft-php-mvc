@@ -41,12 +41,12 @@ class InertiaAssetBundleTest extends TestCase
             ],
         ], JSON_THROW_ON_ERROR));
 
-        $bundle = new InertiaAssetBundle($this->manifestPath, '/');
+        $bundle = new InertiaAssetBundle($this->manifestPath, '/assets/build');
         $tags = $bundle->renderTags('frontend/app.tsx');
 
-        $this->assertStringContainsString('/assets/app.css', $tags);
-        $this->assertStringContainsString('/assets/shared.css', $tags);
-        $this->assertStringContainsString('/assets/app.js', $tags);
+        $this->assertStringContainsString('/assets/build/assets/app.css', $tags);
+        $this->assertStringContainsString('/assets/build/assets/shared.css', $tags);
+        $this->assertStringContainsString('/assets/build/assets/app.js', $tags);
     }
 
     public function testItReturnsEmptyStringWhenManifestIsMissing(): void

@@ -62,7 +62,7 @@ class InertiaResponseFactoryTest extends TestCase
             $response,
             '1',
             'app',
-            new InertiaAssetBundle($this->manifestPath, '/'),
+            new InertiaAssetBundle($this->manifestPath, '/assets/build'),
             'frontend/app.tsx',
         );
 
@@ -70,8 +70,8 @@ class InertiaResponseFactoryTest extends TestCase
             'meta' => ['title' => 'React Preview'],
         ]);
 
-        $this->assertStringContainsString('/assets/app.css', $response->getContent());
-        $this->assertStringContainsString('/assets/app.js', $response->getContent());
+        $this->assertStringContainsString('/assets/build/assets/app.css', $response->getContent());
+        $this->assertStringContainsString('/assets/build/assets/app.js', $response->getContent());
     }
 
     public function testItReturnsJsonPageObjectForInertiaRequests(): void

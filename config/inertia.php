@@ -7,5 +7,5 @@ return [
     'root_element_id' => 'app',
     'entrypoint' => 'frontend/app.tsx',
     'manifest_path' => basepath('assets/build/.vite/manifest.json'),
-    'asset_public_path' => '/',
+    'asset_public_path' => '/assets/build',
 ];
