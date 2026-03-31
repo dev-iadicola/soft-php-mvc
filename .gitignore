@@ -17,6 +17,7 @@ pint.json
 /.phpunit.cache/test-results
 
 /todo.md
+/docs/
 
 /task/
 /task/*
