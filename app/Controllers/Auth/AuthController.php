@@ -30,7 +30,19 @@ class AuthController extends Controller
                 ->withWarning('Nessun account trovato. Crea il primo account admin per iniziare.');
         }
 
-        view('Auth.login');
+        inertia('Auth/Login', [
+            'meta' => [
+                'title' => 'Login',
+            ],
+            'authPage' => [
+                'title' => 'Login admin',
+                'description' => 'Accedi al pannello per gestire contenuti, sicurezza e dashboard del portfolio.',
+                'links' => [
+                    ['href' => '/forgot', 'label' => 'Forgot password?'],
+                    ['href' => '/sign-up', 'label' => 'Sei il primo? Registrati'],
+                ],
+            ],
+        ]);
     }
 
     #[Post('login', 'login', 'rate_limit')]
@@ -46,8 +58,7 @@ class AuthController extends Controller
         $user = User::query()->where('email', $request->get('email'))->first();
 
         if (! $user instanceof User) {
-            
-            return view('Auth.login', ['message' => 'Credenziali non valide!']);
+            return redirect()->back()->withError('Credenziali non valide.');
         }
 
         // conferma password
@@ -78,7 +89,15 @@ class AuthController extends Controller
             return redirect('/login');
         }
 
-        return view('Auth.two-factor');
+        return inertia('Auth/TwoFactor', [
+            'meta' => [
+                'title' => 'Verifica 2FA',
+            ],
+            'authPage' => [
+                'title' => 'Verifica 2FA',
+                'description' => 'Inserisci il codice TOTP generato dalla tua app di autenticazione per completare il login.',
+            ],
+        ]);
     }
 
     #[Post('/two-factor', 'auth.two-factor.verify')]
@@ -120,7 +139,15 @@ class AuthController extends Controller
     public function signUp()
     {
         if (FirstUserSetupService::requiresRegistration()) {
-            return view('Auth.sign-up');
+            return inertia('Auth/SignUp', [
+                'meta' => [
+                    'title' => 'Sign up iniziale',
+                ],
+                'authPage' => [
+                    'title' => 'Crea il primo account admin',
+                    'description' => 'Questo passaggio è disponibile solo quando il progetto non ha ancora alcun utente registrato.',
+                ],
+            ]);
         }
 
         return response()

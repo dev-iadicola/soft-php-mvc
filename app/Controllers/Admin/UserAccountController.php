@@ -119,7 +119,19 @@ class UserAccountController extends AdminController
             );
         }
 
-        return view('admin.security', compact('user', 'setupSecret', 'provisioningUri'));
+        return inertia('Admin/Security', [
+            'meta' => [
+                'title' => 'Sicurezza account',
+            ],
+            'security' => [
+                'user' => [
+                    'email' => (string) ($user->email ?? ''),
+                    'twoFactorEnabled' => (bool) ($user->two_factor_enabled ?? false),
+                ],
+                'setupSecret' => $setupSecret,
+                'provisioningUri' => $provisioningUri,
+            ],
+        ]);
     }
 
     #[Post('security/two-factor/enable', 'admin.security.two-factor.enable')]
@@ -182,7 +194,27 @@ class UserAccountController extends AdminController
         $sessions = AuthSessionService::getForUser((int) $user->id);
         $currentSessionId = session_id();
 
-        return view('admin.sessions', compact('user', 'sessions', 'currentSessionId'));
+        return inertia('Admin/Sessions', [
+            'meta' => [
+                'title' => 'Sessioni attive',
+            ],
+            'sessionsPage' => [
+                'currentSessionId' => $currentSessionId,
+                'user' => [
+                    'email' => (string) ($user->email ?? ''),
+                ],
+                'sessions' => array_map(
+                    static fn(object $session): array => [
+                        'id' => (string) ($session->id ?? ''),
+                        'ip' => (string) ($session->ip ?? ''),
+                        'userAgent' => (string) ($session->user_agent ?? 'Sconosciuto'),
+                        'lastActivity' => (string) ($session->last_activity ?? ''),
+                        'createdAt' => (string) ($session->created_at ?? '-'),
+                    ],
+                    $sessions
+                ),
+            ],
+        ]);
     }
 
     #[Post('sessions/{id}/terminate', 'admin.sessions.terminate')]

@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/admin-critical-flows
+
+### Porting React dei flussi admin critici
+- Portate su Inertia le pagine critiche di autenticazione admin (`/login`, `/sign-up`, `/two-factor`) con nuove pagine React guest e submit via `useForm`
+- Portata su React la dashboard admin reale con metriche serializzate lato controller, trend visite e lista dei messaggi recenti
+- Portate su React anche le pagine sicurezza account e sessioni attive, mantenendo attivazione/disattivazione 2FA e terminazione sessioni dentro la nuova shell admin
+
+---
+
 ## feature/react/admin-form-strategy
 
 ### Strategia base per i form admin React
