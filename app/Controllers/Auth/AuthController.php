@@ -13,6 +13,8 @@ use App\Core\Validation\Validator;
 use App\Core\Controllers\Controller;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Attributes\Post;
+use App\Core\Exception\ValidationException;
+use App\Services\FirstUserSetupService;
 use App\Services\LogService;
 use App\Services\TotpService;
 
@@ -20,15 +22,26 @@ class AuthController extends Controller
 {
 
     #[Get('/login')]
-    public function index(): void
+    public function index()
     {
-        // pagina login
+        if (FirstUserSetupService::requiresRegistration()) {
+            return response()
+                ->redirect('/sign-up')
+                ->withWarning('Nessun account trovato. Crea il primo account admin per iniziare.');
+        }
+
         view('Auth.login');
     }
 
     #[Post('login', 'login', 'rate_limit')]
     public function login(Request $request)
     {
+        if (FirstUserSetupService::requiresRegistration()) {
+            return response()
+                ->redirect('/sign-up')
+                ->withWarning('Nessun account trovato. Registrati per creare il primo accesso admin.');
+        }
+
         // verifica esistenza user
         $user = User::query()->where('email', $request->get('email'))->first();
 
@@ -106,26 +119,49 @@ class AuthController extends Controller
     #[Get('sign-up')]
     public function signUp()
     {
-        $user = User::query()->all();
-        if (count($user) == 0) {
+        if (FirstUserSetupService::requiresRegistration()) {
             return view('Auth.sign-up');
-        } 
-            // se esiste un utente, ritorna alla pagina di login
-            return redirect('/');
+        }
+
+        return response()
+            ->redirect('/login')
+            ->withError('Registrazione chiusa: esiste gia un account admin.');
                 
     }
 
     #[Post('/sign-up')]
     public function registration(Request $request)
     {
+        try {
+            FirstUserSetupService::ensureRegistrationOpen();
+        } catch (ValidationException $e) {
+            return response()
+                ->redirect('/login')
+                ->withError($e->getErrors());
+        }
+
+        $email = trim($request->string('email'));
+        if ($email === '' || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            return response()->redirect()->back()->withError('Inserisci un indirizzo email valido.');
+        }
+
         $confirmed =  Validator::make($request->all(),["password" => ["confirmed","required","min:8"]]);
         if ($confirmed->fails()) {
             return response()->redirect()->back()->withError($confirmed->errors()); 
         }
-        $data['password'] = password_hash($request->string('password'), PASSWORD_BCRYPT);
-        User::upload($data);
 
-        response()->redirect("/login")->withSuccess("Sign in comoplete, now sign up!");
+        try {
+            FirstUserSetupService::createInitialUser(
+                $email,
+                password_hash($request->string('password'), PASSWORD_BCRYPT)
+            );
+        } catch (ValidationException $e) {
+            return response()
+                ->redirect('/login')
+                ->withError($e->getErrors());
+        }
+
+        return response()->redirect('/login')->withSuccess('Account admin creato. Ora puoi effettuare il login.');
     }
     #[Post('/logout', 'logout')]
     public function logout(){

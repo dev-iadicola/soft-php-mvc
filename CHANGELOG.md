@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/first-user-registration
+
+### Bootstrap primo account admin
+- Rimosso il seeder automatico dell'utente admin
+- Il login ora reindirizza alla pagina di registrazione iniziale quando non esiste alcun utente
+- La registrazione del primo account e stata blindata lato server: se esiste gia un utente, non e possibile crearne un secondo nemmeno via POST diretto
+- Introdotto `FirstUserSetupService` con test unitari dedicati per il flusso bootstrap del primo admin
+
+---
+
 ## fix/admin-asset-404
 
 ### Layout admin

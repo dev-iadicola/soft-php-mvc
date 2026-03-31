@@ -3,6 +3,7 @@
     <div class="w-full max-w-md">
       <div class="bg-gray-800 text-white rounded-lg shadow-lg">
         <div class="p-6 text-center">
+          @csrf
 
           <div class="mb-8">
 
