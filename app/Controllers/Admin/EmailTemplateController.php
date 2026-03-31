@@ -19,7 +19,12 @@ class EmailTemplateController extends AdminController
     #[Get('/email-templates', 'admin.emailTemplates')]
     public function index()
     {
-        $templates = EmailTemplateService::getAll();
+        try {
+            $templates = EmailTemplateService::getAll();
+        } catch (\Throwable) {
+            $templates = [];
+        }
+
         return view('admin.portfolio.email-templates', compact('templates'));
     }
 
