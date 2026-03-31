@@ -24,6 +24,10 @@ export default function WelcomePreviewPage() {
       <Head title="React Preview" />
 
       <GuestLayout
+        breadcrumbs={[
+          { href: '/', label: 'Home' },
+          { label: 'React preview' },
+        ]}
         eyebrow="Inertia preview"
         title={preview.title}
         description={preview.description}

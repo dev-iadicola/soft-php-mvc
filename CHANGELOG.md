@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/guest-layout-shell
+
+### Shell guest/pubblica condivisa
+- Evoluto `GuestLayout` in una shell React completa con header pubblico, CTA, drawer mobile, breadcrumb, hero strutturato e footer condiviso
+- Estratti componenti dedicati per navigazione guest, breadcrumb e footer, cosi da poter riusare la stessa shell su pagine pubbliche, blog e flussi guest come login o sign-up
+- Aggiornata la pagina preview Inertia per usare la nuova shell e verificare stato attivo, compatibilita mobile e composizione hero/contenuto senza toccare ancora il contratto server delle shared props
+
+---
+
 ## feature/react/inertia-first-page
 
 ### Prima pagina Inertia reale
