@@ -24,6 +24,7 @@ class SitemapController extends Controller
             ['url' => '/tech-stack', 'priority' => '0.6', 'changefreq' => 'monthly'],
             ['url' => '/certificati', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['url' => '/contatti', 'priority' => '0.5', 'changefreq' => 'monthly'],
+            ['url' => '/blog', 'priority' => '0.7', 'changefreq' => 'weekly'],
         ];
 
         $projects = ProjectService::getActive();

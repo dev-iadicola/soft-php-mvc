@@ -1,5 +1,99 @@
 # Changelog
 
+## feature/projects-enhancements
+
+### Stato progetto con enum
+- Enum `ProjectStatus` (`in_progress`, `completed`, `paused`) con metodi `label()`, `color()`, `icon()`
+- Migration: colonne `status`, `started_at`, `ended_at` su `projects`
+- Model `Project` aggiornato con le nuove proprietà
+- Form admin: select status (iterato dall'enum), input date inizio/fine
+- Vista pubblica dettaglio: badge status colorato con icona, range date "Mar 2024 — in corso"
+
+### Galleria screenshot
+- Upload multiplo galleria nel form admin progetti (`<input type="file" multiple name="gallery[]">`)
+- Anteprima immagini esistenti con bottone elimina per ciascuna
+- Vista dettaglio pubblica: griglia gallery con immagini cliccabili (link diretto)
+
+### Note
+- Drag-and-drop era già integrato (SortableJS + `initSortable`)
+
+---
+
+## feature/blog-system
+
+### Integrazione frontend
+- Nuovo `BlogController` con rotta `GET /blog` — paginazione, ricerca per titolo, filtro per tag via query string
+- Vista pubblica `blog.php` con griglia card articoli, barra ricerca, chip tag cliccabili, paginazione
+- Link "~/blog" aggiunto nella navbar pubblica e nella sitemap
+- Multi-select tag nel form create e nel modal edit articolo admin
+- `HomeManagerController` aggiornato: passa tag alla vista, sync tag su create/update
+- Campo `content` corretto in `overview` nel form create (allineato al model)
+
+### Sistema tag
+- Migration: tabelle `tags` (id, name, slug UNIQUE) e `article_tag` (article_id, tag_id) con indici
+- Model `Tag` e `ArticleTag`
+- `TagService` con CRUD, `getForArticle()`, `syncForArticle()`, `findBySlug()`
+
+### Paginazione
+- DTO `PaginationResult` con: items, currentPage, totalPages, totalItems, perPage, helper `hasPages()`, `hasPrevious()`, `hasNext()`, `pageRange()`
+- `ArticleService::paginateActive()` con supporto ricerca e filtro tag
+- Partial view `components/pagination.php` con navigazione prev/next e numeri pagina, preserva query string
+
+### Ricerca full-text
+- `ArticleService::search()` con `WHERE title LIKE ?`
+- `ArticleService::paginateActive()` accetta parametro `$search` per filtrare
+
+### Editor rich-text
+- Classe `editor` aggiunta alla textarea `overview` nel form create articolo
+- Campo `overview` con editor Quill aggiunto nel modal edit articolo
+- Corretto nome campo da `content` a `overview` nel form create (allineato al model)
+
+---
+
+## feature/auto-reply
+
+### Sistema auto-reply configurabile
+- Migration: creata tabella `email_templates` (id, slug UNIQUE, subject, body TEXT, is_active, updated_at)
+- Model `EmailTemplate` con proprietà tipizzate e cast `is_active` → bool
+- `EmailTemplateService` con metodi: `getAll()`, `findBySlug()`, `findOrFail()`, `update()`, `render()` (sostituzione placeholder), `sendIfActive()` (invio via BrevoMail se template attivo)
+- Seeder con template `contact_auto_reply`: oggetto "Abbiamo ricevuto il tuo messaggio", body HTML con placeholder `{nome}`, `{email}`, `{messaggio}`
+
+### Integrazione automatica
+- `ContactService::create()` ora chiama `EmailTemplateService::sendIfActive('contact_auto_reply', ...)` dopo salvataggio e notifica
+- L'invio è silenzioso: se il template non esiste, è disattivo, o l'invio fallisce, non blocca il flusso
+
+### Pagina admin
+- `EmailTemplateController` con rotte: lista (`GET /admin/email-templates`), edit (`GET /admin/email-templates/{id}/edit`), update (`POST /admin/email-templates/{id}`)
+- Vista con tabella template, form modifica con subject/body/toggle attivo, anteprima HTML del template
+- Link "Template Email" aggiunto nella sidebar admin sotto Gestione Portfolio
+
+---
+
+## feature/contacts-management
+
+### Toggle letto/non letto
+- `ContactService::toggleRead($id)` inverte lo stato `is_read` e restituisce il nuovo valore
+- Nuovo endpoint `POST /admin/contatti/{id}/toggle-read` con feedback
+- Bottone toggle nella lista messaggi (icona busta aperta/chiusa) e nel dettaglio messaggio
+
+### Risposta diretta via Brevo
+- Form textarea + bottone "Invia risposta" nella vista dettaglio messaggio
+- Endpoint `POST /admin/contatti/{id}/reply` usa `BrevoMail` per inviare via API Brevo
+- Conferma prima dell'invio, gestione errori con try/catch
+
+### Filtri per tipologia
+- `ContactService::getDistinctTypologies()` restituisce le tipologie uniche
+- `ContactService::getByTypologie()` filtra per tipologia
+- Select con auto-submit nel header della lista messaggi
+- `ContattiManagerController::index()` accetta query string `?typologie=...`
+
+### Miglioramenti vista messaggi
+- Messaggi non letti evidenziati con bordo sinistro giallo e badge "Nuovo"
+- XSS protection con `htmlspecialchars()` su tutti gli output utente
+- Layout dettaglio messaggio migliorato con bottoni azione raggruppati
+
+---
+
 ## feature/upload-media
 
 ### Tabella media e sistema polimorfico

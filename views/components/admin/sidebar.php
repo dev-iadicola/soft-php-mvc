@@ -42,6 +42,7 @@
                     <a class="dropdown-item text-dark<?= ($page === '/admin/technology' || str_starts_with($page, '/admin/technology-')) ? ' active' : '' ?>" href="/admin/technology">Stack Tecnologico</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/partner' || str_starts_with($page, '/admin/partner-')) ? ' active' : '' ?>" href="/admin/partner">Partner</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/footer-links' || str_starts_with($page, '/admin/footer-links-')) ? ' active' : '' ?>" href="/admin/footer-links">Footer Links</a>
+                    <a class="dropdown-item text-dark<?= ($page === '/admin/email-templates' || str_starts_with($page, '/admin/email-templates')) ? ' active' : '' ?>" href="/admin/email-templates">Template Email</a>
                 </div>
             </div>
         </div>
