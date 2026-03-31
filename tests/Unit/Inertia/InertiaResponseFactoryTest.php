@@ -74,6 +74,41 @@ class InertiaResponseFactoryTest extends TestCase
         $this->assertStringContainsString('/assets/build/assets/app.js', $response->getContent());
     }
 
+    public function testItRendersSeoMetaTagsIntoHtmlRoot(): void
+    {
+        $_SERVER['REQUEST_URI'] = '/blog/test-article';
+
+        $response = new Response($this->createMock(View::class));
+        $factory = new InertiaResponseFactory($response, '1', 'app');
+
+        $factory->render('Public/Blog/Show', [
+            'meta' => ['title' => 'Test article | Iadicola // dev'],
+            'seo' => [
+                'title' => 'Test article | Iadicola // dev',
+                'description' => 'Descrizione articolo',
+                'canonical' => 'https://portfolio.test/blog/test-article',
+                'image' => 'https://portfolio.test/assets/article.png',
+                'type' => 'article',
+                'robots' => 'index,follow',
+                'site_name' => 'Iadicola // dev',
+                'published_time' => '2026-03-31 10:00:00',
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Article',
+                    'headline' => 'Test article',
+                ],
+            ],
+        ]);
+
+        $content = $response->getContent();
+
+        $this->assertStringContainsString('<meta name="description" content="Descrizione articolo">', $content);
+        $this->assertStringContainsString('<link rel="canonical" href="https://portfolio.test/blog/test-article">', $content);
+        $this->assertStringContainsString('<meta property="og:type" content="article">', $content);
+        $this->assertStringContainsString('<meta name="twitter:card" content="summary_large_image">', $content);
+        $this->assertStringContainsString('<script type="application/ld+json">', $content);
+    }
+
     public function testItReturnsJsonPageObjectForInertiaRequests(): void
     {
         $_SERVER['HTTP_X_INERTIA'] = 'true';

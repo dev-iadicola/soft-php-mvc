@@ -22,7 +22,7 @@ class TechnologyController extends Controller
 
         inertia('Public/TechStack', [
             'meta' => [
-                'title' => 'Tech Stack',
+                'title' => $seo['title'],
             ],
             'page' => [
                 'technologies' => array_map(
@@ -30,7 +30,15 @@ class TechnologyController extends Controller
                     TechnologyService::getActive()
                 ),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CollectionPage',
+                    'name' => $seo['title'],
+                    'url' => $seo['url'],
+                    'description' => $seo['description'],
+                ],
+            ]),
         ]);
     }
 }

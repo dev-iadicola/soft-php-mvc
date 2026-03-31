@@ -1,8 +1,9 @@
-import { router, Head, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 
 import { PublicArticleCard } from '@/components/public/public-article-card';
 import { PublicSectionHeader } from '@/components/public/public-section-header';
+import { SeoHead } from '@/components/seo-head';
 import { GuestLayout } from '@/layouts/guest-layout';
 import type { SharedPageProps } from '@/types/inertia';
 
@@ -52,7 +53,7 @@ export default function PublicBlogIndexPage() {
 
   return (
     <>
-      <Head title="Blog" />
+      <SeoHead />
 
       <GuestLayout
         breadcrumbs={[

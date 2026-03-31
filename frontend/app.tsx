@@ -16,7 +16,7 @@ if (mountElement === null) {
 
 void createInertiaApp({
   resolve: (name) => resolvePageComponent(name),
-  title: (title) => (title ? `${title} | Soft MVC` : 'Soft MVC'),
+  title: (title) => title || 'Iadicola // dev',
   defaults: {
     visitOptions: (_href, options) => ({
       ...options,

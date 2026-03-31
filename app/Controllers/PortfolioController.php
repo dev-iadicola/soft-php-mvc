@@ -27,14 +27,22 @@ class PortfolioController extends Controller
 
         inertia('Public/Portfolio', [
             'meta' => [
-                'title' => 'Portfolio',
+                'title' => $seo['title'],
             ],
             'page' => [
                 'certificates' => array_map([PublicPageSerializer::class, 'certificate'], $certificati),
                 'projects' => array_map([PublicPageSerializer::class, 'projectCard'], $projects),
                 'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CollectionPage',
+                    'name' => $seo['title'],
+                    'url' => $seo['url'],
+                    'description' => $seo['description'],
+                ],
+            ]),
         ]);
     }
 }

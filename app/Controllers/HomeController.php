@@ -41,7 +41,15 @@ class HomeController extends Controller
                 'skills' => array_map([PublicPageSerializer::class, 'skill'], $skills),
                 'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'WebSite',
+                    'name' => $seo['title'],
+                    'url' => $seo['url'],
+                    'description' => $seo['description'],
+                ],
+            ]),
         ]);
     }
 

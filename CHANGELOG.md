@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/public-seo-parity
+
+### Parita SEO per le pagine pubbliche React
+- Estesa la risposta HTML Inertia iniziale per renderizzare lato server description, canonical, Open Graph, Twitter Card, favicon e JSON-LD partendo dai props SEO condivisi
+- Uniformato il titolo documento tra primo render server-side e navigazioni client-side React, evitando suffissi incoerenti tra HTML iniziale e pagina idratata
+- Aggiunto `SeoHead` riusabile per le pagine pubbliche React, cosi canonical, OG, Twitter e structured data restano allineati anche nelle navigazioni Inertia senza reload completo
+- Arricchiti i controller pubblici con metadati SEO piu coerenti per home, portfolio, tech stack, progetti e articoli, inclusi `Article`/`CollectionPage`/`CreativeWork` in JSON-LD dove rilevante
+
+---
+
 ## feature/react/public-pages-porting
 
 ### Porting React delle pagine pubbliche principali

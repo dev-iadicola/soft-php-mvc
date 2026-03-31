@@ -1,7 +1,8 @@
-import { router, Head, usePage } from '@inertiajs/react';
+import { router, usePage } from '@inertiajs/react';
 
 import { PublicProjectCard } from '@/components/public/public-project-card';
 import { PublicSectionHeader } from '@/components/public/public-section-header';
+import { SeoHead } from '@/components/seo-head';
 import { UiBadge } from '@/components/ui/ui-badge';
 import { GuestLayout } from '@/layouts/guest-layout';
 import type { SharedPageProps } from '@/types/inertia';
@@ -32,7 +33,7 @@ export default function PublicProjectsIndexPage() {
 
   return (
     <>
-      <Head title="Progetti" />
+      <SeoHead />
 
       <GuestLayout
         breadcrumbs={[

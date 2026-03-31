@@ -21,21 +21,32 @@ class ProgettiController extends Controller
         $selectedTechnology = $selectedTechnology !== '' ? $selectedTechnology : null;
         $projects = ProjectService::getActive(technology: $selectedTechnology);
         $technologies = TechnologyService::getActive();
+        $seoDescription = $selectedTechnology !== null
+            ? "Progetti di sviluppo web filtrati per {$selectedTechnology}."
+            : 'Scopri i progetti di sviluppo web realizzati con PHP, Laravel, React e altre tecnologie.';
         $seo = Seo::make([
             'title' => 'Progetti',
-            'description' => 'Scopri i progetti di sviluppo web realizzati con PHP, Laravel, React e altre tecnologie.',
+            'description' => $seoDescription,
         ]);
 
         inertia('Public/Projects/Index', [
             'meta' => [
-                'title' => 'Progetti',
+                'title' => $seo['title'],
             ],
             'page' => [
                 'projects' => array_map([PublicPageSerializer::class, 'projectCard'], $projects),
                 'selectedTechnology' => $selectedTechnology,
                 'technologies' => array_map([PublicPageSerializer::class, 'technology'], $technologies),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CollectionPage',
+                    'name' => $seo['title'],
+                    'url' => $seo['url'],
+                    'description' => $seo['description'],
+                ],
+            ]),
         ]);
     }
 
@@ -49,15 +60,20 @@ class ProgettiController extends Controller
             : ProjectService::findBySlug($slug);
 
         $projects = ProjectService::getActive();
+        $projectUrl = Seo::baseUrl() . '/progetti/' . rawurlencode((string) ($project->slug ?? $project->id ?? $slug));
+        $projectDescription = $project->overview !== null
+            ? trim(strip_tags(substr((string) $project->overview, 0, 160)))
+            : 'Dettaglio progetto del portfolio.';
         $seo = Seo::make([
             'title' => $project->title,
-            'description' => $project->overview ? strip_tags(substr($project->overview, 0, 160)) : null,
+            'description' => $projectDescription,
             'image' => $project->img ?: null,
+            'url' => $projectUrl,
         ]);
 
         inertia('Public/Projects/Show', [
             'meta' => [
-                'title' => (string) $project->title,
+                'title' => $seo['title'],
             ],
             'page' => [
                 'project' => PublicPageSerializer::projectDetail($project),
@@ -66,7 +82,16 @@ class ProgettiController extends Controller
                     static fn(array $item): bool => $item['id'] !== (int) ($project->id ?? 0)
                 )),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'CreativeWork',
+                    'name' => (string) ($project->title ?? ''),
+                    'url' => $projectUrl,
+                    'description' => $projectDescription,
+                    'image' => $project->img ?: $seo['image'],
+                ],
+            ]),
         ]);
     }
 }

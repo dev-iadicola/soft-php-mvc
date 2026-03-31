@@ -37,7 +37,14 @@ export type SharedPageProps = {
     canonical?: string | null;
     description?: string | null;
     image?: string | null;
+    modified_time?: string | null;
+    published_time?: string | null;
+    robots?: string | null;
+    site_name?: string | null;
+    structured_data?: Array<Record<string, unknown>> | Record<string, unknown> | null;
     title?: string | null;
+    twitter_card?: string | null;
+    type?: string | null;
   };
   site?: {
     base_url?: string | null;

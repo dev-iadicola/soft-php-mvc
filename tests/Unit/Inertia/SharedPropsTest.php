@@ -55,5 +55,8 @@ class SharedPropsTest extends TestCase
         $this->assertIsArray($resolved['navigation']['main']);
         $this->assertSame('Home', $resolved['navigation']['main'][0]['label']);
         $this->assertSame('http://portfolio.test/react-preview', $resolved['seo']['canonical']);
+        $this->assertSame('index,follow', $resolved['seo']['robots']);
+        $this->assertSame('Iadicola // dev', $resolved['seo']['site_name']);
+        $this->assertSame('website', $resolved['seo']['type']);
     }
 }

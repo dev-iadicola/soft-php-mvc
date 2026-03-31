@@ -1,8 +1,9 @@
-import { Head, Link, usePage } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 
 import { PublicArticleCard } from '@/components/public/public-article-card';
 import { PublicProjectCard } from '@/components/public/public-project-card';
 import { PublicSectionHeader } from '@/components/public/public-section-header';
+import { SeoHead } from '@/components/seo-head';
 import { UiBadge } from '@/components/ui/ui-badge';
 import { UiCard } from '@/components/ui/ui-card';
 import { GuestLayout } from '@/layouts/guest-layout';
@@ -72,7 +73,7 @@ export default function PublicHomePage() {
 
   return (
     <>
-      <Head title="Home" />
+      <SeoHead />
 
       <GuestLayout
         eyebrow="Portfolio"

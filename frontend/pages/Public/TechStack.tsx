@@ -1,6 +1,7 @@
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 import { PublicSectionHeader } from '@/components/public/public-section-header';
+import { SeoHead } from '@/components/seo-head';
 import { UiCard } from '@/components/ui/ui-card';
 import { GuestLayout } from '@/layouts/guest-layout';
 import type { SharedPageProps } from '@/types/inertia';
@@ -17,7 +18,7 @@ export default function PublicTechStackPage() {
 
   return (
     <>
-      <Head title="Tech Stack" />
+      <SeoHead />
 
       <GuestLayout
         breadcrumbs={[

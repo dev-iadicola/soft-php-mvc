@@ -78,6 +78,9 @@ class SharedProps
                 'description' => $seo['description'],
                 'canonical' => $seo['url'],
                 'image' => $seo['image'],
+                'robots' => 'index,follow',
+                'site_name' => self::appName(),
+                'type' => 'website',
             ],
             'meta' => [
                 'title' => $seo['title'],

@@ -31,7 +31,7 @@ class BlogController extends Controller
 
         inertia('Public/Blog/Index', [
             'meta' => [
-                'title' => 'Blog',
+                'title' => $seo['title'],
             ],
             'page' => [
                 'filters' => [
@@ -48,7 +48,15 @@ class BlogController extends Controller
                     $tags
                 ),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Blog',
+                    'name' => $seo['title'],
+                    'url' => $seo['url'],
+                    'description' => $seo['description'],
+                ],
+            ]),
         ]);
     }
 
@@ -69,26 +77,50 @@ class BlogController extends Controller
             ArticleService::getActive(),
             static fn(object $item): bool => (int) ($item->id ?? 0) !== (int) ($article->id ?? 0)
         );
+        $articlePayload = PublicPageSerializer::articleDetail($article);
+        $articleUrl = Seo::baseUrl() . '/blog/' . rawurlencode((string) ($article->slug ?? $article->id ?? $slug));
+        $articleDescription = $article->overview !== null
+            ? trim(strip_tags(substr((string) $article->overview, 0, 160)))
+            : ((string) ($article->subtitle ?? 'Dettaglio articolo del blog.'));
+        $articleTags = array_map(
+            static fn(array $tag): string => $tag['name'],
+            $articlePayload['tags']
+        );
 
         $seo = Seo::make([
             'title' => $article->title,
-            'description' => $article->overview ? strip_tags(substr($article->overview, 0, 160)) : null,
+            'description' => $articleDescription,
             'image' => $article->img ?: null,
+            'url' => $articleUrl,
         ]);
 
         inertia('Public/Blog/Show', [
             'meta' => [
-                'title' => (string) $article->title,
+                'title' => $seo['title'],
             ],
             'page' => [
-                'article' => PublicPageSerializer::articleDetail($article),
+                'article' => $articlePayload,
                 'relatedArticles' => array_slice(
                     array_map([PublicPageSerializer::class, 'articleCard'], array_values($related)),
                     0,
                     6
                 ),
             ],
-            'seo' => $seo,
+            'seo' => array_merge($seo, [
+                'type' => 'article',
+                'published_time' => $articlePayload['createdAt'],
+                'structured_data' => [
+                    '@context' => 'https://schema.org',
+                    '@type' => 'Article',
+                    'headline' => (string) ($article->title ?? ''),
+                    'description' => $articleDescription,
+                    'datePublished' => $articlePayload['createdAt'],
+                    'image' => $article->img ?: $seo['image'],
+                    'keywords' => array_values(array_filter($articleTags)),
+                    'mainEntityOfPage' => $articleUrl,
+                    'url' => $articleUrl,
+                ],
+            ]),
         ]);
     }
 }

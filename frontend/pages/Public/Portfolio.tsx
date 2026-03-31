@@ -1,7 +1,8 @@
-import { Head, usePage } from '@inertiajs/react';
+import { usePage } from '@inertiajs/react';
 
 import { PublicProjectCard } from '@/components/public/public-project-card';
 import { PublicSectionHeader } from '@/components/public/public-section-header';
+import { SeoHead } from '@/components/seo-head';
 import { UiBadge } from '@/components/ui/ui-badge';
 import { UiCard } from '@/components/ui/ui-card';
 import { GuestLayout } from '@/layouts/guest-layout';
@@ -33,7 +34,7 @@ export default function PublicPortfolioPage() {
 
   return (
     <>
-      <Head title="Portfolio" />
+      <SeoHead />
 
       <GuestLayout
         breadcrumbs={[
