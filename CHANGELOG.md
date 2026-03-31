@@ -1,5 +1,38 @@
 # Changelog
 
+## feature/upload-media
+
+### Tabella media e sistema polimorfico
+- Migration: creata tabella `media` (id, entity_type, entity_id, path, disk, sort_order, created_at) con indice su entity
+- Model `Media` con proprietà tipizzate
+- `MediaService` con metodi: `attach()`, `getFor()`, `delete()`, `deleteAllFor()`, `reorder()`, `findOrFail()`
+- Upload tramite `MediaService::attach('project', $id, $file)` — gestisce naming, path, resize/compress automatico e salvataggio su disco
+
+### ImageHelper
+- Creato `App\Core\Helpers\ImageHelper` con GD: `processFromString()`, `resize()`, `compress()`
+- Supporto JPEG, PNG, WebP con resize proporzionale (max 1200x1200) e compressione
+- Preserva trasparenza per PNG/WebP
+- Applicato automaticamente in `MediaService::attach()` per immagini
+
+### Integrazione ProjectManagerController
+- Upload multiplo galleria (`<input type="file" name="gallery[]" multiple>`) in store/update
+- Immagine principale (`img`) resta come campo singolo, galleria su tabella `media`
+- `destroy()` ora pulisce anche i media associati via `MediaService::deleteAllFor()`
+- Nuovo endpoint `DELETE /admin/project-media/{mediaId}` per eliminare singole immagini
+- Vista edit passa `gallery` con media del progetto
+
+### Config filesystem
+- Corretti typo in `config/filesystem.php`: `drive` → `driver`, `locale` → `local`
+- Aggiunti commenti per documentare convenzioni dischi public/private
+
+### Test Filesystem
+- 7 nuovi test: getPath public vs private, strip leading slash, sovrascrittura file, deleteOrFail su file inesistente/esistente, existsOrFail
+
+### SVG template per seeder
+- Creato template `database/seed/stubs/project-svg-template.php` per generare SVG professionali con iniziali e gradient — da usare in `feature/demo-seeders`
+
+---
+
 ## feature/admin-notifications
 
 ### Sistema notifiche admin
