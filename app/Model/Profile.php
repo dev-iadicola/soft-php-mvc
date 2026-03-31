@@ -15,6 +15,10 @@ class Profile extends Model
     protected ?string $tagline = null;
     protected ?string $welcome_message = null;
     protected ?string $bio = null;
+    protected ?string $github_url = null;
+    protected ?string $linkedin_url = null;
+    protected ?string $twitter_url = null;
+    protected ?string $avatar = null;
     protected bool $selected = true;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;

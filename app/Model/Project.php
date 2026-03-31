@@ -27,6 +27,9 @@ class Project extends Model
    protected ?string $website = null;
    protected int $sort_order = 0;
    protected bool $is_active = true;
+   protected string $status = 'in_progress';
+   protected ?string $started_at = null;
+   protected ?string $ended_at = null;
    protected ?string $created_at = null;
 
    protected function casts(): array

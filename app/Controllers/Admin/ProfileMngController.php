@@ -10,6 +10,8 @@ use App\Core\Http\Attributes\Get;
 use App\Core\Http\Attributes\Middleware;
 use App\Core\Http\Attributes\Prefix;
 use App\Core\Http\Attributes\Post;
+use App\Core\Facade\Storage;
+use App\Core\Helpers\ImageHelper;
 use App\Services\ArticleService;
 use App\Services\SkillService;
 use App\Services\ProfileService;
@@ -41,13 +43,27 @@ class ProfileMngController extends AdminController
   public function update(Request $request, int $id)
   {
     $data = $request->all();
-
     $data['selected'] = isset($data['selected']) ? 1 : 0;
+
+    if ($request->hasFile('avatar')) {
+        $file = $request->file('avatar');
+        $extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        $filename = 'avatar_' . $id . '.' . $extension;
+        $path = 'profile/' . $filename;
+
+        $content = file_get_contents($file['tmp_name']);
+        $content = ImageHelper::processFromString($content, $extension, 200, 200);
+
+        $storage = Storage::make('public');
+        $storage->put($path, $content, ['visibility' => 'public']);
+        $data['avatar'] = $storage->getPath($path);
+    } else {
+        unset($data['avatar']);
+    }
 
     ProfileService::update($id, $data);
 
     return response()->back()->withSuccess('Aggiornamento Eseguito');
-
   }
 
   #[Delete('/profile-delete/{id}', 'profile.delete')]

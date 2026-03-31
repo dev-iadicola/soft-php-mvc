@@ -1,112 +1,16 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Access to protected property App\\Model\\Contatti\:\:\$email\.$#'
-			identifier: property.protected
-			count: 1
-			path: app/Controllers/Admin/ContattiManagerController.php
-
-		-
-			message: '#^Access to protected property App\\Model\\Contatti\:\:\$nome\.$#'
-			identifier: property.protected
-			count: 1
-			path: app/Controllers/Admin/ContattiManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/ContattiManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/ContattiManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Controllers\\BaseController\:\:statusCode413\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/CorsiManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/CorsiManagerController.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between bool and ''DELETE'' will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
 			path: app/Controllers/Admin/CorsiManagerController.php
 
 		-
-			message: '#^Access to protected property App\\Model\\Article\:\:\$img\.$#'
-			identifier: property.protected
-			count: 2
-			path: app/Controllers/Admin/HomeManagerController.php
-
-		-
-			message: '#^Access to protected property App\\Model\\Article\:\:\$title\.$#'
-			identifier: property.protected
-			count: 1
-			path: app/Controllers/Admin/HomeManagerController.php
-
-		-
 			message: '#^Parameter \#1 \$code of method App\\Core\\Http\\Response\:\:back\(\) expects int\|null, string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: app/Controllers/Admin/HomeManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Admin/HomeManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/LawsMngController.php
-
-		-
-			message: '#^Result of method App\\Core\\Controllers\\BaseController\:\:render\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Admin/MaintenanceController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Admin/MaintenanceController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 3
-			path: app/Controllers/Admin/ProfileMngController.php
-
-		-
-			message: '#^Access to protected property App\\Model\\Project\:\:\$img\.$#'
-			identifier: property.protected
-			count: 2
-			path: app/Controllers/Admin/ProjectManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 3
-			path: app/Controllers/Admin/ProjectManagerController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Admin/ProjectManagerController.php
 
 		-
 			message: '#^Call to function compact\(\) contains undefined variable \$articles\.$#'
@@ -127,40 +31,10 @@ parameters:
 			path: app/Controllers/Admin/SkillMngController.php
 
 		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Admin/SkillMngController.php
-
-		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$id\.$#'
 			identifier: property.notFound
 			count: 1
 			path: app/Controllers/Admin/UserAccountController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 3
-			path: app/Controllers/Admin/UserAccountController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Admin/UserAccountController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$id\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Auth/AuthController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$password\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/Auth/AuthController.php
 
 		-
 			message: '#^Call to an undefined static method App\\Model\\User\:\:upload\(\)\.$#'
@@ -169,122 +43,14 @@ parameters:
 			path: app/Controllers/Auth/AuthController.php
 
 		-
-			message: '#^Parameter \#1 \$message of method App\\Core\\Http\\Response\:\:withError\(\) expects string, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/Auth/AuthController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Auth/AuthController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 3
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Call to function is_null\(\) with App\\Core\\DataLayer\\Model will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Method App\\Controllers\\Auth\\TokenController\:\:forgotPasswordToken\(\) with return type void returns null but should not return anything\.$#'
-			identifier: return.void
-			count: 4
-			path: app/Controllers/Auth/TokenController.php
-
-		-
 			message: '#^Negated boolean expression is always false\.$#'
 			identifier: booleanNot.alwaysFalse
 			count: 1
 			path: app/Controllers/Auth/TokenController.php
 
 		-
-			message: '#^PHPDoc tag @param for parameter \$token with type mixed is not subtype of native type string\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Parameter \#1 \$message of method App\\Core\\Controllers\\BaseController\:\:withError\(\) expects string, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Parameter \#1 \$message of method App\\Core\\Http\\Response\:\:withError\(\) expects string, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Result of method App\\Core\\Controllers\\BaseController\:\:render\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 3
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:set413\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 3
-			path: app/Controllers/Auth/TokenController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 2
-			path: app/Controllers/Auth/TokenController.php
-
-		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$email\.$#'
 			identifier: property.notFound
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$email\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$messaggio\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$nome\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Http\\Request\:\:\$typologie\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withError\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Controllers/ContattiController.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:withSuccess\(\) \(void\) is used\.$#'
-			identifier: method.void
 			count: 1
 			path: app/Controllers/ContattiController.php
 
@@ -307,61 +73,10 @@ parameters:
 			path: app/Core/CLI/System/Out.php
 
 		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$env$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Core/Config.php
-
-		-
-			message: '#^Property PHPMailer\\PHPMailer\\PHPMailer\:\:\$Port \(int\) does not accept string\|false\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: app/Core/Connection/SMTP.php
-
-		-
 			message: '#^Parameter \$schema of method App\\Core\\Contract\\ModelSchemaInterface\:\:schema\(\) has invalid type App\\Core\\DataLayer\\Schema\\SchemaBuilder\.$#'
 			identifier: class.notFound
 			count: 1
 			path: app/Core/Contract/ModelSchemaInterface.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$message with type mixed is not subtype of native type string\.$#'
-			identifier: parameter.phpDocType
-			count: 3
-			path: app/Core/Controllers/BaseController.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$var with type mixed is not subtype of native type string\|null\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: app/Core/Controllers/BaseController.php
-
-		-
-			message: '#^PHPDoc tag @return with type App\\Core\\Controllers\\BaseController is incompatible with native type void\.$#'
-			identifier: return.phpDocType
-			count: 2
-			path: app/Core/Controllers/BaseController.php
-
-		-
-			message: '#^PHPDoc tag @return with type App\\Core\\Controllers\\BaseController is not subtype of native type static\(App\\Core\\Controllers\\BaseController\)\.$#'
-			identifier: return.phpDocType
-			count: 2
-			path: app/Core/Controllers/BaseController.php
-
-		-
-			message: '#^PHPDoc tag @var above a method has no effect\.$#'
-			identifier: varTag.misplaced
-			count: 1
-			path: app/Core/Controllers/BaseController.php
-
-		-
-			message: '''
-				#^PHPDoc tag @var has invalid value \(\$view inserire il file con estensione php per
-				visualizzare la pagina\)\: Unexpected token "\$view", expected type at offset 92 on line 4$#
-			'''
-			identifier: phpDoc.parseError
-			count: 1
-			path: app/Core/Controllers/BaseController.php
 
 		-
 			message: '#^Method App\\Core\\DataLayer\\Model\:\:isDeclaredModelProperty\(\) is unused\.$#'
@@ -442,12 +157,6 @@ parameters:
 			path: app/Core/DataLayer/Query/QueryExecutor.php
 
 		-
-			message: '#^Property App\\Core\\DataLayer\\Query\\SqlOperation\:\:\$qe is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/DataLayer/Query/SqlOperation.php
-
-		-
 			message: '#^Access to an undefined property App\\Core\\Contract\\QueryBuilderInterface\:\:\$selectValues\.$#'
 			identifier: property.notFound
 			count: 8
@@ -468,24 +177,6 @@ parameters:
 		-
 			message: '#^Call to an undefined method App\\Core\\DataLayer\\Runtime\\OrmEngine\:\:get\(\)\.$#'
 			identifier: method.notFound
-			count: 1
-			path: app/Core/DataLayer/Runtime/OrmEngine.php
-
-		-
-			message: '#^Method App\\Core\\DataLayer\\Runtime\\OrmEngine\:\:removeSpecialChars\(\) has invalid return type App\\Core\\DataLayer\\Runtime\\Model\.$#'
-			identifier: class.notFound
-			count: 1
-			path: app/Core/DataLayer/Runtime/OrmEngine.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$fetchType$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Core/DataLayer/Runtime/OrmEngine.php
-
-		-
-			message: '#^PHPDoc tag @return with type array\<App\\Core\\DataLayer\\Runtime\\Model\> is incompatible with native type string\.$#'
-			identifier: return.phpDocType
 			count: 1
 			path: app/Core/DataLayer/Runtime/OrmEngine.php
 
@@ -518,30 +209,6 @@ parameters:
 			identifier: property.onlyWritten
 			count: 1
 			path: app/Core/DataLayer/Schema/Validation/CheckSchema.php
-
-		-
-			message: '#^Left side of && is always true\.$#'
-			identifier: booleanAnd.leftAlwaysTrue
-			count: 1
-			path: app/Core/Exception/Base/CoreException.php
-
-		-
-			message: '#^Method App\\Core\\Facade\\Auth\:\:user\(\) should return App\\Core\\Contract\\QueryBuilderInterface\|null but returns App\\Core\\DataLayer\\Model\|null\.$#'
-			identifier: return.type
-			count: 1
-			path: app/Core/Facade/Auth.php
-
-		-
-			message: '#^PHPDoc tag @return with type void is incompatible with native type bool\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Core/Facade/Auth.php
-
-		-
-			message: '#^Parameter \#1 \$model of method App\\Core\\Services\\AuthService\:\:login\(\) expects App\\Model\\User, App\\Core\\DataLayer\\Model given\.$#'
-			identifier: argument.type
-			count: 1
-			path: app/Core/Facade/Auth.php
 
 		-
 			message: '#^Negated boolean expression is always false\.$#'
@@ -598,12 +265,6 @@ parameters:
 			path: app/Core/Http/Helpers/ClassControllers.php
 
 		-
-			message: '#^Property App\\Core\\Http\\Request\:\:\$lastUri is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Http/Request.php
-
-		-
 			message: '#^Variable \$_FILES on left side of \?\? always exists and is not nullable\.$#'
 			identifier: nullCoalesce.variable
 			count: 1
@@ -614,72 +275,6 @@ parameters:
 			identifier: nullCoalesce.variable
 			count: 1
 			path: app/Core/Http/Request.php
-
-		-
-			message: '#^Variable \$server on left side of \?\? is never defined\.$#'
-			identifier: nullCoalesce.variable
-			count: 3
-			path: app/Core/Http/Request.php
-
-		-
-			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Call to an undefined method ReflectionType\:\:isBuiltin\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$action is unused\.$#'
-			identifier: property.unused
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$controller is never written, only read\.$#'
-			identifier: property.onlyRead
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$dispatche is unused\.$#'
-			identifier: property.unused
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$method is unused\.$#'
-			identifier: property.unused
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$name \(string\|null\) is never assigned string so it can be removed from the property type\.$#'
-			identifier: property.unusedType
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$name is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$nameOfListMiddleware is unused\.$#'
-			identifier: property.unused
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
-
-		-
-			message: '#^Property App\\Core\\Http\\RouteDispatcher\:\:\$path is unused\.$#'
-			identifier: property.unused
-			count: 1
-			path: app/Core/Http/RouteDispatcher.php
 
 		-
 			message: '#^Call to function property_exists\(\) with App\\Core\\Http\\Attributes\\ControllerAttr and ''basePath'' will always evaluate to true\.$#'
@@ -694,30 +289,6 @@ parameters:
 			path: app/Core/Http/RouteLoader.php
 
 		-
-			message: '#^Call to method Exception\:\:getFile\(\) on a separate line has no effect\.$#'
-			identifier: method.resultUnused
-			count: 1
-			path: app/Core/Http/RouteLoader.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$controllersPath$#'
-			identifier: parameter.notFound
-			count: 1
-			path: app/Core/Http/RouteLoader.php
-
-		-
-			message: '#^PHPDoc tag @return with type App\\Core\\Http\\Helpers\\Stack is incompatible with native type App\\Core\\Http\\Helpers\\ClassControllers\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Core/Http/RouteLoader.php
-
-		-
-			message: '#^Variable \$controllers might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: app/Core/Http/RouteLoader.php
-
-		-
 			message: '#^PHPDoc tag @return with type array\|null is not subtype of native type App\\Core\\Http\\Helpers\\RouteDefinition\|null\.$#'
 			identifier: return.phpDocType
 			count: 1
@@ -728,24 +299,6 @@ parameters:
 			identifier: parameter.notFound
 			count: 1
 			path: app/Core/Http/RouteRegister.php
-
-		-
-			message: '#^Access to an undefined property App\\Core\\Mvc\:\:\$middleware\.$#'
-			identifier: property.notFound
-			count: 1
-			path: app/Core/Http/Router.php
-
-		-
-			message: '#^PHPDoc tag @return with type App\\Core\\Http\\Helpers\\RouteCollection\|null is not subtype of native type App\\Core\\Http\\Helpers\\RouteCollection\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Core/Http/Router.php
-
-		-
-			message: '#^Property App\\Core\\Http\\Router\:\:\$registry is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Http/Router.php
 
 		-
 			message: '#^Call to an undefined static method App\\Core\\Migration\:\:find\(\)\.$#'
@@ -772,12 +325,6 @@ parameters:
 			path: app/Core/Migration.php
 
 		-
-			message: '#^Result of method App\\Core\\DataLayer\\Model\:\:save\(\) \(void\) is used\.$#'
-			identifier: staticMethod.void
-			count: 1
-			path: app/Core/Migration.php
-
-		-
 			message: '#^Static call to instance method App\\Core\\DataLayer\\Model\:\:save\(\)\.$#'
 			identifier: method.staticCall
 			count: 1
@@ -796,52 +343,10 @@ parameters:
 			path: app/Core/Mvc.php
 
 		-
-			message: '#^PHPDoc tag @return with type void is incompatible with native type bool\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: app/Core/Provider/NativeErrorProvider.php
-
-		-
-			message: '#^Property App\\Core\\Provider\\SmtpProvider\:\:\$response is never read, only written\.$#'
-			identifier: property.onlyWritten
-			count: 1
-			path: app/Core/Provider/SmtpProvider.php
-
-		-
 			message: '#^Property App\\Core\\Provider\\WhoopsProvider\:\:\$debug is unused\.$#'
 			identifier: property.unused
 			count: 1
 			path: app/Core/Provider/WhoopsProvider.php
-
-		-
-			message: '#^If condition is always true\.$#'
-			identifier: if.alwaysTrue
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
-			message: '#^Loose comparison using \=\= between false and true will always evaluate to false\.$#'
-			identifier: equal.alwaysFalse
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
-			message: '#^PHPDoc tag @param for parameter \$model with type App\\Core\\DataLayer\\Model is not subtype of native type App\\Model\\User\.$#'
-			identifier: parameter.phpDocType
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
-			message: '#^Unreachable statement \- code above always terminates\.$#'
-			identifier: deadCode.unreachable
-			count: 1
-			path: app/Core/Services/AuthService.php
-
-		-
-			message: '#^Unsafe call to private method App\\Core\\Services\\AuthService\:\:startUserSession\(\) through static\:\:\.$#'
-			identifier: staticClassAccess.privateMethod
-			count: 1
-			path: app/Core/Services/AuthService.php
 
 		-
 			message: '#^Property App\\Core\\Services\\CsrfService\:\:\$_sessionStorage \(App\\Core\\Services\\SessionStorage\|null\) is never assigned null so it can be removed from the property type\.$#'
@@ -940,24 +445,6 @@ parameters:
 			path: app/Core/Support/Tree/TreeProject.php
 
 		-
-			message: '#^Right side of \|\| is always false\.$#'
-			identifier: booleanOr.rightAlwaysFalse
-			count: 1
-			path: app/Core/Validation/Validator.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between null and mixed will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: app/Core/Validation/Validator.php
-
-		-
-			message: '#^Call to function is_array\(\) with array will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: app/Core/Validator.php
-
-		-
 			message: '#^PHPDoc tag @param references unknown parameter\: \$variables$#'
 			identifier: parameter.notFound
 			count: 1
@@ -974,24 +461,6 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: app/Core/View.php
-
-		-
-			message: '#^Variable \$page in isset\(\) is never defined\.$#'
-			identifier: isset.variable
-			count: 1
-			path: app/Core/View.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:send\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Middleware/MaintenanceMiddleware.php
-
-		-
-			message: '#^Result of method App\\Core\\Http\\Response\:\:set405\(\) \(void\) is used\.$#'
-			identifier: method.void
-			count: 1
-			path: app/Middleware/MethodOverrideMiddleware.php
 
 		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$expiry_date\.$#'
@@ -1016,18 +485,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: app/Model/User.php
-
-		-
-			message: '#^Access to protected property App\\Model\\User\:\:\$id\.$#'
-			identifier: property.protected
-			count: 1
-			path: app/Services/PasswordService.php
-
-		-
-			message: '#^Access to protected property App\\Model\\User\:\:\$password\.$#'
-			identifier: property.protected
-			count: 1
-			path: app/Services/PasswordService.php
 
 		-
 			message: '#^Access to an undefined property App\\Core\\DataLayer\\Model\:\:\$expiry_date\.$#'
