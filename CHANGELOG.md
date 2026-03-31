@@ -1,5 +1,16 @@
 # Changelog
 
+## feature/react/frontend-toolchain
+
+### Toolchain frontend React + TypeScript + Vite
+- Aggiunti `package.json`, `tsconfig.json`, `tsconfig.app.json`, `tsconfig.node.json` e `vite.config.ts` come base del nuovo frontend React
+- Definiti script Node standard per `dev`, `build` e `preview`
+- Configurato Vite per produrre build versionate in `assets/build` con entrypoint frontend dedicato e manifest abilitato
+- Aggiornato `.gitignore` per escludere `node_modules`, cache Vite e gli output build generati localmente
+- Aggiornato il `Dockerfile` per includere `nodejs` e `npm` nel container applicativo, cosi la toolchain React puo essere usata anche tramite `dock`
+
+---
+
 ## feature/react/inertia-backend-adapter
 
 ### Infrastruttura backend minima per Inertia

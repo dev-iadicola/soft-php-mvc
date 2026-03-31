@@ -1,4 +1,8 @@
 /vendor/
+/node_modules/
+.npm/
+.vite/
+/assets/build/
 .vscode/*
 .env
 settings.json
