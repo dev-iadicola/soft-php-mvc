@@ -1,5 +1,16 @@
 # Changelog
 
+## feature/demo-seeders
+
+### Blog demo data
+- Riscritto il seeder articoli con 10 contenuti demo realistici, slug espliciti, date distribuite e mix di formati `pillar` e `quick-note`
+- Introdotto stub condiviso `database/seed/stubs/article-demo-content.php` per centralizzare copy, metadata editoriali e cover demo
+- Cover articolo generate come SVG data URI differenti e compatibili con il limite del campo `articles.img`
+- Aggiunti seeders per `tags` e `article_tag`, derivati automaticamente dal dataset articoli per mantenere coerenza tra contenuti e tassonomia
+- Aggiunto test unitario dedicato per verificare quantita, varieta, slug, cover e tag del dataset demo articoli
+
+---
+
 ## feature/projects-status-cleanup
 
 ### Semplificazione stato progetto
