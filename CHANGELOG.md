@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/feasibility-assessment
+
+### Analisi di fattibilita React + TypeScript + Inertia
+- Aggiunto il documento `docs/react-inertia-feasibility.md` con valutazione architetturale basata sul framework reale
+- Documentati i punti favorevoli alla migrazione: bootstrap centralizzato, `Response` condivisa, router a attributi, sessione/flash/CSRF e shell pubblica/admin gia separate
+- Evidenziati i principali vincoli tecnici: assenza di pipeline frontend moderna, helper asset statico, response mutation pattern, script inline/CDN e mancanza di un contratto props/DTO per il frontend
+- Formalizzata la raccomandazione di una migrazione ibrida e progressiva, con perimetro chiaro del primo MVP tecnico e ordine suggerito dei branch successivi
+
+---
+
 ## feature/admin-responsive-ui
 
 ### Redesign completo layout admin
