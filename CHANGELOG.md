@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/projects-status-cleanup
+
+### Semplificazione stato progetto
+- Rimosso il campo `status` dal form admin dei progetti
+- Rimossi badge e label "In corso/Completato" dalla vista pubblica di dettaglio progetto
+- Presentazione delle date resa neutra con campi separati "Inizio" e "Fine"
+- Eliminato l'enum `ProjectStatus` e la proprietà `status` dal model `Project`
+
+---
+
 ## feature/auth-security
 
 ### Rate limiting mirato

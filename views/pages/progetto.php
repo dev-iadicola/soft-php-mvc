@@ -249,17 +249,21 @@
         </figure>
 
         <div class="proj-detail__meta">
-            <?php $projectStatus = \App\Core\Enum\ProjectStatus::tryFrom($project->status) ?? \App\Core\Enum\ProjectStatus::InProgress; ?>
-            <div class="proj-detail__meta-item" style="border-color: <?= $projectStatus->color() ?>; color: <?= $projectStatus->color() ?>;">
-                <i class="fa <?= $projectStatus->icon() ?>" style="font-size: 0.6rem;"></i> <?= $projectStatus->label() ?>
-            </div>
             <?php if (!empty($project->started_at)) : ?>
                 <div class="proj-detail__meta-item">
                     <i class="fa fa-calendar" aria-hidden="true"></i>
                     <?php
                         $start = (new DateTime($project->started_at))->format('M Y');
-                        $end = !empty($project->ended_at) ? (new DateTime($project->ended_at))->format('M Y') : 'in corso';
-                        echo "{$start} — {$end}";
+                        echo "Inizio: {$start}";
+                    ?>
+                </div>
+            <?php endif; ?>
+            <?php if (!empty($project->ended_at)) : ?>
+                <div class="proj-detail__meta-item">
+                    <i class="fa fa-calendar-check-o" aria-hidden="true"></i>
+                    <?php
+                        $end = (new DateTime($project->ended_at))->format('M Y');
+                        echo "Fine: {$end}";
                     ?>
                 </div>
             <?php endif; ?>

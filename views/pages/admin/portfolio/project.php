@@ -68,15 +68,6 @@ use App\Core\Enum\HttpActionType;
                         </div>
                     </div>
                 </div>
-                <div class="form-group mt-3">
-                    <label for="status">Stato progetto</label>
-                    <select class="form-control" id="status" name="status">
-                        <?php $currentStatus = $project->status ?? 'in_progress'; ?>
-                        <?php foreach (\App\Core\Enum\ProjectStatus::cases() as $status) : ?>
-                            <option value="<?= $status->value ?>" <?= $currentStatus === $status->value ? 'selected' : '' ?>><?= $status->label() ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
                 <div class="row mt-3">
                     <div class="col-md-6">
                         <div class="form-group">
@@ -88,7 +79,7 @@ use App\Core\Enum\HttpActionType;
                         <div class="form-group">
                             <label for="ended_at">Data fine</label>
                             <input type="date" class="form-control" id="ended_at" name="ended_at" value="<?= $project->ended_at ?? '' ?>">
-                            <small class="form-text text-muted">Lascia vuoto se il progetto è ancora in corso</small>
+                            <small class="form-text text-muted">Campo opzionale</small>
                         </div>
                     </div>
                 </div>
