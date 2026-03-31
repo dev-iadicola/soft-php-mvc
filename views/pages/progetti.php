@@ -290,7 +290,7 @@
                     <span class="proj-card__tab-name"><?= $project->title ?></span>
                 </div>
 
-                <a href="/progetti/<?= urlencode($project->title) ?>" class="proj-card__img-link">
+                <a href="/progetti/<?= $project->slug ?? urlencode($project->title) ?>" class="proj-card__img-link">
                     <img src="<?= validateImagePath($project->img, assets('img/no-img.svg')) ?>"
                          alt="<?= $project->title ?>" />
                     <span class="proj-card__overlay">$ open --project</span>
@@ -343,7 +343,7 @@
                                 <i class="fa fa-external-link" aria-hidden="true"></i> live
                             </a>
                         <?php } ?>
-                        <a href="/progetti/<?= urlencode($project->title) ?>"
+                        <a href="/progetti/<?= $project->slug ?? urlencode($project->title) ?>"
                            class="proj-card__btn proj-card__btn--detail">
                             dettagli <i class="fa fa-angle-right" aria-hidden="true"></i>
                         </a>

@@ -19,6 +19,8 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?= assets('admin.css') ?>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <!-- Devicon - Technology icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css">
 
 
     <!-- Editor styles -->

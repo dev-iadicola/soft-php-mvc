@@ -5,8 +5,26 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="csrf-token" content="<?= csrf_token() ?>">
+    <?php $seo = $seo ?? []; ?>
+    <?php if (!empty($seo['description'])) : ?>
+        <meta name="description" content="<?= htmlspecialchars($seo['description']) ?>">
+    <?php endif; ?>
 
-    <title>Iadicola // dev</title>
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="<?= htmlspecialchars($seo['title'] ?? 'Iadicola // dev') ?>">
+    <?php if (!empty($seo['description'])) : ?>
+        <meta property="og:description" content="<?= htmlspecialchars($seo['description']) ?>">
+    <?php endif; ?>
+    <?php if (!empty($seo['image'])) : ?>
+        <meta property="og:image" content="<?= htmlspecialchars($seo['image']) ?>">
+    <?php endif; ?>
+    <?php if (!empty($seo['url'])) : ?>
+        <meta property="og:url" content="<?= htmlspecialchars($seo['url']) ?>">
+        <link rel="canonical" href="<?= htmlspecialchars($seo['url']) ?>">
+    <?php endif; ?>
+
+    <title><?= htmlspecialchars($seo['title'] ?? 'Iadicola // dev') ?></title>
     <link rel="icon" type="image/x-icon" href="/assets/img/favicon.png" />
 
     <!-- Bootstrap 5 CSS -->
@@ -14,6 +32,8 @@
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" />
+    <!-- Devicon - Technology icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/devicons/devicon@v2.16.0/devicon.min.css">
 
     <!-- Custom styles -->
     <link rel="stylesheet" href="/assets/style.css" />
@@ -39,7 +59,6 @@
                         <li><a href="/portfolio" class="{{ isActivePage('portfolio', $page) }}">~/portfolio</a></li>
                         <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">~/progetti</a></li>
                         <li><a href="/tech-stack" class="{{ isActivePage('tech-stack', $page) }}">~/tech-stack</a></li>
-                        <li><a href="/partners" class="{{ isActivePage('partners', $page) }}">~/partners</a></li>
                         <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">~/certificati</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/"><i class="fa fa-github" aria-hidden="true"></i> github</a></li>
                     </ul>

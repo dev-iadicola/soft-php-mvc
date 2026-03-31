@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Controllers;
 
 use App\Core\Controllers\Controller;
+use App\Core\Helpers\Seo;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Request;
 use App\Services\ProjectService;
@@ -18,8 +19,12 @@ class ProgettiController extends Controller
         $selectedTechnology = isset($_GET['technology']) ? trim((string) $_GET['technology']) : null;
         $projects = ProjectService::getActive(technology: $selectedTechnology);
         $technologies = TechnologyService::getActive();
+        $seo = Seo::make([
+            'title' => 'Progetti',
+            'description' => 'Scopri i progetti di sviluppo web realizzati con PHP, Laravel, React e altre tecnologie.',
+        ]);
 
-        view('progetti', compact('projects', 'technologies', 'selectedTechnology'));
+        view('progetti', compact('projects', 'technologies', 'selectedTechnology', 'seo'));
     }
 
     #[Get('progetti/{slug}')]
@@ -32,7 +37,12 @@ class ProgettiController extends Controller
             : ProjectService::findBySlug($slug);
 
         $projects = ProjectService::getActive();
+        $seo = Seo::make([
+            'title' => $project->title,
+            'description' => $project->overview ? strip_tags(substr($project->overview, 0, 160)) : null,
+            'image' => $project->img ?: null,
+        ]);
 
-        view('progetto', compact('project', 'projects'));
+        view('progetto', compact('project', 'projects', 'seo'));
     }
 }

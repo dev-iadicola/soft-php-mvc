@@ -19,6 +19,7 @@ class Project extends Model
    protected ?int $technology_id = null;
    protected ?int $partner_id = null;
    protected string $title;
+   protected ?string $slug = null;
    protected ?string $overview = null;
    protected ?string $description = null;
    protected ?string $link = null;

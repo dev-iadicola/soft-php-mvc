@@ -12,6 +12,7 @@ class Article extends Model
 {
     protected ?int $id = null;
     protected string $title;
+    protected ?string $slug = null;
     protected string $subtitle;
     protected ?string $overview = null;
     protected ?string $img = null;

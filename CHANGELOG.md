@@ -1,5 +1,47 @@
 # Changelog
 
+## feature/seo-metadata
+
+### Rimozione sezione Partners
+- Rimosso `PartnersController` e vista `partners.php`
+- Rimosso link Partners dalla navbar, footer e sitemap
+- Rimosso riferimento a `PartnerService` da `PortfolioController`
+- Rimossa riga Partners dal seeder `links_footer`
+- Aggiunto filtro nel footer per escludere il link `/partners` dal database
+
+### Slug automatici
+- Aggiunta colonna `slug` (VARCHAR 150, nullable) a `projects` e `articles`
+- Proprietà `?string $slug` aggiunta ai model `Project` e `Article`
+- Generazione automatica dello slug da `Str::slug($title)` in `ProjectService::create/update` e `ArticleService::create/update`
+- `ProjectService::findBySlug()` cerca prima per slug, poi fallback per titolo (compatibilità URL precedenti)
+- Aggiunto `ArticleService::findBySlug()`
+- Aggiornata vista progetti per usare slug negli URL invece di `urlencode($title)`
+- Migration per popolare gli slug dei record esistenti
+
+### Meta description e og:image dinamici
+- Creato helper `App\Core\Helpers\Seo` con metodo `Seo::make()` per generare array meta tag (title, description, image, url)
+- Aggiornato layout `default.php` con supporto a: `<meta name="description">`, Open Graph tags (`og:title`, `og:description`, `og:image`, `og:url`), `<link rel="canonical">`
+- Tag `<title>` ora dinamico (pagina + suffisso sito)
+- Aggiornati controller pubblici: HomeController, ProgettiController, PortfolioController, TechnologyController
+- Per pagine senza SEO esplicito, fallback ai valori default
+
+### Sitemap XML
+- Creato `SitemapController` con rotta `GET /sitemap.xml`
+- Genera XML con: 7 pagine statiche (home, portfolio, progetti, tech-stack, partners, certificati, contatti), tutti i progetti attivi con slug e lastmod, tutti gli articoli attivi con link esterno
+
+---
+
+## feature/technology-icons
+
+- Aggiunta colonna `icon` (VARCHAR 100, nullable) alla tabella `technology`
+- Aggiunta proprietà `?string $icon` al model `Technology`
+- Aggiunto CDN Devicon (~130 icone tecnologie) nei layout admin e pubblico
+- Aggiunto `<select>` con anteprima live nella vista admin per scegliere l'icona dalla libreria Devicon (3 varianti: plain, original, line)
+- Aggiornata la vista pubblica tech stack: mostra l'icona Devicon se presente, altrimenti fallback al dot verde
+- Aggiornata validazione nel controller per accettare il campo `icon`
+
+---
+
 ## Refactoring: da fillable a incapsulamento (proprieta tipizzate)
 
 ### Fase 1 - Base Model e Attributes trait

@@ -78,12 +78,16 @@ class TechnologyMngController extends AdminController
      */
     private function validatePayload(Request $request): array|Validator
     {
+        $icon = trim($request->string('icon'));
+
         $data = [
             'name' => trim($request->string('name')),
+            'icon' => $icon !== '' ? $icon : null,
         ];
 
         $validator = Validator::make($data, [
             'name' => ['required', 'string', 'max:100'],
+            'icon' => ['nullable', 'string', 'max:100'],
         ], [
             'name.required' => 'Il nome della tecnologia e obbligatorio.',
             'name.string' => 'Il nome della tecnologia deve essere una stringa.',

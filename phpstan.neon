@@ -15,4 +15,11 @@ parameters:
         - views/
         - vendor/
         - storage/
+    ignoreErrors:
+        -
+            identifier: property.protected
+            path: app/Controllers/
+        -
+            identifier: property.protected
+            path: app/Services/
     reportUnmatchedIgnoredErrors: false

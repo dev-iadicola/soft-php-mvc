@@ -68,7 +68,10 @@
 <footer class="site-footer">
     <?php
     try {
-        $footerLinks = \App\Services\LinkFooterService::getAll();
+        $footerLinks = array_values(array_filter(
+            \App\Services\LinkFooterService::getAll(),
+            static fn ($footerLink): bool => $footerLink->link !== '/partners'
+        ));
     } catch (\Throwable) {
         $footerLinks = [];
     }
