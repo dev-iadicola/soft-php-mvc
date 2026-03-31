@@ -44,6 +44,10 @@
                                         <input type="text" class="form-control" name="subtitle" value="<?= htmlspecialchars($article->subtitle) ?>">
                                     </div>
                                     <div class="mb-3">
+                                        <label class="form-label">Contenuto</label>
+                                        <textarea class="form-control editor" name="overview" rows="4"><?= $article->overview ?? '' ?></textarea>
+                                    </div>
+                                    <div class="mb-3">
                                         <label class="form-label">Immagine</label>
                                         <input type="file" class="form-control" name="img">
                                     </div>

@@ -31,7 +31,7 @@
 
                 <div class="mb-3">
                     <label class="form-label">Contenuto</label>
-                    <textarea class="form-control" name="content" rows="4" placeholder="Scrivi qui il contenuto..."></textarea>
+                    <textarea class="form-control editor" name="overview" rows="4" placeholder="Scrivi qui il contenuto..."></textarea>
                 </div>
 
                 <div class="mb-3">

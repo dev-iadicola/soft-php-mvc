@@ -1,5 +1,28 @@
 # Changelog
 
+## feature/blog-system
+
+### Sistema tag
+- Migration: tabelle `tags` (id, name, slug UNIQUE) e `article_tag` (article_id, tag_id) con indici
+- Model `Tag` e `ArticleTag`
+- `TagService` con CRUD, `getForArticle()`, `syncForArticle()`, `findBySlug()`
+
+### Paginazione
+- DTO `PaginationResult` con: items, currentPage, totalPages, totalItems, perPage, helper `hasPages()`, `hasPrevious()`, `hasNext()`, `pageRange()`
+- `ArticleService::paginateActive()` con supporto ricerca e filtro tag
+- Partial view `components/pagination.php` con navigazione prev/next e numeri pagina, preserva query string
+
+### Ricerca full-text
+- `ArticleService::search()` con `WHERE title LIKE ?`
+- `ArticleService::paginateActive()` accetta parametro `$search` per filtrare
+
+### Editor rich-text
+- Classe `editor` aggiunta alla textarea `overview` nel form create articolo
+- Campo `overview` con editor Quill aggiunto nel modal edit articolo
+- Corretto nome campo da `content` a `overview` nel form create (allineato al model)
+
+---
+
 ## feature/auto-reply
 
 ### Sistema auto-reply configurabile
