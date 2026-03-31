@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Model\Contatti;
 use App\Core\Exception\ValidationException;
 use App\Core\Exception\NotFoundException;
+use App\Services\NotificationService;
 
 class ContactService
 {
@@ -84,7 +85,16 @@ class ContactService
         Contatti::query()->create($data);
 
         /** @var Contatti */
-        return Contatti::query()->orderBy('id', 'DESC')->first();
+        $contatto = Contatti::query()->orderBy('id', 'DESC')->first();
+
+        NotificationService::create(
+            'new_contact',
+            'Nuovo messaggio da ' . ($data['nome'] ?? 'Anonimo'),
+            substr((string) ($data['messaggio'] ?? ''), 0, 80),
+            '/admin/contatti/' . $contatto->id,
+        );
+
+        return $contatto;
     }
 
     public static function countUnread(): int

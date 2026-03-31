@@ -1,5 +1,30 @@
 # Changelog
 
+## feature/admin-notifications
+
+### Sistema notifiche admin
+- Migration: creata tabella `notifications` (id, type, title, message, link, is_read, created_at)
+- Model `Notification` con proprietà tipizzate e cast `is_read` → bool
+- `NotificationService` con metodi: `create()`, `getUnread()`, `countUnread()`, `markAsRead()`, `markAllAsRead()`, `findOrFail()`
+- Notifica automatica generata in `ContactService::create()` alla ricezione di un nuovo messaggio contatti
+
+### Controller e endpoint
+- `NotificationController` con 3 endpoint:
+  - `GET /admin/notifications/count` — JSON `{"count": N}` per polling
+  - `POST /admin/notifications/{id}/read` — segna come letta e redirect al link
+  - `POST /admin/notifications/read-all` — segna tutte come lette
+
+### Campanellino UI
+- Partial `notification-bell.php` incluso nel layout admin globale
+- Icona `fa-bell` fixed in alto a destra con badge numerico rosso
+- Dropdown al click con lista ultime 10 notifiche non lette
+- Ogni notifica cliccabile (segna come letta + naviga alla pagina)
+- Bottone "Segna tutte come lette" nell'header del dropdown
+- Polling automatico ogni 30 secondi via `fetch()` per aggiornare il badge
+- CSS dedicato: animazione pulse sul badge, dropdown con scroll, hover sugli item
+
+---
+
 ## feature/admin-dashboard
 
 ### Pulizia dashboard
