@@ -1,5 +1,13 @@
 # Changelog
 
+## feature/react/execution-roadmap
+
+### Roadmap esecutiva della migrazione React
+- Aggiunto un artefatto tracciato nel repository con la sequenza operativa aggiornata della migrazione React/Inertia, distinguendo tranche gia completate, hardening QA, inventario legacy e pulizia finale
+- Formalizzati i criteri di go/no-go dei branch React, cosi la roadmap non resta solo descrittiva ma diventa un riferimento esecutivo per chiudere le prossime tranche senza ampliare lo scope
+
+---
+
 ## feature/react/design-system-foundation
 
 ### Primitive UI condivise per il frontend React
