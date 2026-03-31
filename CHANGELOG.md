@@ -1,5 +1,32 @@
 # Changelog
 
+## feature/auth-security
+
+### Rate limiting mirato
+- Nuova tabella `rate_limits` con tracking per `IP + route` (`attempts`, `last_attempt_at`)
+- `RateLimitMiddleware` riscritto su storage persistente e configurazione `settings.rate_limit`
+- Middleware non più globale: applicato via attributo alle sole rotte `POST /login` e `POST /contatti`
+- Risposta HTTP `429` con messaggio e `retry_after` per richieste JSON, redirect back con errore per form web
+
+### 2FA TOTP
+- Migration: colonne `two_factor_secret` e `two_factor_enabled` sulla tabella `users`
+- Implementato `TotpService` puro con generazione secret, provisioning URI e verifica codici a 6 cifre
+- Nuova pagina admin `/admin/security` per attivare/disattivare la 2FA
+- QR code generato come SVG inline lato client a partire da URI `otpauth://...`
+- Login aggiornato: dopo password valida, gli utenti con 2FA attiva vengono reindirizzati al form `/two-factor`
+
+### Sessioni attive
+- Nuova tabella `sessions` per tracciare sessioni autenticare con `user_id`, IP, user agent e `last_activity`
+- Nuovi model/service: `AuthSession` e `AuthSessionService`
+- `AuthService` e `AuthMiddleware` aggiornati per validare la sessione attiva dal database e sincronizzare `last_activity`
+- Nuova pagina admin `/admin/sessions` con elenco sessioni e azione "Termina"
+
+### Supporto framework
+- `SessionStorage` ora espone helper per `session_id`, rigenerazione ID e rimozione multipla chiavi
+- Corretto `ActiveQueryFactory` per leggere il flag `timestamps` dai model senza forzare `created_at`/`updated_at`
+
+---
+
 ## feature/profile-enhancements
 
 ### Campi social

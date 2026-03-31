@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace App\Core\Services;
 
-use App\Model\User;
-use App\Model\LogTrace;
 use App\Core\Helpers\Log;
 use App\Core\DataLayer\Model;
+use App\Model\AuthSession;
+use App\Model\User;
+use App\Services\AuthSessionService;
 
 
 class AuthService
@@ -44,15 +45,21 @@ class AuthService
     {
         // Generate token from server and save the value
         $token = static::generateToken();
-        // * Set lifetime of the session.
-        $this->_sessionStorage->setLifeTime(mvc()->config->get('settings.session.auth-lifetime'));
+        $this->_sessionStorage->regenerateId();
+
+        $sessionId = $this->_sessionStorage->id();
+        $ip = $_SERVER['REMOTE_ADDR'] ?? '';
+        $device = $_SERVER['HTTP_USER_AGENT'] ?? '';
 
         $model->setAttribute('token', $token);
-        // Save token in the database.
         $model->save();
 
+        $userId = (int) $model->getAttribute('id');
+
+        AuthSessionService::create($sessionId, $userId, $ip, $device);
+
         // Save the data of user and the token in session
-        $this->startUserSession(token: $token);
+        $this->startUserSession(token: $token, sessionId: $sessionId, userId: $userId);
 
         // Save the model
         $this->setUser($model);
@@ -67,12 +74,35 @@ class AuthService
      */
     public function logout(): void
     {
+        $sessionId = (string) $this->_sessionStorage->get('AUTH_SESSION_ID', $this->_sessionStorage->id());
+
+        if ($sessionId !== '') {
+            AuthSessionService::terminate($sessionId);
+        }
+
+        $this->_user = null;
         $this->_sessionStorage->destroy();
     }
 
     public function user(): ?Model
     {
-        return $this->_user;
+        if ($this->_user !== null) {
+            return $this->_user;
+        }
+
+        $userId = (int) $this->_sessionStorage->get('AUTH_USER_ID', 0);
+
+        if ($userId <= 0) {
+            return null;
+        }
+
+        /** @var User|null $user */
+        $user = User::query()->find($userId);
+        if ($user instanceof User) {
+            $this->setUser($user);
+        }
+
+        return $user;
     }
     public function setUser(Model $model): void
     {
@@ -87,39 +117,52 @@ class AuthService
      */
     public function checkIpAddressSessionAndRemoteAddr(): bool
     {
-        return $this->_sessionStorage->get('IP') === $_SERVER['REMOTE_ADDR'];
+        return $this->_sessionStorage->get('IP') === ($_SERVER['REMOTE_ADDR'] ?? '');
     }
 
     public function isLogged(): bool
     {
-        return (bool) $this->_sessionStorage->get("LOGGED_IN") || $this->_user !== null;
+        return (bool) $this->_sessionStorage->get("LOGGED_IN") || $this->user() !== null;
     }
 
     public function isAuthenticated(): bool
     {
-        if ($this->_sessionStorage->get('AUTH_TOKEN')) {
+        $sessionId = (string) $this->_sessionStorage->get('AUTH_SESSION_ID', $this->_sessionStorage->id());
+        $userId = (int) $this->_sessionStorage->get('AUTH_USER_ID', 0);
 
-            $token = $this->_sessionStorage->get('AUTH_TOKEN');
-
-            return $this->verifyTokenInDatabase($token);
+        if ($sessionId === '' || $userId <= 0 || !$this->isLogged()) {
+            return false;
         }
-        return false;
+
+        $session = $this->currentAuthSession();
+
+        return $session instanceof AuthSession && (int) $session->getAttribute('user_id') === $userId;
     }
 
     public function updateLastPing(int $value): void
     {
         $this->_sessionStorage->setOrCreate('LAST_PING', $value);
+
+        $sessionId = (string) $this->_sessionStorage->get('AUTH_SESSION_ID', $this->_sessionStorage->id());
+        if ($sessionId !== '') {
+            AuthSessionService::touch($sessionId);
+        }
     }
 
     public function destroySession(): void
     {
-        $this->_sessionStorage->destroy();
+        $this->logout();
     }
 
-    protected function verifyTokenInDatabase(string $token): bool
+    public function currentAuthSession(): ?AuthSession
     {
-        $user = User::query()->where('token', $token)->first();
-        return (empty($user)) ? false : true;
+        $sessionId = (string) $this->_sessionStorage->get('AUTH_SESSION_ID', $this->_sessionStorage->id());
+
+        if ($sessionId === '') {
+            return null;
+        }
+
+        return AuthSessionService::find($sessionId);
     }
 
 
@@ -135,15 +178,17 @@ class AuthService
      * applicando la durata configurata per la sessione autenticata.
      */
 
-    private function startUserSession(string $token): void
+    private function startUserSession(string $token, string $sessionId, int $userId): void
     {
         // setting the token, last ping,
         $this->_sessionStorage->create([
             'AUTH_TOKEN' => $token,
+            'AUTH_USER_ID' => $userId,
+            'AUTH_SESSION_ID' => $sessionId,
             'LAST_PING' => time(),
-            'LOGGED_IN' => TRUE,
-            'IP' => $_SERVER['REMOTE_ADDR'],
-            'DEVICE' =>  $_SERVER['HTTP_USER_AGENT'],
+            'LOGGED_IN' => true,
+            'IP' => $_SERVER['REMOTE_ADDR'] ?? '',
+            'DEVICE' =>  $_SERVER['HTTP_USER_AGENT'] ?? '',
             'SESSION_CONTEXT' => 'auth'
         ]);
 

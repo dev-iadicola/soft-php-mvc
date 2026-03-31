@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controllers\Admin;
 
+use App\Core\Facade\Auth;
 use App\Core\Controllers\AdminController;
 use App\Core\Facade\Session;
 use App\Core\Http\Attributes\Get;
@@ -13,7 +14,9 @@ use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Exception\ValidationException;
 use App\Model\User;
+use App\Services\AuthSessionService;
 use App\Services\PasswordService;
+use App\Services\TotpService;
 
 #[Prefix('/admin')]
 #[Middleware('auth')]
@@ -89,14 +92,132 @@ class UserAccountController extends AdminController
         return response()->back()->withSuccess('Password aggiornata.');
     }
 
+    #[Get('security', 'admin.security')]
+    public function security()
+    {
+        $user = $this->currentUser();
+
+        if (!$user) {
+            return response()->redirect('/login');
+        }
+
+        $setupSecret = null;
+        $provisioningUri = null;
+
+        if (!$user->two_factor_enabled) {
+            $setupSecret = (string) Session::get('TWO_FACTOR_SETUP_SECRET', '');
+
+            if ($setupSecret === '') {
+                $setupSecret = TotpService::generateSecret();
+                Session::set('TWO_FACTOR_SETUP_SECRET', $setupSecret);
+            }
+
+            $provisioningUri = TotpService::provisioningUri(
+                (string) $user->email,
+                $setupSecret,
+                'Soft MVC'
+            );
+        }
+
+        return view('admin.security', compact('user', 'setupSecret', 'provisioningUri'));
+    }
+
+    #[Post('security/two-factor/enable', 'admin.security.two-factor.enable')]
+    public function enableTwoFactor(Request $request)
+    {
+        $user = $this->currentUser();
+
+        if (!$user) {
+            return response()->redirect('/login');
+        }
+
+        $setupSecret = (string) Session::get('TWO_FACTOR_SETUP_SECRET', '');
+
+        if ($setupSecret === '') {
+            return response()->back()->withError('Secret 2FA mancante. Ricarica la pagina sicurezza e riprova.');
+        }
+
+        if (!TotpService::verify($setupSecret, $request->string('code'))) {
+            return response()->back()->withError('Il codice TOTP inserito non e valido.');
+        }
+
+        User::query()->where('id', $user->id)->update([
+            'two_factor_secret' => $setupSecret,
+            'two_factor_enabled' => 1,
+        ]);
+
+        Session::remove('TWO_FACTOR_SETUP_SECRET');
+
+        return response()->back()->withSuccess('Autenticazione a due fattori abilitata.');
+    }
+
+    #[Post('security/two-factor/disable', 'admin.security.two-factor.disable')]
+    public function disableTwoFactor()
+    {
+        $user = $this->currentUser();
+
+        if (!$user) {
+            return response()->redirect('/login');
+        }
+
+        User::query()->where('id', $user->id)->update([
+            'two_factor_secret' => null,
+            'two_factor_enabled' => 0,
+        ]);
+
+        Session::remove('TWO_FACTOR_SETUP_SECRET');
+
+        return response()->back()->withSuccess('Autenticazione a due fattori disattivata.');
+    }
+
+    #[Get('sessions', 'admin.sessions')]
+    public function sessions()
+    {
+        $user = $this->currentUser();
+
+        if (!$user) {
+            return response()->redirect('/login');
+        }
+
+        $sessions = AuthSessionService::getForUser((int) $user->id);
+        $currentSessionId = session_id();
+
+        return view('admin.sessions', compact('user', 'sessions', 'currentSessionId'));
+    }
+
+    #[Post('sessions/{id}/terminate', 'admin.sessions.terminate')]
+    public function terminateSession(string $id)
+    {
+        $user = $this->currentUser();
+
+        if (!$user) {
+            return response()->redirect('/login');
+        }
+
+        $session = AuthSessionService::find($id);
+
+        if ($session === null || (int) $session->user_id !== (int) $user->id) {
+            return response()->back()->withError('Sessione non trovata.');
+        }
+
+        if ($id === session_id()) {
+            Auth::logout();
+            return response()->redirect('/login');
+        }
+
+        AuthSessionService::terminate($id);
+
+        return response()->back()->withSuccess('Sessione terminata.');
+    }
+
     private function currentUser(): ?object
     {
-        $token = Session::get('AUTH_TOKEN');
+        $user = Auth::user();
 
-        if (!$token) {
+        if (!$user instanceof User) {
             return null;
         }
 
-        return User::query()->where('token', $token)->first();
+        return $user;
     }
 }

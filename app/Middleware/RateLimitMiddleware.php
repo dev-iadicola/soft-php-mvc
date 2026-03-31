@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace App\Middleware;
 
 use App\Core\Http\Request;
-use App\Core\Facade\Session;
 use App\Core\Contract\MiddlewareInterface;
+use App\Services\RateLimitService;
 
 /**
  * Summary of RateLimitMiddleware
@@ -14,40 +14,42 @@ use App\Core\Contract\MiddlewareInterface;
  */
 class RateLimitMiddleware implements MiddlewareInterface
 {
-    private int $maxRequest;
-    private int $window;
     public function exec(Request $request): mixed
-    {   // I take the maximum limit of request allowed.
-        $this->maxRequest = mvc()->config->get('settings.request.max');
-        // I take the time window for this limit.
-        $this->window = mvc()->config->get('settings.request.window');
+    {
+        $config = mvc()->config->get('settings.rate_limit');
+        $path = rtrim($request->path(), '/');
+        $path = $path === '' ? '/' : $path;
+        $routeKey = strtoupper($request->method()) . ' ' . $path;
+        $routeConfig = $config['routes'][$routeKey] ?? $config['default'] ?? ['max' => 5, 'window' => 900];
+        $maxRequest = (int) ($routeConfig['max'] ?? 5);
+        $window = (int) ($routeConfig['window'] ?? 900);
 
-        $count = Session::getOrCreate('request_count', 0);
-        $start = Session::getOrCreate('request_start_time', time());
-      
-        // If the time windoes has exprired, reset it.
-        if ((time() - $start) > $this->window) {
-            $count = 0;
-            $start = time();
-            Session::create([
-                'request_count' => $count,
-                'request_start_time' => $start
-            ]);
-        }
+        $result = RateLimitService::hit(
+            $request->getIp(),
+            $routeKey,
+            $maxRequest,
+            $window
+        );
 
-        // check numebrs of requests don't exceed the limit of the max requests
-        $count++;
-        Session::set('request_count', $count);
-
-        if ($count > $this->maxRequest) {
-            response()->json(
-                [
-                    'error' => 'Too many requests',
-                    'limit' => $this->maxRequest,
-                    'window' => "{$this->window} seconds",
-                ],
-                429
+        if ($result['allowed'] === false) {
+            $message = sprintf(
+                'Troppi tentativi. Riprova tra %d secondi.',
+                max(1, (int) $result['retry_after'])
             );
+
+            if (response()->wantsJson()) {
+                return response()->json(
+                    [
+                        'error' => $message,
+                        'limit' => $maxRequest,
+                        'window' => $window,
+                        'retry_after' => $result['retry_after'],
+                    ],
+                    429
+                );
+            }
+
+            return response()->back(429)->withError($message);
         }
 
         return null;

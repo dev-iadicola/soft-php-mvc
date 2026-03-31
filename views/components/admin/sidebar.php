@@ -69,6 +69,8 @@
             <div class="collapse" id="collapseUser">
                 <div class="card card-body mt-2">
                     <a class="dropdown-item text-dark<?= $page === '/admin/settings' ? ' active' : '' ?>" href="/admin/settings">Impostazioni</a>
+                    <a class="dropdown-item text-dark<?= $page === '/admin/security' ? ' active' : '' ?>" href="/admin/security">Sicurezza 2FA</a>
+                    <a class="dropdown-item text-dark<?= $page === '/admin/sessions' ? ' active' : '' ?>" href="/admin/sessions">Sessioni Attive</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/password' ? ' active' : '' ?>" href="/admin/password">Cambia Password</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/edit-profile' ? ' active' : '' ?>" href="/admin/edit-profile">Edit Profile</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/logs' ? ' active' : '' ?>" href="/admin/logs">Logs</a>

@@ -24,9 +24,9 @@ class Session {
        return Mvc::$mvc->sessionStorage->getFlashSession($key);
     }
 
-    public static function get(string $key): mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
-        return Mvc::$mvc->sessionStorage->get($key);
+        return Mvc::$mvc->sessionStorage->get($key, $default);
     }
 
     /**
@@ -56,6 +56,16 @@ class Session {
     public static function set(string $key, mixed $value): void
     {
         Mvc::$mvc->sessionStorage->set($key, $value);
+    }
+
+    public static function remove(string $key): void
+    {
+        Mvc::$mvc->sessionStorage->remove($key);
+    }
+
+    public static function removeMany(array $keys): void
+    {
+        Mvc::$mvc->sessionStorage->removeMany($keys);
     }
 
     public static function flash(string $key, mixed $value): void

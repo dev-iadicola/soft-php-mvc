@@ -21,13 +21,12 @@ return [
         SecureHeaderMiddleware::class,
         CsrfMiddleware::class,
         MethodOverrideMiddleware::class,
-        RateLimitMiddleware::class,
     ],
     // Middlwares for APIs
     'api' => [
         CorsMiddleware::class,
-        RateLimitMiddleware::class
     ],
+    'rate_limit' => [RateLimitMiddleware::class],
     // Middleware for maintenance and visitor tracking
     'guest' => [
         MaintenanceMiddleware::class,
