@@ -1,5 +1,24 @@
 # Changelog
 
+## feature/projects-enhancements
+
+### Stato progetto con enum
+- Enum `ProjectStatus` (`in_progress`, `completed`, `paused`) con metodi `label()`, `color()`, `icon()`
+- Migration: colonne `status`, `started_at`, `ended_at` su `projects`
+- Model `Project` aggiornato con le nuove proprietà
+- Form admin: select status (iterato dall'enum), input date inizio/fine
+- Vista pubblica dettaglio: badge status colorato con icona, range date "Mar 2024 — in corso"
+
+### Galleria screenshot
+- Upload multiplo galleria nel form admin progetti (`<input type="file" multiple name="gallery[]">`)
+- Anteprima immagini esistenti con bottone elimina per ciascuna
+- Vista dettaglio pubblica: griglia gallery con immagini cliccabili (link diretto)
+
+### Note
+- Drag-and-drop era già integrato (SortableJS + `initSortable`)
+
+---
+
 ## feature/blog-system
 
 ### Integrazione frontend

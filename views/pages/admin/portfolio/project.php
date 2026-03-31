@@ -68,6 +68,49 @@ use App\Core\Enum\HttpActionType;
                         </div>
                     </div>
                 </div>
+                <div class="form-group mt-3">
+                    <label for="status">Stato progetto</label>
+                    <select class="form-control" id="status" name="status">
+                        <?php $currentStatus = $project->status ?? 'in_progress'; ?>
+                        <?php foreach (\App\Core\Enum\ProjectStatus::cases() as $status) : ?>
+                            <option value="<?= $status->value ?>" <?= $currentStatus === $status->value ? 'selected' : '' ?>><?= $status->label() ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="started_at">Data inizio</label>
+                            <input type="date" class="form-control" id="started_at" name="started_at" value="<?= $project->started_at ?? '' ?>">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="ended_at">Data fine</label>
+                            <input type="date" class="form-control" id="ended_at" name="ended_at" value="<?= $project->ended_at ?? '' ?>">
+                            <small class="form-text text-muted">Lascia vuoto se il progetto è ancora in corso</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="gallery">Galleria immagini</label>
+                    <input type="file" class="form-control" id="gallery" name="gallery[]" multiple accept="image/*">
+                    <small class="form-text text-muted">Puoi selezionare più immagini</small>
+                    <?php if (!empty($gallery)) : ?>
+                        <div class="row mt-2">
+                            <?php foreach ($gallery as $media) : ?>
+                                <div class="col-3 mb-2 position-relative">
+                                    <img src="<?= $media->path ?>" class="img-fluid rounded border" alt="Gallery">
+                                    <form action="/admin/project-media/<?= $media->id ?>" method="POST" class="position-absolute" style="top: 2px; right: 17px;">
+                                        @csrf
+                                        @delete
+                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Eliminare questa immagine?')" style="padding: 0 5px; font-size: 0.7rem;">&times;</button>
+                                    </form>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                    <?php endif; ?>
+                </div>
                 <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" name="is_active" id="is_active" value="1" <?= ($project->is_active ?? true) ? 'checked' : '' ?>>
                     <label class="form-check-label" for="is_active">Visibile nel portfolio pubblico</label>

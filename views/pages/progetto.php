@@ -249,6 +249,20 @@
         </figure>
 
         <div class="proj-detail__meta">
+            <?php $projectStatus = \App\Core\Enum\ProjectStatus::tryFrom($project->status) ?? \App\Core\Enum\ProjectStatus::InProgress; ?>
+            <div class="proj-detail__meta-item" style="border-color: <?= $projectStatus->color() ?>; color: <?= $projectStatus->color() ?>;">
+                <i class="fa <?= $projectStatus->icon() ?>" style="font-size: 0.6rem;"></i> <?= $projectStatus->label() ?>
+            </div>
+            <?php if (!empty($project->started_at)) : ?>
+                <div class="proj-detail__meta-item">
+                    <i class="fa fa-calendar" aria-hidden="true"></i>
+                    <?php
+                        $start = (new DateTime($project->started_at))->format('M Y');
+                        $end = !empty($project->ended_at) ? (new DateTime($project->ended_at))->format('M Y') : 'in corso';
+                        echo "{$start} — {$end}";
+                    ?>
+                </div>
+            <?php endif; ?>
             <?php foreach ($project->technologies() as $technology) : ?>
                 <div class="proj-detail__meta-item">
                     <i class="fa fa-code" aria-hidden="true"></i>
@@ -266,6 +280,22 @@
                 </div>
             <?php endif; ?>
         </div>
+
+        <?php
+            $galleryMedia = \App\Services\MediaService::getFor('project', (int) $project->id);
+            if ($galleryMedia !== []) :
+        ?>
+        <div style="margin-bottom: 1.5rem;">
+            <div class="proj-detail__label">// gallery</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.5rem;">
+                <?php foreach ($galleryMedia as $media) : ?>
+                    <a href="<?= $media->path ?>" target="_blank" style="display: block; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden;">
+                        <img src="<?= $media->path ?>" alt="Screenshot" style="width: 100%; height: 120px; object-fit: cover;" loading="lazy">
+                    </a>
+                <?php endforeach; ?>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <div class="proj-detail__content">
             <button type="button" class="proj-detail__tts" data-tts-toggle>
