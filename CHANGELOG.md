@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/admin-form-strategy
+
+### Strategia base per i form admin React
+- Introdotti componenti riusabili per form admin (`AdminFormShell`, sezioni, field wrapper, input/select/textarea) per evitare di ridisegnare ogni CRUD da zero
+- Aggiunta una preview dedicata `Admin/FormStrategyPreview` con `useForm`, error bag, aside impostazioni, indicatori di completion e preparazione a upload/editor rich-text
+- Aggiornata la preview React admin con il nuovo entry della strategia form, cosi il prossimo branch dei flussi critici può riusare subito la stessa base UI
+
+---
+
 ## feature/react/admin-layout-shell
 
 ### Shell admin React condivisa

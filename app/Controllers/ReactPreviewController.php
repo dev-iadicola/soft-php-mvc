@@ -51,4 +51,26 @@ class ReactPreviewController extends Controller
             ],
         ]);
     }
+
+    #[Get('/react-preview/admin/forms', 'react.preview.admin.forms')]
+    public function adminForms(): void
+    {
+        inertia('Admin/FormStrategyPreview', [
+            'meta' => [
+                'title' => 'Admin Form Strategy',
+            ],
+            'preview' => [
+                'categories' => [
+                    ['label' => 'Engineering', 'value' => 'engineering'],
+                    ['label' => 'Case Study', 'value' => 'case-study'],
+                    ['label' => 'Product', 'value' => 'product'],
+                ],
+                'visibilities' => [
+                    ['label' => 'Draft', 'value' => 'draft'],
+                    ['label' => 'Scheduled', 'value' => 'scheduled'],
+                    ['label' => 'Published', 'value' => 'published'],
+                ],
+            ],
+        ]);
+    }
 }

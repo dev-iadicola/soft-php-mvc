@@ -29,6 +29,7 @@ const DEFAULT_SECTIONS: AdminNavSection[] = [
     items: [
       { href: '/admin/dashboard', label: 'Dashboard' },
       { href: '/react-preview/admin', label: 'React preview' },
+      { href: '/react-preview/admin/forms', label: 'Form strategy' },
       { href: '/admin/notifications/count', label: 'Notifications API' },
     ],
   },

@@ -828,6 +828,204 @@ code {
   padding-left: 1.1rem;
 }
 
+.admin-form-shell,
+.admin-form-shell__main,
+.admin-form-shell__aside,
+.admin-form-aside,
+.admin-form-grid,
+.admin-form-grid__columns,
+.admin-form-field,
+.admin-form-section,
+.admin-form-section__header,
+.admin-form-section__body,
+.admin-form-progress,
+.admin-form-actions,
+.admin-upload-summary {
+  display: grid;
+}
+
+.admin-form-shell,
+.admin-form-aside,
+.admin-form-grid,
+.admin-form-section,
+.admin-form-progress,
+.admin-upload-summary {
+  gap: 1rem;
+}
+
+.admin-form-shell__aside {
+  gap: 1rem;
+  align-content: start;
+}
+
+.admin-form-grid__columns {
+  gap: 1rem;
+}
+
+.admin-form-section {
+  padding: 1.35rem;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-md);
+  background: var(--app-surface);
+}
+
+.admin-form-section__header {
+  gap: 0.5rem;
+}
+
+.admin-form-section__eyebrow,
+.admin-form-field__label,
+.admin-form-progress__label {
+  margin: 0;
+  color: var(--app-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.admin-form-section__title {
+  margin: 0.2rem 0 0;
+  font-size: 1.25rem;
+}
+
+.admin-form-section__description,
+.admin-form-field__hint,
+.admin-upload-summary span {
+  margin: 0;
+  color: var(--app-text-muted);
+  line-height: 1.6;
+}
+
+.admin-form-field {
+  gap: 0.65rem;
+}
+
+.admin-form-field__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.admin-form-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--app-text);
+  font-size: 0.86rem;
+  letter-spacing: 0.02em;
+  text-transform: none;
+}
+
+.admin-form-field__required {
+  padding: 0.2rem 0.45rem;
+  border-radius: 999px;
+  background: var(--app-primary-soft);
+  color: var(--app-primary);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-form-field__toolbar {
+  color: var(--app-text-muted);
+  font-size: 0.82rem;
+}
+
+.admin-form-field__control {
+  display: block;
+}
+
+.admin-form-field__control--invalid .admin-input,
+.admin-input--invalid {
+  border-color: rgba(180, 35, 24, 0.32);
+  box-shadow: 0 0 0 4px rgba(180, 35, 24, 0.08);
+}
+
+.admin-input {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.85rem 0.95rem;
+  border: 1px solid var(--app-border);
+  border-radius: var(--app-radius-sm);
+  background: #fff;
+  color: var(--app-text);
+}
+
+.admin-input:focus {
+  outline: none;
+  border-color: rgba(15, 118, 110, 0.4);
+  box-shadow: 0 0 0 4px rgba(15, 118, 110, 0.08);
+}
+
+.admin-select {
+  appearance: none;
+}
+
+.admin-textarea {
+  min-height: 8rem;
+  resize: vertical;
+}
+
+.admin-form-field__error {
+  color: var(--app-danger);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.admin-form-progress__bar {
+  overflow: hidden;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: var(--app-surface-muted);
+}
+
+.admin-form-progress__value {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(135deg, #0f766e, #12b981);
+}
+
+.admin-form-checklist {
+  display: grid;
+  gap: 0.75rem;
+  margin: 0;
+  padding-left: 1.1rem;
+}
+
+.admin-upload-summary {
+  padding: 1rem;
+  border-radius: var(--app-radius-sm);
+  background: var(--app-surface-muted);
+}
+
+.admin-form-actions {
+  gap: 0.75rem;
+}
+
+.admin-form-actions__button {
+  min-height: 2.85rem;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--app-border);
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.admin-form-actions__button--ghost {
+  background: #fff;
+  color: var(--app-text);
+}
+
+.admin-form-actions__button--primary {
+  border-color: transparent;
+  background: linear-gradient(135deg, #0f766e, #0b5b54);
+  color: #f8fffe;
+}
+
 @media (min-width: 960px) {
   .guest-header__nav {
     display: flex;
@@ -888,5 +1086,19 @@ code {
 
   .admin-stat-card {
     flex: 1 1 0;
+  }
+
+  .admin-form-shell {
+    grid-template-columns: minmax(0, 1.8fr) minmax(18rem, 0.95fr);
+    align-items: start;
+  }
+
+  .admin-form-shell__footer {
+    grid-column: 1 / -1;
+  }
+
+  .admin-form-grid__columns,
+  .admin-form-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
