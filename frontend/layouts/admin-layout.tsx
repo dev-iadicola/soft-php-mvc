@@ -38,12 +38,15 @@ const DEFAULT_SECTIONS: AdminNavSection[] = [
     items: [
       { href: '/admin/home', label: 'Articles' },
       { href: '/admin/project', label: 'Projects' },
+      { href: '/admin/contatti', label: 'Contacts' },
+      { href: '/admin/email-templates', label: 'Email templates' },
       { href: '/admin/technology', label: 'Tech stack' },
     ],
   },
   {
     title: 'System',
     items: [
+      { href: '/admin/visitors', label: 'Visitors' },
       { href: '/admin/edit-profile', label: 'Account' },
       { href: '/admin/security', label: 'Security' },
       { href: '/admin/settings', label: 'Settings' },

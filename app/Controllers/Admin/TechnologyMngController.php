@@ -22,18 +22,33 @@ class TechnologyMngController extends AdminController
     #[Get('/technology', 'admin.technology')]
     public function index()
     {
-        return view('admin.portfolio.technology', [
-            'technologies' => TechnologyService::getAll(),
-            'technology' => null,
+        $technologies = TechnologyService::getAll();
+
+        return inertia('Admin/Technology', [
+            'meta' => [
+                'title' => 'Tech stack',
+            ],
+            'technologyPage' => [
+                'current' => null,
+                'technologies' => array_map([$this, 'serializeTechnology'], $technologies),
+            ],
         ]);
     }
 
     #[Get('/technology-edit/{id}', 'admin.technology.edit')]
     public function edit(int $id)
     {
-        return view('admin.portfolio.technology', [
-            'technologies' => TechnologyService::getAll(),
-            'technology' => TechnologyService::findOrFail($id),
+        $technologies = TechnologyService::getAll();
+        $technology = TechnologyService::findOrFail($id);
+
+        return inertia('Admin/Technology', [
+            'meta' => [
+                'title' => 'Tech stack',
+            ],
+            'technologyPage' => [
+                'current' => $this->serializeTechnology($technology),
+                'technologies' => array_map([$this, 'serializeTechnology'], $technologies),
+            ],
         ]);
     }
 
@@ -99,5 +114,27 @@ class TechnologyMngController extends AdminController
         }
 
         return $data;
+    }
+
+    /**
+     * @return array{
+     *   id: int,
+     *   icon: string|null,
+     *   isActive: bool,
+     *   name: string,
+     *   sortOrder: int
+     * }
+     */
+    private function serializeTechnology(object $technology): array
+    {
+        return [
+            'id' => (int) ($technology->id ?? 0),
+            'icon' => isset($technology->icon) && $technology->icon !== ''
+                ? (string) $technology->icon
+                : null,
+            'isActive' => (bool) ($technology->is_active ?? false),
+            'name' => (string) ($technology->name ?? ''),
+            'sortOrder' => (int) ($technology->sort_order ?? 0),
+        ];
     }
 }

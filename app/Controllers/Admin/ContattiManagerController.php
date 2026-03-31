@@ -19,7 +19,6 @@ use App\Services\ContactService;
 #[Middleware('auth')]
 class ContattiManagerController extends AdminController
 {
-
   #[Get('/contatti')]
   public function index(Request $request)
   {
@@ -29,7 +28,23 @@ class ContattiManagerController extends AdminController
         : ContactService::getAll();
     $typologies = ContactService::getDistinctTypologies();
 
-    return view('admin.portfolio.messaggi', compact('contatti', 'typologies', 'typologie'));
+    return inertia('Admin/Contacts', [
+        'meta' => [
+            'title' => 'Messaggi ricevuti',
+        ],
+        'contactsPage' => [
+            'current' => null,
+            'filter' => [
+                'typologie' => $typologie !== null ? (string) $typologie : '',
+            ],
+            'messages' => array_map([$this, 'serializeContactListItem'], $contatti),
+            'summary' => [
+                'total' => count($contatti),
+                'unread' => ContactService::countUnread(),
+                'typologies' => array_values($typologies),
+            ],
+        ],
+    ]);
   }
 
   #[Get('contatti/{id}', 'admin.contatti')]
@@ -43,7 +58,23 @@ class ContattiManagerController extends AdminController
     $contatto = ContactService::findOrFail($id);
     $typologies = ContactService::getDistinctTypologies();
 
-    return view('admin.portfolio.messaggi', compact('contatti', 'contatto', 'typologies', 'typologie'));
+    return inertia('Admin/Contacts', [
+        'meta' => [
+            'title' => 'Messaggi ricevuti',
+        ],
+        'contactsPage' => [
+            'current' => $this->serializeContactDetail($contatto),
+            'filter' => [
+                'typologie' => $typologie !== null ? (string) $typologie : '',
+            ],
+            'messages' => array_map([$this, 'serializeContactListItem'], $contatti),
+            'summary' => [
+                'total' => count($contatti),
+                'unread' => ContactService::countUnread(),
+                'typologies' => array_values($typologies),
+            ],
+        ],
+    ]);
   }
 
   #[Post('/contatti/{id}/read', 'admin.contatti.read')]
@@ -98,4 +129,52 @@ class ContattiManagerController extends AdminController
         return response()->back()->withError("Impossibile eliminare il messaggio: non trovato.");
     }
   }
+
+    /**
+     * @return array{
+     *   id: int,
+     *   email: string,
+     *   excerpt: string,
+     *   isRead: bool,
+     *   name: string,
+     *   typology: string,
+     *   createdAt: string
+     * }
+     */
+    private function serializeContactListItem(object $contact): array
+    {
+        return [
+            'id' => (int) ($contact->id ?? 0),
+            'email' => (string) ($contact->email ?? ''),
+            'excerpt' => mb_substr((string) ($contact->messaggio ?? ''), 0, 300),
+            'isRead' => (bool) ($contact->is_read ?? false),
+            'name' => (string) ($contact->nome ?? ''),
+            'typology' => (string) ($contact->typologie ?? ''),
+            'createdAt' => (string) ($contact->created_at ?? ''),
+        ];
+    }
+
+    /**
+     * @return array{
+     *   id: int,
+     *   email: string,
+     *   isRead: bool,
+     *   message: string,
+     *   name: string,
+     *   typology: string,
+     *   createdAt: string
+     * }
+     */
+    private function serializeContactDetail(object $contact): array
+    {
+        return [
+            'id' => (int) ($contact->id ?? 0),
+            'email' => (string) ($contact->email ?? ''),
+            'isRead' => (bool) ($contact->is_read ?? false),
+            'message' => (string) ($contact->messaggio ?? ''),
+            'name' => (string) ($contact->nome ?? ''),
+            'typology' => (string) ($contact->typologie ?? ''),
+            'createdAt' => (string) ($contact->created_at ?? ''),
+        ];
+    }
 }

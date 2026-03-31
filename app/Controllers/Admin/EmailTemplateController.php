@@ -25,7 +25,20 @@ class EmailTemplateController extends AdminController
             $templates = [];
         }
 
-        return view('admin.portfolio.email-templates', compact('templates'));
+        return inertia('Admin/EmailTemplates', [
+            'meta' => [
+                'title' => 'Template email',
+            ],
+            'emailTemplatesPage' => [
+                'current' => null,
+                'placeholders' => [
+                    ['label' => '{nome}', 'description' => 'Nome del mittente'],
+                    ['label' => '{email}', 'description' => 'Email del mittente'],
+                    ['label' => '{messaggio}', 'description' => 'Messaggio originale'],
+                ],
+                'templates' => array_map([$this, 'serializeTemplate'], $templates),
+            ],
+        ]);
     }
 
     #[Get('/email-templates/{id}/edit', 'admin.emailTemplates.edit')]
@@ -33,7 +46,21 @@ class EmailTemplateController extends AdminController
     {
         $templates = EmailTemplateService::getAll();
         $template = EmailTemplateService::findOrFail($id);
-        return view('admin.portfolio.email-templates', compact('templates', 'template'));
+
+        return inertia('Admin/EmailTemplates', [
+            'meta' => [
+                'title' => 'Template email',
+            ],
+            'emailTemplatesPage' => [
+                'current' => $this->serializeTemplate($template),
+                'placeholders' => [
+                    ['label' => '{nome}', 'description' => 'Nome del mittente'],
+                    ['label' => '{email}', 'description' => 'Email del mittente'],
+                    ['label' => '{messaggio}', 'description' => 'Messaggio originale'],
+                ],
+                'templates' => array_map([$this, 'serializeTemplate'], $templates),
+            ],
+        ]);
     }
 
     #[Post('/email-templates/{id}', 'admin.emailTemplates.update')]
@@ -52,5 +79,27 @@ class EmailTemplateController extends AdminController
         EmailTemplateService::update($id, $data);
 
         return response()->back()->withSuccess('Template aggiornato con successo.');
+    }
+
+    /**
+     * @return array{
+     *   id: int,
+     *   slug: string,
+     *   subject: string,
+     *   body: string,
+     *   isActive: bool,
+     *   updatedAt: string
+     * }
+     */
+    private function serializeTemplate(object $template): array
+    {
+        return [
+            'id' => (int) ($template->id ?? 0),
+            'slug' => (string) ($template->slug ?? ''),
+            'subject' => (string) ($template->subject ?? ''),
+            'body' => (string) ($template->body ?? ''),
+            'isActive' => (bool) ($template->is_active ?? false),
+            'updatedAt' => (string) ($template->updated_at ?? ''),
+        ];
     }
 }

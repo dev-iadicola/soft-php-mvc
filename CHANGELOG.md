@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/admin-secondary-areas
+
+### Porting React delle aree admin secondarie
+- Portate su Inertia le pagine admin di contatti, template email, tech stack e statistiche visitatori con serializzazione esplicita lato controller
+- Aggiunte nuove pagine React gestionali per inbox messaggi, editing template, gestione tecnologie e dashboard visitatori senza dipendere piu dalle view legacy PHP di quelle sezioni
+- Estesa la shell admin React con nuovi entry di navigazione e componenti/stili riusabili per liste record, pannelli secondari, placeholder editor e tabelle dati
+
+---
+
 ## feature/react/admin-critical-flows
 
 ### Porting React dei flussi admin critici
