@@ -1,5 +1,24 @@
 # Changelog
 
+## feature/auto-reply
+
+### Sistema auto-reply configurabile
+- Migration: creata tabella `email_templates` (id, slug UNIQUE, subject, body TEXT, is_active, updated_at)
+- Model `EmailTemplate` con proprietà tipizzate e cast `is_active` → bool
+- `EmailTemplateService` con metodi: `getAll()`, `findBySlug()`, `findOrFail()`, `update()`, `render()` (sostituzione placeholder), `sendIfActive()` (invio via BrevoMail se template attivo)
+- Seeder con template `contact_auto_reply`: oggetto "Abbiamo ricevuto il tuo messaggio", body HTML con placeholder `{nome}`, `{email}`, `{messaggio}`
+
+### Integrazione automatica
+- `ContactService::create()` ora chiama `EmailTemplateService::sendIfActive('contact_auto_reply', ...)` dopo salvataggio e notifica
+- L'invio è silenzioso: se il template non esiste, è disattivo, o l'invio fallisce, non blocca il flusso
+
+### Pagina admin
+- `EmailTemplateController` con rotte: lista (`GET /admin/email-templates`), edit (`GET /admin/email-templates/{id}/edit`), update (`POST /admin/email-templates/{id}`)
+- Vista con tabella template, form modifica con subject/body/toggle attivo, anteprima HTML del template
+- Link "Template Email" aggiunto nella sidebar admin sotto Gestione Portfolio
+
+---
+
 ## feature/contacts-management
 
 ### Toggle letto/non letto

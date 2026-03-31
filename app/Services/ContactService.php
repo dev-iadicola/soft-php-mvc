@@ -7,6 +7,7 @@ namespace App\Services;
 use App\Model\Contatti;
 use App\Core\Exception\ValidationException;
 use App\Core\Exception\NotFoundException;
+use App\Services\EmailTemplateService;
 use App\Services\NotificationService;
 
 class ContactService
@@ -93,6 +94,13 @@ class ContactService
             substr((string) ($data['messaggio'] ?? ''), 0, 80),
             '/admin/contatti/' . $contatto->id,
         );
+
+        // Auto-reply
+        EmailTemplateService::sendIfActive('contact_auto_reply', (string) ($data['email'] ?? ''), [
+            'nome' => (string) ($data['nome'] ?? ''),
+            'email' => (string) ($data['email'] ?? ''),
+            'messaggio' => (string) ($data['messaggio'] ?? ''),
+        ]);
 
         return $contatto;
     }
