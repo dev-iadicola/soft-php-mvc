@@ -28,3 +28,5 @@ pint.json
 /.codex-work/
 AGENTS.md
 refactoring.md
+.codex
+/.codex
