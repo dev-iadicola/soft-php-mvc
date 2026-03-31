@@ -2,6 +2,13 @@
 
 ## feature/seo-metadata
 
+### Rimozione sezione Partners
+- Rimosso `PartnersController` e vista `partners.php`
+- Rimosso link Partners dalla navbar, footer e sitemap
+- Rimosso riferimento a `PartnerService` da `PortfolioController`
+- Rimossa riga Partners dal seeder `links_footer`
+- Aggiunto filtro nel footer per escludere il link `/partners` dal database
+
 ### Slug automatici
 - Aggiunta colonna `slug` (VARCHAR 150, nullable) a `projects` e `articles`
 - Proprietà `?string $slug` aggiunta ai model `Project` e `Article`

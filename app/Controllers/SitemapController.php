@@ -22,7 +22,6 @@ class SitemapController extends Controller
             ['url' => '/portfolio', 'priority' => '0.8', 'changefreq' => 'weekly'],
             ['url' => '/progetti', 'priority' => '0.8', 'changefreq' => 'weekly'],
             ['url' => '/tech-stack', 'priority' => '0.6', 'changefreq' => 'monthly'],
-            ['url' => '/partners', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['url' => '/certificati', 'priority' => '0.5', 'changefreq' => 'monthly'],
             ['url' => '/contatti', 'priority' => '0.5', 'changefreq' => 'monthly'],
         ];
