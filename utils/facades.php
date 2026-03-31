@@ -2,6 +2,7 @@
 
 use App\Core\Mvc;
 use App\Core\Facade\Auth;
+use App\Core\Facade\Inertia as InertiaFacade;
 use App\Core\Facade\Session;
 use App\Core\Facade\View;
 use App\Utils\Enviroment;
@@ -23,6 +24,13 @@ if (!function_exists(function: 'view')) {
     function view(string $page, array $variables = [], array|null $message = null)
     {
         return View::make($page, $variables, $message);
+    }
+}
+
+if (!function_exists(function: 'inertia')) {
+    function inertia(string $component, array $props = [])
+    {
+        return InertiaFacade::render($component, $props);
     }
 }
 

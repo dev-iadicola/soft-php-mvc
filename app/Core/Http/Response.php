@@ -30,6 +30,19 @@ class Response
         return $this->content;
     }
 
+    /**
+     * @return array<string, string>
+     */
+    public function getHeaders(): array
+    {
+        return $this->headers;
+    }
+
+    public function getStatusCode(): int
+    {
+        return $this->statusCode;
+    }
+
 
     public function send(): static
     {

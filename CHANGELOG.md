@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/inertia-backend-adapter
+
+### Infrastruttura backend minima per Inertia
+- Introdotti `InertiaPage`, `SharedProps`, `InertiaResponseFactory` e la facade `Inertia` per preparare il protocollo Inertia nel framework senza toccare ancora la toolchain frontend
+- Aggiunto helper globale `inertia()` e config `config/inertia.php` con versione e root element iniziali
+- `Response` ora espone getter per status code e headers, utili per testing e per il nuovo adapter response-oriented
+- Aggiunti test dedicati per serializzazione del page object, merge delle shared props e comportamento HTML/JSON delle prime risposte Inertia
+
+---
+
 ## feature/react/migration-strategy
 
 ### Strategia operativa di migrazione React + Inertia
