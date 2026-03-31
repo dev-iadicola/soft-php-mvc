@@ -2,6 +2,14 @@
 
 ## feature/blog-system
 
+### Integrazione frontend
+- Nuovo `BlogController` con rotta `GET /blog` — paginazione, ricerca per titolo, filtro per tag via query string
+- Vista pubblica `blog.php` con griglia card articoli, barra ricerca, chip tag cliccabili, paginazione
+- Link "~/blog" aggiunto nella navbar pubblica e nella sitemap
+- Multi-select tag nel form create e nel modal edit articolo admin
+- `HomeManagerController` aggiornato: passa tag alla vista, sync tag su create/update
+- Campo `content` corretto in `overview` nel form create (allineato al model)
+
 ### Sistema tag
 - Migration: tabelle `tags` (id, name, slug UNIQUE) e `article_tag` (article_id, tag_id) con indici
 - Model `Tag` e `ArticleTag`
