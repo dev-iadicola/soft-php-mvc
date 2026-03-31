@@ -1,39 +1,56 @@
 
 name: Deploy website on push
 
-on: 
-  push: 
+on:
+  push:
     branches:
-      - production 
+      - production
 
 jobs:
   web-deploy:
     name: Deploy
     runs-on: ubuntu-latest
     steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v4
 
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v4
+      - name: 🟢 Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
 
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-      with:
-        server: ${{secrets.FTP}}
-        username: ${{ secrets.FTPUSERNAME }}
-        password: ${{ secrets.FTPPASSWORD }}
-        protocol: ftps
-        server-dir: /public_html/
-        exclude: |
-          vendor/sendinblue/api-v3-sdk/docs/**
-          **/.git*
-          **/.github*
-          **/node_modules/**
-          **/Storage/logs/**
-          **/tests/**
-          README.md
-          .env
-          storage/
-          Storage/
-          *.log
+      - name: 📦 Install frontend dependencies
+        run: npm ci
 
+      - name: 🏗 Build frontend assets
+        run: npm run build
+
+      - name: 📂 Sync files
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP }}
+          username: ${{ secrets.FTPUSERNAME }}
+          password: ${{ secrets.FTPPASSWORD }}
+          protocol: ftps
+          server-dir: /public_html/
+          exclude: |
+            vendor/sendinblue/api-v3-sdk/docs/**
+            **/.git*
+            **/.github*
+            **/node_modules/**
+            **/Storage/logs/**
+            **/tests/**
+            .env
+            *.log
+            README.md
+            storage/
+            Storage/
+            frontend/**
+            package.json
+            package-lock.json
+            tsconfig.json
+            tsconfig.app.json
+            tsconfig.node.json
+            vite.config.ts
 

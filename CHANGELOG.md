@@ -1,5 +1,19 @@
 # Changelog
 
+## feature/react/react-ts-bootstrap
+
+### Deploy frontend compilato in CI
+- Aggiornato `.github/workflows/main.yml` per installare le dipendenze frontend in GitHub Actions, eseguire la build Vite prima del deploy e inviare al server solo gli asset compilati necessari a runtime
+- Esclusi dal deploy i file di toolchain/frontend non necessari in produzione, come `frontend/`, `package*.json`, `tsconfig*` e `vite.config.ts`
+
+### Bootstrap iniziale React + TypeScript
+- Aggiunto il nuovo entrypoint `frontend/app.tsx` con bootstrap Inertia client-side e resolver pagine iniziale
+- Introdotta la struttura base `frontend/` con `pages`, `components`, `layouts`, `hooks`, `lib`, `styles` e `types` per avviare il porting in modo ordinato
+- Definiti alias `@/*`, utility `cn(...)`, layout placeholder `GuestLayout` e `AdminLayout`, piu una fallback page per componenti Inertia non ancora migrate
+- Rifinito lo script `npm run build` per validare TypeScript senza emettere artefatti transitori nel repository durante la build CI
+
+---
+
 ## feature/react/frontend-toolchain
 
 ### Toolchain frontend React + TypeScript + Vite

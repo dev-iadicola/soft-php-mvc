@@ -3,6 +3,9 @@
 .npm/
 .vite/
 /assets/build/
+*.tsbuildinfo
+vite.config.d.ts
+vite.config.js
 .vscode/*
 .env
 settings.json
