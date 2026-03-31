@@ -19,7 +19,7 @@
 
                     <div class="form-group mb-3">
                         <label for="body"><strong>Corpo (HTML)</strong></label>
-                        <textarea name="body" id="body" class="form-control" rows="12" required><?= htmlspecialchars($template->body) ?></textarea>
+                        <textarea name="body" id="body" class="form-control editor" rows="12" required><?= htmlspecialchars($template->body) ?></textarea>
                     </div>
 
                     <div class="form-check mb-3">
