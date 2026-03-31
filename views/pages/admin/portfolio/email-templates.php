@@ -35,13 +35,6 @@
                 </form>
             </div>
 
-            <!-- Preview -->
-            <div class="card-footer">
-                <strong>Anteprima:</strong>
-                <div class="border p-3 mt-2 bg-white" style="max-height: 400px; overflow-y: auto;">
-                    <?= $template->body ?>
-                </div>
-            </div>
         </div>
     <?php endif; ?>
 
