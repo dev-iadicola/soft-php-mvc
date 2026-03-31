@@ -7,6 +7,7 @@
 - Introdotti provider e primitive source-owned (`AppProviders`, `UiButton`, `UiBadge`, `UiCard`) per usare pattern Untitled UI senza accoppiare direttamente le pagine alla libreria esterna
 - Aggiunta una preview `/react-preview/untitled` per validare Tailwind, React Aria, icone Untitled UI e convenzioni di design system già dentro il bootstrap Inertia
 - Risolto il `419` dei form React/Inertia inviando sempre il token CSRF negli header client e accettando il token anche lato middleware via `X-CSRF-TOKEN` / `X-XSRF-TOKEN`
+- Centralizzata nel bootstrap Inertia la costruzione degli header di sicurezza e dei token client-side tramite helper dedicato, cosi CSRF e futuri header condivisi non restano duplicati nei singoli form React
 - Ripulito il copy tecnico del `GuestLayout`, sostituendo il messaggio di bootstrap React con un testo neutro adatto al frontend reale
 
 ---
