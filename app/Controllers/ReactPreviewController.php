@@ -73,4 +73,14 @@ class ReactPreviewController extends Controller
             ],
         ]);
     }
+
+    #[Get('/react-preview/untitled', 'react.preview.untitled')]
+    public function untitledUi(): void
+    {
+        inertia('Preview/UntitledUIShowcase', [
+            'meta' => [
+                'title' => 'Untitled UI Preview',
+            ],
+        ]);
+    }
 }

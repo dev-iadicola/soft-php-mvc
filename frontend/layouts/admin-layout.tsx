@@ -30,6 +30,7 @@ const DEFAULT_SECTIONS: AdminNavSection[] = [
       { href: '/admin/dashboard', label: 'Dashboard' },
       { href: '/react-preview/admin', label: 'React preview' },
       { href: '/react-preview/admin/forms', label: 'Form strategy' },
+      { href: '/react-preview/untitled', label: 'Untitled UI' },
       { href: '/admin/notifications/count', label: 'Notifications API' },
     ],
   },

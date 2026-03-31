@@ -1,0 +1,31 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+@plugin "tailwindcss-react-aria-components";
+@source "../**/*.{ts,tsx}";
+
+@theme {
+  --font-sans:
+    "Inter",
+    "Segoe UI",
+    sans-serif;
+  --radius-4xl: 2rem;
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-200: #99f6e4;
+  --color-brand-500: #14b8a6;
+  --color-brand-600: #0d9488;
+  --color-brand-700: #0f766e;
+  --color-brand-900: #134e4a;
+}
+
+@layer base {
+  body {
+    @apply antialiased;
+  }
+}
+
+@layer components {
+  .ui-surface {
+    @apply rounded-[1.75rem] border border-slate-200/80 bg-white/90 shadow-[0_20px_60px_rgba(15,23,42,0.08)] backdrop-blur;
+  }
+}

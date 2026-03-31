@@ -1,3 +1,5 @@
+import { twMerge } from 'tailwind-merge';
+
 type ClassDictionary = Record<string, boolean | null | undefined>;
 type ClassArray = ClassValue[];
 type ClassValue =
@@ -28,8 +30,10 @@ function flatten(value: ClassValue): string[] {
 }
 
 export function cn(...values: ClassValue[]): string {
-  return values
-    .flatMap((value) => flatten(value))
-    .join(' ')
-    .trim();
+  return twMerge(
+    values
+      .flatMap((value) => flatten(value))
+      .join(' ')
+      .trim(),
+  );
 }

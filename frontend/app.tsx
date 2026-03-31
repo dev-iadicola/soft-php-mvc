@@ -3,6 +3,8 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 
 import { resolvePageComponent } from '@/lib/page-resolver';
+import { AppProviders } from '@/providers/app-providers';
+import '@/styles/tailwind.css';
 import '@/styles/app.css';
 
 const mountElement = document.getElementById('app');
@@ -17,7 +19,9 @@ void createInertiaApp({
   setup({ App, el, props }) {
     createRoot(el).render(
       <StrictMode>
-        <App {...props} />
+        <AppProviders>
+          <App {...props} />
+        </AppProviders>
       </StrictMode>,
     );
   },

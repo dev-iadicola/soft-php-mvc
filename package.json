@@ -9,8 +9,15 @@
   },
   "dependencies": {
     "@inertiajs/react": "^2.2.8",
+    "@tailwindcss/vite": "^4.2.2",
+    "@untitledui/icons": "^0.0.22",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-aria-components": "^1.16.0",
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.5.0",
+    "tailwindcss": "^4.2.2",
+    "tailwindcss-animate": "^1.0.7",
+    "tailwindcss-react-aria-components": "^2.0.1"
   },
   "devDependencies": {
     "@types/node": "^24.6.1",

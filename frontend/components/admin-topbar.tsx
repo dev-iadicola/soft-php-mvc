@@ -1,3 +1,5 @@
+import { Bell02 } from '@untitledui/icons/Bell02';
+
 import { cn } from '@/lib/cn';
 
 type PageAction = {
@@ -51,7 +53,9 @@ export function AdminTopbar({
           className="admin-topbar__notification"
           aria-label="Notifications"
         >
-          <span className="admin-topbar__notification-icon">Bell</span>
+          <span className="admin-topbar__notification-icon" aria-hidden="true">
+            <Bell02 size={18} />
+          </span>
           {notificationCount > 0 ? (
             <span className="admin-topbar__notification-badge">
               {notificationCount}

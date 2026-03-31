@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/untitledui-integration
+
+### Base tecnica per Untitled UI nel frontend React
+- Integrata la toolchain frontend necessaria per una base compatibile con Untitled UI (`tailwindcss`, plugin Vite, `react-aria-components`, `@untitledui/icons`, `tailwind-merge`)
+- Introdotti provider e primitive source-owned (`AppProviders`, `UiButton`, `UiBadge`, `UiCard`) per usare pattern Untitled UI senza accoppiare direttamente le pagine alla libreria esterna
+- Aggiunta una preview `/react-preview/untitled` per validare Tailwind, React Aria, icone Untitled UI e convenzioni di design system già dentro il bootstrap Inertia
+
+---
+
 ## feature/react/admin-secondary-areas
 
 ### Porting React delle aree admin secondarie
