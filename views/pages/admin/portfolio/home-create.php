@@ -31,14 +31,23 @@
 
                 <div class="mb-3">
                     <label class="form-label">Contenuto</label>
-                    <textarea class="form-control" name="content" rows="4" placeholder="Scrivi qui il contenuto..."></textarea>
+                    <textarea class="form-control editor" name="overview" rows="4" placeholder="Scrivi qui il contenuto..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Tag</label>
+                    <select name="tag_ids[]" class="form-control" multiple style="height: 100px;">
+                        <?php foreach ($tags ?? [] as $tag) : ?>
+                            <option value="<?= $tag->id ?>"><?= htmlspecialchars($tag->name) ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <small class="form-text text-muted">Tieni premuto Ctrl per selezionare più tag</small>
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label">Immagine</label>
-                    <input type="file" id="article-img" class="form-control" name="img" accept="image/*">    
+                    <input type="file" id="article-img" class="form-control" name="img" accept="image/*">
                 </div>
-
 
                 <div class="form-check mt-3">
                     <input class="form-check-input" type="checkbox" name="is_active" id="article_is_active" value="1" checked>
@@ -88,8 +97,26 @@
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label">Bio (sottotitolo sezione competenze)</label>
-                    <textarea class="form-control" name="bio" rows="3" placeholder="Es. Software Engineer con focus su backend e architettura applicativa..."></textarea>
+                    <label class="form-label">Bio</label>
+                    <textarea class="form-control editor" name="bio" rows="3" placeholder="Es. Software Engineer con focus su backend e architettura applicativa..."></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Avatar</label>
+                    <input type="file" class="form-control" name="avatar" accept="image/*">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">GitHub URL</label>
+                    <input type="url" class="form-control" name="github_url" placeholder="https://github.com/...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">LinkedIn URL</label>
+                    <input type="url" class="form-control" name="linkedin_url" placeholder="https://linkedin.com/in/...">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Twitter URL</label>
+                    <input type="url" class="form-control" name="twitter_url" placeholder="https://twitter.com/...">
                 </div>
 
                 <div class="mb-3">

@@ -14,8 +14,17 @@ class User extends Model
     protected string $password;
     protected string $email;
     protected ?string $token = null;
+    protected ?string $two_factor_secret = null;
+    protected bool $two_factor_enabled = false;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+
+    protected function casts(): array
+    {
+        return [
+            'two_factor_enabled' => 'bool',
+        ];
+    }
 
     /**
      * @deprecated Use \App\Services\PasswordService::changeByEmail() instead.

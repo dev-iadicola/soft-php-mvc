@@ -60,6 +60,7 @@
                         <li><a href="/progetti" class="{{ isActivePage('progetti', $page) }}">~/progetti</a></li>
                         <li><a href="/tech-stack" class="{{ isActivePage('tech-stack', $page) }}">~/tech-stack</a></li>
                         <li><a href="/certificati" class="{{ isActivePage('corsi', $page) }}">~/certificati</a></li>
+                        <li><a href="/blog" class="{{ isActivePage('blog', $page) }}">~/blog</a></li>
                         <li><a target="_blank" href="https://github.com/dev-iadicola/"><i class="fa fa-github" aria-hidden="true"></i> github</a></li>
                     </ul>
                 </nav>

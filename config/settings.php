@@ -80,9 +80,21 @@ return [
      * - max: 100 requests
      * - window: 60 seconds
      */
-    'request' => [
-        'max'    => GetEnv::int('MAX_REQUEST', 100),
-        'window' => GetEnv::int('WINDOW', 60),
+    'rate_limit' => [
+        'default' => [
+            'max' => GetEnv::int('RATE_LIMIT_MAX', 5),
+            'window' => GetEnv::int('RATE_LIMIT_WINDOW', 900),
+        ],
+        'routes' => [
+            'POST /login' => [
+                'max' => GetEnv::int('LOGIN_RATE_LIMIT_MAX', 5),
+                'window' => GetEnv::int('LOGIN_RATE_LIMIT_WINDOW', 900),
+            ],
+            'POST /contatti' => [
+                'max' => GetEnv::int('CONTACT_RATE_LIMIT_MAX', 5),
+                'window' => GetEnv::int('CONTACT_RATE_LIMIT_WINDOW', 900),
+            ],
+        ],
     ],
     /**
      * Database driver.

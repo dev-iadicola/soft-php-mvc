@@ -255,6 +255,27 @@ class SessionStorage
         unset($_SESSION[$key]);
     }
 
+    public function removeMany(array $keys): void
+    {
+        foreach ($keys as $key) {
+            unset($_SESSION[$key]);
+        }
+    }
+
+    public function regenerateId(bool $deleteOldSession = true): bool
+    {
+        if (session_status() !== PHP_SESSION_ACTIVE) {
+            return false;
+        }
+
+        return session_regenerate_id($deleteOldSession);
+    }
+
+    public function id(): string
+    {
+        return session_id();
+    }
+
     /**
      * @deprecated Use remove() instead
      */

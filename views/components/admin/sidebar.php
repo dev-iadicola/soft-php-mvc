@@ -42,6 +42,7 @@
                     <a class="dropdown-item text-dark<?= ($page === '/admin/technology' || str_starts_with($page, '/admin/technology-')) ? ' active' : '' ?>" href="/admin/technology">Stack Tecnologico</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/partner' || str_starts_with($page, '/admin/partner-')) ? ' active' : '' ?>" href="/admin/partner">Partner</a>
                     <a class="dropdown-item text-dark<?= ($page === '/admin/footer-links' || str_starts_with($page, '/admin/footer-links-')) ? ' active' : '' ?>" href="/admin/footer-links">Footer Links</a>
+                    <a class="dropdown-item text-dark<?= ($page === '/admin/email-templates' || str_starts_with($page, '/admin/email-templates')) ? ' active' : '' ?>" href="/admin/email-templates">Template Email</a>
                 </div>
             </div>
         </div>
@@ -68,6 +69,8 @@
             <div class="collapse" id="collapseUser">
                 <div class="card card-body mt-2">
                     <a class="dropdown-item text-dark<?= $page === '/admin/settings' ? ' active' : '' ?>" href="/admin/settings">Impostazioni</a>
+                    <a class="dropdown-item text-dark<?= $page === '/admin/security' ? ' active' : '' ?>" href="/admin/security">Sicurezza 2FA</a>
+                    <a class="dropdown-item text-dark<?= $page === '/admin/sessions' ? ' active' : '' ?>" href="/admin/sessions">Sessioni Attive</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/password' ? ' active' : '' ?>" href="/admin/password">Cambia Password</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/edit-profile' ? ' active' : '' ?>" href="/admin/edit-profile">Edit Profile</a>
                     <a class="dropdown-item text-dark<?= $page === '/admin/logs' ? ' active' : '' ?>" href="/admin/logs">Logs</a>

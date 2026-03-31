@@ -132,6 +132,11 @@ class Model  implements JsonSerializable
         return $this->timestamps = $bool;
     }
 
+    public function usesTimestamps(): bool
+    {
+        return $this->timestamps;
+    }
+
     protected function setTable(string $table): string
     {
         return $this->table = $table;

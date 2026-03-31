@@ -11,6 +11,8 @@ use App\Core\Http\Attributes\Get;
 use App\Core\Http\Attributes\Middleware;
 use App\Core\Http\Attributes\Post;
 use App\Core\Http\Attributes\Prefix;
+use App\Core\Http\Request;
+use App\Mail\BrevoMail;
 use App\Services\ContactService;
 
 #[Prefix('/admin')]
@@ -19,19 +21,29 @@ class ContattiManagerController extends AdminController
 {
 
   #[Get('/contatti')]
-  public function index()
+  public function index(Request $request)
   {
-    $contatti = ContactService::getAll();
-    return view('admin.portfolio.messaggi', compact('contatti'));
+    $typologie = $request->get('typologie');
+    $contatti = ($typologie !== null && $typologie !== '')
+        ? ContactService::getByTypologie($typologie)
+        : ContactService::getAll();
+    $typologies = ContactService::getDistinctTypologies();
+
+    return view('admin.portfolio.messaggi', compact('contatti', 'typologies', 'typologie'));
   }
 
   #[Get('contatti/{id}', 'admin.contatti')]
-  public function get(int $id)
+  public function get(int $id, Request $request)
   {
     ContactService::markAsRead($id);
-    $contatti = ContactService::getAll();
+    $typologie = $request->get('typologie');
+    $contatti = ($typologie !== null && $typologie !== '')
+        ? ContactService::getByTypologie($typologie)
+        : ContactService::getAll();
     $contatto = ContactService::findOrFail($id);
-    return view('admin.portfolio.messaggi', compact('contatti', 'contatto'));
+    $typologies = ContactService::getDistinctTypologies();
+
+    return view('admin.portfolio.messaggi', compact('contatti', 'contatto', 'typologies', 'typologie'));
   }
 
   #[Post('/contatti/{id}/read', 'admin.contatti.read')]
@@ -39,6 +51,39 @@ class ContattiManagerController extends AdminController
   {
     ContactService::markAsRead($id);
     return response()->back()->withSuccess('Messaggio segnato come letto.');
+  }
+
+  #[Post('/contatti/{id}/toggle-read', 'admin.contatti.toggleRead')]
+  public function toggleRead(int $id)
+  {
+    $isRead = ContactService::toggleRead($id);
+    $label = $isRead ? 'letto' : 'non letto';
+    return response()->back()->withSuccess("Messaggio segnato come {$label}.");
+  }
+
+  #[Post('/contatti/{id}/reply', 'admin.contatti.reply')]
+  public function reply(Request $request, int $id)
+  {
+    $contatto = ContactService::findOrFail($id);
+    $body = trim((string) $request->get('reply_body'));
+
+    if ($body === '') {
+        return response()->back()->withError('Il testo della risposta non può essere vuoto.');
+    }
+
+    try {
+        $mailer = new BrevoMail();
+        $mailer->bodyHtml = $body;
+        $mailer->setEmail(
+            $contatto->email,
+            'Re: Messaggio da portfolio',
+        );
+        $mailer->send();
+    } catch (\Throwable $e) {
+        return response()->back()->withError('Errore nell\'invio della risposta: ' . $e->getMessage());
+    }
+
+    return response()->back()->withSuccess("Risposta inviata a {$contatto->email}.");
   }
 
   #[Delete('/contatti-delete/{id}/', 'admin.contatti.delete')]

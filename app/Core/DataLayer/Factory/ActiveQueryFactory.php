@@ -29,7 +29,7 @@ class ActiveQueryFactory
         // Read ORM metadata directly from the model's declared structure.
         $table = $model->getTable() ?: throw new ModelStructureException("Missing table in: $modelClass");
         $allowedColumns = $model->columns();
-        $timestampsExists = $model->timestamps ?? true;
+        $timestampsExists = $model->usesTimestamps();
 
 
         // Runtime (global)

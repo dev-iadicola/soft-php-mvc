@@ -31,7 +31,7 @@ class ContattiController extends Controller
     }
 
 
-    #[Post('contatti', 'contatti')]
+    #[Post('contatti', 'contatti', 'rate_limit')]
     public function sendForm(Request $request)
     {
         $post = $request->all();

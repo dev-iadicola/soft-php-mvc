@@ -93,6 +93,18 @@ class AuthMiddleware implements MiddlewareInterface
     {
         // verifica se ha effettuato il login
         if ($this->_authService->isLogged()) {
+            $authSession = $this->_authService->currentAuthSession();
+
+            if ($authSession === null) {
+                $this->_authService->logout();
+                return false;
+            }
+
+            if ((string) $authSession->getAttribute('ip') !== ($_SERVER['REMOTE_ADDR'] ?? '')) {
+                $this->_authService->logout();
+                return false;
+            }
+
             // Validazione IP
 
             if (! $this->_authService->checkIpAddressSessionAndRemoteAddr()) {
