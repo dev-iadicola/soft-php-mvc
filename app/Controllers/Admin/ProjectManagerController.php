@@ -14,7 +14,7 @@ use App\Core\Http\Attributes\Prefix;
 use App\Core\Http\Attributes\Post;
 use App\Core\Http\Request;
 use App\Core\Validation\Validator;
-use App\Model\Project;
+use App\Services\MediaService;
 use App\Services\PartnerService;
 use App\Services\ProjectService;
 use App\Services\ProjectTechnologyService;
@@ -34,6 +34,7 @@ class ProjectManagerController extends AdminController
             'project'  => null,
             'partners' => PartnerService::getAll(),
             'technologies' => TechnologyService::getAll(),
+            'gallery' => [],
         ]);
     }
 
@@ -48,6 +49,7 @@ class ProjectManagerController extends AdminController
             'projects' => $projects,
             'partners' => PartnerService::getAll(),
             'technologies' => TechnologyService::getAll(),
+            'gallery' => MediaService::getFor('project', $id),
         ]);
     }
 
@@ -63,39 +65,32 @@ class ProjectManagerController extends AdminController
             return redirect()->back()->withError($validator->implodeError());
         }
 
-        $message = 'Progetto salvato con successo';
-
-        // remove img from data if no new file uploaded, keep existing
+        // Remove img from data if no new file uploaded, keep existing
         unset($data['img']);
 
         if ($request->hasFile('img')) {
             $file = $request->file('img');
-            $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-            $path = 'images/' . $filename;
-            $storage = Storage::make('public');
+            $mainMedia = MediaService::attach('project_img', $id, $file);
 
-            // delete old image if present
+            // Delete old image if present
             if (!empty($project->img)) {
-                $oldPath = ltrim((string)$project->img, '/');
+                $oldPath = ltrim((string) $project->img, '/');
                 if (str_starts_with($oldPath, 'storage/')) {
                     $oldPath = substr($oldPath, strlen('storage/'));
                 }
-                $storage->deleteIfExist($oldPath);
+                Storage::make('public')->deleteIfExist($oldPath);
             }
 
-            $storage->put(
-                $path,
-                file_get_contents($file['tmp_name']),
-                ['visibility' => 'public']
-            );
-
-            $data['img'] = $storage->getPath($path);
+            $data['img'] = $mainMedia->path;
         }
+
+        // Gallery images
+        $this->attachGalleryFiles($request, $id);
 
         ProjectService::update($id, $data);
         ProjectTechnologyService::syncForProject($id, $this->resolveTechnologyIds($request));
 
-        return response()->back()->withSuccess($message);
+        return response()->back()->withSuccess('Progetto salvato con successo');
     }
 
     #[Patch('project-upsert/{id}', 'admin.project.upset')]
@@ -112,7 +107,6 @@ class ProjectManagerController extends AdminController
     #[Post('project-store', 'admin.project.store')]
     public function store(Request $request)
     {
-        // validate req
         $valid = $this->validateRequest($request);
         if ($valid->fails()) {
             return redirect()->back()->withError($valid->implodeError());
@@ -122,25 +116,23 @@ class ProjectManagerController extends AdminController
             return redirect()->back()->withError('Immagine obbligatoria per un nuovo progetto.');
         }
 
-        // insert image to storage
+        // Main image via MediaService
         $file = $request->file('img');
-
-        $filename = uniqid('project_') . '.' . pathinfo($file['name'], PATHINFO_EXTENSION);
-        $path = 'images/' . $filename;
-
-        $storage = Storage::make('public');
-        $storage->put(
-            $path,
-            file_get_contents($file['tmp_name']),
-            ['visibility' => 'public']
-        );
-
+        $mainMedia = MediaService::attach('project_img', 0, $file);
 
         $data = $valid->validated();
-        $data['img'] = $storage->getPath($path);
-        // Crea il progetto
+        $data['img'] = $mainMedia->path;
+
         $project = ProjectService::create($data);
-        ProjectTechnologyService::syncForProject((int) $project->getAttribute('id'), $this->resolveTechnologyIds($request));
+        $projectId = (int) $project->getAttribute('id');
+
+        // Update main media entity_id now that we have the project ID
+        MediaService::reorder($mainMedia->id, 0);
+
+        // Gallery images
+        $this->attachGalleryFiles($request, $projectId);
+
+        ProjectTechnologyService::syncForProject($projectId, $this->resolveTechnologyIds($request));
 
         return redirect()->back()->withSuccess('Progetto salvato con Successo!');
     }
@@ -150,19 +142,21 @@ class ProjectManagerController extends AdminController
     {
         $project = ProjectService::findOrFail($id);
 
-        // delete img if exist
-        $storage = Storage::make('public');
-        $imgPath = ltrim((string)$project->img, '/');
-        if (str_starts_with($imgPath, 'storage/app/public/')) {
-            $imgPath = substr($imgPath, strlen('storage/app/public/'));
+        // Delete main image
+        if (!empty($project->img)) {
+            $imgPath = ltrim((string) $project->img, '/');
+            if (str_starts_with($imgPath, 'storage/')) {
+                $imgPath = substr($imgPath, strlen('storage/'));
+            }
+            Storage::make('public')->deleteIfExist($imgPath);
         }
-        if ($storage->exists($imgPath)) {
-            $storage->delete($imgPath);
-        }
+
+        // Delete gallery
+        MediaService::deleteAllFor('project', $id);
 
         ProjectService::delete($id);
 
-        response()->back()->withSuccess('Progetto non eliminato correttamente.');
+        return response()->back()->withSuccess('Progetto eliminato correttamente.');
     }
 
     /**
@@ -200,6 +194,43 @@ class ProjectManagerController extends AdminController
         );
 
         return $validator;
+    }
+
+    #[Delete('project-media/{mediaId}', 'project.media.delete')]
+    public function deleteMedia(int $mediaId)
+    {
+        MediaService::delete($mediaId);
+        return response()->back()->withSuccess('Immagine eliminata.');
+    }
+
+    /**
+     * Attach gallery files from a multi-file input (name="gallery[]").
+     */
+    private function attachGalleryFiles(Request $request, int $projectId): void
+    {
+        $galleryFiles = $_FILES['gallery'] ?? null;
+
+        if ($galleryFiles === null || !is_array($galleryFiles['name'] ?? null)) {
+            return;
+        }
+
+        $count = count($galleryFiles['name']);
+
+        for ($i = 0; $i < $count; $i++) {
+            if (($galleryFiles['error'][$i] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK) {
+                continue;
+            }
+
+            $file = [
+                'name' => $galleryFiles['name'][$i],
+                'tmp_name' => $galleryFiles['tmp_name'][$i],
+                'type' => $galleryFiles['type'][$i] ?? '',
+                'size' => $galleryFiles['size'][$i] ?? 0,
+                'error' => $galleryFiles['error'][$i],
+            ];
+
+            MediaService::attach('project', $projectId, $file);
+        }
     }
 
     /**

@@ -50,6 +50,56 @@ class FilesystemTest extends TestCase
         $this->assertStringContainsString($this->root, $full);
     }
 
+    public function testGetPathPublicDisk(): void
+    {
+        $fs = new Filesystem(new LocalDrive($this->root), 'public', '/storage');
+        $this->assertSame('/storage/images/test.png', $fs->getPath('images/test.png'));
+    }
+
+    public function testGetPathPrivateDisk(): void
+    {
+        $fs = new Filesystem(new LocalDrive($this->root), 'private', '/storage');
+        $this->assertSame('images/test.png', $fs->getPath('images/test.png'));
+    }
+
+    public function testGetPathStripsLeadingSlash(): void
+    {
+        $fs = new Filesystem(new LocalDrive($this->root), 'public', '/storage');
+        $this->assertSame('/storage/images/test.png', $fs->getPath('/images/test.png'));
+    }
+
+    public function testOverwriteExistingFile(): void
+    {
+        $path = 'overwrite/test.txt';
+        $this->fs->put($path, 'original', ['visibility' => 'public']);
+        $this->assertSame('original', $this->fs->get($path));
+
+        $this->fs->put($path, 'updated', ['visibility' => 'public']);
+        $this->assertSame('updated', $this->fs->get($path));
+    }
+
+    public function testDeleteOrFailOnNonExistentFile(): void
+    {
+        $this->expectException(\App\Core\Exception\FileSystemException::class);
+        $this->fs->deleteOrFail('non/existent/file.txt');
+    }
+
+    public function testDeleteOrFailOnExistingFile(): void
+    {
+        $path = 'deletable/file.txt';
+        $this->fs->put($path, 'data', ['visibility' => 'public']);
+        $this->assertTrue($this->fs->exists($path));
+
+        $this->fs->deleteOrFail($path);
+        $this->assertFalse($this->fs->exists($path));
+    }
+
+    public function testExistsOrFailOnNonExistentFile(): void
+    {
+        $this->expectException(\App\Core\Exception\FileSystemException::class);
+        $this->fs->existsOrFail('missing.txt');
+    }
+
     private function deleteDir(string $dir): void
     {
         if (!is_dir($dir)) {
