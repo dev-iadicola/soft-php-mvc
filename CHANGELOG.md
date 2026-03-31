@@ -1,5 +1,30 @@
 # Changelog
 
+## feature/contacts-management
+
+### Toggle letto/non letto
+- `ContactService::toggleRead($id)` inverte lo stato `is_read` e restituisce il nuovo valore
+- Nuovo endpoint `POST /admin/contatti/{id}/toggle-read` con feedback
+- Bottone toggle nella lista messaggi (icona busta aperta/chiusa) e nel dettaglio messaggio
+
+### Risposta diretta via Brevo
+- Form textarea + bottone "Invia risposta" nella vista dettaglio messaggio
+- Endpoint `POST /admin/contatti/{id}/reply` usa `BrevoMail` per inviare via API Brevo
+- Conferma prima dell'invio, gestione errori con try/catch
+
+### Filtri per tipologia
+- `ContactService::getDistinctTypologies()` restituisce le tipologie uniche
+- `ContactService::getByTypologie()` filtra per tipologia
+- Select con auto-submit nel header della lista messaggi
+- `ContattiManagerController::index()` accetta query string `?typologie=...`
+
+### Miglioramenti vista messaggi
+- Messaggi non letti evidenziati con bordo sinistro giallo e badge "Nuovo"
+- XSS protection con `htmlspecialchars()` su tutti gli output utente
+- Layout dettaglio messaggio migliorato con bottoni azione raggruppati
+
+---
+
 ## feature/upload-media
 
 ### Tabella media e sistema polimorfico

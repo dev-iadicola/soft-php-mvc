@@ -107,6 +107,49 @@ class ContactService
         Contatti::query()->where('id', $id)->update(['is_read' => 1]);
     }
 
+    public static function toggleRead(int $id): bool
+    {
+        $contatto = static::findOrFail($id);
+        $newState = !$contatto->is_read;
+        Contatti::query()->where('id', $id)->update(['is_read' => $newState ? 1 : 0]);
+
+        return $newState;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public static function getDistinctTypologies(): array
+    {
+        /** @var array<int, Contatti> $rows */
+        $rows = Contatti::query()
+            ->select('typologie')
+            ->distinct()
+            ->orderBy('typologie')
+            ->get();
+
+        $typologies = [];
+        foreach ($rows as $row) {
+            if ($row->typologie !== null && $row->typologie !== '') {
+                $typologies[] = $row->typologie;
+            }
+        }
+
+        return $typologies;
+    }
+
+    /**
+     * @return array<int, Contatti>
+     */
+    public static function getByTypologie(string $typologie, string $order = 'DESC'): array
+    {
+        /** @var array<int, Contatti> */
+        return Contatti::query()
+            ->where('typologie', $typologie)
+            ->orderBy('created_at', $order)
+            ->get();
+    }
+
     /**
      * Delete a contact by ID.
      *
