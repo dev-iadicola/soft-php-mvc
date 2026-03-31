@@ -1,5 +1,15 @@
 # Changelog
 
+## feature/react/architecture-rfc
+
+### Decisioni architetturali per React + TypeScript + Inertia
+- Formalizzata la strategia di migrazione ibrida: coesistenza esplicita tra view PHP legacy e nuove pagine Inertia, senza riscrivere il router custom
+- Definita l'integrazione di Inertia come adapter sul layer HTTP, basata sulla `Response` condivisa e non su una rottura del flusso attuale controller/router
+- Scelti i capisaldi del nuovo frontend: struttura dedicata `frontend/`, due layout React distinti (`GuestLayout` e `AdminLayout`), shared props centralizzate e output build in `assets/build`
+- Confermata la convenzione `cn(...)`, il bisogno di un resolver Vite separato da `assets()` e l'uso di payload/DTO stabilizzati per serializzare i dati verso React
+
+---
+
 ## feature/react/frontend-surface-audit
 
 ### Audit superfici frontend da migrare
