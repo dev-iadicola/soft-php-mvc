@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { PublicArticleCard } from '@/components/public/public-article-card';
 import { PublicSectionHeader } from '@/components/public/public-section-header';
 import { SeoHead } from '@/components/seo-head';
+import { UiButton } from '@/components/ui/ui-button';
+import { UiEmptyState } from '@/components/ui/ui-empty-state';
+import { UiInput } from '@/components/ui/ui-input';
 import { GuestLayout } from '@/layouts/guest-layout';
 import type { SharedPageProps } from '@/types/inertia';
 
@@ -72,7 +75,7 @@ export default function PublicBlogIndexPage() {
           />
 
           <div className="flex flex-wrap gap-3">
-            <input
+            <UiInput
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               onKeyDown={(event) => {
@@ -81,24 +84,16 @@ export default function PublicBlogIndexPage() {
                   submitSearch();
                 }
               }}
-              className="min-h-11 min-w-[18rem] flex-1 rounded-full border border-slate-200 bg-white px-4 text-sm text-slate-800"
+              className="min-w-[18rem] flex-1 rounded-full"
               placeholder="Cerca per titolo..."
             />
-            <button
-              type="button"
-              onClick={submitSearch}
-              className="inline-flex min-h-11 items-center justify-center rounded-full border border-brand-700 bg-brand-700 px-4 text-sm font-semibold text-white"
-            >
+            <UiButton onPress={submitSearch} tone="primary">
               Cerca
-            </button>
+            </UiButton>
             {(page.filters.search || page.filters.tag) ? (
-              <button
-                type="button"
-                onClick={() => router.get('/blog')}
-                className="inline-flex min-h-11 items-center justify-center rounded-full border border-slate-200 bg-white px-4 text-sm font-semibold text-slate-700"
-              >
+              <UiButton onPress={() => router.get('/blog')}>
                 Reset
-              </button>
+              </UiButton>
             ) : null}
           </div>
 
@@ -106,31 +101,32 @@ export default function PublicBlogIndexPage() {
             {page.tags.map((tag) => {
               const active = page.filters.tag === tag.slug;
               return (
-                <button
+                <UiButton
                   key={tag.id}
-                  type="button"
-                  onClick={() =>
+                  onPress={() =>
                     router.get('/blog', {
                       ...(page.filters.search ? { search: page.filters.search } : {}),
                       tag: tag.slug,
                     })
                   }
-                  className={`inline-flex min-h-10 items-center justify-center rounded-full border px-4 text-sm font-semibold ${
+                  tone={active ? 'primary' : 'secondary'}
+                  className={
                     active
-                      ? 'border-brand-700 bg-brand-700 text-white'
-                      : 'border-slate-200 bg-white text-slate-700'
-                  }`}
+                      ? undefined
+                      : 'hover:border-brand-200 hover:text-brand-700'
+                  }
                 >
                   #{tag.name}
-                </button>
+                </UiButton>
               );
             })}
           </div>
 
           {page.pagination.items.length === 0 ? (
-            <div className="ui-surface p-8 text-center text-sm text-slate-600">
-              Nessun articolo trovato.
-            </div>
+            <UiEmptyState
+              title="Nessun articolo trovato"
+              description="Prova a cambiare ricerca o a rimuovere i filtri attivi."
+            />
           ) : (
             <div className="grid gap-6 lg:grid-cols-2">
               {page.pagination.items.map((article) => (
@@ -142,24 +138,20 @@ export default function PublicBlogIndexPage() {
           {page.pagination.hasPages ? (
             <div className="flex flex-wrap items-center justify-center gap-2">
               {page.pagination.pageRange.map((pageNumber) => (
-                <button
+                <UiButton
                   key={pageNumber}
-                  type="button"
-                  onClick={() =>
+                  onPress={() =>
                     router.get('/blog', {
                       ...(page.filters.search ? { search: page.filters.search } : {}),
                       ...(page.filters.tag ? { tag: page.filters.tag } : {}),
                       page: pageNumber,
                     })
                   }
-                  className={`inline-flex size-10 items-center justify-center rounded-full border text-sm font-semibold ${
-                    pageNumber === page.pagination.currentPage
-                      ? 'border-brand-700 bg-brand-700 text-white'
-                      : 'border-slate-200 bg-white text-slate-700'
-                  }`}
+                  tone={pageNumber === page.pagination.currentPage ? 'primary' : 'secondary'}
+                  className="size-10 px-0"
                 >
                   {pageNumber}
-                </button>
+                </UiButton>
               ))}
             </div>
           ) : null}

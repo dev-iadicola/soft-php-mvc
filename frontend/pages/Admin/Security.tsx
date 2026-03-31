@@ -1,6 +1,9 @@
 import { Head, useForm, usePage } from '@inertiajs/react';
 
 import { AdminLayout } from '@/layouts/admin-layout';
+import { UiButton } from '@/components/ui/ui-button';
+import { UiField } from '@/components/ui/ui-field';
+import { UiInput } from '@/components/ui/ui-input';
 import type { SharedPageProps } from '@/types/inertia';
 
 type SecurityProps = SharedPageProps & {
@@ -81,9 +84,9 @@ export default function AdminSecurityPage() {
                 enableForm.post('/admin/security/two-factor/disable');
               }}
             >
-              <button type="submit" className="admin-form-actions__button admin-form-actions__button--ghost">
+              <UiButton type="submit" tone="secondary">
                 Disattiva 2FA
-              </button>
+              </UiButton>
             </form>
           </section>
         ) : (
@@ -119,9 +122,12 @@ export default function AdminSecurityPage() {
                   enableForm.post('/admin/security/two-factor/enable');
                 }}
               >
-                <label className="auth-form__field" htmlFor="security-code">
-                  <span>Codice TOTP</span>
-                  <input
+                <UiField
+                  htmlFor="security-code"
+                  label="Codice TOTP"
+                  hint="Inserisci il codice a 6 cifre generato dalla tua app di autenticazione."
+                >
+                  <UiInput
                     id="security-code"
                     type="text"
                     inputMode="numeric"
@@ -132,11 +138,11 @@ export default function AdminSecurityPage() {
                     placeholder="123456"
                     required
                   />
-                </label>
+                </UiField>
 
-                <button type="submit" className="auth-form__submit" disabled={enableForm.processing}>
+                <UiButton type="submit" tone="primary" isDisabled={enableForm.processing}>
                   {enableForm.processing ? 'Attivazione...' : 'Abilita 2FA'}
-                </button>
+                </UiButton>
               </form>
             </section>
           </div>

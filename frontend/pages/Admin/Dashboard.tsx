@@ -1,6 +1,7 @@
 import { Head, usePage } from '@inertiajs/react';
 
 import { AdminLayout } from '@/layouts/admin-layout';
+import { UiStatCard } from '@/components/ui/ui-stat-card';
 import type { SharedPageProps } from '@/types/inertia';
 
 type DashboardProps = SharedPageProps & {
@@ -37,8 +38,9 @@ export default function AdminDashboardPage() {
         <div className="admin-preview-grid">
           {dashboard.stats.map((stat) => (
             <a key={stat.label} href={stat.href} className="admin-stat-card admin-stat-card--link">
-              <span className="admin-stat-card__label">{stat.label}</span>
-              <strong className="admin-stat-card__value">{stat.value}</strong>
+              <UiStatCard label={stat.label} value={stat.value}>
+                <span className="text-sm font-medium text-brand-700">Apri sezione</span>
+              </UiStatCard>
             </a>
           ))}
         </div>

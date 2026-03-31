@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/design-system-foundation
+
+### Primitive UI condivise per il frontend React
+- Introdotte nuove primitive source-owned (`UiInput`, `UiField`, `UiEmptyState`, `UiStatCard`) e nuovi layer Tailwind per input, stati vuoti e KPI card, cosi la base UI React non dipende solo da classi raw sparse nelle pagine
+- Adottate le nuove primitive nelle pagine pubbliche già migrate per ricerca blog, filtri progetto e paginazione, riducendo duplicazioni e allineando meglio pubblico e design system Untitled-style
+- Rifinita anche l’adozione lato admin su dashboard, sicurezza account e sessioni attive, cosi i primi flussi reali riusano gia componenti condivisi e non solo preview o showcase
+
+---
+
 ## feature/react/public-seo-parity
 
 ### Parita SEO per le pagine pubbliche React
