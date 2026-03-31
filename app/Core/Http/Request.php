@@ -196,6 +196,37 @@ class Request
         return $this->attributes;
     }
 
+    public function getHeader(string $name, ?string $default = null): ?string
+    {
+        $normalized = 'HTTP_' . strtoupper(str_replace('-', '_', $name));
+        $value = $_SERVER[$normalized] ?? null;
+
+        if (!is_string($value) || $value === '') {
+            return $default;
+        }
+
+        return $value;
+    }
+
+    /**
+     * @return array<string, string>
+     */
+    public function headers(): array
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $key => $value) {
+            if (!str_starts_with($key, 'HTTP_') || !is_string($value) || $value === '') {
+                continue;
+            }
+
+            $headerName = str_replace('_', '-', substr($key, 5));
+            $headers[$headerName] = $value;
+        }
+
+        return $headers;
+    }
+
     public function getLastUri(): ?string
     {
         // Assicurati che HTTP_REFERER sia impostato

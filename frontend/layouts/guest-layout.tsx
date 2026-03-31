@@ -116,9 +116,9 @@ export function GuestLayout({
         <div className="guest-shell__highlight">
           <span className="guest-shell__highlight-badge">Shared shell</span>
           <p className="guest-shell__highlight-copy">
-            {appName} ora ha un layout guest React condiviso, pronto per pagine
-            pubbliche, auth guest e flussi editoriali senza duplicare header,
-            footer e navigazione mobile.
+            {appName} raccoglie portfolio, articoli e accesso area riservata in
+            un&apos;esperienza coerente, con navigazione e call to action unificate
+            su desktop e mobile.
           </p>
         </div>
       </section>

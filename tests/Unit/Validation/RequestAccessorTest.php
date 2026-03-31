@@ -179,4 +179,28 @@ class RequestAccessorTest extends TestCase
     {
         $this->assertTrue($this->request->has('empty_string'));
     }
+
+    public function testGetHeaderReturnsNormalizedHttpHeader(): void
+    {
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'csrf-header-token';
+        $request = new Request();
+
+        $this->assertSame('csrf-header-token', $request->getHeader('X-CSRF-TOKEN'));
+
+        unset($_SERVER['HTTP_X_CSRF_TOKEN']);
+    }
+
+    public function testHeadersReturnsNormalizedHeaderMap(): void
+    {
+        $_SERVER['HTTP_X_CSRF_TOKEN'] = 'csrf-header-token';
+        $_SERVER['HTTP_X_REQUESTED_WITH'] = 'XMLHttpRequest';
+        $request = new Request();
+
+        $headers = $request->headers();
+
+        $this->assertSame('csrf-header-token', $headers['X-CSRF-TOKEN'] ?? null);
+        $this->assertSame('XMLHttpRequest', $headers['X-REQUESTED-WITH'] ?? null);
+
+        unset($_SERVER['HTTP_X_CSRF_TOKEN'], $_SERVER['HTTP_X_REQUESTED_WITH']);
+    }
 }
