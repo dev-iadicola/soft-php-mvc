@@ -28,4 +28,27 @@ class ReactPreviewController extends Controller
             ],
         ]);
     }
+
+    #[Get('/react-preview/admin', 'react.preview.admin')]
+    public function admin(): void
+    {
+        inertia('Admin/PreviewDashboard', [
+            'meta' => [
+                'title' => 'Admin React Preview',
+            ],
+            'preview' => [
+                'title' => 'Admin layout React attivo',
+                'description' => 'Questa pagina valida la shell admin condivisa con sidebar, topbar, drawer mobile e page actions.',
+                'actions' => [
+                    ['href' => '/admin/project', 'label' => 'Manage projects'],
+                    ['href' => '/admin/home', 'label' => 'New article', 'variant' => 'primary'],
+                ],
+                'stats' => [
+                    ['label' => 'Unread notifications', 'value' => '04'],
+                    ['label' => 'Published articles', 'value' => '18'],
+                    ['label' => 'Active projects', 'value' => '09'],
+                ],
+            ],
+        ]);
+    }
 }

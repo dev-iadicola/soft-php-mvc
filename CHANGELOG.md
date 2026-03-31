@@ -1,5 +1,14 @@
 # Changelog
 
+## feature/react/admin-layout-shell
+
+### Shell admin React condivisa
+- Evoluto `AdminLayout` in una shell reale con sidebar sezionata, drawer mobile, topbar, notification bell placeholder, user snapshot, breadcrumb e page actions
+- Aggiunta una preview admin Inertia dedicata con `Admin/PreviewDashboard` e route `/react-preview/admin` per verificare la shell senza toccare ancora i CRUD reali
+- Aggiornato il fallback React per distinguere automaticamente tra pagine guest e admin, applicando il layout corretto già dalla fase di bootstrap
+
+---
+
 ## feature/react/public-props-contract
 
 ### Shared props pubbliche per React
