@@ -18,6 +18,9 @@
         </a>
     </li>
     <li class="nav-item my-2">
+        @include('components.admin.notification-bell')
+    </li>
+    <li class="nav-item my-2">
         <a href="/admin/visitors" class="nav-link text-white<?= $page === '/admin/visitors' ? ' active' : '' ?>">
             <i class="fa fa-line-chart me-2"></i>
             Visitatori

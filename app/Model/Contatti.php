@@ -16,8 +16,14 @@ class Contatti extends Model
     protected ?string $email = null;
     protected ?string $messaggio = null;
     protected ?string $typologie = null;
+    protected bool $is_read = false;
     protected ?string $created_at = null;
     protected ?string $updated_at = null;
+
+    protected function casts(): array
+    {
+        return ['is_read' => 'bool'];
+    }
 
 
     /**

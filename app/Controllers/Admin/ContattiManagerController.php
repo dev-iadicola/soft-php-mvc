@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Controllers\Admin;
 
-use App\Core\Http\Request;
 use App\Core\Controllers\AdminController;
 use App\Core\Exception\NotFoundException;
 use App\Core\Http\Attributes\Delete;
 use App\Core\Http\Attributes\Get;
 use App\Core\Http\Attributes\Middleware;
+use App\Core\Http\Attributes\Post;
 use App\Core\Http\Attributes\Prefix;
 use App\Services\ContactService;
 
@@ -28,9 +28,17 @@ class ContattiManagerController extends AdminController
   #[Get('contatti/{id}', 'admin.contatti')]
   public function get(int $id)
   {
+    ContactService::markAsRead($id);
     $contatti = ContactService::getAll();
     $contatto = ContactService::findOrFail($id);
     return view('admin.portfolio.messaggi', compact('contatti', 'contatto'));
+  }
+
+  #[Post('/contatti/{id}/read', 'admin.contatti.read')]
+  public function markAsRead(int $id)
+  {
+    ContactService::markAsRead($id);
+    return response()->back()->withSuccess('Messaggio segnato come letto.');
   }
 
   #[Delete('/contatti-delete/{id}/', 'admin.contatti.delete')]

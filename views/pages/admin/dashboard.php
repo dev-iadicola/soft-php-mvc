@@ -1,3 +1,10 @@
+<style>
+  .border-left-bold {
+    border-left: 4px solid #ffc107 !important;
+    background-color: rgba(255, 193, 7, 0.05);
+  }
+</style>
+
 <section class="container justify-content-center m-auto">
 
   <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pb-2 mb-3 border-bottom">
@@ -36,10 +43,10 @@
       </div>
     </div>
     <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card text-white bg-warning">
-        <div class="card-header"><i class="fa fa-commenting"></i> Messaggi</div>
+      <div class="card text-white <?= $unreadCount > 0 ? 'bg-danger' : 'bg-warning' ?>">
+        <div class="card-header"><i class="fa fa-commenting"></i> Messaggi non letti</div>
         <div class="card-body">
-          <h3 class="card-title"><?= count($messages) ?></h3>
+          <h3 class="card-title"><?= $unreadCount ?></h3>
         </div>
         <a class="card-footer text-right text-white" href="/admin/contatti">
           Dettagli <i class="fa fa-arrow-circle-right"></i>
@@ -54,6 +61,31 @@
         </div>
         <a class="card-footer text-right text-white" href="/admin/visitors">
           Dettagli <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card text-white bg-success">
+        <div class="card-header"><i class="fa fa-folder-open"></i> Progetti Attivi</div>
+        <div class="card-body">
+          <h3 class="card-title"><?= $totalProjects ?></h3>
+        </div>
+        <a class="card-footer text-right text-white" href="/admin/project">
+          Gestisci <i class="fa fa-arrow-circle-right"></i>
+        </a>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-6 col-sm-12 pr-0 mb-3">
+      <div class="card text-white bg-info">
+        <div class="card-header"><i class="fa fa-pencil"></i> Articoli Attivi</div>
+        <div class="card-body">
+          <h3 class="card-title"><?= $totalArticles ?></h3>
+        </div>
+        <a class="card-footer text-right text-white" href="/admin/home">
+          Gestisci <i class="fa fa-arrow-circle-right"></i>
         </a>
       </div>
     </div>
@@ -75,108 +107,33 @@
     <div class="col-lg-6 col-md-6 col-sm-12 pr-0 mb-3">
       <div class="card-collapsible card">
         <div class="card-header">
-          Messages <i class="fa fa-commenting" aria-hidden="true"></i>
-
+          Messaggi <i class="fa fa-commenting" aria-hidden="true"></i>
+          <?php if ($unreadCount > 0) : ?>
+            <span class="badge badge-danger ml-1"><?= $unreadCount ?> non letti</span>
+          <?php endif; ?>
         </div>
-        <div class="card-body d-flex justify-content-around">
-          <div class="list-group" style="max-height: 700px; overflow-y: auto;">
-
-          <div class="list-group" style="max-height: 300px; overflow-y: auto;">
-
+        <div class="card-body">
+          <div class="list-group" style="max-height: 400px; overflow-y: auto;">
             <?php foreach ($messages as $msg) : ?>
-             
-              <div class="list-group-item list-group-item-action my-2 rounded-2 ">
-                <h5 class="mb-1">Mittente: <?= $msg->nome ?> - <?= $msg->typologie ?></h5>
-                <h6 class="mb-1">Indirizzo email: <a href="mailto:<?= $msg->email ?>"><?= $msg->email ?></a></h6>
-                <p class="mb-2 overflow-auto"><?=substr( $msg->messaggio,0,300) ?></p>
-                <small>Data: <?php echo date('d/m/Y - H:i:s', strtotime($msg->created_at)) ?></small>
-              </div>
+              <a href="/admin/contatti/<?= $msg->id ?>" class="list-group-item list-group-item-action my-1 rounded-2 <?= !$msg->is_read ? 'border-left-bold' : '' ?>">
+                <div class="d-flex justify-content-between align-items-center">
+                  <h6 class="mb-1" style="<?= !$msg->is_read ? 'font-weight:bold;' : '' ?>">
+                    <?= htmlspecialchars($msg->nome) ?> — <?= htmlspecialchars($msg->typologie ?? '') ?>
+                  </h6>
+                  <?php if (!$msg->is_read) : ?>
+                    <span class="badge badge-warning">Nuovo</span>
+                  <?php endif; ?>
+                </div>
+                <p class="mb-1 text-muted small"><?= htmlspecialchars(substr($msg->messaggio, 0, 120)) ?>...</p>
+                <small class="text-muted"><?= date('d/m/Y H:i', strtotime($msg->created_at)) ?></small>
+              </a>
             <?php endforeach ?>
-            </div>
-
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="row">
-    <div class="col-lg-6 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card-collapsible card">
-        <div class="card-header">
-          Table <i class="fa fa-caret-down caret"></i>
-        </div>
-        <div class="card-body">
-          <table class="table">
-            <thead class="thead bg-primary text-white">
-              <tr>
-                <th scope="col">#</th>
-                <th scope="col">First</th>
-                <th scope="col">Last</th>
-                <th scope="col">Handle</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th scope="row">1</th>
-                <td>Mark</td>
-                <td>Otto</td>
-                <td>@mdo</td>
-              </tr>
-              <tr>
-                <th scope="row">2</th>
-                <td>Jacob</td>
-                <td>Thornton</td>
-                <td>@fat</td>
-              </tr>
-              <tr>
-                <th scope="row">3</th>
-                <td>Larry</td>
-                <td>the Bird</td>
-                <td>@twitter</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-12 pr-0 mb-3">
-      <div class="card-collapsible card">
-        <div class="card-header">
-          Quick Form <i class="fa fa-caret-down caret"></i>
-        </div>
-        <div class="card-body">
-          <form>
-
-            <div class="input-group mb-3">
-              <input type="text" class="form-control" placeholder="Assignee's email">
-              <div class="input-group-append">
-                <span class="input-group-text">@example.com</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <input type="text" class="form-control" placeholder="Ticket title">
-            </div>
-
-            <div class="form-group">
-              <textarea class="form-control" placeholder="Ticket description" cols="30" rows="5"></textarea>
-            </div>
-
-            <div class="form-group row">
-              <div class="col-sm-10">
-                <button type="submit" class="btn btn-primary">
-                  <i class="fa fa-send"></i>
-                  Submit Ticket
-                </button>
-              </div>
-            </div>
-
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
 
 </section>
 
